@@ -5,6 +5,6 @@ A PAL Compiler for CMPUT 415.
 
 ###Team Meow
 * Steve Jahns
-* Kenneth Armstrong (Mike)
+* Mike Armstrong
 * Chris Pavlicek
 * Connor Moreside
