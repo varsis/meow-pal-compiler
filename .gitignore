@@ -11,3 +11,14 @@
 *.lai
 *.la
 *.a
+
+# Compiled binary
+bin/pal
+
+# Bison/Flex generated files
+location.hh
+pal.tab.c
+pal.tab.h
+position.hh
+stack.hh
+

@@ -1,21 +1,34 @@
-OBJS = main.o pal.lex.o pal.bison.o
+LOBJS = pal.tab.o lex.yy.o main.o
+OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 CC = g++
-CFLAGS = -g
+CXX = g++
+CFLAGS = -g -Wall
 OBJDIR = ./obj
 SRCDIR = ./src
 BINDIR = ./bin
+EXE = pal
 
-pal: $(OBJDIR)/$(OBJS)
-	$(CC) -o $(BINDIR)/pal $(OBJS)
+pal: $(OBJS)
+	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $(OBJS)
+
+$(OBJDIR)/pal.tab.h: $(SRCDIR)/pal.y
+	cp $(SRCDIR)/Scanner.hpp $(OBJDIR)/
+	cp $(SRCDIR)/Parser.hpp $(OBJDIR)/
+	bison -o $@ $(SRCDIR)/pal.y 
+
+$(OBJDIR)/pal.tab.c: $(SRCDIR)/pal.y
+	cp $(SRCDIR)/Scanner.hpp $(OBJDIR)/
+	cp $(SRCDIR)/Parser.hpp $(OBJDIR)/
+	bison -o $@ $(SRCDIR)/pal.y
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CC) -c -o $@ $<
+	cp $^ $(OBJDIR)/
+	$(CC) -c -o $@ $(OBJDIR)/$(<F)
 
-pal.lex.cpp: $(SRCDIR)/pal.lex $(SRC)/pal.b
-	flex -o $(SRCDIR)/$@ $(SRCDIR)/pal.lex
-	
-pal.bison.cpp: $(SRCDIR)/pal.b
-	bison -o $(SRCDIR)/$@ $(SRCDIR)/pal.b
+$(OBJDIR)/lex.yy.o: $(OBJDIR)/lex.yy.cc $(OBJDIR)/pal.tab.h
+
+$(OBJDIR)/lex.yy.cc: $(SRCDIR)/pal.lex
+	flex -o $@ $(SRCDIR)/pal.lex
 
 clean:
 	rm -f $(OBJDIR)/* $(BINDIR)/*
