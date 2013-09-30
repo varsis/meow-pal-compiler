@@ -33,11 +33,14 @@
 "div" { return token::INT_DIVIDE; }
 "mod" { return token::MOD; }
 
+"bool" { return token::BOOL; }
+"char" { return token::CHAR; }
+"integer" { return token::INT; }
+"real" { return token::REAL; }
+
 "and" { return token::AND; }
 "array" { return token::ARRAY; }
 "begin" { return token::PAL_BEGIN; }
-"bool" { return token::BOOL; }
-"char" { return token::CHAR; }
 "const" { return token::CONST; }
 "continue" { return token::CONTINUE; }
 "do" { return token::DO; }

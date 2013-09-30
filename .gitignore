@@ -21,4 +21,8 @@ pal.tab.c
 pal.tab.h
 position.hh
 stack.hh
+lex.yy.cc
+obj/Parser.hpp
+obj/Scanner.hpp
+obj/main.cpp
 
