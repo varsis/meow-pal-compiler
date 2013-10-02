@@ -1,0 +1,12 @@
+#!/bin/bash
+
+TESTDIR=test_cases
+OUTPUTDIR=test_output
+BINDIR=../bin
+
+cd $TESTDIR
+
+for file in *.pal; do
+    fpc $file -oexec/test > ../$OUTPUTDIR/$file.output
+done;
+    

@@ -1,0 +1,4 @@
+program test002;
+begin
+  writeln ('Hello, world.');
+end.

@@ -1,0 +1,6 @@
+program test003;
+begin
+        { "This should pass
+         testing." }
+        // Comment // still valid // still valid
+end.
