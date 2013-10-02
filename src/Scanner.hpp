@@ -12,18 +12,21 @@
 // Include Bison for types / tokens
 #include "pal.tab.h"
 
-
 namespace Meow {
 	class FlexScanner : public yyFlexLexer {
 		public:
+
+			FlexScanner( FLEX_STD istream* arg_yyin = 0, FLEX_STD ostream* arg_yyout = 0 )
+				: yyFlexLexer(arg_yyin, arg_yyout)
+			{
+			}
+
+			virtual int yylex();
+
 			// save the pointer to yylval so we can change it, and invoke scanner
-			int yylex(BisonParser::semantic_type * lval) { yylval = lval; return yylex(); }
+			virtual int yylex(BisonParser::semantic_type * lval) { yylval = lval; return yylex(); }
 		
 		private:
-			// Scanning function created by Flex; make this private to force usage
-			// of the overloaded method so we can get a pointer to Bison's yylval
-			int yylex();
-			
 			// point to yylval (provided by Bison in overloaded yylex)
 			BisonParser::semantic_type * yylval;
 	};
