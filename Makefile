@@ -10,9 +10,10 @@ TESTDIR = ./test
 EXE = pal
 BISON = bison
 FLEX = flex
-# If using custum bison / flex version...
-#BISON = ~/bin/bison
-#FLEX = /usr/local/Cellar/flex/2.5.37/bin/flex
+
+# If you need to override flex/bison version used, specify 
+# in a file named MakefileCustomDefs
+-include MakefileCustomDefs
 
 .PHONY: test clean
 

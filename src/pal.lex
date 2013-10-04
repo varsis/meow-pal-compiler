@@ -1,10 +1,10 @@
 %{
 	#include <iostream>
 	#include "Scanner.hpp"
-	typedef Meow::BisonParser::token token;
+	typedef Meow::PalParser::token token;
 %}
 
-%option nodefault yyclass="FlexScanner" noyywrap c++
+%option nodefault yyclass="PalScanner" noyywrap c++
 
 %%
 [ \t] { ; /* Ignore whitespace */ }

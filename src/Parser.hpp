@@ -10,7 +10,7 @@ namespace Meow {
 			}
 		
 		private:
-			FlexScanner scanner;
-			BisonParser parser;
+			PalScanner scanner;
+			PalParser parser;
 	};
 }

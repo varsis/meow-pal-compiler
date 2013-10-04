@@ -7,16 +7,16 @@
 
 // Override the interface for yylex since we namespaced it
 #undef YY_DECL
-#define YY_DECL int Meow::FlexScanner::yylex()
+#define YY_DECL int Meow::PalScanner::yylex()
 
 // Include Bison for types / tokens
 #include "pal.tab.h"
 
 namespace Meow {
-	class FlexScanner : public yyFlexLexer {
+	class PalScanner : public yyFlexLexer {
 		public:
 
-			FlexScanner( FLEX_STD istream* arg_yyin = 0, FLEX_STD ostream* arg_yyout = 0 )
+			PalScanner( FLEX_STD istream* arg_yyin = 0, FLEX_STD ostream* arg_yyout = 0 )
 				: yyFlexLexer(arg_yyin, arg_yyout)
 			{
 			}
@@ -24,11 +24,11 @@ namespace Meow {
 			virtual int yylex();
 
 			// save the pointer to yylval so we can change it, and invoke scanner
-			virtual int yylex(BisonParser::semantic_type * lval) { yylval = lval; return yylex(); }
+			virtual int yylex(PalParser::semantic_type * lval) { yylval = lval; return yylex(); }
 		
 		private:
 			// point to yylval (provided by Bison in overloaded yylex)
-			BisonParser::semantic_type * yylval;
+			PalParser::semantic_type * yylval;
 	};
 }
 

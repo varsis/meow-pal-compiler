@@ -2,21 +2,21 @@
 %skeleton "lalr1.cc"
 %defines
 %define namespace "Meow"
-%define parser_class_name "BisonParser"
-%parse-param { Meow::FlexScanner &scanner }
-%lex-param   { Meow::FlexScanner &scanner }
+%define parser_class_name "PalParser"
+%parse-param { Meow::PalScanner &scanner }
+%lex-param   { Meow::PalScanner &scanner }
 
 %code requires {
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
 	namespace Meow {
-		class FlexScanner;
+		class PalScanner;
 	}
 }
 
 %code {
 	// Prototype for the yylex function
-	static int yylex(Meow::BisonParser::semantic_type * yylval, Meow::FlexScanner &scanner);
+	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);
 	void print_error(const std::string msg);
 	void print_value(bool value);
 }
@@ -259,11 +259,11 @@ void print_error(const std::string msg) {
 }
 
 // We have to implement the error function
-void Meow::BisonParser::error(const Meow::BisonParser::location_type &loc, const std::string &msg) { }
+void Meow::PalParser::error(const Meow::PalParser::location_type &loc, const std::string &msg) { }
 
 // Now that we have the Parser declared, we can declare the Scanner and implement
 // the yylex function
 #include "Scanner.hpp"
-static int yylex(Meow::BisonParser::semantic_type * yylval, Meow::FlexScanner &scanner) {
+static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner) {
 	return scanner.yylex(yylval);
 }

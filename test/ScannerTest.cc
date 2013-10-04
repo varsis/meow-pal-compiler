@@ -7,7 +7,7 @@ using namespace std;
 
 namespace Meow
 {
-	typedef BisonParser::token token;
+	typedef PalParser::token token;
 
 	TEST(ScannerTest, TestValidInput001)
 	{
@@ -17,7 +17,7 @@ namespace Meow
 
 		if (input.is_open())
 		{
-			FlexScanner scanner(&input);
+			PalScanner scanner(&input);
 
 			EXPECT_EQ(token::PROGRAM, scanner.yylex());
 			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
@@ -42,7 +42,7 @@ namespace Meow
 
 		if (input.is_open())
 		{
-			FlexScanner scanner(&input);
+			PalScanner scanner(&input);
 
 			EXPECT_EQ(token::PROGRAM, scanner.yylex());
 			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
@@ -74,7 +74,7 @@ namespace Meow
 
 		if (input.is_open())
 		{
-			FlexScanner scanner(&input);
+			PalScanner scanner(&input);
 
 			EXPECT_EQ(token::PROGRAM, scanner.yylex());
 			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());

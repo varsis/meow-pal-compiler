@@ -1,3 +1,6 @@
+# Machine specific build configs
+MakefileCustomDefs
+
 # Compiled Object files
 *.slo
 *.lo
