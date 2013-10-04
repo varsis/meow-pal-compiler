@@ -1,0 +1,16 @@
+program test010;
+
+var 
+        list : array[0..10] of integer;
+        i : integer;
+
+begin
+        i := 0;
+        while (i < 10) do
+        begin
+                list[i] := i;
+                i := i + 1;
+        end;
+
+        writeln(list[4]);
+end.

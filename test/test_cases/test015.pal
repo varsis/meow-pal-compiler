@@ -1,0 +1,10 @@
+program test015;
+
+var
+        test : real;
+
+begin
+        test := 999E10;
+        test := 999E-10;
+        test := 123.4E+10;
+end.

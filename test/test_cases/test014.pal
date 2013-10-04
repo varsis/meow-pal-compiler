@@ -1,0 +1,15 @@
+program test014;
+
+var
+        int : integer;
+        float : real;
+
+begin
+        int := -42;
+        float := 3.14159;
+        writeln(sqr(float));
+        writeln(sqrt(float));
+        writeln(abs(int));
+        writeln(exp(float));
+        writeln(ln(float));
+end.

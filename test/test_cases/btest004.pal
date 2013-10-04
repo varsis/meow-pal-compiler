@@ -1,0 +1,8 @@
+program btest004;
+
+const
+        test = c;
+        c = 42;
+
+begin
+end.

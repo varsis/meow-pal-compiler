@@ -1,0 +1,21 @@
+program test011;
+
+const
+        num = 32;
+var
+        fib_list : array[0..50] of integer;
+        i : integer;
+
+begin
+        i := 2;
+        fib_list[0] := 0;
+        fib_list[1] := 1;
+        while (i < 50) do
+        begin
+                fib_list[i] := fib_list[i-1] + fib_list[i-2];
+                i := i + 1;
+        end;
+
+        writeln(fib_list[num]);
+end.
+

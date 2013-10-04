@@ -1,0 +1,18 @@
+program test006;
+
+const
+        test_string = 'Hello world!';
+        test_number = 42;
+        test_real = 3.14159;
+
+var
+        number : real;
+
+begin
+
+        number := test_real * 32;
+        number := number * test_number;
+        writeln(test_string, '\n\t', number);
+end.
+        
+        

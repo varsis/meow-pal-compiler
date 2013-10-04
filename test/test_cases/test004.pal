@@ -1,0 +1,7 @@
+program test004;
+const
+    zilch = 0;
+begin
+    if zilch = zilch then
+    writeln('Constants are fun.');
+end.
