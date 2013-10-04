@@ -1,4 +1,4 @@
-program test006;
+program test006(input, output);
 
 const
         test_string = 'Hello world!';

@@ -1,4 +1,4 @@
-program test008;
+program test008(input, output);
 
 procedure dostuff(a : integer);
 const

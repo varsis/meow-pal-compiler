@@ -1,4 +1,4 @@
-program btest006;
+program btest006(input, output);
 
 var
         list : array[34..67] of real;

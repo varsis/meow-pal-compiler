@@ -1,4 +1,4 @@
-program btest005;
+program btest005(input, output);
 
 const
         if = 3.4;
