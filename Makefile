@@ -11,8 +11,8 @@ EXE = pal
 BISON = bison
 FLEX = flex
 # If using custum bison / flex version...
-BISON = ~/bin/bison
-FLEX = /usr/local/Cellar/flex/2.5.37/bin/flex
+#BISON = ~/bin/bison
+#FLEX = /usr/local/Cellar/flex/2.5.37/bin/flex
 
 .PHONY: test clean
 
