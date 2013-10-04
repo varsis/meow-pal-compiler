@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Scanner.hpp"
+#include "pal.tab.h"
+
 namespace Meow {
 	class Parser {
 		public:

@@ -48,15 +48,49 @@ $(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 # Tests
 ################################################################################
 
-TESTS = ScannerTest
+TESTS = ScannerTest ParserTest
 
-test: $(addprefix $(TESTDIR)/,$(TESTS))
-	$(addprefix $(TESTDIR)/./, $(TESTS))
+test: $(TESTDIR)/AllTests $(addprefix $(TESTDIR)/,$(TESTS))
+	$(TESTDIR)/AllTests
+
+# Link all tests together into one big super test executable
+$(TESTDIR)/AllTests: $(TESTDIR)/ParserTest.o 		\
+						$(TESTDIR)/ScannerTest.o	\
+						$(TESTDIR)/MockScanner.o	\
+						$(OBJDIR)/pal.tab.o			\
+						$(OBJDIR)/lex.yy.o 			\
+						$(TESTDIR)/test-main.a
+	$(CXX) $(CFLAGS) -o $@ $^
+
+	
+
+# Parser Test
+ParserTest: $(TESTDIR)/ParserTest
+	$^
+
+$(TESTDIR)/ParserTest: $(TESTDIR)/ParserTest.o 		\
+						$(TESTDIR)/MockScanner.o	\
+						$(OBJDIR)/pal.tab.o			\
+						$(OBJDIR)/lex.yy.o 			\
+						$(TESTDIR)/test-main.a
+	$(CXX) $(CFLAGS) -o $@ $^
+	
+$(TESTDIR)/ParserTest.o: $(TESTDIR)/ParserTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
+	$(CXX) $(CFLAGS) -c -o $@ $<
+
+# Scanner Test
+ScannerTest: $(TESTDIR)/ScannerTest
+	$^
 
 $(TESTDIR)/ScannerTest: $(TESTDIR)/ScannerTest.o $(OBJDIR)/lex.yy.o $(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
-$(TESTDIR)/ScannerTest.o: $(TESTDIR)/ScannerTest.cc $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
+$(TESTDIR)/ScannerTest.o: $(TESTDIR)/ScannerTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
+	$(CXX) $(CFLAGS) -c -o $@ $<
+
+# Test utilities
+
+$(TESTDIR)/MockScanner.o: $(TESTDIR)/MockScanner.cpp $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 $(TESTDIR)/test-main.a : $(TESTDIR)/gmock-gtest-all.o $(TESTDIR)/gmock_main.o
