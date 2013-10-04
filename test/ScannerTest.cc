@@ -1,7 +1,7 @@
 #include <fstream>
 #include "gtest/gtest.h"
 
-#include "../obj/Scanner.hpp"
+#include "../src/Scanner.hpp"
 
 using namespace std;
 

@@ -12,3 +12,15 @@
 *.la
 *.a
 .DS_Store
+
+# Generated Lex/Yacc sources
+pal.tab.c
+pal.tab.h
+position.hh
+stack.hh
+location.hh
+lex.yy.cc
+
+# Generated executables
+bin/pal
+test/ScannerTest

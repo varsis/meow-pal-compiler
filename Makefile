@@ -2,7 +2,7 @@ LOBJS = pal.tab.o lex.yy.o main.o
 OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 CC = g++
 CXX = g++
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -pthread
 OBJDIR = ./obj
 SRCDIR = ./src
 BINDIR = ./bin
@@ -10,9 +10,9 @@ TESTDIR = ./test
 EXE = pal
 BISON = bison
 FLEX = flex
-# If using Homebrew ...
-#BISON = /usr/local/Cellar/bison/3.0/bin/bison
-#FLEX = /usr/local/Cellar/flex/2.5.37/bin/flex
+# If using custum bison / flex version...
+BISON = ~/bin/bison
+FLEX = /usr/local/Cellar/flex/2.5.37/bin/flex
 
 .PHONY: test clean
 
@@ -25,24 +25,23 @@ all: pal test
 pal: $(OBJS)
 	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $(OBJS)
 
-$(OBJDIR)/pal.tab.h: $(SRCDIR)/pal.y
-	cp $(SRCDIR)/Scanner.hpp $(OBJDIR)/
-	cp $(SRCDIR)/Parser.hpp $(OBJDIR)/
+$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp
+	$(CC) -c -o $@ $<
+
+$(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hpp
+	$(CC) -c -o $@ $<
+
+$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc
+	$(CC) -c -o $@ $<
+
+$(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
+	$(FLEX) -o $@ $(SRCDIR)/pal.lex
+
+$(SRCDIR)/pal.tab.h: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 	$(BISON) -o $@ $(SRCDIR)/pal.y 
 
-$(OBJDIR)/pal.tab.c: $(SRCDIR)/pal.y
-	cp $(SRCDIR)/Scanner.hpp $(OBJDIR)/
-	cp $(SRCDIR)/Parser.hpp $(OBJDIR)/
+$(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 	$(BISON) -o $@ $(SRCDIR)/pal.y
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	cp $^ $(OBJDIR)/
-	$(CC) -c -o $@ $(OBJDIR)/$(<F)
-
-$(OBJDIR)/lex.yy.o: $(OBJDIR)/lex.yy.cc $(OBJDIR)/pal.tab.h $(SRCDIR)/Scanner.hpp
-
-$(OBJDIR)/lex.yy.cc: $(SRCDIR)/pal.lex
-	$(FLEX) -o $@ $(SRCDIR)/pal.lex
 
 ################################################################################
 # Tests
@@ -74,6 +73,12 @@ clean:
 	rm -f \
 		$(OBJDIR)/* \
 		$(BINDIR)/* \
+		$(SRCDIR)/pal.tab.c\
+		$(SRCDIR)/pal.tab.h\
+		$(SRCDIR)/position.hh\
+		$(SRCDIR)/stack.hh\
+		$(SRCDIR)/location.hh\
+		$(SRCDIR)/lex.yy.cc\
 		$(TESTDIR)/*.a \
 		$(TESTDIR)/*.o \
 		$(addprefix $(TESTDIR)/,$(TESTS))
