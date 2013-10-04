@@ -1,0 +1,15 @@
+program btest005(input, output);
+
+const
+        if = 3.4;
+
+var
+        or : integer;
+
+begin
+        or := if;
+        if (if = or) then
+        begin
+                writeln('Hello.');
+        end;
+end. 

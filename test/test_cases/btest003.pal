@@ -1,0 +1,12 @@
+program btest003(input, output);
+var
+        number : integer;
+
+const
+        test = 42;
+
+begin
+        number := test;
+        writeln(number);
+end.
+        

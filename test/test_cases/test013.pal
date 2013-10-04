@@ -1,0 +1,23 @@
+program test013(input, output);
+
+type
+        TGender = (Male, Female);
+        TPerson = record
+                name : string[16];
+                age : integer;
+                gender : TGender;
+                end;
+
+var
+        me : TPerson;
+
+begin
+        me.name := 'Mike';
+        me.age := 21;
+        me.gender := Male;
+
+        writeln('Name: ', me.name);
+        writeln('Age: ', me.age);
+        writeln('Gender: ', me.gender);
+end.
+        

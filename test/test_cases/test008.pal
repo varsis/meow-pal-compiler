@@ -1,0 +1,15 @@
+program test008(input, output);
+
+procedure dostuff(a : integer);
+const
+        pi = 3.14159;
+var
+        number : real;
+begin
+        number := pi;
+        writeln(number, '  ', a);
+end;
+
+begin 
+      dostuff(23);
+end.

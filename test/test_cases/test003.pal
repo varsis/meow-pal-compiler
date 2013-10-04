@@ -1,4 +1,4 @@
-program test003;
+program test003(input, output);
 begin
         { "This should pass
          testing." }
