@@ -25,6 +25,7 @@
 ">" { return token::GT; }
 
 ":=" { return token::ASSIGN; }
+"." {return token::PERIOD; }
 
 "+" { return token::ADD; }
 "-" { return token::SUBTRACT; }
@@ -60,7 +61,7 @@
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-"'"([A-Za-z0-9]|[ \t]|"\\t"|"\\n"|(\\\')|(\\{2}))*"'" { return token::STRING_LITERAL; }
+'(\\.|[^'])*' { return token::STRING_LITERAL; } /* TODO check for valid escapes, only one line, etc */
 
 [+-]?(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { std::cout << "Real constant.\n"; return token::REAL_CONST; }
 [+-]?(0|[1-9])+ { std::cout << "Integer constant.\n"; return token::INT_CONST; }
