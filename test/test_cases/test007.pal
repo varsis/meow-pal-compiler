@@ -1,0 +1,20 @@
+program test007(input, output);
+
+const
+        pi = 3.14159;
+        e = 2.718;
+        p = 42;
+
+var
+        a, b, c, d : integer;
+
+begin
+
+        writeln(trunc(e));
+        writeln(round(e));
+        a := succ(p);
+        writeln(a);
+        a := pred(p);
+        writeln(a);
+        writeln(odd(p));
+end.        

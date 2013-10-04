@@ -1,1 +1,1 @@
-program btest002;
+program btest002(input, output);
