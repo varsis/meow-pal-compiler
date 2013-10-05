@@ -34,7 +34,7 @@
 %token ASSIGN
 %token LEFT_BRACKET RIGHT_BRACKET
 %token LEFT_PAREN RIGHT_PAREN
-%token SEMICOLON EOLN
+%token COLON SEMICOLON
 %token COMMA PERIOD
 %token LE GE NE EQ LT GT
 %token ADD SUBTRACT MULTIPLY REAL_DIVIDE INT_DIVIDE MOD DIV
@@ -47,10 +47,17 @@
 
 %%
 
-program                 : program_head decls compound_stat '.'
+dummy_test            : PROGRAM IDENTIFIER 
+							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
+							SEMICOLON PAL_BEGIN END PERIOD
+						;
+
+program                 : program_head decls compound_stat PERIOD
                         ;
 
-program_head            : PROGRAM IDENTIFIER '(' IDENTIFIER ',' IDENTIFIER ')' ';'
+program_head            : PROGRAM IDENTIFIER 
+							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
+							SEMICOLON
                         ;
 
 decls                   : const_decl_part
@@ -59,23 +66,23 @@ decls                   : const_decl_part
                           proc_decl_part
                         ;
 
-const_decl_part         : CONST const_decl_list ';'
+const_decl_part         : CONST const_decl_list SEMICOLON
                         |
                         ;
 
 const_decl_list         : const_decl
-                        | const_decl_list ';' const_decl
+                        | const_decl_list SEMICOLON const_decl
                         ;
 
 const_decl              : IDENTIFIER EQ expr
                         ;
 
-type_decl_part          : TYPE type_decl_list ';'
+type_decl_part          : TYPE type_decl_list SEMICOLON
                         |
                         ;
 
 type_decl_list          : type_decl
-                        | type_decl_list ';' type_decl
+                        | type_decl_list SEMICOLON type_decl
                         ;
 
 type_decl               : IDENTIFIER EQ type
@@ -86,21 +93,21 @@ type                    : simple_type
                         ;
 
 simple_type             : scalar_type
-                        : REAL
+                        | REAL
                         | IDENTIFIER
                         ;
 
-scalar_type             : '(' scalar_list ')'
+scalar_type             : LEFT_PAREN scalar_list RIGHT_PAREN
                         | INT
                         | BOOL
                         | CHAR
                         ;
 
 scalar_list             : IDENTIFIER
-                        | scalar_list ',' IDENTIFIER
+                        | scalar_list COMMA IDENTIFIER
                         ;
 
-structured_type         : ARRAY '[' array_type ']' OF type
+structured_type         : ARRAY LEFT_BRACKET array_type RIGHT_BRACKET OF type
                         | RECORD field_list END
                         ;
 
@@ -109,22 +116,22 @@ array_type              : simple_type
                         ;
 
 field_list              : field
-                        | field_list ';' field
+                        | field_list SEMICOLON field
                         ;
 
-field                   : IDENTIFIER ':' type
+field                   : IDENTIFIER COLON type
                         ;
 
-var_decl_part           : VAR var_decl_list ';'
+var_decl_part           : VAR var_decl_list SEMICOLON 
                         |
                         ;
 
 var_decl_list           : var_decl
-                        | var_decl_list ';' var_decl
+                        | var_decl_list SEMICOLON var_decl
                         ;
 
-var_decl                : IDENTIFIER ':' type
-                        | IDENTIFIER ',' var_decl
+var_decl                : IDENTIFIER COLON type
+                        | IDENTIFIER COMMA var_decl
                         ;
 
 proc_decl_part          : proc_decl_list
@@ -135,30 +142,30 @@ proc_decl_list          : proc_decl
                         | proc_decl_list proc_decl
                         ;
 
-proc_decl               : proc_heading decls compound_stat ';'
+proc_decl               : proc_heading decls compound_stat SEMICOLON 
                         ;
 
-proc_heading            : PROCEDURE IDENTIFIER f_parm_decl ';'
-                        | FUNCTION IDENTIFIER f_parm_decl ':' IDENTIFIER ';'
+proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON 
+                        | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         ;
 
-f_parm_decl             : '(' f_parm_list ')'
-                        | '(' ')'
+f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
+                        | LEFT_PAREN RIGHT_PAREN
                         ;
 
 f_parm_list             : f_parm
-                        | f_parm_list ';' f_parm
+                        | f_parm_list SEMICOLON f_parm
                         ;
 
-f_parm                  : IDENTIFIER ':' IDENTIFIER
-                        | VAR IDENTIFIER ':' IDENTIFIER
+f_parm                  : IDENTIFIER COLON IDENTIFIER
+                        | VAR IDENTIFIER COLON IDENTIFIER
                         ;
 
 compound_stat           : PAL_BEGIN stat_list END
-                        ;       
+						;
 
 stat_list               : stat
-                        | stat_list ';' stat
+                        | stat_list SEMICOLON stat
                         ;
 
 stat                    : simple_stat
@@ -171,17 +178,17 @@ simple_stat             : var ASSIGN expr
                         | compound_stat
                         ;
 
-proc_invok              : plist_finvok ')'
-                        | IDENTIFIER '(' ')'
+proc_invok              : plist_finvok RIGHT_PAREN
+                        | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         ;
 
 var                     : IDENTIFIER
-                        | var '.' IDENTIFIER
-                        | subscripted_var ']'
+                        | var PERIOD IDENTIFIER
+                        | subscripted_var RIGHT_BRACKET
                         ;
 
-subscripted_var         : var '[' expr
-                        | subscripted_var ',' expr
+subscripted_var         : var LEFT_BRACKET expr
+                        | subscripted_var COMMA expr
                         ;
 
 expr                    : simple_expr
@@ -193,7 +200,7 @@ expr                    : simple_expr
                         | expr GT simple_expr
                         ;
 
-expr_list               : expr_list ',' expr
+expr_list               : expr_list COMMA expr
                         | expr
                         ;
 
@@ -215,7 +222,7 @@ term                    : factor
 
 factor                  : var
                         | unsigned_const
-                        | '(' expr ')'
+                        | LEFT_PAREN expr RIGHT_PAREN
                         | func_invok
                         | NOT factor
                         ;
@@ -229,12 +236,12 @@ unsigned_num            : INT_CONST
                         | REAL_CONST
                         ;
 
-func_invok              : plist_finvok ')'
-                        | IDENTIFIER '(' ')'
+func_invok              : plist_finvok RIGHT_PAREN
+                        | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         ;
 
-plist_finvok            : IDENTIFIER '(' parm
-                        | plist_finvok ',' parm
+plist_finvok            : IDENTIFIER LEFT_PAREN parm
+                        | plist_finvok COMMA parm
                         ;
 
 parm                    : expr

@@ -8,6 +8,7 @@
 
 %%
 [ \t] { ; /* Ignore whitespace */ }
+"\n" { ; /* ignore line endings */ }
 "//".* { ; /* Ignore single line comments */ }
 "\{"([^\}]+) { return token::BEGIN_COMMENT; }
 "\}" { return token::CLOSE_COMMENT; }
@@ -67,8 +68,9 @@
 [+-]?(0|[1-9])+ { std::cout << "Integer constant.\n"; return token::INT_CONST; }
 ([a-zA-Z]+[0-9]*) { return token::IDENTIFIER; }
 
+"," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
-"\n" { return token::EOLN; }
+":" { return token::COLON; }
 
 . { std::cerr << "** " << "(" << yylineno << ") lex: Unknown symbol \'" << yytext[0] << "\'\n"; }
 

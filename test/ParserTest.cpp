@@ -25,10 +25,8 @@ namespace Meow
 		tokens.push_back(token::IDENTIFIER);
 		tokens.push_back(token::RIGHT_PAREN);
 		tokens.push_back(token::SEMICOLON);
-		tokens.push_back(token::EOLN);
 
 		tokens.push_back(token::PAL_BEGIN);
-		tokens.push_back(token::EOLN);
 
 		tokens.push_back(token::END);
 		tokens.push_back(token::PERIOD);

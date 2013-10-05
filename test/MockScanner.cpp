@@ -24,14 +24,13 @@ namespace Meow
 	//--------------------------------------------------------------------------------
 	int MockScanner::yylex()
 	{
-		PalParser::token_type token = PalParser::token::EXIT;
-
 		if (m_tokenIterator != m_tokens.end())
 		{
-			token = *m_tokenIterator;
-			++m_tokenIterator; // advance to next token
+			PalParser::token_type token = *m_tokenIterator;
+			++m_tokenIterator; // advance to next token;
+			return token;
 		}
 
-		return token;
+		return 0; // outta tokens!
 	}
 }
