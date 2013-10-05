@@ -47,11 +47,6 @@
 
 %%
 
-dummy_test            : PROGRAM IDENTIFIER 
-							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
-							SEMICOLON PAL_BEGIN END PERIOD
-						;
-
 program                 : program_head decls compound_stat PERIOD
                         ;
 
@@ -162,7 +157,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
                         ;
 
 compound_stat           : PAL_BEGIN stat_list END
-						;
+                        ;
 
 stat_list               : stat
                         | stat_list SEMICOLON stat
