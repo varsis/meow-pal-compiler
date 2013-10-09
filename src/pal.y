@@ -21,10 +21,6 @@
 	void print_value(bool value);
 }
 
-%code {
-	#include <utility>
-}
-
 %union {
 	std::string* identifier;
 }
@@ -36,6 +32,7 @@
 %token LEFT_PAREN RIGHT_PAREN
 %token COLON SEMICOLON
 %token COMMA PERIOD
+%token UPTO
 %token LE GE NE EQ LT GT
 %token ADD SUBTRACT MULTIPLY REAL_DIVIDE INT_DIVIDE MOD DIV
 %token AND ARRAY BOOL CHAR CONST CONTINUE DO ELSE END EXIT
@@ -55,12 +52,19 @@ program_head            : PROGRAM IDENTIFIER
 							SEMICOLON
                         ;
 
+/********************************************************************************
+ * Rules for declarations...
+ ********************************************************************************/
+
 decls                   : const_decl_part
                           type_decl_part        
                           var_decl_part
                           proc_decl_part
                         ;
 
+/********************************************************************************
+ * Rules for constant declarations...
+ ********************************************************************************/
 const_decl_part         : CONST const_decl_list SEMICOLON
                         |
                         ;
@@ -70,8 +74,11 @@ const_decl_list         : const_decl
                         ;
 
 const_decl              : IDENTIFIER EQ expr
-                        ;
+						;
 
+/********************************************************************************
+ * Rules for type declarations...
+ ********************************************************************************/
 type_decl_part          : TYPE type_decl_list SEMICOLON
                         |
                         ;
@@ -102,12 +109,12 @@ scalar_list             : IDENTIFIER
                         | scalar_list COMMA IDENTIFIER
                         ;
 
-structured_type         : ARRAY LEFT_BRACKET array_type RIGHT_BRACKET OF type
+structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         | RECORD field_list END
                         ;
 
-array_type              : simple_type
-                        | expr ".." expr
+index_type              : simple_type
+                        | expr UPTO expr
                         ;
 
 field_list              : field
@@ -117,6 +124,9 @@ field_list              : field
 field                   : IDENTIFIER COLON type
                         ;
 
+/********************************************************************************
+ * Rules for variable declarations...
+ ********************************************************************************/
 var_decl_part           : VAR var_decl_list SEMICOLON 
                         |
                         ;
@@ -129,6 +139,9 @@ var_decl                : IDENTIFIER COLON type
                         | IDENTIFIER COMMA var_decl
                         ;
 
+/********************************************************************************
+ * Rules for procedure + function declarations...
+ ********************************************************************************/
 proc_decl_part          : proc_decl_list
                         |
                         ;
@@ -137,7 +150,7 @@ proc_decl_list          : proc_decl
                         | proc_decl_list proc_decl
                         ;
 
-proc_decl               : proc_heading decls compound_stat SEMICOLON 
+proc_decl               : proc_heading decls compound_stat SEMICOLON
                         ;
 
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON 
@@ -156,8 +169,12 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
                         | VAR IDENTIFIER COLON IDENTIFIER
                         ;
 
+/********************************************************************************
+ * Rules for statements
+ ********************************************************************************/
+
 compound_stat           : PAL_BEGIN stat_list END
-                        ;
+						;
 
 stat_list               : stat
                         | stat_list SEMICOLON stat
@@ -173,10 +190,6 @@ simple_stat             : var ASSIGN expr
                         | compound_stat
                         ;
 
-proc_invok              : plist_finvok RIGHT_PAREN
-                        | IDENTIFIER LEFT_PAREN RIGHT_PAREN
-                        ;
-
 var                     : IDENTIFIER
                         | var PERIOD IDENTIFIER
                         | subscripted_var RIGHT_BRACKET
@@ -186,6 +199,34 @@ subscripted_var         : var LEFT_BRACKET expr
                         | subscripted_var COMMA expr
                         ;
 
+proc_invok              : plist_finvok RIGHT_PAREN
+                        | IDENTIFIER LEFT_PAREN RIGHT_PAREN
+                        ;
+
+plist_finvok            : IDENTIFIER LEFT_PAREN parm
+                        | plist_finvok COMMA parm
+                        ;
+
+parm                    : expr
+
+struct_stat             : IF expr THEN matched_stat ELSE stat
+                        | IF expr THEN stat
+                        | WHILE expr DO stat
+                        | CONTINUE
+                        | EXIT
+                        ;
+
+matched_stat            : simple_stat
+                        | IF expr THEN matched_stat ELSE matched_stat
+                        | WHILE expr DO matched_stat
+                        | CONTINUE
+                        | EXIT
+                        ;
+
+/********************************************************************************
+ * Rules for expressions
+ ********************************************************************************/
+
 expr                    : simple_expr
                         | expr EQ simple_expr
                         | expr NE simple_expr
@@ -193,10 +234,6 @@ expr                    : simple_expr
                         | expr LT simple_expr
                         | expr GE simple_expr
                         | expr GT simple_expr
-                        ;
-
-expr_list               : expr_list COMMA expr
-                        | expr
                         ;
 
 simple_expr             : term
@@ -231,29 +268,11 @@ unsigned_num            : INT_CONST
                         | REAL_CONST
                         ;
 
+
 func_invok              : plist_finvok RIGHT_PAREN
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         ;
 
-plist_finvok            : IDENTIFIER LEFT_PAREN parm
-                        | plist_finvok COMMA parm
-                        ;
-
-parm                    : expr
-
-struct_stat             : IF expr THEN matched_stat ELSE stat
-                        | IF expr THEN stat
-                        | WHILE expr DO stat
-                        | CONTINUE
-                        | EXIT
-                        ;
-
-matched_stat            : simple_stat
-                        | IF expr THEN matched_stat ELSE matched_stat
-                        | WHILE expr DO matched_stat
-                        | CONTINUE
-                        | EXIT
-                        ;
 %%
 
 void print_error(const std::string msg) {

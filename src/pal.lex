@@ -27,6 +27,7 @@
 
 ":=" { return token::ASSIGN; }
 "." {return token::PERIOD; }
+".." {return token::UPTO; }
 
 "+" { return token::ADD; }
 "-" { return token::SUBTRACT; }
