@@ -1,0 +1,16 @@
+program test024(input, output);
+
+var
+        value : integer;
+
+begin
+        value := 0;
+        
+        while (value <> 100) do
+        begin
+                writeln('1');
+                if (value = 0) then
+                   exit;
+        end
+
+end.

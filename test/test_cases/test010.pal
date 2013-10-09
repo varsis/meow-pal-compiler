@@ -1,16 +1,9 @@
-program test010(input, output);
+{ This should be allowed according to the standard }
 
-var 
-        list : array[0..10] of integer;
-        i : integer;
-
+            
+ 
+program test017(input, output);
 begin
-        i := 0;
-        while (i < 10) do
-        begin
-                list[i] := i;
-                i := i + 1;
-        end;
-
-        writeln(list[4]);
+        writeln("Hello world!");
 end.
+
