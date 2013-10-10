@@ -1,0 +1,10 @@
+program test031(input, output);
+
+var
+        str     :       array[false..true] of char;
+
+begin
+        str[false] := 'a';
+        str[true] := 'b';
+        writeln(str);
+end.
