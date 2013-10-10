@@ -1,0 +1,1 @@
+program btest011(input, output);const pi=3.14159;e=2.71;z=0;i=899;var str:string;int:integer;float:real;begin writeln(pi,e,i,z);str:='Hellothisisacompressedstring';int:=42;float:=3.27273;writeln(str,int,float);if(true)then writeln('HI');else writeln('test');end.

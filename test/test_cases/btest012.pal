@@ -1,0 +1,6 @@
+program btest012(input, output);
+
+begin
+        while(42) do
+                  writeln('a');
+end.

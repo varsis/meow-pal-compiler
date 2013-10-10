@@ -1,18 +1,18 @@
 program test029(input, output);
 
 var
-        my_chars  : array[0..50] of char;
-        my_ints   : array[0..50] of integer;
-        my_string : string;
-        my_ints2  : array[0..50] of integer;
+        myChars  : array[0..50] of char;
+        myInts   : array[0..50] of integer;
+        myString : string;
+        myInts2  : array[0..50] of integer;
 
 begin
-        my_string := 'abcdefg';
-        my_chars := 'hijklmnopqrstuvwxyz';
-        my_ints[0] := 42;
-        my_ints[1] := 90;
-        my_ints[2] := 17837;
-        my_ints2 := my_ints;
-        writeln(my_string, my_chars);
-        writeln(my_ints2[0], my_ints2[1], my_ints2[2]);
+        myString := 'abcdefg';
+        myChars := 'hijklmnopqrstuvwxyz';
+        myInts[0] := 42;
+        myInts[1] := 90;
+        myInts[2] := 17837;
+        myInts2 := myInts;
+        writeln(myString, myChars);
+        writeln(myInts2[0], myInts2[1], myInts2[2]);
 end.

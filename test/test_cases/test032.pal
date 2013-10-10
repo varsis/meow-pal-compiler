@@ -1,0 +1,1 @@
+program btest011(input, output); var str : string; myInt : integer; otherString : array[0..34] of char; begin writeln('Hello world.'); str := ' This is a string. '; myInt := 24443; otherString := 'This is another string.'; writeln(str,otherString,myInt); end.

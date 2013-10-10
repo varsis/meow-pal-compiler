@@ -1,10 +1,10 @@
 program test022(input, output);
 
 var
-        weird_array : array[Boolean] of integer;
+        weirdArray : array[Boolean] of integer;
 
 begin
-        weird_array[true] := 1;
-        weird_array[false] := 2;
-        writeln(weird_array[true], '  ', weird_array[false]);
+        weirdArray[true] := 1;
+        weirdArray[false] := 2;
+        writeln(weirdArray[true], '  ', weirdArray[false]);
 end.

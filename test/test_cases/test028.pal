@@ -7,10 +7,10 @@ type
         str = array[0..size] of char;
 
 var
-        my_string : str;
+        myString : str;
 
 begin
-        my_string[0] := 'a';
-        my_string[1] := 'b';
-        writeln(my_string, '   ', maxint);
+        myString[0] := 'a';
+        myString[1] := 'b';
+        writeln(myString, '   ', maxint);
 end.
