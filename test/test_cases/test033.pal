@@ -1,0 +1,6 @@
+program test033(input, output);
+
+begin
+        if (true) then else;
+        if (true) then;
+end.

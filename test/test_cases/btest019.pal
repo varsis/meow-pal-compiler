@@ -1,0 +1,35 @@
+program btest019(input, output);
+
+begin
+        begin
+                begin
+                        begin
+                                begin
+                                        begin
+                                                begin
+                                                        begin
+                                                                begin
+                                                                        begin
+                                                                                begin
+                                                                                        begin
+                                                                                                begin
+                                                                                                        begin
+                                                                                                                begin
+                                                                                                                        begin
+                                                                                                                                begin
+                                                                                                                                 writeln('Hello world');
+end.
+end
+end
+end
+end
+end
+end
+end
+end
+end
+end
+end
+end
+end
+end
