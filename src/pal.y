@@ -91,6 +91,7 @@ type_decl               : IDENTIFIER EQ type
                         ;
 
 type                    : simple_type
+						| enumerated_type
                         | structured_type
                         ;
 
@@ -99,14 +100,16 @@ simple_type             : scalar_type
                         | IDENTIFIER
                         ;
 
-scalar_type             : LEFT_PAREN scalar_list RIGHT_PAREN
-                        | INT
+scalar_type             : INT
                         | BOOL
                         | CHAR
                         ;
 
-scalar_list             : IDENTIFIER
-                        | scalar_list COMMA IDENTIFIER
+enumerated_type			: LEFT_PAREN enum_list RIGHT_PAREN
+				  		;
+
+enum_list             	: IDENTIFIER
+                        | enum_list COMMA IDENTIFIER
                         ;
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
@@ -260,7 +263,6 @@ factor                  : var
                         ;
 
 unsigned_const          : unsigned_num
-                        | IDENTIFIER
                         | STRING_LITERAL
                         ;
 
