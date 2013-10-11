@@ -18,8 +18,7 @@
 	"}"	{ BEGIN(INITIAL); }
 	\n	{ /* Count line endings */ }
 	<<EOF>> {
-				// TODO use error handler!
-				std::cerr << "UNCLOSED COMMENT STARTING AT LINE " << s_commentStartLine << std::endl;
+				getManager()->addError(new Error(UnclosedComment, "???", s_commentStartLine));
 				return 0;
 			}
 	.	{ /* ignore eveything else */ }

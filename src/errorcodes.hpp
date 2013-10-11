@@ -1,4 +1,15 @@
-/* DO NOT DELETE */
-//const std::string UNKNOWNERROR = "Error Unknown";
+#ifndef ERRORCODES_H
+#define ERRORCODES_H
 
-/* DECLARE ALL OTHER ERRORS HERE */
+namespace Meow
+{
+	enum ErrorCode
+	{
+		OtherError,
+		UnclosedComment,
+		UnclosedString
+		/* DECLARE ALL OTHER ERRORS HERE */
+	};
+}
+
+#endif

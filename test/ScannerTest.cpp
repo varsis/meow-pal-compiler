@@ -2,6 +2,8 @@
 #include "gtest/gtest.h"
 
 #include "../src/Scanner.hpp"
+#include "../src/error.hpp"
+#include "../src/errormanager.hpp"
 
 using namespace std;
 
@@ -106,7 +108,8 @@ namespace Meow
 
 		if (input.is_open())
 		{
-			PalScanner scanner(&input);
+			ErrorManager errorManager;
+			PalScanner scanner(&input, &errorManager);
 
 			EXPECT_EQ(token::PROGRAM, scanner.yylex());
 			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
@@ -122,11 +125,31 @@ namespace Meow
 			// there should be an unclosed comment starting at this point
 			// therefore, scanner should just return 0 next as the rest of the file
 			// will be commented out.
-
-			// TODO test error output somehow!! 
-			// (eg, check for presence of some error code at some line/column?)
-
 			EXPECT_EQ(0, scanner.yylex());
+
+			// should only be one error
+			vector<const Error*> unclosedErrors;
+			const vector<Error*>* errors = errorManager.getErrors();
+
+			EXPECT_EQ(errors->size(), 1u); 
+
+			// should be one and only one UnclosedComment error, on line 3
+			vector<Error*>::const_iterator errorIt;
+			for (errorIt = errors->begin(); errorIt != errors->end(); ++errorIt)
+			{
+				Error* error = *errorIt;
+				if (error->getErrorCode() == UnclosedComment)
+				{
+					unclosedErrors.push_back(error);
+				}
+			}
+
+			EXPECT_EQ(unclosedErrors.size(), 1u);
+			if (unclosedErrors.size() > 0)
+			{
+				const Error* unclosedError = unclosedErrors.front();
+				EXPECT_EQ(unclosedError->getLineNumber(), 3u);
+			}
 		}
 
 		input.close();

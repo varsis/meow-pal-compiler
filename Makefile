@@ -1,4 +1,4 @@
-LOBJS = pal.tab.o lex.yy.o main.o
+LOBJS = pal.tab.o lex.yy.o error.o errormanager.o
 OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 CC = g++
 CXX = g++
@@ -23,23 +23,25 @@ FLEX = flex
 
 all: pal test
 
-pal: $(OBJS)
-	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $(OBJS)
+pal: $(OBJDIR)/main.o $(OBJS)
+	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $^
 
-$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp
+$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
 	$(CC) -c -o $@ $<
 
-$(OBJDIR)/error.o: $(SRCDIR)/error.hpp $(SRCDIR)/error.cpp 
+$(OBJDIR)/error.o: $(SRCDIR)/error.cpp $(SRCDIR)/error.hpp
 	$(CC) -c -o $@ $<
 
-$(OBJDIR)/errormanager.o: $(SRCDIR)/errormanager.hpp $(SRCDIR)/errormanager.cpp \
-	$(SRCDIR)/error.hpp $(SRCDIR)/error.cpp 
+$(OBJDIR)/errormanager.o: 	$(SRCDIR)/errormanager.cpp 	\
+							$(SRCDIR)/errormanager.hpp 	\
+							$(SRCDIR)/error.hpp 		\
+							$(SRCDIR)/error.cpp 
 	$(CC) -c -o $@ $<
 
 $(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hpp
 	$(CC) -c -o $@ $<
 
-$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc
+$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc 
 	$(CC) -c -o $@ $<
 
 $(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
@@ -64,8 +66,7 @@ test: $(TESTDIR)/AllTests $(addprefix $(TESTDIR)/,$(TESTS))
 $(TESTDIR)/AllTests: $(TESTDIR)/ParserTest.o 		\
 						$(TESTDIR)/ScannerTest.o	\
 						$(TESTDIR)/MockScanner.o	\
-						$(OBJDIR)/pal.tab.o			\
-						$(OBJDIR)/lex.yy.o 			\
+						$(OBJS)						\
 						$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
@@ -77,8 +78,7 @@ ParserTest: $(TESTDIR)/ParserTest
 
 $(TESTDIR)/ParserTest: $(TESTDIR)/ParserTest.o 		\
 						$(TESTDIR)/MockScanner.o	\
-						$(OBJDIR)/pal.tab.o			\
-						$(OBJDIR)/lex.yy.o 			\
+						$(OBJS)						\
 						$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 	
@@ -89,7 +89,9 @@ $(TESTDIR)/ParserTest.o: $(TESTDIR)/ParserTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/p
 ScannerTest: $(TESTDIR)/ScannerTest
 	$^
 
-$(TESTDIR)/ScannerTest: $(TESTDIR)/ScannerTest.o $(OBJDIR)/lex.yy.o $(TESTDIR)/test-main.a
+$(TESTDIR)/ScannerTest: 	$(TESTDIR)/ScannerTest.o 	\
+							$(OBJS)						\
+							$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
 $(TESTDIR)/ScannerTest.o: $(TESTDIR)/ScannerTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
