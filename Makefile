@@ -29,6 +29,13 @@ pal: $(OBJS)
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp
 	$(CC) -c -o $@ $<
 
+$(OBJDIR)/error.o: $(SRCDIR)/error.hpp $(SRCDIR)/error.cpp 
+	$(CC) -c -o $@ $<
+
+$(OBJDIR)/errormanager.o: $(SRCDIR)/errormanager.hpp $(SRCDIR)/errormanager.cpp \
+	$(SRCDIR)/error.hpp $(SRCDIR)/error.cpp 
+	$(CC) -c -o $@ $<
+
 $(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hpp
 	$(CC) -c -o $@ $<
 
