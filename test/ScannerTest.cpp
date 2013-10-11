@@ -129,13 +129,13 @@ namespace Meow
 
 			// should only be one error
 			vector<const Error*> unclosedErrors;
-			const vector<Error*>* errors = errorManager.getErrors();
+			const vector<Error*> errors = errorManager.getErrors();
 
-			EXPECT_EQ(errors->size(), 1u); 
+			EXPECT_EQ(errors.size(), 1u); 
 
 			// should be one and only one UnclosedComment error, on line 3
 			vector<Error*>::const_iterator errorIt;
-			for (errorIt = errors->begin(); errorIt != errors->end(); ++errorIt)
+			for (errorIt = errors.begin(); errorIt != errors.end(); ++errorIt)
 			{
 				Error* error = *errorIt;
 				if (error->getErrorCode() == UnclosedComment)
