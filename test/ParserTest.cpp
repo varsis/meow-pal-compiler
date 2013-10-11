@@ -11,12 +11,38 @@ namespace Meow
 	typedef PalParser::token token;
 	typedef PalParser::token_type token_type;
 
-	TEST(ParserTest, TestMinimalProgram)
+	class ParserTest : public ::testing::Test
 	{
-		MockScanner scanner;
+		protected:
 
-		vector<token_type> tokens;
+			ParserTest() 
+				: parser(scanner)
+			{
+			}
 
+			virtual void SetUp()
+			{
+				expectedParseResult = 0;
+				tokens.clear();
+			}
+
+			virtual void TearDown()
+			{
+				scanner.setTokens(tokens);
+				ASSERT_EQ(expectedParseResult, parser.parse()) 
+					<< ">> Failed to parse correct input!";
+			}
+
+			int expectedParseResult;
+
+			MockScanner scanner;
+			vector<token_type> tokens;
+
+			PalParser parser;
+	};
+
+	TEST_F(ParserTest, TestMinimalProgram)
+	{
 		tokens.push_back(token::PROGRAM);
 		tokens.push_back(token::IDENTIFIER);
 		tokens.push_back(token::LEFT_PAREN);
@@ -30,66 +56,88 @@ namespace Meow
 
 		tokens.push_back(token::END);
 		tokens.push_back(token::PERIOD);
-
-		scanner.setTokens(tokens);
-
-		PalParser parser(scanner);
-
-		ASSERT_EQ(0, parser.parse()) << ">> Failed to parse correct input!";
 	}
 
 // Array declaration tests...
-// This probably looks rather voodo, there's probably a nicer way to do this using test 
-// fixture classes but then we'll need to make a whole lot of files for test classes
 
-#define ARRAY_DEC_TEST(ARRAY_DEC_TEST_NAME)\
-	TEST(ParserTest, ARRAY_DEC_TEST_NAME)\
-	{\
-		MockScanner scanner;\
-		vector<token_type> tokens;\
-		tokens.push_back(token::PROGRAM);\
-		tokens.push_back(token::IDENTIFIER);\
-		tokens.push_back(token::LEFT_PAREN);\
-		tokens.push_back(token::IDENTIFIER);\
-		tokens.push_back(token::COMMA);\
-		tokens.push_back(token::IDENTIFIER);\
-		tokens.push_back(token::RIGHT_PAREN);\
-		tokens.push_back(token::SEMICOLON);\
-		tokens.push_back(token::TYPE);\
-		tokens.push_back(token::IDENTIFIER);\
-		tokens.push_back(token::EQ);\
-		tokens.push_back(token::ARRAY);
+	class ArrayDecTest : public ParserTest
+	{
+		protected:
+			virtual void SetUp()
+			{
+				ParserTest::SetUp();
 
+				tokens.push_back(token::PROGRAM);
+				tokens.push_back(token::IDENTIFIER);
+				tokens.push_back(token::LEFT_PAREN);
+				tokens.push_back(token::IDENTIFIER);
+				tokens.push_back(token::COMMA);
+				tokens.push_back(token::IDENTIFIER);
+				tokens.push_back(token::RIGHT_PAREN);
+				tokens.push_back(token::SEMICOLON);
+				tokens.push_back(token::TYPE);
+				tokens.push_back(token::IDENTIFIER);
+				tokens.push_back(token::EQ);
+				tokens.push_back(token::ARRAY);
+			}
 
-#define ARRAY_DEC_TEST_END(ARRAY_DEC_TEST_STRING)\
-		tokens.push_back(token::OF);\
-		tokens.push_back(token::BOOL);\
-		tokens.push_back(token::SEMICOLON);\
-		tokens.push_back(token::PAL_BEGIN);\
-		tokens.push_back(token::END);\
-		tokens.push_back(token::PERIOD);\
-		scanner.setTokens(tokens);\
-		PalParser parser(scanner);\
-		ASSERT_EQ(0, parser.parse()) << ARRAY_DEC_TEST_STRING; \
-	}
+			virtual void TearDown()
+			{
+				tokens.push_back(token::OF);
+				tokens.push_back(token::BOOL);
+				tokens.push_back(token::SEMICOLON);
+				tokens.push_back(token::PAL_BEGIN);
+				tokens.push_back(token::END);
+				tokens.push_back(token::PERIOD);
 
-	ARRAY_DEC_TEST(TestArrayDeclarations0)
+				ParserTest::TearDown();
+			}
+	};
+
+	TEST_F(ArrayDecTest, TestArrayDeclarations0)
+	{
 		tokens.push_back(token::LEFT_BRACKET);
 		tokens.push_back(token::INT_CONST);
 		tokens.push_back(token::UPTO);
 		tokens.push_back(token::INT_CONST);
 		tokens.push_back(token::RIGHT_BRACKET);
-	ARRAY_DEC_TEST_END("type array[1..10] of bool;")
+	} // type array[1..10] of bool;
 
-	ARRAY_DEC_TEST(TestArrayDeclarations1)
+	TEST_F(ArrayDecTest, TestArrayDeclarations1)
+	{
+		tokens.push_back(token::LEFT_BRACKET);
+
+		tokens.push_back(token::LEFT_PAREN);
+		tokens.push_back(token::IDENTIFIER);
+		tokens.push_back(token::RIGHT_PAREN);
+
+		tokens.push_back(token::UPTO);
+
+		tokens.push_back(token::LEFT_PAREN);
+		tokens.push_back(token::IDENTIFIER);
+		tokens.push_back(token::RIGHT_PAREN);
+
+		tokens.push_back(token::RIGHT_BRACKET);
+	} // type array[(id) .. (id)] of bool;
+
+	// With the supplied grammar, these are 'legal' but PAL doesn't allow 
+	// anonymous enumerations in array types, so the next two SHOULD fail to parse
+
+	TEST_F(ArrayDecTest, TestArrayDeclarations2)
+	{
+		expectedParseResult = 1;
+
 		tokens.push_back(token::LEFT_BRACKET);
 		tokens.push_back(token::LEFT_PAREN);
 		tokens.push_back(token::IDENTIFIER);
 		tokens.push_back(token::RIGHT_PAREN);
 		tokens.push_back(token::RIGHT_BRACKET);
-	ARRAY_DEC_TEST_END("type array[(id)] of bool;")
+	} // type array[(id)]
 
-	ARRAY_DEC_TEST(TestArrayDeclarations2)
+	TEST_F(ArrayDecTest, TestArrayDeclarations3)
+	{
+		expectedParseResult = 1;
+
 		tokens.push_back(token::LEFT_BRACKET);
 		tokens.push_back(token::LEFT_PAREN);
 		tokens.push_back(token::IDENTIFIER);
@@ -97,25 +145,5 @@ namespace Meow
 		tokens.push_back(token::IDENTIFIER);
 		tokens.push_back(token::RIGHT_PAREN);
 		tokens.push_back(token::RIGHT_BRACKET);
-	ARRAY_DEC_TEST_END("type array[(id, id)] of bool;")
-
-	// Next one is tricky...
-	// Reduce/Reduce conflict in given grammar makes assumption that (id) is 
-	// a 'scalar_list', then it explodes when it sees the '..'
-
-	ARRAY_DEC_TEST(TestArrayDeclarations3)
-		tokens.push_back(token::LEFT_BRACKET);
-
-		tokens.push_back(token::LEFT_PAREN);
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::RIGHT_PAREN);
-
-		tokens.push_back(token::UPTO);
-
-		tokens.push_back(token::LEFT_PAREN);
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::RIGHT_PAREN);
-
-		tokens.push_back(token::RIGHT_BRACKET);
-	ARRAY_DEC_TEST_END("type array[(false) .. (true)] of bool;")
+	} // type array[(id, id)] of bool;
 }

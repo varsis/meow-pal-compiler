@@ -26,4 +26,6 @@ lex.yy.cc
 
 # Generated executables
 bin/pal
+test/AllTests
 test/ScannerTest
+test/ParserTest
