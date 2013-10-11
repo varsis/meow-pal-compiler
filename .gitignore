@@ -29,6 +29,7 @@ bin/pal
 test/AllTests
 test/ScannerTest
 test/ParserTest
+test/ParserTestWithFiles
 
 # Generated GTest code
 test/ParserTestWithFiles.cpp
