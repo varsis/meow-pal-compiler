@@ -1,0 +1,7 @@
+program btest014(input, output);
+
+begin
+        writeln('This is a program.');
+        readln();
+        exit;
+end.

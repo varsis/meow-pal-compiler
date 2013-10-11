@@ -1,0 +1,18 @@
+program test029(input, output);
+
+var
+        myChars  : array[0..50] of char;
+        myInts   : array[0..50] of integer;
+        myString : string;
+        myInts2  : array[0..50] of integer;
+
+begin
+        myString := 'abcdefg';
+        myChars := 'hijklmnopqrstuvwxyz';
+        myInts[0] := 42;
+        myInts[1] := 90;
+        myInts[2] := 17837;
+        myInts2 := myInts;
+        writeln(myString, myChars);
+        writeln(myInts2[0], myInts2[1], myInts2[2]);
+end.

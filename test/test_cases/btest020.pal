@@ -1,0 +1,5 @@
+program btest020(input, output);
+
+begin
+        2+2;
+end.

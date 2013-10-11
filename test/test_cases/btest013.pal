@@ -1,0 +1,9 @@
+program btest013(input, output);
+
+var
+        str : string;
+begin
+        str := 'hello';
+        continue;
+        write(str);
+end.

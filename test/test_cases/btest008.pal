@@ -1,0 +1,5 @@
+program btest008(input, output);
+
+begin
+        writeln('asjdfskafhkjasgfa\ba\c');
+end.

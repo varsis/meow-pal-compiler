@@ -1,0 +1,13 @@
+program test019(input, output);
+
+var
+        speed : real;
+        age   : integer;
+        forSale : Boolean;
+
+begin
+        speed := (23+34*2*(20/10));
+        age   := 23.233;
+        forSale := false;
+        writeln(speed, '   ', age, '   ', forSale);
+end.

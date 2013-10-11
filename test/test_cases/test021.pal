@@ -1,0 +1,13 @@
+program test021(input, output);
+
+var
+        value : integer;
+
+begin
+        value := 42;
+        if ((value = 42) and (true or false) and (value <> 27)
+           and (value >= 27)) then
+        begin
+                writeln('Hi! This works. ' );
+        end
+end.

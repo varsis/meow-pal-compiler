@@ -1,0 +1,16 @@
+program test028(input, output);
+{ Tests const defined sizes and maxint definition }
+const
+        size = 50;
+
+type 
+        str = array[0..size] of char;
+
+var
+        myString : str;
+
+begin
+        myString[0] := 'a';
+        myString[1] := 'b';
+        writeln(myString, '   ', maxint);
+end.

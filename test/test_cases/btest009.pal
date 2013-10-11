@@ -1,0 +1,8 @@
+program btest009(input, output);
+{ Extra semi-colon causes severe issues in Pascal }
+begin
+        if (true) then
+           writeln('Hello world.');
+        else
+           writeln('Oh no.');
+end.

@@ -1,0 +1,18 @@
+program test025(input, output);
+
+var
+        value : integer;
+
+begin   
+        value := 0;
+        while (value <> 100) do
+        begin
+                if (value = 0) then
+                begin
+                   value := 100;
+                   continue;
+                end;
+                writeln('Hello.');
+        end;
+        writeln('Stuff.');
+end.

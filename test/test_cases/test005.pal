@@ -1,11 +1,11 @@
 program test005(input, output);
 const
-        the_answer = 42;
+        theAnswer = 42;
 var
         number : integer;
 
 begin
-        number := the_answer;
+        number := theAnswer;
         writeln(number);
         
 end.

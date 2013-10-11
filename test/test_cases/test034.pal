@@ -1,0 +1,5 @@
+program test034(input, output);
+
+begin
+        if (true) then if (true) then if (true) then;
+end.

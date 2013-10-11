@@ -1,0 +1,5 @@
+program btest018(input, output);
+
+begin
+        if (if (if (if (true) then;) then;) then;) then;
+end.

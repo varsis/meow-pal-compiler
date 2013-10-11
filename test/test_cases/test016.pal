@@ -1,0 +1,50 @@
+program test016(input, output);
+        { program takes input/output from terminal }
+        { copied from PAL Specification document in part }
+
+type    string1 = array[1..7] of char;
+
+var     x      : integer;
+        y      : integer;
+        answer : integer;
+        flag   : char;
+        str    : string1;
+
+function gcd( a: integer; b : integer ) : integer;
+begin
+        { Note where semi-colons are legal! }
+        if b = 0 then
+           gcd := a
+        else
+                gcd := gcd( b, a mod b)
+end;
+
+function lcm( a : integer; b : integer ) : integer;
+begin
+        if (a = 0) or (b = 0) then
+           lcm := 0
+        else
+           lcm := (a * b) div gcd( a, b )
+end;
+
+begin           { Main program }
+        read( flag );
+        
+        while flag <> 's' do
+              begin
+                read( x, y );
+                readln();
+                if flag = 'g' then begin
+                   answer := gcd( x, y );
+                   str := 'GCD of ';
+                end;
+                if flag = 'l' then begin
+                   answer := lcm( x, y );
+                   str := 'LCM of ';
+                   end;
+                
+                write(str, x, ' and ', y, ' is ', answer);
+                writeln();
+                read( flag );
+         end
+end.

@@ -1,0 +1,13 @@
+program test030(input, output);
+{ Program to test the compilers handling of strings }
+// Note that FPC doesn't compile this
+var
+        str : string;
+
+begin
+        str := 'hjgfffffashkj\n\tashsh\\djjd\'\'\'';
+        write(str);
+        write('aj\'\'\'\n\n\tshj\tttt\nnn\'\\\\\'');
+end.
+        
+                

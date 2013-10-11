@@ -1,0 +1,10 @@
+program test022(input, output);
+
+var
+        weirdArray : array[Boolean] of integer;
+
+begin
+        weirdArray[true] := 1;
+        weirdArray[false] := 2;
+        writeln(weirdArray[true], '  ', weirdArray[false]);
+end.

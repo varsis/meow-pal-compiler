@@ -1,0 +1,18 @@
+program test027(input, output);
+{ Tests to make sure that no parameter procedures and functions work }
+
+procedure printStuff();
+begin
+        writeln('Hello world.');
+end;
+
+function printOtherStuff() : integer;
+begin
+        writeln('Hello, world!!');
+        printOtherStuff := 0;
+end;
+
+begin
+        printStuff();
+        writeln(printOtherStuff());
+end.

@@ -1,0 +1,10 @@
+program btest007(input, output);
+
+var
+        str : string;
+
+begin
+        str := 'asdghkajsdghjkadshakjsdghkajsdgj\n\n\n\n\t\n\n\n\n
+               ahsdajdhgajsdhashdjadg';
+        writeln(str);
+end.
