@@ -1,0 +1,42 @@
+#!/bin/bash
+
+OUTFILE=../ParserTestWithFiles.cpp
+TESTDIR=../test_cases
+
+echo "#include <fstream>
+#include \"gtest/gtest.h\"
+
+#include \"../src/Scanner.hpp\"
+
+using namespace std;
+
+namespace Meow
+{" > $OUTFILE;
+
+for file in $TESTDIR/*.pal 
+do
+    BASENAME=$(basename $file .pal);
+    FIRSTLETTER=${BASENAME::1};
+    echo "    TEST(ParserTestWithFiles, $BASENAME)
+    {
+        ifstream file(\"test/test_cases/$BASENAME.pal\");
+        PalScanner scanner(&file);
+        PalParser parser(scanner);" >> $OUTFILE;
+
+if [ "$FIRSTLETTER" = "b" ]
+then
+    echo "        EXPECT_NE(0, parser.parse());
+    }" >> $OUTFILE;
+fi
+
+if [ "$FIRSTLETTER" != "b" ] 
+then
+    echo "        EXPECT_EQ(0, parser.parse());
+    }" >> $OUTFILE;
+fi
+
+done
+
+echo "}" >> $OUTFILE;
+
+

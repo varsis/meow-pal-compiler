@@ -55,13 +55,14 @@ $(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 # Tests
 ################################################################################
 
-TESTS = ScannerTest ParserTest
+TESTS = ScannerTest ParserTest ParserTestWithFiles
 
 test: $(TESTDIR)/AllTests $(addprefix $(TESTDIR)/,$(TESTS))
-	$(TESTDIR)/AllTests
+	-$(TESTDIR)/AllTests
 
 # Link all tests together into one big super test executable
 $(TESTDIR)/AllTests: $(TESTDIR)/ParserTest.o 		\
+      $(TESTDIR)/ParserTestWithFiles.o  \
 						$(TESTDIR)/ScannerTest.o	\
 						$(TESTDIR)/MockScanner.o	\
 						$(OBJDIR)/pal.tab.o			\
@@ -84,6 +85,22 @@ $(TESTDIR)/ParserTest: $(TESTDIR)/ParserTest.o 		\
 	
 $(TESTDIR)/ParserTest.o: $(TESTDIR)/ParserTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
 	$(CXX) $(CFLAGS) -c -o $@ $<
+
+# Parser Test with files
+ParserTestWithFiles: $(TESTDIR)/ParserTestWithFiles
+	$^
+
+$(TESTDIR)/ParserTestWithFiles: $(TESTDIR)/ParserTestWithFiles.o 		\
+						$(OBJDIR)/pal.tab.o			\
+						$(OBJDIR)/lex.yy.o 			\
+						$(TESTDIR)/test-main.a
+	$(CXX) $(CFLAGS) -o $@ $^
+	
+$(TESTDIR)/ParserTestWithFiles.o: $(TESTDIR)/ParserTestWithFiles.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
+	$(CXX) $(CFLAGS) -c -o $@ $<
+
+$(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scripts/test_gen
+	cd ./test/scripts && ./test_gen && cd ../../
 
 # Scanner Test
 ScannerTest: $(TESTDIR)/ScannerTest
@@ -123,4 +140,5 @@ clean:
 		$(SRCDIR)/lex.yy.cc\
 		$(TESTDIR)/*.a \
 		$(TESTDIR)/*.o \
+		$(TESTDIR)/AllTests \
 		$(addprefix $(TESTDIR)/,$(TESTS))
