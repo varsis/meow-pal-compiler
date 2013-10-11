@@ -4,22 +4,30 @@
 #include <fstream>
 #include <string>
 
-class Compiler 
-{
-public:
-	Compiler();
-	~Compiler();
-	int run(int argc, char* argv[]);
-private:
-	void getArguments(int argc, char* argv[]);
-	void displayUsage();
-	void printProgramListing();
-	void removeAscOutput();
+class PalScanner;
+class PalParser;
 
-	std::string m_inputFileName;
-	bool m_leaveASC;
-	bool m_programListing;
-	bool m_runtimeArrayBoundChecking;
-};
+namespace Meow
+{
+	class Compiler 
+	{
+	public:
+		Compiler();
+		virtual ~Compiler();
+		int run(int argc, char* argv[]);
+	private:
+		void getArguments(int argc, char* argv[]);
+		void displayUsage();
+		void printProgramListing();
+		void removeAscOutput();
+
+		std::string m_inputFileName;
+		PalScanner* m_scanner;
+		PalParser* m_parser;
+		bool m_leaveASC;
+		bool m_programListing;
+		bool m_runtimeArrayBoundChecking;
+	};
+}
 
 #endif

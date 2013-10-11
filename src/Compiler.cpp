@@ -6,6 +6,7 @@
 #include "Scanner.hpp"
 #include "Compiler.hpp"
 #include "pal.tab.h"
+using namespace Meow;
 
 Compiler::Compiler()
 	: m_leaveASC(false), 
@@ -16,6 +17,17 @@ Compiler::Compiler()
 
 Compiler::~Compiler()
 {
+	if (m_scanner != NULL)
+	{
+		delete m_scanner;
+		m_scanner = NULL;
+	}
+	
+	if (m_parser != NULL)
+	{
+		delete m_parser;
+		m_parser = NULL;
+	}
 }
 
 void Compiler::displayUsage()
@@ -86,8 +98,7 @@ void Compiler::removeAscOutput()
 int Compiler::run(int argc, char* argv[])
 {
 	std::ifstream* inputFileStream = NULL;
-	Meow::PalScanner* scanner = NULL;
-	Meow::PalParser* parser = NULL;
+	int parseResult = 0;
 	
 	getArguments(argc, argv);
 	
@@ -99,14 +110,20 @@ int Compiler::run(int argc, char* argv[])
 	
 	inputFileStream = new std::ifstream(m_inputFileName.c_str());
 	
-	if (!inputFileStream->is_open())
+	if (inputFileStream == NULL || !inputFileStream->is_open())
 	{
 		std::cerr << "** Error: Unable to find" << m_inputFileName << "\n";
 		return -1;
 	}
 	
-	scanner = new Meow::PalScanner(inputFileStream);
-	parser = new Meow::PalParser(*scanner);
+	m_scanner = new PalScanner(inputFileStream);
+	m_parser = new PalParser(*m_scanner);
 	
-	return parser->parse();
+	parseResult = m_parser->parse();
+	
+	inputFileStream->close();
+	delete inputFileStream;
+	inputFileStream = NULL;
+	
+	return parseResult;
 }

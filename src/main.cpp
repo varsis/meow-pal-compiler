@@ -4,7 +4,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-	Compiler compiler;
+	Meow::Compiler compiler;
 	
 	return compiler.run(argc, argv);
 }
