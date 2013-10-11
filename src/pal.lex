@@ -2,16 +2,37 @@
 	#include <iostream>
 	#include "Scanner.hpp"
 	typedef Meow::PalParser::token token;
+
+	static unsigned int s_commentStartLine;
 %}
 
 %option nodefault yyclass="PalScanner" noyywrap c++
+%option yylineno
+
+%x IN_COMMENT
 
 %%
+
+<IN_COMMENT>
+{
+	"}"	{ BEGIN(INITIAL); }
+	\n	{ /* Count line endings */ }
+	<<EOF>> {
+				// TODO use error handler!
+				std::cerr << "UNCLOSED COMMENT STARTING AT LINE " << s_commentStartLine << std::endl;
+				return 0;
+			}
+	.	{ /* ignore eveything else */ }
+}
+
 [ \t] { ; /* Ignore whitespace */ }
-"\n" { ; /* ignore line endings */ }
-"//".* { ; /* Ignore single line comments */ }
-"\{"([^\}]+) { return token::BEGIN_COMMENT; }
-"\}" { return token::CLOSE_COMMENT; }
+\n 	{ ; /* Count line endings */ }
+"//".*[^\n] { ; /* Ignore single line comments */ }
+
+"{" { 
+		s_commentStartLine = yylineno;
+		BEGIN(IN_COMMENT); 
+	}
 
 "\[" { return token::LEFT_BRACKET; }
 "\]" { return token::RIGHT_BRACKET; }
@@ -74,5 +95,4 @@
 ":" { return token::COLON; }
 
 . { std::cerr << "** " << "(" << yylineno << ") lex: Unknown symbol \'" << yytext[0] << "\'\n"; }
-
 

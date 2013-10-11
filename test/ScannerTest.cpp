@@ -91,12 +91,42 @@ namespace Meow
 			EXPECT_EQ(token::SEMICOLON, scanner.yylex());
 
 			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex());
-
-				EXPECT_EQ(token::BEGIN_COMMENT, scanner.yylex());
-				EXPECT_EQ(token::CLOSE_COMMENT, scanner.yylex());
-
 			EXPECT_EQ(token::END, scanner.yylex());
 			EXPECT_EQ(token::PERIOD, scanner.yylex());
+		}
+
+		input.close();
+	}
+
+	TEST(ScannerTest, TestUnclosedComment)
+	{
+		ifstream input("test/test_cases/testUnclosedComment.pal");
+
+		EXPECT_TRUE(input.is_open()) << "Couldn't open test input file!";
+
+		if (input.is_open())
+		{
+			PalScanner scanner(&input);
+
+			EXPECT_EQ(token::PROGRAM, scanner.yylex());
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
+			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex());
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
+			EXPECT_EQ(token::COMMA, scanner.yylex());
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
+			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex());
+			EXPECT_EQ(token::SEMICOLON, scanner.yylex());
+
+			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex());
+
+			// there should be an unclosed comment starting at this point
+			// therefore, scanner should just return 0 next as the rest of the file
+			// will be commented out.
+
+			// TODO test error output somehow!! 
+			// (eg, check for presence of some error code at some line/column?)
+
+			EXPECT_EQ(0, scanner.yylex());
 		}
 
 		input.close();
