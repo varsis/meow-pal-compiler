@@ -116,7 +116,7 @@ int Compiler::run(int argc, char* argv[])
 		return -1;
 	}
 	
-	m_scanner = new PalScanner(inputFileStream);
+	m_scanner = new PalScanner(inputFileStream, &m_errorManager);
 	m_parser = new PalParser(*m_scanner);
 	
 	parseResult = m_parser->parse();

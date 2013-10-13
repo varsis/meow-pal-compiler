@@ -25,7 +25,7 @@ namespace Meow
 	{
 		public:
 
-			PalScanner(FLEX_STD istream* arg_yyin = 0, ErrorManager * manager = 0)
+			PalScanner(FLEX_STD istream* arg_yyin, ErrorManager * manager)
 				: yyFlexLexer(arg_yyin, 0)
 			{
                 this->m_manager = manager;

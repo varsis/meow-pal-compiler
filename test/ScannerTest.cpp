@@ -19,7 +19,8 @@ namespace Meow
 
 		if (input.is_open())
 		{
-			PalScanner scanner(&input);
+			ErrorManager errorManager;
+			PalScanner scanner(&input, &errorManager);
 
 			EXPECT_EQ(token::PROGRAM, scanner.yylex());
 			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
@@ -47,7 +48,8 @@ namespace Meow
 
 		if (input.is_open())
 		{
-			PalScanner scanner(&input);
+			ErrorManager errorManager;
+			PalScanner scanner(&input, &errorManager);
 
 			EXPECT_EQ(token::PROGRAM, scanner.yylex());
 			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
@@ -81,7 +83,8 @@ namespace Meow
 
 		if (input.is_open())
 		{
-			PalScanner scanner(&input);
+			ErrorManager errorManager;
+			PalScanner scanner(&input, &errorManager);
 
 			EXPECT_EQ(token::PROGRAM, scanner.yylex());
 			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());

@@ -19,8 +19,9 @@ do
     FIRSTLETTER=${BASENAME::1};
     echo "    TEST(ParserTestWithFiles, $BASENAME)
     {
+        ErrorManager errorManager;
         ifstream file(\"test/test_cases/$BASENAME.pal\");
-        PalScanner scanner(&file);
+        PalScanner scanner(&file, &errorManager);
         PalParser parser(scanner);" >> $OUTFILE;
 
 if [ "$FIRSTLETTER" = "b" ]

@@ -1,27 +1,30 @@
-#pragma once
+#ifndef PARSER_H
+#define PARSER_H
 
 #include "Scanner.hpp"
+#include "ErrorManager.hpp"
 #include "pal.tab.h"
 
 
-namespace Meow {
-	class Parser {
+namespace Meow
+{
+	class Parser
+	{
 		public:
-			Parser() : parser(scanner) {
-            
-                
-            
+			Parser(ErrorManager* manager)
+				: m_errorManager(manager)
+			{
             }
 		
-			int parse() {
-				return parser.parse();
+			int parseFile(char* fileName)
+			{
+				return 0;
 			}
         
-        
-		
 		private:
         
-			PalScanner scanner;
-			PalParser parser;
+			ErrorManager* m_errorManager;
 	};
 }
+
+#endif

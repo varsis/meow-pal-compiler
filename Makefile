@@ -27,25 +27,25 @@ pal: $(OBJDIR)/main.o $(OBJS)
 	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $^
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
-	$(CC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/compiler.o: $(SRCDIR)/Compiler.cpp $(SRCDIR)/Scanner.hpp
-	$(CC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/error.o: $(SRCDIR)/error.cpp $(SRCDIR)/error.hpp
-	$(CC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/errormanager.o: 	$(SRCDIR)/errormanager.cpp 	\
 							$(SRCDIR)/errormanager.hpp 	\
 							$(SRCDIR)/error.hpp 		\
 							$(SRCDIR)/error.cpp 
-	$(CC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hpp
-	$(CC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc 
-	$(CC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
 	$(FLEX) -o $@ $(SRCDIR)/pal.lex
