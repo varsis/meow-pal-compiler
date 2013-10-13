@@ -83,7 +83,7 @@
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-/* 
+/*
         String Literal with error handling
 */
 
