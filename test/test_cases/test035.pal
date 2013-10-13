@@ -1,9 +1,8 @@
 program test035(input, output);
 
 var
-        aString, bString         :       String
+        stringa : string;
 
 begin
-        aString := 'this is a string literal and should pass test';
-        bString := 'this is a unclosed string;
+        stringa := 'some stringfasdfasd f;
 end.
