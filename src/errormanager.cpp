@@ -21,7 +21,8 @@ const std::vector<Error*>& ErrorManager::getErrors() const
 
 void ErrorManager::addError(Error* inputError)
 {
-    m_errors.push_back(inputError);
+        m_errors.push_back(inputError);
+        ErrorManager::printErrors();
 }
 
 void ErrorManager::printErrors() const 

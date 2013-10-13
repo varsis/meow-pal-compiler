@@ -1,0 +1,8 @@
+program test035(input, output);
+
+var
+        stringa : string;
+
+begin
+        stringa := 'some stringfasdfasd f;
+end.

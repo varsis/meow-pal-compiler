@@ -23,9 +23,11 @@
 
 %union {
 	std::string* identifier;
+        std::string* stringLiteral;
 }
 
 %token <identifier> IDENTIFIER
+%token <stringLiteral> STRING_LITERAL
 
 %token ASSIGN
 %token LEFT_BRACKET RIGHT_BRACKET
@@ -39,7 +41,6 @@
 %token FUNCTION IF NOT OF OR PROCEDURE PROGRAM RECORD THEN
 %token TYPE VAR WHILE PAL_BEGIN
 %token INT REAL
-%token STRING_LITERAL
 %token INT_CONST REAL_CONST
 
 %%
