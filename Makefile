@@ -1,4 +1,4 @@
-LOBJS = pal.tab.o lex.yy.o compiler.o main.o
+LOBJS = pal.tab.o lex.yy.o error.o errormanager.o compiler.o
 OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 CC = g++
 CXX = g++
@@ -23,27 +23,29 @@ FLEX = flex
 
 all: pal test
 
-pal: $(OBJS)
-	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $(OBJS)
+pal: $(OBJDIR)/main.o $(OBJS)
+	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $^
 
-$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp
-	$(CC) -c -g -o $@ $<
-
-$(OBJDIR)/compiler.o: $(SRCDIR)/Compiler.cpp $(SRCDIR)/Scanner.hpp
-	$(CC) -c -g -o $@ $<
-
-$(OBJDIR)/error.o: $(SRCDIR)/error.hpp $(SRCDIR)/error.cpp 
+$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
 	$(CC) -c -o $@ $<
 
-$(OBJDIR)/errormanager.o: $(SRCDIR)/errormanager.hpp $(SRCDIR)/errormanager.cpp \
-	$(SRCDIR)/error.hpp $(SRCDIR)/error.cpp 
+$(OBJDIR)/compiler.o: $(SRCDIR)/Compiler.cpp $(SRCDIR)/Scanner.hpp
+	$(CC) -c -o $@ $<
+
+$(OBJDIR)/error.o: $(SRCDIR)/error.cpp $(SRCDIR)/error.hpp
+	$(CC) -c -o $@ $<
+
+$(OBJDIR)/errormanager.o: 	$(SRCDIR)/errormanager.cpp 	\
+							$(SRCDIR)/errormanager.hpp 	\
+							$(SRCDIR)/error.hpp 		\
+							$(SRCDIR)/error.cpp 
 	$(CC) -c -o $@ $<
 
 $(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hpp
-	$(CC) -c -g -o $@ $<
+	$(CC) -c -o $@ $<
 
-$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc
-	$(CC) -c -g -o $@ $<
+$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc 
+	$(CC) -c -o $@ $<
 
 $(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
 	$(FLEX) -o $@ $(SRCDIR)/pal.lex
@@ -58,18 +60,16 @@ $(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 # Tests
 ################################################################################
 
-TESTS = ScannerTest ParserTest ParserTestWithFiles
+TESTS = ScannerTest ParserTest
 
 test: $(TESTDIR)/AllTests $(addprefix $(TESTDIR)/,$(TESTS))
-	-$(TESTDIR)/AllTests
+	$(TESTDIR)/AllTests
 
 # Link all tests together into one big super test executable
 $(TESTDIR)/AllTests: $(TESTDIR)/ParserTest.o 		\
-      $(TESTDIR)/ParserTestWithFiles.o  \
 						$(TESTDIR)/ScannerTest.o	\
 						$(TESTDIR)/MockScanner.o	\
-						$(OBJDIR)/pal.tab.o			\
-						$(OBJDIR)/lex.yy.o 			\
+						$(OBJS)						\
 						$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
@@ -81,35 +81,20 @@ ParserTest: $(TESTDIR)/ParserTest
 
 $(TESTDIR)/ParserTest: $(TESTDIR)/ParserTest.o 		\
 						$(TESTDIR)/MockScanner.o	\
-						$(OBJDIR)/pal.tab.o			\
-						$(OBJDIR)/lex.yy.o 			\
+						$(OBJS)						\
 						$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
 $(TESTDIR)/ParserTest.o: $(TESTDIR)/ParserTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
-# Parser Test with files
-ParserTestWithFiles: $(TESTDIR)/ParserTestWithFiles
-	$^
-
-$(TESTDIR)/ParserTestWithFiles: $(TESTDIR)/ParserTestWithFiles.o 		\
-						$(OBJDIR)/pal.tab.o			\
-						$(OBJDIR)/lex.yy.o 			\
-						$(TESTDIR)/test-main.a
-	$(CXX) $(CFLAGS) -o $@ $^
-	
-$(TESTDIR)/ParserTestWithFiles.o: $(TESTDIR)/ParserTestWithFiles.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
-	$(CXX) $(CFLAGS) -c -o $@ $<
-
-$(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scripts/test_gen
-	cd ./test/scripts && ./test_gen && cd ../../
-
 # Scanner Test
 ScannerTest: $(TESTDIR)/ScannerTest
 	$^
 
-$(TESTDIR)/ScannerTest: $(TESTDIR)/ScannerTest.o $(OBJDIR)/lex.yy.o $(TESTDIR)/test-main.a
+$(TESTDIR)/ScannerTest: 	$(TESTDIR)/ScannerTest.o 	\
+							$(OBJS)						\
+							$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
 $(TESTDIR)/ScannerTest.o: $(TESTDIR)/ScannerTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
@@ -143,5 +128,4 @@ clean:
 		$(SRCDIR)/lex.yy.cc\
 		$(TESTDIR)/*.a \
 		$(TESTDIR)/*.o \
-		$(TESTDIR)/AllTests \
 		$(addprefix $(TESTDIR)/,$(TESTS))
