@@ -31,8 +31,6 @@ namespace Meow
                 this->m_manager = manager;
 			}
 
-			virtual int yylex();
-
 			// save the pointer to yylval so we can change it, and invoke scanner
 			virtual int yylex(PalParser::semantic_type * lval)
 			{
@@ -41,6 +39,8 @@ namespace Meow
 			}
 		
 		private:
+			virtual int yylex();
+
             ErrorManager * getManager() 
 			{
                 //assert(m_manager != 0);

@@ -21,20 +21,21 @@ namespace Meow
 		{
 			ErrorManager errorManager;
 			PalScanner scanner(&input, &errorManager);
+			PalParser::semantic_type yylval;
 
-			EXPECT_EQ(token::PROGRAM, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::COMMA, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::SEMICOLON, scanner.yylex());
+			EXPECT_EQ(token::PROGRAM, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::COMMA, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::SEMICOLON, scanner.yylex(&yylval));
 
-			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex());
+			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex(&yylval));
 
-			EXPECT_EQ(token::END, scanner.yylex());
-			EXPECT_EQ(token::PERIOD, scanner.yylex());
+			EXPECT_EQ(token::END, scanner.yylex(&yylval));
+			EXPECT_EQ(token::PERIOD, scanner.yylex(&yylval));
 		}
 
 		input.close();
@@ -50,26 +51,27 @@ namespace Meow
 		{
 			ErrorManager errorManager;
 			PalScanner scanner(&input, &errorManager);
+			PalParser::semantic_type yylval;
 
-			EXPECT_EQ(token::PROGRAM, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::COMMA, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::SEMICOLON, scanner.yylex());
+			EXPECT_EQ(token::PROGRAM, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::COMMA, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::SEMICOLON, scanner.yylex(&yylval));
 
-			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex());
+			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex(&yylval));
 
-				EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-				EXPECT_EQ(token::LEFT_PAREN, scanner.yylex());
-				EXPECT_EQ(token::STRING_LITERAL, scanner.yylex());
-				EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex());
-				EXPECT_EQ(token::SEMICOLON, scanner.yylex());
+				EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+				EXPECT_EQ(token::LEFT_PAREN, scanner.yylex(&yylval));
+				EXPECT_EQ(token::STRING_LITERAL, scanner.yylex(&yylval));
+				EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex(&yylval));
+				EXPECT_EQ(token::SEMICOLON, scanner.yylex(&yylval));
 
-			EXPECT_EQ(token::END, scanner.yylex());
-			EXPECT_EQ(token::PERIOD, scanner.yylex());
+			EXPECT_EQ(token::END, scanner.yylex(&yylval));
+			EXPECT_EQ(token::PERIOD, scanner.yylex(&yylval));
 		}
 
 		input.close();
@@ -83,21 +85,22 @@ namespace Meow
 
 		if (input.is_open())
 		{
+			PalParser::semantic_type yylval;
 			ErrorManager errorManager;
 			PalScanner scanner(&input, &errorManager);
 
-			EXPECT_EQ(token::PROGRAM, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::COMMA, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::SEMICOLON, scanner.yylex());
+			EXPECT_EQ(token::PROGRAM, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::COMMA, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::SEMICOLON, scanner.yylex(&yylval));
 
-			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex());
-			EXPECT_EQ(token::END, scanner.yylex());
-			EXPECT_EQ(token::PERIOD, scanner.yylex());
+			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::END, scanner.yylex(&yylval));
+			EXPECT_EQ(token::PERIOD, scanner.yylex(&yylval));
 		}
 
 		input.close();
@@ -111,24 +114,25 @@ namespace Meow
 
 		if (input.is_open())
 		{
+			PalParser::semantic_type yylval;
 			ErrorManager errorManager;
 			PalScanner scanner(&input, &errorManager);
 
-			EXPECT_EQ(token::PROGRAM, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::COMMA, scanner.yylex());
-			EXPECT_EQ(token::IDENTIFIER, scanner.yylex());
-			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex());
-			EXPECT_EQ(token::SEMICOLON, scanner.yylex());
+			EXPECT_EQ(token::PROGRAM, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::LEFT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::COMMA, scanner.yylex(&yylval));
+			EXPECT_EQ(token::IDENTIFIER, scanner.yylex(&yylval));
+			EXPECT_EQ(token::RIGHT_PAREN, scanner.yylex(&yylval));
+			EXPECT_EQ(token::SEMICOLON, scanner.yylex(&yylval));
 
-			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex());
+			EXPECT_EQ(token::PAL_BEGIN, scanner.yylex(&yylval));
 
 			// there should be an unclosed comment starting at this point
 			// therefore, scanner should just return 0 next as the rest of the file
 			// will be commented out.
-			EXPECT_EQ(0, scanner.yylex());
+			EXPECT_EQ(0, scanner.yylex(&yylval));
 
 			// should only be one error
 			vector<const Error*> unclosedErrors;
