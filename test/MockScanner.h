@@ -10,7 +10,10 @@ namespace Meow
 	{
 		public:
 
-		   	MockScanner() {}
+		   	MockScanner() 
+				: PalScanner(NULL, NULL)
+			{
+			}
 
 			void setTokens(std::vector<PalParser::token_type> tokenStream);
 

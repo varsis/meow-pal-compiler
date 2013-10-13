@@ -4,8 +4,8 @@
 #include <fstream>
 #include <string>
 
-class PalScanner;
-class PalParser;
+#include "Parser.hpp"
+#include "errormanager.hpp"
 
 namespace Meow
 {
@@ -21,9 +21,9 @@ namespace Meow
 		void printProgramListing();
 		void removeAscOutput();
 
+		ErrorManager m_errorManager;
+		Parser m_parser;
 		std::string m_inputFileName;
-		PalScanner* m_scanner;
-		PalParser* m_parser;
 		bool m_leaveASC;
 		bool m_programListing;
 		bool m_runtimeArrayBoundChecking;
