@@ -56,7 +56,7 @@
 "div" { return token::INT_DIVIDE; }
 "mod" { return token::MOD; }
 
-"bool" { return token::BOOL; }
+"Boolean" { return token::BOOL; }
 "char" { return token::CHAR; }
 "integer" { return token::INT; }
 "real" { return token::REAL; }

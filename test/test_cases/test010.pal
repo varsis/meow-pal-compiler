@@ -4,6 +4,6 @@
  
 program test017(input, output);
 begin
-        writeln("Hello world!");
+        writeln('Hello world!');
 end.
 

@@ -7,7 +7,7 @@ var
 
 begin
         speed := (23+34*2*(20/10));
-        age   := 23.233;
+        age   := 2366;
         forSale := false;
         writeln(speed, '   ', age, '   ', forSale);
 end.
