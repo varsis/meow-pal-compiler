@@ -6,7 +6,7 @@ TESTDIR=../test_cases
 echo "#include <fstream>
 #include \"gtest/gtest.h\"
 
-#include \"../src/ErrorManager.hpp\"
+#include \"../src/errormanager.hpp\"
 #include \"../src/Parser.hpp\"
 
 using namespace std;
