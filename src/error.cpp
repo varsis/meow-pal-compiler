@@ -2,25 +2,39 @@
 using namespace Meow;
 
 Error::Error(std::string inputString)
+    : m_errorCode(OtherError)
+    , m_errorString(inputString)
+    , m_lineNumber(NOLINENUMBER)
 {
-    setLineNumber(NOLINENUMBER);
-    setErrorString(inputString);
 }
 
-Error::Error(std::string inputString, int inputLine)
+Error::Error(std::string inputString, unsigned int inputLine)
+    : m_errorCode(OtherError)
+    , m_errorString(inputString)
+    , m_lineNumber(inputLine)
 {
-    setErrorString(inputString);
-    setLineNumber(inputLine);
 }
 
-void Error::setLineNumber(int inputLine)
+Error::Error(ErrorCode errorCode, std::string inputString, unsigned int inputLine)
+    : m_errorCode(errorCode)
+    , m_errorString(inputString)
+    , m_lineNumber(inputLine)
+{
+}
+
+void Error::setLineNumber(unsigned int inputLine)
 {
     m_lineNumber = inputLine;
 }
 
 void Error::setErrorString(std::string inputString)
 {
-    m_errorString = * new std::string(inputString);
+    m_errorString = inputString;
+}
+
+ErrorCode Error::getErrorCode() const
+{
+    return m_errorCode;
 }
 
 std::string Error::getErrorString() const
@@ -28,7 +42,7 @@ std::string Error::getErrorString() const
     return m_errorString;
 }
 
-int Error::getLineNumber() const
+unsigned int Error::getLineNumber() const
 {
     return m_lineNumber;
 }

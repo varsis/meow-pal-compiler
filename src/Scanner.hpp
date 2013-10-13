@@ -1,9 +1,12 @@
-#pragma once
+#ifndef SCANNER_H
+#define SCANNER_H
 
 // Only include FlexLexer.h if it hasn't been already included
 #if ! defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
 #endif
+
+#include <assert.h>
 
 #include "errorcodes.hpp"
 #include "error.hpp"
@@ -22,8 +25,8 @@ namespace Meow
 	{
 		public:
 
-			PalScanner( FLEX_STD istream* arg_yyin = 0, FLEX_STD ostream* arg_yyout = 0 , ErrorManager * manager = 0)
-				: yyFlexLexer(arg_yyin, arg_yyout)
+			PalScanner(FLEX_STD istream* arg_yyin = 0, ErrorManager * manager = 0)
+				: yyFlexLexer(arg_yyin, 0)
 			{
                 this->m_manager = manager;
 			}
@@ -36,14 +39,17 @@ namespace Meow
 				yylval = lval;
 				return yylex();
 			}
-        
-        
-        
 		
 		private:
+            ErrorManager * getManager() 
+			{ 
+				assert(m_manager != 0);
+				return m_manager;
+			};
             ErrorManager * m_manager;
 			// point to yylval (provided by Bison in overloaded yylex)
 			PalParser::semantic_type * yylval;
 	};
 }
 
+#endif

@@ -3,20 +3,23 @@
 #include <vector>
 #include "error.hpp"
 
+#ifndef ERRORMANAGER_H
+#define ERRORMANAGER_H
+
 namespace Meow
 {
-    
-class ErrorManager
+    class ErrorManager
     {
-public:
-    ErrorManager();
-    void printErrors();
-    void addError(Error);
-
-    
-private:
-    std::vector<Error> * m_errors;
-    std::vector<Error> * getErrors();
-            };
+        public:
+            ErrorManager();
+            ~ErrorManager();
+            void printErrors() const;
+            void addError(Error* inputError);
+            const std::vector<Error*>& getErrors() const;
+            
+        private:
+            std::vector<Error*> m_errors;
+    };
 }
 
+#endif

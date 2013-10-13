@@ -4,24 +4,30 @@ using namespace Meow;
 
 ErrorManager::ErrorManager()
 {
-    m_errors  = new std::vector<Error>();
 }
 
-std::vector<Error> * ErrorManager::getErrors() {
+ErrorManager::~ErrorManager()
+{
+    for (unsigned int i = 0; i < m_errors.size(); i++)
+    {
+        delete m_errors.at(i);
+    }
+}
+
+const std::vector<Error*>& ErrorManager::getErrors() const
+{
     return m_errors;
 }
 
-void ErrorManager::addError(Error inputError) {
-    getErrors()->push_back(inputError);
+void ErrorManager::addError(Error* inputError)
+{
+    m_errors.push_back(inputError);
 }
 
-void ErrorManager::printErrors() {
-    
-    std::vector<Error> * errors = getErrors();
-    for ( int i = 0; i < errors->size(); i++)
+void ErrorManager::printErrors() const 
+{
+    for (unsigned int i = 0; i < getErrors().size(); i++)
     {
-        Error error = errors->at(i);
-        error.printError();
+        getErrors().at(i)->printError();
     }
-
 }
