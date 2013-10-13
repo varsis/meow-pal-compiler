@@ -6,7 +6,8 @@ TESTDIR=../test_cases
 echo "#include <fstream>
 #include \"gtest/gtest.h\"
 
-#include \"../src/Scanner.hpp\"
+#include \"../src/ErrorManager.hpp\"
+#include \"../src/Parser.hpp\"
 
 using namespace std;
 
@@ -20,19 +21,18 @@ do
     echo "    TEST(ParserTestWithFiles, $BASENAME)
     {
         ErrorManager errorManager;
-        ifstream file(\"test/test_cases/$BASENAME.pal\");
-        PalScanner scanner(&file, &errorManager);
-        PalParser parser(scanner);" >> $OUTFILE;
+        Parser parser(&errorManager);
+        int retval = parser.parseFile(\"test/test_cases/$BASENAME.pal\");" >> $OUTFILE;
 
 if [ "$FIRSTLETTER" = "b" ]
 then
-    echo "        EXPECT_NE(0, parser.parse());
+    echo "        EXPECT_NE(0, retval);
     }" >> $OUTFILE;
 fi
 
 if [ "$FIRSTLETTER" != "b" ] 
 then
-    echo "        EXPECT_EQ(0, parser.parse());
+    echo "        EXPECT_EQ(0, retval);
     }" >> $OUTFILE;
 fi
 

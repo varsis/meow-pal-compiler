@@ -3,13 +3,14 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "Scanner.hpp"
 #include "Compiler.hpp"
-#include "pal.tab.h"
+#include "Parser.hpp"
+
 using namespace Meow;
 
 Compiler::Compiler()
-	: m_leaveASC(false), 
+	: m_parser(&m_errorManager), 
+	  m_leaveASC(false), 
 	  m_programListing(true), 
 	  m_runtimeArrayBoundChecking(true)
 {
@@ -17,17 +18,6 @@ Compiler::Compiler()
 
 Compiler::~Compiler()
 {
-	if (m_scanner != NULL)
-	{
-		delete m_scanner;
-		m_scanner = NULL;
-	}
-	
-	if (m_parser != NULL)
-	{
-		delete m_parser;
-		m_parser = NULL;
-	}
 }
 
 void Compiler::displayUsage()
@@ -97,7 +87,7 @@ void Compiler::removeAscOutput()
 
 int Compiler::run(int argc, char* argv[])
 {
-	std::ifstream* inputFileStream = NULL;
+	Parser parser(&m_errorManager);
 	int parseResult = 0;
 	
 	getArguments(argc, argv);
@@ -108,22 +98,7 @@ int Compiler::run(int argc, char* argv[])
 	if (m_programListing)
 		printProgramListing();
 	
-	inputFileStream = new std::ifstream(m_inputFileName.c_str());
-	
-	if (inputFileStream == NULL || !inputFileStream->is_open())
-	{
-		std::cerr << "** Error: Unable to find" << m_inputFileName << "\n";
-		return -1;
-	}
-	
-	m_scanner = new PalScanner(inputFileStream, &m_errorManager);
-	m_parser = new PalParser(*m_scanner);
-	
-	parseResult = m_parser->parse();
-	
-	inputFileStream->close();
-	delete inputFileStream;
-	inputFileStream = NULL;
-	
+	parseResult = parser.parseFile(m_inputFileName);
+
 	return parseResult;
 }
