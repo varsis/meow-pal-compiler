@@ -83,10 +83,6 @@
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-/*
-        String Literal with error handling
-*/
-
 "'"(\\.|[^'])*"'" {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;} /* TODO check for valid escapes, only one line, etc */
 "'"(\\.|[^;])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
 
