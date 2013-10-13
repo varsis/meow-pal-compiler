@@ -42,9 +42,20 @@ namespace Meow
 		
 		private:
             ErrorManager * getManager() 
-			{ 
-				assert(m_manager != 0);
-				return m_manager;
+			{
+				//assert(m_manager != 0);
+                // If no manager make one
+                if(m_manager == NULL)
+                {
+                    // Return the new one.
+                   return m_manager = new ErrorManager();
+                }
+                else
+                {
+                // Otherwise return it.
+                    return m_manager;
+                    
+                }
 			};
             ErrorManager * m_manager;
 			// point to yylval (provided by Bison in overloaded yylex)
