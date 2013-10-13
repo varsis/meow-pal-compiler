@@ -2,7 +2,7 @@
 #define PARSER_H
 
 #include "Scanner.hpp"
-#include "ErrorManager.hpp"
+#include "errormanager.hpp"
 #include "pal.tab.h"
 
 
