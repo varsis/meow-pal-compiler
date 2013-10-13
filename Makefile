@@ -1,4 +1,4 @@
-LOBJS = pal.tab.o lex.yy.o main.o
+LOBJS = pal.tab.o lex.yy.o compiler.o main.o
 OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 CC = g++
 CXX = g++
@@ -27,7 +27,10 @@ pal: $(OBJS)
 	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $(OBJS)
 
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp
-	$(CC) -c -o $@ $<
+	$(CC) -c -g -o $@ $<
+
+$(OBJDIR)/compiler.o: $(SRCDIR)/Compiler.cpp $(SRCDIR)/Scanner.hpp
+	$(CC) -c -g -o $@ $<
 
 $(OBJDIR)/error.o: $(SRCDIR)/error.hpp $(SRCDIR)/error.cpp 
 	$(CC) -c -o $@ $<
@@ -37,10 +40,10 @@ $(OBJDIR)/errormanager.o: $(SRCDIR)/errormanager.hpp $(SRCDIR)/errormanager.cpp 
 	$(CC) -c -o $@ $<
 
 $(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hpp
-	$(CC) -c -o $@ $<
+	$(CC) -c -g -o $@ $<
 
 $(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc
-	$(CC) -c -o $@ $<
+	$(CC) -c -g -o $@ $<
 
 $(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
 	$(FLEX) -o $@ $(SRCDIR)/pal.lex
@@ -70,7 +73,7 @@ $(TESTDIR)/AllTests: $(TESTDIR)/ParserTest.o 		\
 						$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
-	
+
 
 # Parser Test
 ParserTest: $(TESTDIR)/ParserTest
@@ -82,7 +85,7 @@ $(TESTDIR)/ParserTest: $(TESTDIR)/ParserTest.o 		\
 						$(OBJDIR)/lex.yy.o 			\
 						$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
-	
+
 $(TESTDIR)/ParserTest.o: $(TESTDIR)/ParserTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
