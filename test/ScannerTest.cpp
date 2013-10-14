@@ -175,6 +175,58 @@ namespace Meow
 		}
 	}
 
+	TEST_F(ScannerTest, TestUnclosedString)
+	{
+		initTest("test/test_cases/btestUnclosedString.pal");
+
+		EXPECT_TOKEN(token::PROGRAM);
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::LEFT_PAREN);
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::COMMA);
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::RIGHT_PAREN);
+		EXPECT_TOKEN(token::SEMICOLON);
+
+		EXPECT_TOKEN(token::PAL_BEGIN);
+		
+		// TODO - tokenize the unclosed string or ignore it?
+
+		// Next line should tokenize fine!
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::LEFT_PAREN);
+		EXPECT_TOKEN(token::STRING_LITERAL);
+		EXPECT_TOKEN(token::RIGHT_PAREN);
+		EXPECT_TOKEN(token::SEMICOLON);
+
+		// TODO - tokenize the unclosed string or ignore it?
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::LEFT_PAREN);
+
+		// Next line should tokenize fine!
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::LEFT_PAREN);
+		EXPECT_TOKEN(token::STRING_LITERAL);
+		EXPECT_TOKEN(token::RIGHT_PAREN);
+		EXPECT_TOKEN(token::SEMICOLON);
+
+		EXPECT_TOKEN(token::END);
+		EXPECT_TOKEN(token::PERIOD);
+
+		// should be 2 errors
+		const vector<Error*> errors = m_errorManager->getErrors();
+		EXPECT_EQ(2u, errors.size()); 
+
+		// should be 2 unclosed string errors
+		if (errors.size() == 2)
+		{
+			EXPECT_EQ(UnclosedString, errors.at(0)->getErrorCode());
+			EXPECT_EQ(3u, errors.at(0)->getLineNumber());
+			EXPECT_EQ(UnclosedString, errors.at(1)->getErrorCode());
+			EXPECT_EQ(5u, errors.at(1)->getLineNumber());
+		}
+	}
+
 	TEST_F(ScannerTest, TestSubtractionWithoutSpace)
 	{
 		initTest("test/test_cases/subtractionWithoutSpace.pal");

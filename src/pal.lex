@@ -18,7 +18,7 @@
 	"}"	{ BEGIN(INITIAL); }
 	\n	{ /* Count line endings */ }
 	<<EOF>> {
-				getManager()->addError(new Error(UnclosedComment, "???", s_commentStartLine));
+				getManager()->addError(new Error(UnclosedComment, "{", s_commentStartLine));
 				return 0;
 			}
 	.	{ /* ignore eveything else */ }
@@ -78,8 +78,8 @@
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-'(\\.|[^'])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;} /* TODO check for valid escapes, only one line, etc */
-'(\\.|[^'])*\n {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
+'(\\.|[^'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;} /* TODO check for valid escapes, etc */
+'(\\.|[^'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
 
 [+-]?(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { std::cout << "Real constant.\n"; return token::REAL_CONST; }
 [+-]?(0|[1-9])+ { std::cout << "Integer constant.\n"; return token::INT_CONST; }
