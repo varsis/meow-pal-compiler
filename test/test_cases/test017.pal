@@ -8,7 +8,7 @@ begin
         end        
         else
         begin
-           recurse(a-1);
+           recurse(a - 1);
            writeln(a);
         end
 end;

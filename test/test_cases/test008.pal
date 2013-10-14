@@ -1,5 +1,7 @@
 program test008(input, output);
 
+{ Test Case: procedure defs parse properly }
+
 procedure dostuff(a : integer);
 const
         pi = 3.14159;

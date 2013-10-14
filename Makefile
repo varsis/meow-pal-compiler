@@ -50,7 +50,7 @@ $(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hp
 $(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc 
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
+$(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
 	$(FLEX) -o $@ $(SRCDIR)/pal.lex
 
 $(SRCDIR)/pal.tab.h: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
@@ -116,7 +116,7 @@ $(TESTDIR)/ScannerTest: 	$(TESTDIR)/ScannerTest.o 	\
 							$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
 
-$(TESTDIR)/ScannerTest.o: $(TESTDIR)/ScannerTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
+$(TESTDIR)/ScannerTest.o: $(TESTDIR)/ScannerTest.cpp $(SRCDIR)/lex.yy.cc $(SRCDIR)/Scanner.hpp
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 # Test utilities
@@ -148,4 +148,5 @@ clean:
 		$(TESTDIR)/*.a \
 		$(TESTDIR)/*.o \
 		$(TESTDIR)/AllTests \
+		$(TESTDIR)/ParserTestWithFiles.cpp \
 		$(addprefix $(TESTDIR)/,$(TESTS))

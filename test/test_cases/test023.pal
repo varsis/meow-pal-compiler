@@ -2,9 +2,12 @@ program test023(input, output);
 
 type
         letters = (a, b, c, d, e, f, g);
+{ TODO: determine if multidimensional arrays are allowed in PAL!}
+{
         array1 = array[Boolean] of array [1..10] of array[1..23] of real;
         array2 = array[Boolean, 1..10, 1..23] of integer;
         array3 = array[Boolean, letters] of real;
+}
 
 var
         a1     : array1;

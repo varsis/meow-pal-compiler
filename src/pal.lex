@@ -56,11 +56,6 @@
 "div" { return token::INT_DIVIDE; }
 "mod" { return token::MOD; }
 
-"Boolean" { return token::BOOL; }
-"char" { return token::CHAR; }
-"integer" { return token::INT; }
-"real" { return token::REAL; }
-
 "and" { return token::AND; }
 "array" { return token::ARRAY; }
 "begin" { return token::PAL_BEGIN; }

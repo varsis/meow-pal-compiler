@@ -1,5 +1,5 @@
 program btest007(input, output);
-
+{ Test Case: can't have a literal newline in a string literal }
 var
         str : string;
 

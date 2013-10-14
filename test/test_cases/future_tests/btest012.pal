@@ -1,5 +1,5 @@
 program btest012(input, output);
-
+{ Test Case: infinite loop? }
 begin
         while(42) do
                   writeln('a');

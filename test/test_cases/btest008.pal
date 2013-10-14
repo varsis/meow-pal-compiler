@@ -1,5 +1,5 @@
 program btest008(input, output);
-
+{ Test Case: invalid escaped characters in a string literal }
 begin
         writeln('asjdfskafhkjasgfa\ba\c');
 end.

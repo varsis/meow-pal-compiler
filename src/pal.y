@@ -37,10 +37,10 @@
 %token UPTO
 %token LE GE NE EQ LT GT
 %token ADD SUBTRACT MULTIPLY REAL_DIVIDE INT_DIVIDE MOD DIV
-%token AND ARRAY BOOL CHAR CONST CONTINUE DO ELSE END EXIT
+%token AND ARRAY CONST CONTINUE DO ELSE END EXIT
+/* BOOL CHAR INT REAL */
 %token FUNCTION IF NOT OF OR PROCEDURE PROGRAM RECORD THEN
 %token TYPE VAR WHILE PAL_BEGIN
-%token INT REAL
 %token INT_CONST REAL_CONST
 
 %%
@@ -96,14 +96,7 @@ type                    : simple_type
                         | structured_type
                         ;
 
-simple_type             : scalar_type
-                        | REAL
-                        | IDENTIFIER
-                        ;
-
-scalar_type             : INT
-                        | BOOL
-                        | CHAR
+simple_type             : IDENTIFIER
                         ;
 
 enumerated_type			: LEFT_PAREN enum_list RIGHT_PAREN

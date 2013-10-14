@@ -3,9 +3,10 @@ program test013(input, output);
 type
         TGender = (Male, Female);
         TPerson = record
-                name : string[16];
+                { name : string[16]; ??? this doesn't look legal }
+                name : string;
                 age : integer;
-                gender : TGender;
+                gender : TGender
                 end;
 
 var

@@ -1,0 +1,8 @@
+program testSubtractionWithoutSpace(input, output);
+var
+        i : integer;
+begin
+		i := i-1-2;
+        { TODO speed := (23+34*2*(20/10)); }
+end.
+

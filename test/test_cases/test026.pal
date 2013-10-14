@@ -2,7 +2,7 @@ program test026(input, output);
 
 const
         num = 42;
-        value = 23*num/45+45;
+        value = 23 * num / 45 + 45;
 
 begin
         writeln(value);
