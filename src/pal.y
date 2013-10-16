@@ -100,9 +100,9 @@ simple_type             : IDENTIFIER
                         ;
 
 enumerated_type			: LEFT_PAREN enum_list RIGHT_PAREN
-				  		;
+						;
 
-enum_list             	: IDENTIFIER
+enum_list				: IDENTIFIER
                         | enum_list COMMA IDENTIFIER
                         ;
 
@@ -218,6 +218,7 @@ matched_stat            : simple_stat
                         | WHILE expr DO matched_stat
                         | CONTINUE
                         | EXIT
+						| /* empty */
                         ;
 
 /********************************************************************************
