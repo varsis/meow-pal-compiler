@@ -1,4 +1,4 @@
-LOBJS = pal.tab.o lex.yy.o error.o errormanager.o compiler.o parser.o
+LOBJS = pal.tab.o lex.yy.o error.o errormanager.o compiler.o parser.o programlisting.o
 OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 CC = g++
 CXX = g++
@@ -29,7 +29,10 @@ pal: $(OBJDIR)/main.o $(OBJS)
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/compiler.o: $(SRCDIR)/Compiler.cpp $(SRCDIR)/Scanner.hpp
+$(OBJDIR)/programlisting.o: $(SRCDIR)/ProgramListing.cpp $(SRCDIR)/ProgramListing.hpp 
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+$(OBJDIR)/compiler.o: $(SRCDIR)/Compiler.cpp $(SRCDIR)/Scanner.hpp $(SRCDIR)/ProgramListing.cpp $(SRCDIR)/ProgramListing.hpp
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/parser.o: $(SRCDIR)/Parser.cpp $(SRCDIR)/Parser.hpp
