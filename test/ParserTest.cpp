@@ -625,7 +625,7 @@ namespace Meow
 			tokens.push_back(token::IDENTIFIER);
 			tokens.push_back(token::ASSIGN);
 			tokens.push_back(token::IDENTIFIER);
-			tokens.push_back(token::ADD);
+			tokens.push_back(token::PLUS);
 			tokens.push_back(token::INT_CONST);
 			tokens.push_back(token::SEMICOLON);
 

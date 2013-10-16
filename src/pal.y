@@ -36,7 +36,7 @@
 %token COMMA PERIOD
 %token UPTO
 %token LE GE NE EQ LT GT
-%token ADD SUBTRACT MULTIPLY REAL_DIVIDE INT_DIVIDE MOD DIV
+%token PLUS MINUS MULTIPLY REAL_DIVIDE INT_DIVIDE MOD DIV
 %token AND ARRAY CONST CONTINUE DO ELSE END EXIT
 /* BOOL CHAR INT REAL */
 %token FUNCTION IF NOT OF OR PROCEDURE PROGRAM RECORD THEN
@@ -234,10 +234,10 @@ expr                    : simple_expr
                         ;
 
 simple_expr             : term
-                        | ADD term
-                        | SUBTRACT term
-                        | simple_expr ADD term
-                        | simple_expr SUBTRACT term
+                        | PLUS term
+                        | MINUS term
+                        | simple_expr PLUS term
+                        | simple_expr MINUS term
                         | simple_expr OR  term
                         ;
 
