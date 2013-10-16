@@ -1,0 +1,12 @@
+program btest023(input, output);
+
+var
+        stringa : string;
+
+begin
+        { umm.. this definitely isn't valid...
+        {
+        stringa := 'some stringfasdfasd f;
+        }
+        stringa := 'some stringfasdfasd f';
+end.
