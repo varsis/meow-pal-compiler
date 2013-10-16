@@ -1,5 +1,3 @@
-LOBJS = pal.tab.o lex.yy.o error.o errormanager.o compiler.o parser.o programlisting.o
-OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 CC = g++
 CXX = g++
 CFLAGS = -g -Wall -pthread
@@ -21,37 +19,40 @@ FLEX = flex
 # PAL
 ################################################################################
 
-all: pal test
+# List all object files to be generated and linked here
+# Must match name of source CPP for automatic rule to catch
+LOBJS = pal.tab.o\
+		lex.yy.o\
+		error.o\
+		errormanager.o\
+		Compiler.o\
+		ProgramListing.o\
+		Parser.o
+
+OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
+
+# For simplicity, just make (almost) everything depend on everything in the source folder
+
+SRCDEPS = $(SRCDIR)/* \
+		  $(SRCDIR)/lex.yy.cc \
+		  $(SRCDIR)/pal.tab.h \
+		  $(SRCDIR)/pal.tab.c
+
+all: pal
 
 pal: $(OBJDIR)/main.o $(OBJS)
 	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $^
 
-$(OBJDIR)/main.o: $(SRCDIR)/main.cpp $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
+$(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDEPS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/programlisting.o: $(SRCDIR)/ProgramListing.cpp $(SRCDIR)/ProgramListing.hpp 
+$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc  $(SRCDEPS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/compiler.o: $(SRCDIR)/Compiler.cpp $(SRCDIR)/Scanner.hpp $(SRCDIR)/ProgramListing.cpp $(SRCDIR)/ProgramListing.hpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDEPS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/parser.o: $(SRCDIR)/Parser.cpp $(SRCDIR)/Parser.hpp
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(OBJDIR)/error.o: $(SRCDIR)/error.cpp $(SRCDIR)/error.hpp
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(OBJDIR)/errormanager.o: 	$(SRCDIR)/errormanager.cpp 	\
-							$(SRCDIR)/errormanager.hpp 	\
-							$(SRCDIR)/error.hpp 		\
-							$(SRCDIR)/error.cpp 
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDIR)/pal.tab.h $(SRCDIR)/Parser.hpp
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc 
-	$(CC) $(CFLAGS) -c -o $@ $<
+# Lexer/Parser source generation...
 
 $(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
 	$(FLEX) -o $@ $(SRCDIR)/pal.lex
@@ -75,7 +76,7 @@ test: $(TESTDIR)/AllTests $(addprefix $(TESTDIR)/,$(TESTS))
 $(TESTDIR)/AllTests: $(TESTDIR)/ParserTest.o 		\
 						$(TESTDIR)/ScannerTest.o	\
 						$(TESTDIR)/MockScanner.o	\
-      $(TESTDIR)/ParserTestWithFiles.o  \
+						$(TESTDIR)/ParserTestWithFiles.o  \
 						$(OBJS)						\
 						$(TESTDIR)/test-main.a
 	$(CXX) $(CFLAGS) -o $@ $^
