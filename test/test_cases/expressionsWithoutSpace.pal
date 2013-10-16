@@ -1,0 +1,8 @@
+program testExpressionsWithoutSpace(input, output);
+var
+        i : integer;
+begin
+        i := i-1-2;
+        i := i+1+2;
+        i := (23+34*2*(20/10));
+end.

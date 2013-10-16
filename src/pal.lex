@@ -49,8 +49,8 @@
 "." {return token::PERIOD; }
 ".." {return token::UPTO; }
 
-"+" { return token::ADD; }
-"-" { return token::SUBTRACT; }
+"+" { return token::PLUS; }
+"-" { return token::MINUS; }
 "*" { return token::MULTIPLY; }
 "/" { return token::REAL_DIVIDE; }
 "div" { return token::INT_DIVIDE; }
@@ -81,8 +81,8 @@
 '(\\.|[^'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;} /* TODO check for valid escapes, etc */
 '(\\.|[^'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
 
-[+-]?(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { std::cout << "Real constant.\n"; return token::REAL_CONST; }
-[+-]?(0|[1-9])+ { std::cout << "Integer constant.\n"; return token::INT_CONST; }
+(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { std::cout << "Real constant.\n"; return token::REAL_CONST; }
+(0|[1-9])+ { std::cout << "Integer constant.\n"; return token::INT_CONST; }
 ([a-zA-Z]+[0-9]*) { return token::IDENTIFIER; }
 
 "," { return token::COMMA; }
