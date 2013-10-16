@@ -14,9 +14,9 @@ namespace Meow
         public:
             ErrorManager();
             ~ErrorManager();
-            void printErrors();
+            void printErrors() const;
             void addError(Error* inputError);
-            const std::vector<Error*>& getErrors() const;
+            const std::vector<Error*>* getErrors() const;
             
         private:
             std::vector<Error*> m_errors;

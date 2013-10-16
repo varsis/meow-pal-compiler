@@ -17,9 +17,9 @@ ErrorManager::~ErrorManager()
     }
 }
 
-const std::vector<Error*>& ErrorManager::getErrors() const
+const std::vector<Error*>* ErrorManager::getErrors() const
 {
-        return m_errors;
+        return &m_errors;
 }
 
 
@@ -29,10 +29,10 @@ void ErrorManager::addError(Error* inputError)
         std::sort(m_errors.begin(), m_errors.end(), error_ptr_less);
 }
 
-void ErrorManager::printErrors() 
+void ErrorManager::printErrors() const
 {
-    for (unsigned int i = 0; i < getErrors().size(); i++)
+    for (unsigned int i = 0; i < getErrors()->size(); i++)
     {
-        getErrors().at(i)->printError();
+        getErrors()->at(i)->printError();
     }
 }

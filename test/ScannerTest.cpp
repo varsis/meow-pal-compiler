@@ -151,13 +151,13 @@ namespace Meow
 
 		// should only be one error
 		vector<const Error*> unclosedErrors;
-		const vector<Error*> errors = m_errorManager->getErrors();
+		const vector<Error*>* errors = m_errorManager->getErrors();
 
-		EXPECT_EQ(1u, errors.size()); 
+		EXPECT_EQ(1u, errors->size()); 
 
 		// should be one and only one UnclosedComment error, on line 3
 		vector<Error*>::const_iterator errorIt;
-		for (errorIt = errors.begin(); errorIt != errors.end(); ++errorIt)
+		for (errorIt = errors->begin(); errorIt != errors->end(); ++errorIt)
 		{
 			Error* error = *errorIt;
 			if (error->getErrorCode() == UnclosedComment)
@@ -214,16 +214,16 @@ namespace Meow
 		EXPECT_TOKEN(token::PERIOD);
 
 		// should be 2 errors
-		const vector<Error*> errors = m_errorManager->getErrors();
-		EXPECT_EQ(2u, errors.size()); 
+		const vector<Error*>* errors = m_errorManager->getErrors();
+		EXPECT_EQ(2u, errors->size()); 
 
 		// should be 2 unclosed string errors
-		if (errors.size() == 2)
+		if (errors->size() == 2)
 		{
-			EXPECT_EQ(UnclosedString, errors.at(0)->getErrorCode());
-			EXPECT_EQ(3u, errors.at(0)->getLineNumber());
-			EXPECT_EQ(UnclosedString, errors.at(1)->getErrorCode());
-			EXPECT_EQ(5u, errors.at(1)->getLineNumber());
+			EXPECT_EQ(UnclosedString, errors->at(0)->getErrorCode());
+			EXPECT_EQ(3u, errors->at(0)->getLineNumber());
+			EXPECT_EQ(UnclosedString, errors->at(1)->getErrorCode());
+			EXPECT_EQ(5u, errors->at(1)->getLineNumber());
 		}
 	}
 
