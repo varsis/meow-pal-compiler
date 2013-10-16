@@ -14,10 +14,16 @@ namespace Meow
             Error(std::string inputString, unsigned int inputLine);
             Error(ErrorCode errorCode, std::string inputString, unsigned int inputLine);
 
+            bool operator < (Error* other) const
+            {
+                return getLineNumber() < other->getLineNumber();
+            }
+
             std::string getErrorString() const;
             ErrorCode getErrorCode() const;
             unsigned int getLineNumber() const;
             void printError();
+
 
         private:
             void setErrorString(std::string);

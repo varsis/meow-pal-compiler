@@ -1,58 +1,57 @@
-#include <unistd.h>
-#include <fstream>
 #include <iostream>
-#include <istream>
-#include <cstdlib>
 #include <string>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <iterator>
 #include <fstream>
-#include <iomanip>
-#include <algorithm>
+#include <set>
+
+#include "ProgramListing.hpp"
 #include "errormanager.hpp"
 #include "error.hpp"
-#include "ProgramListing.hpp"
 
 using namespace Meow;
 
-
-
-ProgramListing::ProgramListing(const std::string currentProgram, ErrorManager * errorManager)
+ProgramListing::ProgramListing(const std::string currentProgram, const ErrorManager * errorManager)
 {
-        std::vector<Error*> errors = errorManager->getErrors();
-        
-        std::ifstream inputFileStream(currentProgram.c_str());
-        
+	const std::multiset<Error*>* errors = errorManager->getErrors();
+
+	std::ifstream inputFileStream(currentProgram.c_str());
+
 	if (!inputFileStream.is_open())
 	{
 		std::cerr << "** Error: Unable to find " << currentProgram << "\n";
-	} else {
-                
-                int lineCount = 1;
-                std::string currentLine;
-                // open file
-                while (std::getline(inputFileStream, currentLine))
-                {
-                        std::cout << lineCount << ": " << currentLine << std::endl;
-                        
-                        while(!errors.empty() && errors.front()->getLineNumber() == lineCount)
-                        {
-                                errors.front()->printError();
-                                errors.erase(errors.begin());
-                                
-                        }
-                        lineCount++;
-                }
-                
-                if(!errors.empty()) {
-                        for(int i = 0; i < errors.size(); i++) {
-                                errors.at(i)->printError();
-                        }
-                }
-                
-                inputFileStream.close();
 	}
-        
+	else
+	{
+		unsigned int lineCount = 1;
+		std::string currentLine;
+ 
+		std::multiset<Error*>::const_iterator errorIt = errors->begin();
+
+		// open file
+		while (std::getline(inputFileStream, currentLine))
+		{
+			// print the line
+			std::cout << lineCount << ": " << currentLine << std::endl;
+
+			// print any errors for the line
+			// assumes errors are sorted by line number
+			while (errorIt != errors->end() && (*errorIt)->getLineNumber() == lineCount)
+			{
+				(*errorIt)->printError();
+				++errorIt;
+			}
+			lineCount++;
+		}
+
+		// print errors where line number exceeds number of actual lines in the file
+		// -> when can this happen?
+		// print errors without any line number?
+		while (errorIt != errors->end())
+		{
+			(*errorIt)->printError();
+			++errorIt;
+		}
+
+		inputFileStream.close();
+	}
+
 }

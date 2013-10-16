@@ -147,31 +147,16 @@ namespace Meow
 		// therefore, scanner should just return 0 next as the rest of the file
 		// will be commented out.
 		EXPECT_TOKEN(0);
-		//EXPECT_EQ(0, scanner.yylex(&yylval));
 
 		// should only be one error
-		vector<const Error*> unclosedErrors;
-		const vector<Error*> errors = m_errorManager->getErrors();
-
-		EXPECT_EQ(1u, errors.size()); 
+		const multiset<Error*>* errors = m_errorManager->getErrors();
+		EXPECT_EQ(1u, errors->size()); 
 
 		// should be one and only one UnclosedComment error, on line 3
-		vector<Error*>::const_iterator errorIt;
-		for (errorIt = errors.begin(); errorIt != errors.end(); ++errorIt)
+		if (errors->size() == 1)
 		{
-			Error* error = *errorIt;
-			if (error->getErrorCode() == UnclosedComment)
-			{
-				unclosedErrors.push_back(error);
-			}
-		}
-
-		EXPECT_EQ(1u, unclosedErrors.size());
-
-		if (unclosedErrors.size() > 0)
-		{
-			const Error* unclosedError = unclosedErrors.front();
-			EXPECT_EQ(3u, unclosedError->getLineNumber());
+			EXPECT_EQ(UnclosedComment, (*errors->begin())->getErrorCode());
+			EXPECT_EQ(3u, (*errors->begin())->getLineNumber());
 		}
 	}
 
@@ -214,16 +199,21 @@ namespace Meow
 		EXPECT_TOKEN(token::PERIOD);
 
 		// should be 2 errors
-		const vector<Error*> errors = m_errorManager->getErrors();
-		EXPECT_EQ(2u, errors.size()); 
+		const multiset<Error*>* errors = m_errorManager->getErrors();
+		EXPECT_EQ(2u, errors->size()); 
 
 		// should be 2 unclosed string errors
-		if (errors.size() == 2)
+		if (errors->size() == 2)
 		{
-			EXPECT_EQ(UnclosedString, errors.at(0)->getErrorCode());
-			EXPECT_EQ(3u, errors.at(0)->getLineNumber());
-			EXPECT_EQ(UnclosedString, errors.at(1)->getErrorCode());
-			EXPECT_EQ(5u, errors.at(1)->getLineNumber());
+			multiset<Error*>::iterator errIt = errors->begin();
+
+			EXPECT_EQ(UnclosedString, (*errIt)->getErrorCode());
+			EXPECT_EQ(3u, (*errIt)->getLineNumber());
+
+			++errIt;
+
+			EXPECT_EQ(UnclosedString, (*errIt)->getErrorCode());
+			EXPECT_EQ(5u, (*errIt)->getLineNumber());
 		}
 	}
 
