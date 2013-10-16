@@ -6,6 +6,7 @@
 %parse-param { Meow::PalScanner &scanner }
 %lex-param   { Meow::PalScanner &scanner }
 
+
 %code requires {
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
@@ -218,6 +219,7 @@ matched_stat            : simple_stat
                         | WHILE expr DO matched_stat
                         | CONTINUE
                         | EXIT
+			| /* empty */
                         ;
 
 /********************************************************************************

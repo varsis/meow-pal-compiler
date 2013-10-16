@@ -3,6 +3,7 @@
 	#include "Scanner.hpp"
 	typedef Meow::PalParser::token token;
 
+
 	static unsigned int s_commentStartLine;
 %}
 
@@ -78,16 +79,16 @@
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-'(\\.|[^'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;} /* TODO check for valid escapes, etc */
-'(\\.|[^'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
+'(\\([nt'\\])|[^\\'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;} /* TODO check for valid escapes, etc */
+'(\\([nt'\\])|[^\\'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
 
 (0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { std::cout << "Real constant.\n"; return token::REAL_CONST; }
-(0|[1-9])+ { std::cout << "Integer constant.\n"; return token::INT_CONST; }
+(0|[1-9])+ { return token::INT_CONST; }
 ([a-zA-Z]+[0-9]*) { return token::IDENTIFIER; }
 
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
 ":" { return token::COLON; }
 
-. { std::cerr << "** " << "(" << yylineno << ") lex: Unknown symbol \'" << yytext[0] << "\'\n"; }
+. { std::cerr << "** " << "(" << yylineno << ") lex: Unknown symbol \'" << yytext[0] << "\'\n";}
 
