@@ -2,7 +2,7 @@
 #define PROGRAMLISTING_H
 
 #include <string>
-#include "ErrorManager.hpp"
+#include "errormanager.hpp"
 
 namespace Meow
 {
