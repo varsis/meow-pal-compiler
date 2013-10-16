@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 
+#include "ProgramListing.hpp"
 #include "Compiler.hpp"
 #include "Parser.hpp"
 
@@ -77,7 +78,7 @@ void Compiler::getArguments(int argc, char* argv[])
 
 void Compiler::printProgramListing()
 {
-	std::cout << "Print program listing.\n";
+	new Meow::ProgramListing(m_inputFileName,&m_errorManager);
 }
 
 void Compiler::removeAscOutput()
@@ -95,10 +96,10 @@ int Compiler::run(int argc, char* argv[])
 	if (!m_leaveASC)
 		removeAscOutput();
 	
-	if (m_programListing)
-		printProgramListing();
-	
 	parseResult = parser.parseFile(m_inputFileName);
+        
+        if (m_programListing)
+		printProgramListing();
 
 	return parseResult;
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "error.hpp"
 
 #ifndef ERRORMANAGER_H
@@ -13,7 +14,7 @@ namespace Meow
         public:
             ErrorManager();
             ~ErrorManager();
-            void printErrors() const;
+            void printErrors();
             void addError(Error* inputError);
             const std::vector<Error*>& getErrors() const;
             
