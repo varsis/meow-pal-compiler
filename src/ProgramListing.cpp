@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <algorithm>
+#include <set>
 
 #include "ProgramListing.hpp"
 #include "errormanager.hpp"
@@ -11,7 +11,7 @@ using namespace Meow;
 
 ProgramListing::ProgramListing(const std::string currentProgram, const ErrorManager * errorManager)
 {
-	const std::vector<Error*>* errors = errorManager->getErrors();
+	const std::multiset<Error*>* errors = errorManager->getErrors();
 
 	std::ifstream inputFileStream(currentProgram.c_str());
 
@@ -24,7 +24,7 @@ ProgramListing::ProgramListing(const std::string currentProgram, const ErrorMana
 		unsigned int lineCount = 1;
 		std::string currentLine;
  
-		std::vector<Error*>::const_iterator errorIt = errors->begin();
+		std::multiset<Error*>::const_iterator errorIt = errors->begin();
 
 		// open file
 		while (std::getline(inputFileStream, currentLine))

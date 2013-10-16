@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <vector>
+#include <set>
 #include <algorithm>
 #include "error.hpp"
 
@@ -16,10 +16,10 @@ namespace Meow
             ~ErrorManager();
             void printErrors() const;
             void addError(Error* inputError);
-            const std::vector<Error*>* getErrors() const;
+            const std::multiset<Error*>* getErrors() const;
             
         private:
-            std::vector<Error*> m_errors;
+            std::multiset<Error*> m_errors;
     };
 }
 
