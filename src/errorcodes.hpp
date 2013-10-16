@@ -9,7 +9,9 @@ namespace Meow
 		UnclosedComment,
 		UnclosedString,
   UnrecognizedSymbol,
-  InvalidIdentifier
+  InvalidIdentifier,
+  NestedComment,
+  UnmatchedComment
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
