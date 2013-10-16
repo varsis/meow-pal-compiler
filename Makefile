@@ -67,65 +67,30 @@ $(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 # Tests
 ################################################################################
 
+# Add new tests here. Test % must be in file $(TESTDIR)/%.cpp
 TESTS = ScannerTest ParserTest ParserTestWithFiles
 
-test: $(TESTDIR)/AllTests $(addprefix $(TESTDIR)/,$(TESTS))
+TESTS_ = $(addprefix $(TESTDIR)/,$(TESTS))
+
+TEST_OBJS = $(addsuffix .o, $(TESTS_))
+
+# GTEST library, any mock objects, PAL objects
+TEST_SUPPORT_OBJS = $(TESTDIR)/test-main.a\
+					$(TESTDIR)/MockScanner.o\
+					$(OBJS)
+
+TEST_SUPPORT_SRCS = $(TESTDIR)/MockScanner.cpp\
+					$(TESTDIR)/MockScanner.h
+
+test: $(TESTDIR)/AllTests $(TEST_)
 	-$(TESTDIR)/AllTests
 
-# Link all tests together into one big super test executable
-$(TESTDIR)/AllTests: $(TESTDIR)/ParserTest.o 		\
-						$(TESTDIR)/ScannerTest.o	\
-						$(TESTDIR)/MockScanner.o	\
-						$(TESTDIR)/ParserTestWithFiles.o  \
-						$(OBJS)						\
-						$(TESTDIR)/test-main.a
-	$(CXX) $(CFLAGS) -o $@ $^
-
-
-
-# Parser Test
-ParserTest: $(TESTDIR)/ParserTest
-	$^
-
-$(TESTDIR)/ParserTest: $(TESTDIR)/ParserTest.o 		\
-						$(TESTDIR)/MockScanner.o	\
-						$(OBJS)						\
-						$(TESTDIR)/test-main.a
-	$(CXX) $(CFLAGS) -o $@ $^
-
-$(TESTDIR)/ParserTest.o: $(TESTDIR)/ParserTest.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
-	$(CXX) $(CFLAGS) -c -o $@ $<
-
-# Parser Test with files
-ParserTestWithFiles: $(TESTDIR)/ParserTestWithFiles
-	$^
-
-$(TESTDIR)/ParserTestWithFiles: $(TESTDIR)/ParserTestWithFiles.o     \
-            $(OBJS)  \
-            $(TESTDIR)/test-main.a
-	$(CXX) $(CFLAGS) -o $@ $^
-  
-$(TESTDIR)/ParserTestWithFiles.o: $(TESTDIR)/ParserTestWithFiles.cpp $(SRCDIR)/pal.lex $(SRCDIR)/pal.y
-	$(CXX) $(CFLAGS) -c -o $@ $<
-
-$(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scripts/test_gen
-	cd ./test/scripts && ./test_gen && cd ../../
-
-# Scanner Test
-ScannerTest: $(TESTDIR)/ScannerTest
-	$^
-
-$(TESTDIR)/ScannerTest: 	$(TESTDIR)/ScannerTest.o 	\
-							$(OBJS)						\
-							$(TESTDIR)/test-main.a
-	$(CXX) $(CFLAGS) -o $@ $^
-
-$(TESTDIR)/ScannerTest.o: $(TESTDIR)/ScannerTest.cpp $(SRCDIR)/lex.yy.cc $(SRCDIR)/Scanner.hpp
-	$(CXX) $(CFLAGS) -c -o $@ $<
+$(TESTDIR)/AllTests: $(TEST_OBJS) $(TEST_SUPPORT_OBJS) 
+	-$(CXX) $(CFLAGS) -o $@ $^
 
 # Test utilities
 
-$(TESTDIR)/MockScanner.o: $(TESTDIR)/MockScanner.cpp $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp
+$(TESTDIR)/MockScanner.o: $(TESTDIR)/MockScanner.cpp $(SRCDEPS)
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 $(TESTDIR)/test-main.a : $(TESTDIR)/gmock-gtest-all.o $(TESTDIR)/gmock_main.o
@@ -136,6 +101,21 @@ $(TESTDIR)/gmock-gtest-all.o: $(TESTDIR)/gmock-gtest-all.cc
 
 $(TESTDIR)/gmock-main.o: $(TESTDIR)/gmock_main.cc
 	$(CXX) $(CFLAGS) -o $@ -c $^
+
+# Individual tests:
+
+$(TESTS): % : $(TESTDIR)/%
+	-$^
+
+$(TESTDIR)/%.o: $(TESTDIR)/%.cpp $(SRCDEPS) $(TEST_SUPPORT_SRCS)
+	$(CXX) $(CFLAGS) -c -o $@ $<
+
+$(TESTDIR)/%: $(TESTDIR)/%.o $(TEST_SUPPORT_OBJS)
+	$(CXX) $(CFLAGS) -o $@ $^
+
+# Generated tests:
+$(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scripts/test_gen
+	cd ./test/scripts && ./test_gen && cd ../../
 
 ################################################################################
 
