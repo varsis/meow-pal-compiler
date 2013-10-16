@@ -83,7 +83,8 @@
 
 [+-]?(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { return token::REAL_CONST; }
 [+-]?(0|[1-9])+ {  return token::INT_CONST; }
-([a-zA-Z]+[0-9]*) { return token::IDENTIFIER; }
+([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER; }
+([0-9_]*[a-zA-Z_0-9]*) { yylval->identifier = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "Identifiers may not contain underscores or begin with numbers.", yylineno)); }
 
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
