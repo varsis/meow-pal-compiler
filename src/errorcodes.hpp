@@ -7,7 +7,9 @@ namespace Meow
 	{
 		OtherError,
 		UnclosedComment,
-		UnclosedString
+		UnclosedString,
+  UnrecognizedSymbol,
+  InvalidIdentifier
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }

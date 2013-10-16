@@ -18,7 +18,7 @@
 	"}"	{ BEGIN(INITIAL); }
 	\n	{ /* Count line endings */ }
 	<<EOF>> {
-				getManager()->addError(new Error(UnclosedComment, "{", s_commentStartLine));
+				getManager()->addError(new Error(UnclosedComment, "Unclosed comment.", s_commentStartLine));
 				return 0;
 			}
 	.	{ /* ignore eveything else */ }
@@ -79,15 +79,15 @@
 "while" { return token::WHILE; }
 
 '(\\.|[^'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;} /* TODO check for valid escapes, etc */
-'(\\.|[^'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
+'(\\.|[^'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "Unclosed string literal.", yylineno));}
 
-(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { std::cout << "Real constant.\n"; return token::REAL_CONST; }
-(0|[1-9])+ { std::cout << "Integer constant.\n"; return token::INT_CONST; }
-([a-zA-Z]+[0-9]*) { return token::IDENTIFIER; }
+(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { return token::REAL_CONST; }
+(0|[1-9])+ { return token::INT_CONST; }
+([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER; }
+([0-9_]*[a-zA-Z_0-9]*) { yylval->identifier = new std::string(yytext); getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not contain underscores or begin with numbers.", yylineno)); }
 
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
 ":" { return token::COLON; }
 
-. { std::cerr << "** " << "(" << yylineno << ") lex: Unknown symbol \'" << yytext[0] << "\'\n"; }
-
+. { getManager()->addError(new Error(UnrecognizedSymbol, "Invalid symbol encountered.", yylineno)); }
