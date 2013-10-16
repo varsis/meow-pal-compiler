@@ -31,5 +31,12 @@ test/ScannerTest
 test/ParserTest
 test/ParserTestWithFiles
 
+# random editor temp files
+*.swp
+
+# latex temp files
+*.aux
+*.log
+
 # Generated GTest code
 test/ParserTestWithFiles.cpp
