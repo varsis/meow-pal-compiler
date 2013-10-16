@@ -16,10 +16,12 @@ namespace Meow
             ~ErrorManager();
             void printErrors() const;
             void addError(Error* inputError);
+            bool getErrorFlag() const;
             const std::multiset<Error*>* getErrors() const;
-            
+            void setErrorFlag();
         private:
             std::multiset<Error*> m_errors;
+            bool m_errorFlag;
     };
 }
 
