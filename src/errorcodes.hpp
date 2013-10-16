@@ -8,7 +8,8 @@ namespace Meow
 		OtherError,
 		UnclosedComment,
 		UnclosedString,
-  UnrecognizedSymbol
+  UnrecognizedSymbol,
+  InvalidIdentifier
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
