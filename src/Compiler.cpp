@@ -10,8 +10,8 @@
 using namespace Meow;
 
 Compiler::Compiler()
-	: m_parser(&m_errorManager), 
-	  m_leaveASC(false), 
+	: m_parser(&m_errorManager, false),
+	  m_leaveASC(false),
 	  m_programListing(true), 
 	  m_runtimeArrayBoundChecking(true)
 {
@@ -29,12 +29,13 @@ void Compiler::displayUsage()
 	std::cout << "\t-n : Do not produce a program listing. Default is to produce one.\n";
 	std::cout << "\t-a : Do not generate run-time array subscript bounds checking. Default\n";
 	std::cout << "\t     is to do the checking.\n\n";
+	std::cout << "\t-d : Bison debug mode\n";
 }
 
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
-	const char* optString = "Sna";
+	const char* optString = "Snad";
 	
 	if (argc == 1)
 	{
@@ -56,6 +57,9 @@ void Compiler::getArguments(int argc, char* argv[])
 				break;
 			case 'a':
 				m_runtimeArrayBoundChecking = false;
+				break;
+			case 'd':
+				m_debug = true;
 				break;
 			default:
 				std::cerr << "\n* Unrecognized option: -" << opt << "\n";
@@ -86,12 +90,14 @@ void Compiler::removeAscOutput()
 	std::cout << "Remove Asc output file.\n";
 }
 
+
+
 int Compiler::run(int argc, char* argv[])
 {
-	Parser parser(&m_errorManager);
-	int parseResult = 0;
-	
 	getArguments(argc, argv);
+
+	Parser parser(&m_errorManager, m_debug);
+	int parseResult = 0;
 	
 	if (!m_leaveASC)
 		removeAscOutput();
@@ -100,6 +106,7 @@ int Compiler::run(int argc, char* argv[])
         
         if (m_programListing)
 		printProgramListing();
+	
 
 	return parseResult;
 }
