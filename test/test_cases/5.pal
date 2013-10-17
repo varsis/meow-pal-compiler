@@ -4,7 +4,7 @@
 	Error 3: line 15 invalid token !+ }
 program test5(input, output);
 var 
-	 : integer;
+	: integer;
 	a : Integer;
 	array : array[1 .. 2];
 { some comment }
