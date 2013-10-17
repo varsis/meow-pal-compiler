@@ -34,12 +34,10 @@ test/ParserTestWithFiles
 # random editor temp files
 *.swp
 
-# latex temp files
+# latex output
 *.aux
 *.log
-
-#PDF doc file
-doc/pal.pdf
+*.pdf
 
 # Generated GTest code
 test/ParserTestWithFiles.cpp
