@@ -20,7 +20,9 @@ namespace Meow
   InvalidProgramHeader,
   InvalidConstDecl,
   InvalidTypeDecl,
-  InvalidVarDecl
+  InvalidVarDecl,
+  InvalidFunctDecl,
+  InvalidProcDecl
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }

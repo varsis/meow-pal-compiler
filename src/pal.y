@@ -188,6 +188,20 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
 
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON 
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
+                        | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidFunctDecl,
+                                        "Function needs to return a value.",
+                                        scanner.lineno()));
+                        }
+                        | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidProcDecl,
+                                        "Procedure can't return a value.",
+                                        scanner.lineno()));
+                        }  
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
