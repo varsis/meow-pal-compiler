@@ -190,7 +190,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
  ********************************************************************************/
 
 compound_stat           : PAL_BEGIN stat_list END
-						;
+                        ;
 
 stat_list               : stat
                         | stat_list SEMICOLON stat
@@ -258,6 +258,13 @@ expr                    : simple_expr
                         | expr LT simple_expr
                         | expr GE simple_expr
                         | expr GT simple_expr
+                        | error SEMICOLON
+                          {
+                            errorManager.addError(
+                                                  new Error(NestedComment,
+                                                            "Invalid expression.",
+                                                            scanner.lineno()));
+                          }
                         ;
 
 simple_expr             : term

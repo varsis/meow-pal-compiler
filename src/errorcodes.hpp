@@ -12,7 +12,6 @@ namespace Meow
   InvalidIdentifier,
   NestedComment,
   UnmatchedComment,
-  MissingMethodParentheses,
   MissingProgramParentheses,
   MissingProgramPeriod,
   CStyleAssignment

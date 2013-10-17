@@ -1,7 +1,7 @@
 program btest010(input, output);
 
 var
-        9mystring      :       string;
+        9mystring       : string;
         myother.string :       string;
         myother_otherstring : string;
 
