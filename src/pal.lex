@@ -84,6 +84,7 @@
 
 '(\\([nt'\\])|[^\\'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;}
 '(\\([nt'\\])|[^\\'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "Unclosed string literal.", yylineno)); }
+'(\\.|[^'\n])*' {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "String contains invalid escapes or characters.", yylineno)); }
 
 (0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { return token::REAL_CONST; }
 (0|[1-9])+ { return token::INT_CONST; }
