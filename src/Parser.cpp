@@ -8,8 +8,9 @@
 namespace Meow
 {
 
-    Parser::Parser(ErrorManager* manager)
-        : m_errorManager(manager)
+    Parser::Parser(ErrorManager* manager, bool debugFlag)
+        : m_errorManager(manager),
+	m_debugFlag(debugFlag)
     {
     }
 
@@ -17,8 +18,12 @@ namespace Meow
     {
         int retval;
         PalScanner scanner(fileStream, m_errorManager);
-        PalParser parser(scanner, *m_errorManager);
 
+        PalParser parser(scanner, *m_errorManager);
+	    if(m_debugFlag)
+	    {
+		    parser.set_debug_level(1);
+	    }
         retval = parser.parse();
         
         if (retval != 0) 
@@ -41,4 +46,7 @@ namespace Meow
 
         return parseFile(&fileStream);
     }
+	
+
+	
 }

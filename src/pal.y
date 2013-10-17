@@ -6,7 +6,7 @@
 %parse-param { Meow::PalScanner &scanner }
 %parse-param { Meow::ErrorManager &errorManager }
 %lex-param   { Meow::PalScanner &scanner }
-
+%debug
 %code requires {
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
@@ -19,7 +19,7 @@
 %code {
 	#include "errormanager.hpp"
 	#include "error.hpp"
-
+	#define YYDEBUG 1
 	// Prototype for the yylex function
 	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);
 	void print_error(const std::string msg);
@@ -47,7 +47,6 @@
 %token FUNCTION IF NOT OF OR PROCEDURE PROGRAM RECORD THEN
 %token TYPE VAR WHILE PAL_BEGIN
 %token INT_CONST REAL_CONST
-
 %%
 
 program                 : program_head decls compound_stat PERIOD
@@ -97,17 +96,17 @@ type_decl               : IDENTIFIER EQ type
                         ;
 
 type                    : simple_type
-						| enumerated_type
+			| enumerated_type
                         | structured_type
                         ;
 
 simple_type             : IDENTIFIER
                         ;
 
-enumerated_type			: LEFT_PAREN enum_list RIGHT_PAREN
-						;
+enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
+			;
 
-enum_list				: IDENTIFIER
+enum_list		: IDENTIFIER
                         | enum_list COMMA IDENTIFIER
                         ;
 
@@ -230,7 +229,7 @@ matched_stat            : simple_stat
  * Rules for expressions
  ********************************************************************************/
 
-expr                    : simple_expr
+expr			: simple_expr
                         | expr EQ simple_expr
                         | expr NE simple_expr
                         | expr LE simple_expr
