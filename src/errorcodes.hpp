@@ -16,6 +16,7 @@ namespace Meow
   MissingProgramParentheses,
   MissingProgramPeriod,
   CStyleAssignment,
+  MismatchedBlock,
   InvalidExpression,
   InvalidProgramHeader,
   InvalidConstDecl,

@@ -111,6 +111,13 @@ const_decl_list         : const_decl
                         ;
 
 const_decl              : IDENTIFIER EQ expr
+                        | IDENTIFIER ASSIGN expr
+                        {
+                            errorManager.addError(
+                                new Error(InvalidConstDecl,
+                                          "Use \"=\" to assign constants.",
+                                          scanner.lineno()));
+                        }
 						;
 
 /********************************************************************************
@@ -125,6 +132,13 @@ type_decl_list          : type_decl
                         ;
 
 type_decl               : IDENTIFIER EQ type
+                        | IDENTIFIER ASSIGN type
+                        {
+                            errorManager.addError(
+                                new Error(InvalidTypeDecl,
+                                          "Use \"=\" for type definitions.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 type                    : simple_type
@@ -170,6 +184,13 @@ var_decl_list           : var_decl
 
 var_decl                : IDENTIFIER COLON type
                         | IDENTIFIER COMMA var_decl
+                        | IDENTIFIER ASSIGN type
+                        {
+                            errorManager.addError(
+                                new Error(InvalidVarDecl,
+                                          "Use \":\" to declare variables.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 /********************************************************************************
