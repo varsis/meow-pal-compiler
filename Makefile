@@ -118,6 +118,15 @@ $(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scrip
 	cd ./test/scripts && ./test_gen && cd ../../
 
 ################################################################################
+# Documentation
+################################################################################
+
+man:
+	nroff -man doc/pal.1 | less
+
+doc: doc.pdf
+doc.pdf: doc/pal.tex
+	pdflatex -output-directory doc/ doc/pal.tex
 
 clean:
 	rm -f \
