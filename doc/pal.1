@@ -1,14 +1,26 @@
 .\" Manpage for pal.
 .TH man 8 "06 September 2013" "0.0.1" "pal"
 .SH NAME
-pal \- compiles programs for the PAL programming language.
+pal \-\- compiles programs for the PAL programming language.
 .SH SYNOPSIS
-Fill in later.
+.B pal 
+[
+.B -n
+] [
+.I file ...
+]
+.SH DESCRIPTION
+Parses a
+.B PAL
+program and is able to detect some error based on syntax. No symantic
+checking yet.
 .SH OPTIONS
-Fill in later.
-.SH SEE ALSO
-Fill in later.
+.IP -n
+Do not produce a program listing. Default is to produce one.
+.SH EXAMPLES
+.B pal -n file
+Will compile the PAL program in the file, without printing a program listing.
 .SH BUGS
-None so far.
+Does not actually compile anything yet....
 .SH AUTHOR
 Chris Pavlicek, Connor Moreside, Mike Armstrong, and Steve Jahns

@@ -9,8 +9,8 @@
 using namespace Meow;
 
 Compiler::Compiler()
-	: m_parser(&m_errorManager), 
-	  m_leaveASC(false), 
+	: m_parser(&m_errorManager, false),
+	  m_leaveASC(false),
 	  m_programListing(true), 
 	  m_runtimeArrayBoundChecking(true)
 {
@@ -31,7 +31,9 @@ void Compiler::displayUsage()
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
+
 	const char* optString = "n";
+
 	
 	if (argc == 1)
 	{
@@ -48,6 +50,7 @@ void Compiler::getArguments(int argc, char* argv[])
 			case 'n':
 				m_programListing = false;
 				break;
+
 			default:
 				std::cerr << "\n* Unrecognized option: -" << opt << "\n";
 				displayUsage();
@@ -129,23 +132,27 @@ void Compiler::printProgramListing()
 	}
 }
 
+
+
 int Compiler::run(int argc, char* argv[])
 {
-	Parser parser(&m_errorManager);
-	int parseResult = 0;
-	
 	getArguments(argc, argv);
+
+	Parser parser(&m_errorManager, m_debug);
+	int parseResult = 0;
 	
 	parseResult = parser.parseFile(m_inputFileName);
         
 	if (m_programListing)
 	{
 		printProgramListing();
+
 	}
 	else
 	{
 		printErrors();
 	}
+
 
 	return parseResult;
 }

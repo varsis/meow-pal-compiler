@@ -125,7 +125,10 @@ man:
 
 doc: doc.pdf
 doc.pdf: doc/pal.tex
-	pdflatex -output-directory doc/ doc/pal.tex
+	cd doc;\
+	epstopdf *.eps;\
+	pdflatex ./pal.tex;\
+	cd ..
 
 clean:
 	rm -f \

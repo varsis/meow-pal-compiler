@@ -28,6 +28,7 @@ namespace Meow
 		bool m_leaveASC;
 		bool m_programListing;
 		bool m_runtimeArrayBoundChecking;
+		bool m_debug;
 	};
 }
 
