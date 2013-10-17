@@ -48,6 +48,6 @@ unsigned int Error::getLineNumber() const
 }
 
 void Error::printError() {
-    std::cout << "ERROR -- (line " << getLineNumber() << ")  : " << getErrorString() << "\n";
+    std::cout << "ERROR -- (Line " << getLineNumber() << ") : " << getErrorString() << "\n";
 }
 

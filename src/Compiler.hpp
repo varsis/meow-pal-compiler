@@ -19,6 +19,7 @@ namespace Meow
 		void getArguments(int argc, char* argv[]);
 		void displayUsage();
 		void printProgramListing();
+		void printErrors();
 		void removeAscOutput();
 
 		ErrorManager m_errorManager;

@@ -26,7 +26,6 @@ LOBJS = pal.tab.o\
 		error.o\
 		errormanager.o\
 		Compiler.o\
-		ProgramListing.o\
 		Parser.o
 
 OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
