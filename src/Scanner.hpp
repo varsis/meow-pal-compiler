@@ -8,9 +8,9 @@
 
 #include <assert.h>
 
-#include "errorcodes.hpp"
-#include "error.hpp"
-#include "errormanager.hpp"
+#include "ErrorCodes.hpp"
+#include "Error.hpp"
+#include "ErrorManager.hpp"
 
 // Override the interface for yylex since we namespaced it
 #undef YY_DECL

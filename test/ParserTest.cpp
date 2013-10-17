@@ -2,8 +2,8 @@
 
 #include "../src/pal.tab.h"
 #include "../src/Scanner.hpp"
-#include "../src/errormanager.hpp"
-#include "../src/error.hpp"
+#include "../src/ErrorManager.hpp"
+#include "../src/Error.hpp"
 #include "MockScanner.h"
 
 using namespace std;

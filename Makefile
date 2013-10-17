@@ -22,11 +22,11 @@ FLEX = flex
 # List all object files to be generated and linked here
 # Must match name of source CPP for automatic rule to catch
 LOBJS = pal.tab.o\
-		lex.yy.o\
-		error.o\
-		errormanager.o\
-		Compiler.o\
-		Parser.o
+	lex.yy.o\
+	Error.o\
+	ErrorManager.o\
+	Compiler.o\
+	Parser.o
 
 OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
 

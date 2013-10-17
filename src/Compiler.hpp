@@ -5,7 +5,7 @@
 #include <string>
 
 #include "Parser.hpp"
-#include "errormanager.hpp"
+#include "ErrorManager.hpp"
 
 namespace Meow
 {

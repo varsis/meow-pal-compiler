@@ -17,8 +17,8 @@
 }
 
 %code {
-	#include "errormanager.hpp"
-	#include "error.hpp"
+	#include "ErrorManager.hpp"
+	#include "Error.hpp"
 	#define YYDEBUG 1
 	// Prototype for the yylex function
 	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);

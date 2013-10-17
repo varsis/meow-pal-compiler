@@ -2,7 +2,7 @@
 #include <string>
 #include <set>
 #include <algorithm>
-#include "error.hpp"
+#include "Error.hpp"
 
 #ifndef ERRORMANAGER_H
 #define ERRORMANAGER_H
