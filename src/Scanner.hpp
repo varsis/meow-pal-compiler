@@ -52,9 +52,8 @@ namespace Meow
                 }
                 else
                 {
-                // Otherwise return it.
+					// Otherwise return it.
                     return m_manager;
-                    
                 }
 			};
             ErrorManager * m_manager;

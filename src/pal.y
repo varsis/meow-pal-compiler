@@ -4,6 +4,7 @@
 %define namespace "Meow"
 %define parser_class_name "PalParser"
 %parse-param { Meow::PalScanner &scanner }
+%parse-param { Meow::ErrorManager &errorManager }
 %lex-param   { Meow::PalScanner &scanner }
 
 %code requires {
@@ -11,10 +12,14 @@
 	// Scanner, but the Scanner can't be declared without the Parser
 	namespace Meow {
 		class PalScanner;
+		class ErrorManager;
 	}
 }
 
 %code {
+	#include "errormanager.hpp"
+	#include "error.hpp"
+
 	// Prototype for the yylex function
 	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);
 	void print_error(const std::string msg);
