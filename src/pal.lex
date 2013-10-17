@@ -18,6 +18,7 @@
 {
 	"}"	{ BEGIN(INITIAL); }
 	\n	{ /* Count line endings */ }
+ "{" { getManager()->addError(new Error(NestedComment, "Unexpected \"{\" in comment; nested comments not allowed.", yylineno)); return 0; } 
 	<<EOF>> {
 				getManager()->addError(new Error(UnclosedComment, "Unclosed comment.", s_commentStartLine));
 				return 0;
@@ -33,6 +34,8 @@
 		s_commentStartLine = yylineno;
 		BEGIN(IN_COMMENT); 
 	}
+
+"}" { getManager()->addError(new Error(UnmatchedComment, "Unexpected \"}\"; unmatched comment.", yylineno)); }
 
 "\[" { return token::LEFT_BRACKET; }
 "\]" { return token::RIGHT_BRACKET; }
@@ -80,7 +83,7 @@
 "while" { return token::WHILE; }
 
 '(\\([nt'\\])|[^\\'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;}
-'(\\([nt'\\])|[^\\'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, yylval->stringLiteral->c_str(), yylineno));}
+'(\\([nt'\\])|[^\\'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "Unclosed string literal.", yylineno)); }
 
 (0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { return token::REAL_CONST; }
 (0|[1-9])+ { return token::INT_CONST; }

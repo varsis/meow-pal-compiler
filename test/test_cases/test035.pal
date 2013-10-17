@@ -1,12 +1,17 @@
-program test035(input, output);
+program test036(input, output);
+{ Tests the var keyword in parameters }
 
 var
-        stringa : string;
+        myInt : integer;
+
+procedure blah(var a : integer);
+begin
+        a:= 26;
+end;
 
 begin
-        { umm.. this definitely isn't valid...
-        {
-        stringa := 'some stringfasdfasd f;
-        }
-        stringa := 'some stringfasdfasd f';
+        myInt := 42;
+        writeln(myInt);
+        blah(myInt);
+        writeln(myInt);
 end.

@@ -51,6 +51,15 @@ ProgramListing::ProgramListing(const std::string currentProgram, const ErrorMana
 			++errorIt;
 		}
 
+  if (errorManager->getErrorFlag()) 
+  {
+    std::cout << "PROGRAM NOT COMPILED -- CONTAINS ERRORS\n";
+  }
+  else 
+  {
+    std::cout << "PROGRAM COMPILED -- NO ERRORS\n";
+  }
+
 		inputFileStream.close();
 	}
 

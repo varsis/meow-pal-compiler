@@ -20,6 +20,11 @@ namespace Meow
         PalParser parser(scanner);
 
         retval = parser.parse();
+        
+        if (retval != 0) 
+        {
+          m_errorManager->setErrorFlag();
+        }
 
         return retval;
     }

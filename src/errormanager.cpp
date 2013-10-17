@@ -4,6 +4,7 @@ namespace Meow
 {
         ErrorManager::ErrorManager()
         {
+                m_errorFlag = false;       
         }
 
         ErrorManager::~ErrorManager()
@@ -24,6 +25,7 @@ namespace Meow
         void ErrorManager::addError(Error* inputError)
         {
                 m_errors.insert(inputError);
+                m_errorFlag = true;
         }
 
         void ErrorManager::printErrors() const
@@ -33,5 +35,15 @@ namespace Meow
                 {
                         (*it)->printError();
                 }
+        }
+     
+        bool ErrorManager::getErrorFlag() const 
+        {
+                return m_errorFlag;
+        }
+        
+        void ErrorManager::setErrorFlag() 
+        {
+                m_errorFlag = true;
         }
 }
