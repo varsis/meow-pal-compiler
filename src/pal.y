@@ -66,10 +66,12 @@ program_head            : PROGRAM IDENTIFIER
 							SEMICOLON
                         | PROGRAM IDENTIFIER 
 							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER 
-       SEMICOLON { errorManager.addError(
-                      new Error(MissingProgramParentheses,
-                                "Missing \")\" after program argument list.", 
-                                scanner.lineno())); }
+       SEMICOLON      
+                        { errorManager.addError(
+                         new Error(MissingProgramParentheses,
+                                   "Missing \")\" after program argument list.", 
+                                   scanner.lineno())); 
+                        }                          
                         ;
 
 /********************************************************************************
@@ -94,6 +96,12 @@ const_decl_list         : const_decl
                         ;
 
 const_decl              : IDENTIFIER EQ expr
+                        | error SEMICOLON
+                        { errorManager.addError(
+                         new Error(InvalidConstDecl,
+                                   "Invalid constant declaration.", 
+                                   scanner.lineno())); 
+                        }
 						;
 
 /********************************************************************************
@@ -261,7 +269,7 @@ expr                    : simple_expr
                         | error SEMICOLON
                           {
                             errorManager.addError(
-                                                  new Error(NestedComment,
+                                                  new Error(InvalidExpression,
                                                             "Invalid expression.",
                                                             scanner.lineno()));
                           }

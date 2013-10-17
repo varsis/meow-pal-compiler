@@ -14,7 +14,10 @@ namespace Meow
   UnmatchedComment,
   MissingProgramParentheses,
   MissingProgramPeriod,
-  CStyleAssignment
+  CStyleAssignment,
+  InvalidExpression,
+  InvalidProgramHeader,
+  InvalidConstDecl
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
