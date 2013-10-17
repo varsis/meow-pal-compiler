@@ -17,7 +17,8 @@ namespace Meow
   CStyleAssignment,
   InvalidExpression,
   InvalidProgramHeader,
-  InvalidConstDecl
+  InvalidConstDecl,
+  InvalidTypeDecl
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }

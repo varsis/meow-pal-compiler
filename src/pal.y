@@ -71,7 +71,7 @@ program_head            : PROGRAM IDENTIFIER
                          new Error(MissingProgramParentheses,
                                    "Missing \")\" after program argument list.", 
                                    scanner.lineno())); 
-                        }                          
+                        }
                         ;
 
 /********************************************************************************
@@ -116,6 +116,12 @@ type_decl_list          : type_decl
                         ;
 
 type_decl               : IDENTIFIER EQ type
+                        | error SEMICOLON
+                        { errorManager.addError(
+                         new Error(InvalidTypeDecl,
+                                   "Invalid type declaration.", 
+                                   scanner.lineno())); 
+                        }
                         ;
 
 type                    : simple_type
