@@ -39,7 +39,7 @@ test/ParserTestWithFiles
 *.log
 
 #PDF doc file
-doc/doc.pdf
+doc/pal.pdf
 
 # Generated GTest code
 test/ParserTestWithFiles.cpp
