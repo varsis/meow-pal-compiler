@@ -6,6 +6,7 @@
 %parse-param { Meow::PalScanner &scanner }
 %parse-param { Meow::ErrorManager &errorManager }
 %lex-param   { Meow::PalScanner &scanner }
+%error-verbose
 
 %code requires {
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
@@ -103,12 +104,6 @@ const_decl_list         : const_decl
                         ;
 
 const_decl              : IDENTIFIER EQ expr
-                        | error SEMICOLON
-                        { errorManager.addError(
-                         new Error(InvalidConstDecl,
-                                   "Invalid constant declaration.", 
-                                   scanner.lineno())); 
-                        }
 						;
 
 /********************************************************************************
@@ -123,12 +118,6 @@ type_decl_list          : type_decl
                         ;
 
 type_decl               : IDENTIFIER EQ type
-                        | error SEMICOLON
-                        { errorManager.addError(
-                         new Error(InvalidTypeDecl,
-                                   "Invalid type declaration.", 
-                                   scanner.lineno())); 
-                        }
                         ;
 
 type                    : simple_type
@@ -174,12 +163,6 @@ var_decl_list           : var_decl
 
 var_decl                : IDENTIFIER COLON type
                         | IDENTIFIER COMMA var_decl
-                        | error SEMICOLON
-                        { errorManager.addError(
-                         new Error(InvalidVarDecl,
-                                   "Invalid variable declaration.", 
-                                   scanner.lineno())); 
-                        }
                         ;
 
 /********************************************************************************
@@ -336,8 +319,11 @@ void print_error(const std::string msg) {
 	std::cerr << msg << std::endl;
 }
 
-// We have to implement the error function
-void Meow::PalParser::error(const Meow::PalParser::location_type &loc, const std::string &msg) { }
+// The most general error handling done here
+void Meow::PalParser::error(const Meow::PalParser::location_type &loc, const std::string &msg)
+{
+  errorManager.addError(new Error(SyntaxError, msg, scanner.lineno()));
+}
 
 // Now that we have the Parser declared, we can declare the Scanner and implement
 // the yylex function

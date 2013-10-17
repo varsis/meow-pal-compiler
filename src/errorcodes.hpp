@@ -6,6 +6,7 @@ namespace Meow
 	enum ErrorCode
 	{
 		OtherError,
+  SyntaxError,
 		UnclosedComment,
 		UnclosedString,
   UnrecognizedSymbol,
