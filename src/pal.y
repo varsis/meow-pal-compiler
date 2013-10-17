@@ -184,6 +184,13 @@ proc_decl_list          : proc_decl
                         ;
 
 proc_decl               : proc_heading decls compound_stat SEMICOLON
+                        | proc_heading decls compound_stat PERIOD
+                        {
+                          errorManager.addError(
+                              new Error(InvalidProcDecl,
+                                        "Funct/proc should not end with \".\".",
+                                        scanner.lineno()));
+                        }
                         ;
 
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON 
@@ -235,7 +242,7 @@ stat                    : simple_stat
 simple_stat             : var ASSIGN expr
                         | proc_invok
                         | compound_stat
-                        | var EQ expr SEMICOLON
+                        | var EQ expr 
                         {
                           errorManager.addError(
                               new Error(CStyleAssignment,
