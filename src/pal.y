@@ -53,6 +53,12 @@
 %%
 
 program                 : program_head decls compound_stat PERIOD
+                        | program_head decls compound_stat 
+                        { errorManager.addError(
+                              new Error(MissingProgramPeriod,
+                                        "Expected \".\" after END", 
+                                        scanner.lineno()-1)); 
+                        }
                         ;
 
 program_head            : PROGRAM IDENTIFIER 

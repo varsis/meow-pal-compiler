@@ -13,7 +13,8 @@ namespace Meow
   NestedComment,
   UnmatchedComment,
   MissingMethodParentheses,
-  MissingProgramParentheses
+  MissingProgramParentheses,
+  MissingProgramPeriod
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
