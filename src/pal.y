@@ -19,6 +19,8 @@
 %code {
 	#include "errormanager.hpp"
 	#include "error.hpp"
+ #include "errorcodes.hpp"
+ #include "Scanner.hpp"
 
 	// Prototype for the yylex function
 	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);
@@ -56,6 +58,12 @@ program                 : program_head decls compound_stat PERIOD
 program_head            : PROGRAM IDENTIFIER 
 							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
 							SEMICOLON
+                        | PROGRAM IDENTIFIER 
+							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER 
+       SEMICOLON { errorManager.addError(
+                      new Error(MissingProgramParentheses,
+                                "Missing \")\" after program argument list.", 
+                                scanner.lineno())); }
                         ;
 
 /********************************************************************************
@@ -160,7 +168,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
-                        | LEFT_PAREN RIGHT_PAREN
+                        | LEFT_PAREN RIGHT_PAREN 
                         ;
 
 f_parm_list             : f_parm

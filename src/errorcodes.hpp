@@ -11,7 +11,9 @@ namespace Meow
   UnrecognizedSymbol,
   InvalidIdentifier,
   NestedComment,
-  UnmatchedComment
+  UnmatchedComment,
+  MissingMethodParentheses,
+  MissingProgramParentheses
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
