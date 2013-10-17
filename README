@@ -1,0 +1,96 @@
+A PAL Compiler for CMPUT 415.
+
+Team Meow
+- Steve Jahns
+- Mike Armstrong
+- Chris Pavlicek
+- Connor Moreside
+
+To build, run:
+
+	$ make
+
+from the root dir, which will place the pal compiler executable at
+	
+	./bin/pal
+
+--------------------------------------------------------------------------------
+PAL Sources
+--------------------------------------------------------------------------------
+	./src/main.cpp
+		- driver program for compiler class
+
+	./src/Compiler.cpp
+	./src/Compiler.hpp
+		- main compiler class
+
+	./src/pal.lex
+		- flex lexer source
+
+	./src/Scanner.hpp
+		- wrapper class for combined lexer + parser
+
+	./src/pal.y
+		- bison parser source
+
+	./src/Parser.cpp
+	./src/Parser.hpp
+		- wrapper class for combined lexer + parser
+
+	./src/error.cpp
+	./src/error.hpp
+		- error representation
+
+	./src/errorcodes.hpp
+		- defines all error types the compiler can find
+
+	./src/errormanager.cpp
+	./src/errormanager.hpp
+		- tracks errors through the course of the compiler's execution
+
+--------------------------------------------------------------------------------
+Testing Sources
+--------------------------------------------------------------------------------
+	// TODO are we even submitting test source dir?
+
+--------------------------------------------------------------------------------
+Checkpoint 1 Submission Tests 
+--------------------------------------------------------------------------------
+	test/test_cases/checkpoint_1/0.pal
+		// TODO brief description of each test
+	test/test_cases/checkpoint_1/1.pal
+	test/test_cases/checkpoint_1/2.pal
+	test/test_cases/checkpoint_1/3.pal
+	test/test_cases/checkpoint_1/4.pal
+	test/test_cases/checkpoint_1/5.pal
+	test/test_cases/checkpoint_1/6.pal
+	test/test_cases/checkpoint_1/7.pal
+	test/test_cases/checkpoint_1/8.pal
+	test/test_cases/checkpoint_1/9.pal
+
+--------------------------------------------------------------------------------
+Man Page
+--------------------------------------------------------------------------------
+
+Man page source for pal is at:
+
+	./doc/pal.1
+
+This can be read with:
+
+	$ nroff -man ./doc.pal.1 | less
+
+or
+	$ make man
+
+--------------------------------------------------------------------------------
+Documentation
+--------------------------------------------------------------------------------
+
+LaTeX source for full documentation can be found at
+
+	./doc/pal.tex
+
+with a compiled PDF of the document at
+
+	./doc/pal.pdf
