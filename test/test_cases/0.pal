@@ -1,0 +1,22 @@
+{ Test Case 0: Test for Lexical Errors 
+	Error 1: "123pi" on line 11 invalid id
+	Error 2: "2if" on line 20 invalid token
+	Error 3: "23." on line 21 invalid number }
+
+program test0(input, output);
+
+
+procedure dostuff(a : integer);
+const
+        123pi = 3.14159;
+var
+        number : real;
+begin
+        number := pi;
+        writeln(number, '  ', a);
+end;
+
+begin 
+      2if (pi = 10) then
+      dostuff(23.)
+end.

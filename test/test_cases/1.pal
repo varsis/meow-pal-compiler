@@ -1,0 +1,12 @@
+{ Test Case 1: Test for Lexical Errors
+	Error 1: "some_var" on line 8 invalid id
+	Error 2: "another-var" on line 9 invalid id with hyphen
+	Error 3: "\b" on line 11 inside string (invalid escaped char) }
+
+program test1(input, output);
+var 
+	some_var : integer;
+	another-var: string;
+begin
+	anothervar := 'this is a string with escaped chars \b and for fun lets put a \n';
+end.

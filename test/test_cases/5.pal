@@ -1,0 +1,16 @@
+{ Test Case 5: Test for Syntax Errors
+	Error 1: Line 9 Integer is not valid should be integer
+	Error 2: line 13 invalid token ~
+	Error 3: line 15 invalid token !+ }
+program test5(input, output);
+var 
+	 : integer;
+	a : Integer;
+	array : array[1 .. 2];
+{ some comment }
+begin
+	a ~ 10;
+	a := 38928398;
+	a !+ 377377373773;
+
+end.
