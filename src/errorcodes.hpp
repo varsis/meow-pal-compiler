@@ -18,7 +18,8 @@ namespace Meow
   InvalidExpression,
   InvalidProgramHeader,
   InvalidConstDecl,
-  InvalidTypeDecl
+  InvalidTypeDecl,
+  InvalidVarDecl
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }

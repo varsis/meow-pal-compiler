@@ -167,6 +167,12 @@ var_decl_list           : var_decl
 
 var_decl                : IDENTIFIER COLON type
                         | IDENTIFIER COMMA var_decl
+                        | error SEMICOLON
+                        { errorManager.addError(
+                         new Error(InvalidVarDecl,
+                                   "Invalid variable declaration.", 
+                                   scanner.lineno())); 
+                        }
                         ;
 
 /********************************************************************************
