@@ -72,6 +72,13 @@ program_head            : PROGRAM IDENTIFIER
                                    "Missing \")\" after program argument list.", 
                                    scanner.lineno())); 
                         }
+                        | /* empty */
+                        {
+                            errorManager.addError(
+                                                  new Error(InvalidProgramHeader,
+                                                            "Missing program header.",
+                                                            scanner.lineno()));
+                        }
                         ;
 
 /********************************************************************************
@@ -264,7 +271,7 @@ matched_stat            : simple_stat
                         | WHILE expr DO matched_stat
                         | CONTINUE
                         | EXIT
-						| /* empty */
+						                  | /* empty */
                         ;
 
 /********************************************************************************
