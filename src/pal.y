@@ -73,12 +73,19 @@ program_head            : PROGRAM IDENTIFIER
                                    "Missing \")\" after program argument list.", 
                                    scanner.lineno())); 
                         }
+                        | PROGRAM IDENTIFIER 
+							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
+                        { errorManager.addError(
+                         new Error(InvalidProgramHeader,
+                                   "Missing \";\" after program header.", 
+                                   scanner.lineno())); 
+                        }
                         | /* empty */
                         {
                             errorManager.addError(
-                                                  new Error(InvalidProgramHeader,
-                                                            "Missing program header.",
-                                                            scanner.lineno()));
+                                     new Error(InvalidProgramHeader,
+                                               "Missing program header.",
+                                               scanner.lineno()));
                         }
                         ;
 
