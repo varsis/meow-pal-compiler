@@ -14,7 +14,8 @@ namespace Meow
   UnmatchedComment,
   MissingMethodParentheses,
   MissingProgramParentheses,
-  MissingProgramPeriod
+  MissingProgramPeriod,
+  CStyleAssignment
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }

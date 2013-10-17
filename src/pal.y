@@ -204,6 +204,13 @@ stat                    : simple_stat
 simple_stat             : var ASSIGN expr
                         | proc_invok
                         | compound_stat
+                        | var EQ expr SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(CStyleAssignment,
+                                        "C-style assignment, expected \":=\".",
+                                        scanner.lineno()));
+                        }
                         ;
 
 var                     : IDENTIFIER
