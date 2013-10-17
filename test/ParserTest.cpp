@@ -2,6 +2,8 @@
 
 #include "../src/pal.tab.h"
 #include "../src/Scanner.hpp"
+#include "../src/errormanager.hpp"
+#include "../src/error.hpp"
 #include "MockScanner.h"
 
 using namespace std;
@@ -22,7 +24,7 @@ namespace Meow
 		protected:
 
 			ParserTest() 
-				: parser(scanner)
+				: parser(scanner, errorManager)
 			{
 			}
 
@@ -42,6 +44,7 @@ namespace Meow
 			int expectedParseResult;
 
 			MockScanner scanner;
+			ErrorManager errorManager;
 			vector<token_type> tokens;
 
 			PalParser parser;

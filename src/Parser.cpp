@@ -17,7 +17,7 @@ namespace Meow
     {
         int retval;
         PalScanner scanner(fileStream, m_errorManager);
-        PalParser parser(scanner);
+        PalParser parser(scanner, *m_errorManager);
 
         retval = parser.parse();
         
