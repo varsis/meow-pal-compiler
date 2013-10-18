@@ -1,3 +1,49 @@
-program test9( input, output );
-{ Should parse as valid PAL }
-function s(a : integer; b : integer) : integer; begin s := a + b; end; function foo1(a : integer; b : integer) : integer; function foo2() : integer; var a : array[1..10] of array[1..10] of array[1..10] of char; procedure foo3(); var a1 : array[1..10] of array[1..10] of array[1..10] of char; begin end; procedure foo4(); var c2 : array[boolean] of array[char] of array[1..10] of char; begin end; begin foo2 := 1 end; begin end; begin if (1 = 1) then else; if (1 = 1) then s(1,2) else s(2,3) end.
+{
+	Should have:
+		Error - Missing ; after program header 8
+		Error - Invalid constant declaration 11
+		Error - Invalid type definition 14
+		Error - Invalid array declarations 22-31
+		Error - Invalid procedure declarations 34
+		Error - Invalid token 39 - 48
+}
+program test9( input, output )
+
+const
+	c := 100;
+type
+
+	t := integer;
+	r = record 
+		a = integer;
+		b = integer;
+		end;
+var
+	a : array[1..10] of array[1..10] of array[1..10] of array[1..10] of array[1..10] of array[1..10] of array[1..10] of array[1..10] of array[1..10] of array[1..10] of integer;
+	
+	arr0 = array[a,b,c] of integer;
+	arr1 = array[a,b,c] of integer;
+	arr2 = array[a,b,c] of integer;
+	arr3 = array[a,b,c] of integer;
+	arr4 = array[a,b,c] of integer;
+	arr5 = array[a,b,c] of integer;
+	arr6 = array[a,b,c] of integer;
+	arr7 = array[a,b,c] of integer;
+	arr8 = array[a,b,c] of integer;
+	arr9 = array[a,b,c] of integer;
+
+procedure f(a : integer)
+	begin
+	end;
+begin
+&
+&
+&
+&
+&
+&
+&
+&
+&
+&
+end
