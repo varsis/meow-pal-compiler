@@ -1,14 +1,10 @@
 { Test Case 2: Test for Lexical Errors
-	Error 1: Comment that is invalid on line 10
-	Error 2: array on line 9 contains an invalid integer for size
-	Error 3: invalid integer on line 12 }
+	Error 1: invalid integer on line 9 }
 
 program test2(input, output);
 var 
 	somevar : integer;
-	array : array[1E1 .. 2];
-{ this is a broken comment!!!! { something here }
+	arr : array[1 .. 2] of integer;
 begin
-	somevar := 47829374E10.1;
-
+	somevar := 47829374E10.1; // TODO is this a syntax error or semantic?
 end.

@@ -1,7 +1,7 @@
 { Test Case 7: Test for Syntax Errors
-	Error 1: Line 17 missing ()
-	Error 2: Line 23 missing right expression
-	Error 3: Line 28 exit missing }
+	Error 1: Line 19 syntax error - unexpected semicolon
+	Error 2: Line 19 invalid expression
+	Error 3: Line 21 unexpected token }
 program test07(input ,output);
 
 var
