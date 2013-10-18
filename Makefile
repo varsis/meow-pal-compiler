@@ -67,7 +67,7 @@ $(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 ################################################################################
 
 # Add new tests here. Test % must be in file $(TESTDIR)/%.cpp
-TESTS = ScannerTest ParserTest ParserTestWithFiles
+TESTS = ScannerTest ParserTest ParserTestWithFiles Checkpoint1Tests
 
 TESTS_ = $(addprefix $(TESTDIR)/,$(TESTS))
 
@@ -122,6 +122,12 @@ $(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scrip
 
 man:
 	nroff -man doc/pal.1 | less
+
+
+zip: 	
+	cd .. ;\
+	tar czf meow-pal-compiler.tgz --exclude='.*'--exclude-vcs meow-pal-compiler;\
+	cd meow-pal-compiler
 
 doc: doc.pdf
 doc.pdf: doc/pal.tex

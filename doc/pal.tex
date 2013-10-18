@@ -150,9 +150,6 @@ errors at the syntax level:
 	error checking except that they don't have a return value and are ended by 
 	a period instead of a semicolon. 
 
-\item[Statements]
-	Will be checked for minor issue like using = instead of the required :=.
-
 \item[Expressions]
 	Expressions will checked for proper structure. If a symbol is missing,
 	semicolon or any part it will be discarded and return an error. 
@@ -200,70 +197,8 @@ errors at the syntax level:
 \item[Submitted Tests 0.pal - 9.pal]
 	Tests 0-4 contain 3 errors which are lexical. Tests 5-7 contain
 	syntax errors, and tests 8 and 9 contain valid pal programs which 
-	check tricky correct syntax.
-		\begin{description}
-		\item[0.pal] contains the following lexical errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[1.pal] contains the following lexical errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[2.pal] contains the following lexical errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[3.pal] contains the following lexical errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[4.pal] contains the following lexical errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[5.pal] contains the following syntax errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[6.pal] contains the following syntax errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[7.pal] contains the following syntax errors:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[8.pal] contains the following ?errors?:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-		\item[9.pal] contains the following ?errors?:
-			\begin{description}
-		  	   \item[Line 1] Some Error
-		  	   \item[Line 2] Some Error
-		 	   \item[Line 3] Some Error
-			\end{description}
-
-		\end{description}	
+	check tricky correct syntax. These tests are included at ''test\textbackslash 
+	test\textunderscore cases\textbackslash checkpoint\textunderscore 1''.
 \end{description}
 % known bugs?
 % extra features?
