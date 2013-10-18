@@ -1,0 +1,6 @@
+program btest025(input, output);
+const
+        blah : 23;
+        blah1 := 45; 
+begin
+end.

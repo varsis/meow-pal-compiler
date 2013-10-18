@@ -6,7 +6,10 @@
 %parse-param { Meow::PalScanner &scanner }
 %parse-param { Meow::ErrorManager &errorManager }
 %lex-param   { Meow::PalScanner &scanner }
+
 %debug
+%error-verbose
+
 %code requires {
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
@@ -19,6 +22,9 @@
 %code {
 	#include "errormanager.hpp"
 	#include "error.hpp"
+ 	#include "errorcodes.hpp"
+ 	#include "Scanner.hpp"
+
 	#define YYDEBUG 1
 	// Prototype for the yylex function
 	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);
@@ -50,11 +56,39 @@
 %%
 
 program                 : program_head decls compound_stat PERIOD
+                        | program_head decls compound_stat 
+                        { errorManager.addError(
+                              new Error(MissingProgramPeriod,
+                                        "Expected \".\" after END", 
+                                        scanner.lineno()-1)); 
+                        }
                         ;
 
 program_head            : PROGRAM IDENTIFIER 
 							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
 							SEMICOLON
+                        | PROGRAM IDENTIFIER 
+							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER 
+       SEMICOLON      
+                        { errorManager.addError(
+                         new Error(MissingProgramParentheses,
+                                   "Missing \")\" after program argument list.", 
+                                   scanner.lineno())); 
+                        }
+                        | PROGRAM IDENTIFIER 
+							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
+                        { errorManager.addError(
+                         new Error(InvalidProgramHeader,
+                                   "Missing \";\" after program header.", 
+                                   scanner.lineno())); 
+                        }
+                        | /* empty */
+                        {
+                            errorManager.addError(
+                                     new Error(InvalidProgramHeader,
+                                               "Missing program header.",
+                                               scanner.lineno()));
+                        }
                         ;
 
 /********************************************************************************
@@ -79,6 +113,13 @@ const_decl_list         : const_decl
                         ;
 
 const_decl              : IDENTIFIER EQ expr
+                        | IDENTIFIER ASSIGN expr
+                        {
+                            errorManager.addError(
+                                new Error(InvalidConstDecl,
+                                          "Use \"=\" to assign constants.",
+                                          scanner.lineno()));
+                        }
 						;
 
 /********************************************************************************
@@ -93,6 +134,13 @@ type_decl_list          : type_decl
                         ;
 
 type_decl               : IDENTIFIER EQ type
+                        | IDENTIFIER ASSIGN type
+                        {
+                            errorManager.addError(
+                                new Error(InvalidTypeDecl,
+                                          "Use \"=\" for type definitions.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 type                    : simple_type
@@ -138,6 +186,13 @@ var_decl_list           : var_decl
 
 var_decl                : IDENTIFIER COLON type
                         | IDENTIFIER COMMA var_decl
+                        | IDENTIFIER ASSIGN type
+                        {
+                            errorManager.addError(
+                                new Error(InvalidVarDecl,
+                                          "Use \":\" to declare variables.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 /********************************************************************************
@@ -152,14 +207,35 @@ proc_decl_list          : proc_decl
                         ;
 
 proc_decl               : proc_heading decls compound_stat SEMICOLON
+                        | proc_heading decls compound_stat PERIOD
+                        {
+                          errorManager.addError(
+                              new Error(InvalidProcDecl,
+                                        "Funct/proc should not end with \".\".",
+                                        scanner.lineno()));
+                        }
                         ;
 
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON 
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
+                        | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidFunctDecl,
+                                        "Function needs to return a value.",
+                                        scanner.lineno()));
+                        }
+                        | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidProcDecl,
+                                        "Procedure can't return a value.",
+                                        scanner.lineno()));
+                        }  
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
-                        | LEFT_PAREN RIGHT_PAREN
+                        | LEFT_PAREN RIGHT_PAREN 
                         ;
 
 f_parm_list             : f_parm
@@ -175,7 +251,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
  ********************************************************************************/
 
 compound_stat           : PAL_BEGIN stat_list END
-						;
+                        ;
 
 stat_list               : stat
                         | stat_list SEMICOLON stat
@@ -189,6 +265,13 @@ stat                    : simple_stat
 simple_stat             : var ASSIGN expr
                         | proc_invok
                         | compound_stat
+                        | var EQ expr 
+                        {
+                          errorManager.addError(
+                              new Error(CStyleAssignment,
+                                        "C-style assignment, expected \":=\".",
+                                        scanner.lineno()));
+                        }
                         ;
 
 var                     : IDENTIFIER
@@ -222,7 +305,7 @@ matched_stat            : simple_stat
                         | WHILE expr DO matched_stat
                         | CONTINUE
                         | EXIT
-						| /* empty */
+						                  | /* empty */
                         ;
 
 /********************************************************************************
@@ -236,6 +319,13 @@ expr			: simple_expr
                         | expr LT simple_expr
                         | expr GE simple_expr
                         | expr GT simple_expr
+                        | error SEMICOLON
+                          {
+                            errorManager.addError(
+                                                  new Error(InvalidExpression,
+                                                            "Invalid expression.",
+                                                            scanner.lineno()));
+                          }
                         ;
 
 simple_expr             : term
@@ -280,8 +370,11 @@ void print_error(const std::string msg) {
 	std::cerr << msg << std::endl;
 }
 
-// We have to implement the error function
-void Meow::PalParser::error(const Meow::PalParser::location_type &loc, const std::string &msg) { }
+// The most general error handling done here
+void Meow::PalParser::error(const Meow::PalParser::location_type &loc, const std::string &msg)
+{
+  errorManager.addError(new Error(SyntaxError, msg, scanner.lineno()));
+}
 
 // Now that we have the Parser declared, we can declare the Scanner and implement
 // the yylex function
