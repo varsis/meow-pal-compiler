@@ -118,8 +118,8 @@ errors at the syntax level:
 		\begin{itemize}
 			\item If the semicolon is missing
 			\item If one or both arguments are missing
-			\item If the statement is missing opening, closing or both
-			parentheses.
+			\item If the program is missing a closing parentheses,
+			starting, or both.
 			\item If there is an invalid program name
 		\end{itemize}
 \item[Variable, Constant or Type Declarations]
@@ -132,6 +132,12 @@ errors at the syntax level:
 			\item Improper variable names, only variables starting with
 			a letter, and containing letters and numbers after are valid.
 		\end{itemize}
+		
+\item[Enumerations]
+	If an enumeration is incorrectly defined an error will be produced.
+\item[Arrays]
+	Arrays which are declared incorrectly, either by defining the set wrong, 
+	or by specifying an invalid type will produce a specific error.
 \item[Functions]	
 	Functions will be checked for proper formatting if a function is invalid 
 	an appropriate error will be emitted. Functions are required to have 
@@ -160,12 +166,105 @@ errors at the syntax level:
 	% handling of lexical units
 	% syntax error reporting
 	% recovery strategies
-
+\end{description}
 \section*{Testing}
+\begin{description}
 	% TODO
 	% gtest, unit tests
 	% whole file tests
+	
+\item[GTest]
+	For accurate tests of the compiler we used gtest. Within gtest we
+	built specific tests using tokens. Our tests can be ran using,
+	\texttt{\%make test}, \texttt{\%make ScannerTest}, or \texttt{\%make ParserTest}.
+	(make test runs every test)
+	\begin{itemize}
+		\item \texttt{MockScanner.cpp} is a simple file. It defines a 
+		'' MockScanner '', for use with testing. The Parser can be unit tested
+		without the dependence of the real scanner which may contain errors.
+		\item \texttt{ParserTest.cpp} contains a few tests which push
+		tokens onto a stack and are fed to our parser to check if the 
+		grammar contained in  \texttt{pal.y} is recognized correctly.
+		
+		\item \texttt{ScannerTest.cpp} Is used to check pal programs.
+		By hand expected tokens are placed into this file, and if they match
+		from the input file the test will pass.
+		
+		\item \texttt{ParserTestWithFiles.cpp} This file is automatically
+		generated using a bash script. This file takes the tests in
+		the test\_cases folder and builds a cpp file, if it is labeled test\*.pal
+		the expected return is 0 (valid pal) or btest\*.pal is 1 (invalid pal).
+		This made it very easy to add test cases and to run them while making 
+		changes to the grammar or token identifiers.
+	\end{itemize}
+\item[Submitted Tests 0.pal - 9.pal]
+	Tests 0-4 contain 3 errors which are lexical. Tests 5-7 contain
+	syntax errors, and tests 8 and 9 contain valid pal programs which 
+	check tricky correct syntax.
+		\begin{description}
+		\item[0.pal] contains the following lexical errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[1.pal] contains the following lexical errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[2.pal] contains the following lexical errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[3.pal] contains the following lexical errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[4.pal] contains the following lexical errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[5.pal] contains the following syntax errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[6.pal] contains the following syntax errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[7.pal] contains the following syntax errors:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[8.pal] contains the following ?errors?:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
+		\item[9.pal] contains the following ?errors?:
+			\begin{description}
+		  	   \item[Line 1] Some Error
+		  	   \item[Line 2] Some Error
+		 	   \item[Line 3] Some Error
+			\end{description}
 
+		\end{description}	
+\end{description}
 % known bugs?
 % extra features?
 
