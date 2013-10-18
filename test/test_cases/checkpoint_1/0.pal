@@ -1,6 +1,8 @@
 { 
 	Test Case 0: Test for Lexical Errors 
-	Invalid identifiers, real constants, and symbols
+ Line 11: Invalid identifiers
+ Line 18: Invalid real constant
+ Line 20: Invalid symbol
 }
 program test0(input, output);
 var
@@ -13,12 +15,7 @@ begin
 	a := 1E-10; 	{ valid real const }
 	a := 000.000; 	{ valid real const }
 
-	// TODO - should we explicilty detect these as invalid constants?
-	a := 1E-10.0; 	{ invalid real const }
-	a := 1E+10.0; 	{ invalid real const }
 	a := 1E1E1;	{ invalid real const }
-	a := 1.0.0; 	{ invalid real const }
-	a := 100.; 	{ invalid real const }
 
 	a ~ 100.; 	{ invalid symbol}
 end.

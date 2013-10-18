@@ -1,6 +1,6 @@
 {
-	Test Case 5: Test for Syntax Errors
-	Extra semicolon on line 14
+ Test Case 5: Test for Syntax Errors
+ Line 14/15: Unmatched else due to extra semicolon on 14
 }
 program test5(input, output);
 const

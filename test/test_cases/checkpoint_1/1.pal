@@ -1,6 +1,7 @@
 { 
-	Test Case 1: Test for Lexical Errors
-	Comments - unclosed and unexpected close brace
+ Test Case 1: Test for Lexical Errors
+ Line 9: Unexpected/unmatched comment close
+ Line 11: Unclosed comment
 }
 program test1(input, output);
 begin
