@@ -1,0 +1,16 @@
+{ Test Case 3: Test for Lexical Errors
+	Error 1: line 12 invalid token ?
+	Error 2: line 13 invalid token ^
+	Error 3: +- invalid on line 14 }
+
+program test3(input, output);
+var 
+	somevar : integer;
+	array : array[1 .. 2];
+{ some comment }
+begin
+	somevar ?= 4782;
+	somevar ^ 2;
+	somevar +- 23232;
+
+end.

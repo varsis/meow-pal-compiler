@@ -1,0 +1,17 @@
+{ Test Case 4: Test for Lexical Errors
+	Error 1: Line 9 Integer is not valid should be integer
+	Error 2: line 13 invalid token ~
+	Error 3: line 15 invalid token !+ }
+{{{{{{{{{{{{{{{{{{{{{{}}}}}}}
+program test4(input, output);
+var 
+	some58903485hfajskdhf93993 : integer;
+	a : Integer;
+	array : array[1 .. 2];
+{ some comment }
+begin
+	a ~ 10;
+	a := 38928398;
+	a !+ 377377373773;
+
+end.

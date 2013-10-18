@@ -95,4 +95,4 @@
 ";" { return token::SEMICOLON; }
 ":" { return token::COLON; }
 
-. { getManager()->addError(new Error(UnrecognizedSymbol, "Invalid symbol encountered.", yylineno)); }
+. { ECHO; getManager()->addError(new Error(UnrecognizedSymbol, "Invalid symbol encountered.", yylineno)); }
