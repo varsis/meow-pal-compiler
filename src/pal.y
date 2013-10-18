@@ -174,7 +174,7 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                                           "Invalid record declaration.",
                                           scanner.lineno()));
                         }
-                        | ARRAY error type
+                        | ARRAY error OF type
                         {
                             errorManager.addError(
                                 new Error(InvalidArrayDecl,
