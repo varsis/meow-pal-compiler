@@ -25,6 +25,7 @@ void Compiler::displayUsage()
 	std::cout << "\nProgram Usage: pal [-n] file.pal\n\n";
 	std::cout << "OPTIONS:\n";
 	std::cout << "\t-n : Do not produce a program listing. Default is to produce one.\n";
+	std::cout << "\t-d : Enable bison debug mode.\n";
 	std::cout << std::endl;
 }
 
@@ -32,7 +33,7 @@ void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
 
-	const char* optString = "n";
+	const char* optString = "nd";
 
 	
 	if (argc == 1)
@@ -50,7 +51,9 @@ void Compiler::getArguments(int argc, char* argv[])
 			case 'n':
 				m_programListing = false;
 				break;
-
+			case 'd':
+				m_debug = true;
+				break;
 			default:
 				std::cerr << "\n* Unrecognized option: -" << opt << "\n";
 				displayUsage();
