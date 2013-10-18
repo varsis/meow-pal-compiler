@@ -29,6 +29,7 @@ namespace Meow
 		InvalidArrayDecl,
 		InvalidRecordDecl,
 		InvalidEnumDecl,
+		InvalidStatement,
 		MultiLineString
 
 			/* DECLARE ALL OTHER ERRORS HERE */

@@ -338,6 +338,13 @@ simple_stat             : var ASSIGN expr
                                         "C-style assignment, expected \":=\".",
                                         scanner.lineno()));
                         }
+                        | var error
+                        {
+                          errorManager.addError(
+                              new Error(InvalidStatement,
+                                        "Invalid statement.",
+                                        scanner.lineno()));
+                        }
                         ;
 
 var                     : IDENTIFIER
