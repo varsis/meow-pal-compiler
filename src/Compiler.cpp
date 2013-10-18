@@ -136,7 +136,7 @@ void Compiler::printProgramListing()
 		if (m_errorManager.getErrorFlag()) 
 		{
 			std::cout << "pal: *** " << m_inputFileName 
-			    << " has errors.\n";
+			    << " has " << errors->size() << " errors.\n";
 		}
 
 		inputFileStream.close();

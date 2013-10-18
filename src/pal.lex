@@ -16,6 +16,9 @@
 %x IN_COMMENT
 %x IN_STRING_LITERAL
 
+DIGIT 		[0-9]
+EXPONENT	E[+-]?{DIGIT}+
+
 %%
 
 <IN_COMMENT>
@@ -170,10 +173,15 @@
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-(0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { return token::REAL_CONST; }
-(0|[1-9])+ { return token::INT_CONST; }
-([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER;  }
-([0-9]+[a-zA-Z0-9]*) { yylval->identifier = new std::string(yytext); getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno)); return token::IDENTIFIER; }
+{DIGIT}+((\.{DIGIT}+{EXPONENT})|(\.{DIGIT}+)|{EXPONENT}) { return token::REAL_CONST; }
+{DIGIT}+ { return token::INT_CONST; }
+
+([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER; }
+([0-9]+[a-zA-Z0-9]*) 	{ 
+				yylval->identifier = new std::string(yytext);
+				getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno));
+				return token::IDENTIFIER; 
+			}
 
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
