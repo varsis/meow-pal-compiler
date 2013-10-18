@@ -1,0 +1,37 @@
+{ Test Case 6: Test for Syntax Errors
+	Error 1: Line 5 missing input variable
+	Error 2: Line 19 end has a period, should be ;
+	Error 3: Line 28 exit missing }
+program test06( ,output);
+const
+        someConstant = 3.4;
+type
+	aType = array [10 .. 100] of array [11 .. 12] of integer;
+
+var
+        a,b : integer;
+	b : string;
+	c : aType;
+
+function gcd (a : integer; b : integer) : real;
+	var x : integer;
+begin
+end.
+
+
+begin
+
+	while (a <> 20) do
+		b := c[a][13];
+		a := a + 1;
+		if(b = 'a string') then
+		exit
+
+
+	if (a = b or c) then;
+		b := c;
+			if (b = c) then
+			else
+			c := 5;
+
+end.

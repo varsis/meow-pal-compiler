@@ -9,6 +9,11 @@
 
 namespace Meow
 {
+	
+	struct classcomp {
+		bool operator() (const Error* lhs, const Error* rhs) const
+		{return lhs->getLineNumber()<rhs->getLineNumber();}
+	};
     class ErrorManager
     {
         public:
@@ -17,10 +22,10 @@ namespace Meow
             void printErrors() const;
             void addError(Error* inputError);
             bool getErrorFlag() const;
-            const std::multiset<Error*>* getErrors() const;
+            const std::multiset<Error*,classcomp>* getErrors() const;
             void setErrorFlag();
         private:
-            std::multiset<Error*> m_errors;
+            std::multiset<Error*,classcomp> m_errors;
             bool m_errorFlag;
     };
 }

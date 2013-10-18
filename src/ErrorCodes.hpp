@@ -24,7 +24,7 @@ namespace Meow
   		InvalidVarDecl,
   		InvalidFunctDecl,
   		InvalidProcDecl
-
+		
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }

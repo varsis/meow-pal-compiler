@@ -72,8 +72,8 @@ void Compiler::getArguments(int argc, char* argv[])
 
 void Compiler::printErrors()
 {
-	const std::multiset<Error*>* errors = m_errorManager.getErrors();
-	std::multiset<Error*>::const_iterator errorIt;
+	const std::multiset<Error*,classcomp>* errors = m_errorManager.getErrors();
+	std::multiset<Error*,classcomp>::const_iterator errorIt;
 
 	for (errorIt = errors->begin(); errorIt != errors->end(); ++errorIt)
 	{
@@ -83,7 +83,7 @@ void Compiler::printErrors()
 
 void Compiler::printProgramListing()
 {
-	const std::multiset<Error*>* errors = m_errorManager.getErrors();
+	const std::multiset<Error*,classcomp>* errors = m_errorManager.getErrors();
 
 	std::ifstream inputFileStream(m_inputFileName.c_str());
 
@@ -97,7 +97,7 @@ void Compiler::printProgramListing()
 		unsigned int lineCount = 1;
 		std::string currentLine;
 
-		std::multiset<Error*>::const_iterator errorIt = errors->begin();
+		std::multiset<Error*,classcomp>::const_iterator errorIt = errors->begin();
 
 		while (std::getline(inputFileStream, currentLine))
 		{
