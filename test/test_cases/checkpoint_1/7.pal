@@ -1,21 +1,15 @@
-{ Test Case 7: Test for Syntax Errors
-	Error 1: Line 19 syntax error - unexpected semicolon
-	Error 2: Line 19 invalid expression
-	Error 3: Line 21 unexpected token }
-program test07(input ,output);
+{
+	Test Case 7: Test for Syntax Errors
+	Invalid array type decalaration
+}
+program test7(input ,output);
 
-var
-        a,b : integer;
-	b : string;
-	
-function s() : string;
+const
+	a = 1;
+	b = 2;
+	c = 3;
+
+type
+	arr = array[(a,b,c)] of integer;
 begin
-	s := string;
-end;
-
-begin
-
-	s();
-	a := c + ;
-end.
 end.

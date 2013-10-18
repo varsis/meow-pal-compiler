@@ -5,7 +5,7 @@
 
 	static bool s_stringInvalid;
 	static bool s_stringMultiline;
-	static unsigned int s_commentStartLine;
+	static int s_commentStartLine;
 	static int s_scannerReturnPosition;
 	static int s_scannerReturnLine;
 %}

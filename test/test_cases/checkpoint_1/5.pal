@@ -1,18 +1,18 @@
-{ Test Case 5: Test for Syntax Errors
-	Error 1: line 14 assignment in if statement}
-program test05(input, output);
-
+{
+	Test Case 5: Test for Syntax Errors
+	Extra semicolon on line 14
+}
+program test5(input, output);
 const
         ca = 3.4;
-
 var
         a : integer;
-
 begin
-        if (a := ca) then
+        if (a = ca) then
         begin
-                writeln('Hello.');
+		writeln('Hello');
         end;
-	5 := or; {BAD}
-	a = ca;  {BAD}
+	else
+		writeln('world.');
+	end;
 end. 

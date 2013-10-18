@@ -11,27 +11,23 @@ namespace Meow
     {
         public:
             Error(std::string inputString);
-            Error(std::string inputString, unsigned int inputLine);
-            Error(ErrorCode errorCode, std::string inputString, unsigned int inputLine);
-
-            bool operator < (Error* other) const
-            {
-                return getLineNumber() < other->getLineNumber();
-            }
+            Error(std::string inputString, int inputLine);
+            Error(ErrorCode errorCode, std::string inputString, int inputLine);
 
             std::string getErrorString() const;
             ErrorCode getErrorCode() const;
-            unsigned int getLineNumber() const;
+            int getLineNumber() const;
             void printError();
+
+            static const int NoLineNumber = -1;
 
         private:
             void setErrorString(std::string);
-            void setLineNumber(unsigned int line);
-            static const int NOLINENUMBER = -1;
+            void setLineNumber(int line);
 
             ErrorCode m_errorCode;
             std::string m_errorString;
-            unsigned int m_lineNumber;
+            int m_lineNumber;
     };
 }
 
