@@ -2,8 +2,8 @@
 #include "gtest/gtest.h"
 
 #include "../src/Scanner.hpp"
-#include "../src/error.hpp"
-#include "../src/errormanager.hpp"
+#include "../src/Error.hpp"
+#include "../src/ErrorManager.hpp"
 
 using namespace std;
 

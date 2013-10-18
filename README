@@ -37,15 +37,15 @@ PAL Sources
 	./src/Parser.hpp
 		- wrapper class for combined lexer + parser
 
-	./src/error.cpp
-	./src/error.hpp
+	./src/Error.cpp
+	./src/Error.hpp
 		- error representation
 
-	./src/errorcodes.hpp
+	./src/ErrorCodes.hpp
 		- defines all error types the compiler can find
 
-	./src/errormanager.cpp
-	./src/errormanager.hpp
+	./src/ErrorManager.cpp
+	./src/ErrorManager.hpp
 		- tracks errors through the course of the compiler's execution
 
 --------------------------------------------------------------------------------

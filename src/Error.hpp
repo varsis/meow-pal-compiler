@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include "errorcodes.hpp"
+#include "ErrorCodes.hpp"
 
 namespace Meow
 {
