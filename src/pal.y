@@ -159,6 +159,13 @@ simple_type             : IDENTIFIER
                         ;
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
+			| LEFT_PAREN error RIGHT_PAREN
+			{
+                            errorManager.addError(
+                                new Error(InvalidEnumDecl,
+                                          "Invalid enumeration declaration.",
+                                          scanner.lineno()));
+                        }
 			;
 
 enum_list		: IDENTIFIER
