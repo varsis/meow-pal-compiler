@@ -1,0 +1,17 @@
+Test cases should try to follow these naming conventions:
+
+ - Test files should start with a 'b' or a 'v', represention whether
+   the file is broken or valid.
+
+ - The second letter of test files names denote its general
+   purpose. These include 'f' for future tests, 's' for stress tests,
+   't' for targeted tests (things that are testing a certain part of
+   the grammar or compiler; usually relatively short), 'r' for random
+   test cases (random programs that will aim for quantity, not
+   quality), and 'c' for the crazy test files.
+
+ - Following the first two letters, the files name should tell what
+   the file does or tests. Examples: vrFibonacci.pal,
+   btArrayDecl2.pal, etc...
+
+The scripts may use some of these letters, so beware!

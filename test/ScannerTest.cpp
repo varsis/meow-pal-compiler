@@ -69,7 +69,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestValidInput001)
 	{
-		initTest("test/test_cases/test001.pal");
+		initTest("test/test_cases/vtMinimalProgram.pal");
 
 		EXPECT_TOKEN(token::PROGRAM);
 		EXPECT_TOKEN(token::IDENTIFIER);
@@ -88,7 +88,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestValidInput002)
 	{
-		initTest("test/test_cases/test002.pal");
+		initTest("test/test_cases/vtHelloWorld.pal");
 
 		EXPECT_TOKEN(token::PROGRAM);
 		EXPECT_TOKEN(token::IDENTIFIER);
@@ -112,7 +112,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestValidInput003)
 	{
-		initTest("test/test_cases/test003.pal");
+		initTest("test/test_cases/vtMinimalProgram.pal");
 
 		EXPECT_TOKEN(token::PROGRAM);
 		EXPECT_TOKEN(token::IDENTIFIER);
@@ -247,7 +247,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestSubtractionWithoutSpace)
 	{
-		initTest("test/test_cases/subtractionWithoutSpace.pal");
+		initTest("test/test_cases/vtSubtractionWithoutSpace.pal");
 
 		EXPECT_TOKEN(token::PROGRAM);
 		EXPECT_TOKEN(token::IDENTIFIER);
@@ -282,7 +282,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestExpressionsWithoutSpace)
 	{
-		initTest("test/test_cases/expressionsWithoutSpace.pal");
+		initTest("test/test_cases/vtExpressionsWithoutSpace.pal");
 
 		EXPECT_TOKEN(token::PROGRAM);
 		EXPECT_TOKEN(token::IDENTIFIER);
