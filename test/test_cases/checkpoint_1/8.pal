@@ -1,0 +1,9 @@
+program example( input, output );
+type
+	t = (a,b,c);
+	u = (1,2,3);
+procedure p( a, b : integer);
+begin
+end;
+begin            { main-program }
+end.
