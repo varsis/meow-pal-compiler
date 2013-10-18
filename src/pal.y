@@ -97,6 +97,7 @@ program_head            : PROGRAM IDENTIFIER
                                                "Missing program header.",
                                                scanner.lineno()));
                         }
+                        | error { ; }
                         ;
 
 /********************************************************************************
@@ -135,6 +136,7 @@ const_decl              : IDENTIFIER EQ expr
                                           "Invalid constant declaration.",
                                           scanner.lineno()));
                         }
+                        | error { ; }
 						;
 
 /********************************************************************************
@@ -156,6 +158,7 @@ type_decl               : IDENTIFIER EQ type
                                           "Use \"=\" for type definitions.",
                                           scanner.lineno()));
                         }
+                        | error { ; }
                         ;
 
 type                    : simple_type
@@ -244,6 +247,7 @@ var_decl                : IDENTIFIER COLON type
                                           "Invalid variable declaration.",
                                           scanner.lineno()));
                         }
+                        | error { ; }
                         ;
 
 /********************************************************************************
@@ -298,6 +302,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                                         "Invalid function header.",
                                         scanner.lineno()));
                         }
+                        | error { ; }
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
@@ -325,6 +330,7 @@ stat_list               : stat
 
 stat                    : simple_stat
                         | struct_stat
+                        | error { ; }
                         |
                         ;
 
