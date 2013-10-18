@@ -128,6 +128,13 @@ const_decl              : IDENTIFIER EQ expr
                                           "Use \"=\" to assign constants.",
                                           scanner.lineno()));
                         }
+                        | IDENTIFIER error
+                        {
+                            errorManager.addError(
+                                new Error(InvalidConstDecl,
+                                          "Invalid constant declaration.",
+                                          scanner.lineno()));
+                        }
 						;
 
 /********************************************************************************
