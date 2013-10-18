@@ -31,8 +31,6 @@ namespace Meow
 		InvalidEnumDecl,
 		InvalidStatement,
 		MultiLineString
-
-			/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
 
