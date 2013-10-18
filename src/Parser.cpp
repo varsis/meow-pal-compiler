@@ -7,10 +7,15 @@
 
 namespace Meow
 {
-	Parser::Parser(ErrorManager* manager, bool debugFlag)
+	Parser::Parser(ErrorManager* manager)
 	    : m_errorManager(manager),
-	      m_debugFlag(debugFlag)
+	      m_debugFlag(false)
 	{
+	}
+
+	void Parser::setDebugFlag(bool value)
+	{
+		m_debugFlag = value;
 	}
 
 	int Parser::parseFile(std::ifstream* fileStream)
@@ -19,6 +24,7 @@ namespace Meow
 		PalScanner scanner(fileStream, m_errorManager);
 
 		PalParser parser(scanner, *m_errorManager);
+
 		if(m_debugFlag)
 		{
 			parser.set_debug_level(1);

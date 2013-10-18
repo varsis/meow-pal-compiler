@@ -11,10 +11,12 @@ namespace Meow
 	class Parser
 	{
 		public:
-			Parser(ErrorManager* manager, bool debugFlag = false);
+			Parser(ErrorManager* manager);
 
 			int parseFile(std::string fileName);
 			int parseFile(std::ifstream* fileStream);
+
+			void setDebugFlag(bool value);
 
 		private:
 			ErrorManager* m_errorManager;
