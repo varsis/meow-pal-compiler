@@ -1,16 +1,20 @@
 { Test Case 5: Test for Syntax Errors
-	Error 1: Line 9 Integer is not valid should be integer
-	Error 2: line 13 invalid token ~
-	Error 3: line 15 invalid token !+ }
-program test5(input, output);
-var 
-	: integer;
-	a : Integer;
-	array : array[1 .. 2];
-{ some comment }
-begin
-	a ~ 10;
-	a := 38928398;
-	a !+ 377377373773;
+	Error 1: Line 14 assigning constant to variable
+	Error 2: line 15 or = if is not valid
+	Error 3: line 16 assignment in if statement}
+program test05(input, output);
 
-end.
+const
+        ca := 3.4;
+
+var
+        a : integer;
+
+begin
+	5 := or;
+	a = ca;
+        if (a := ca) then
+        begin
+                writeln('Hello.');
+        end;
+end. 

@@ -22,7 +22,10 @@ do
     {
         ErrorManager errorManager;
         Parser parser(&errorManager);
-        int retval = parser.parseFile(\"test/test_cases/$BASENAME.pal\");" >> $OUTFILE;
+        int retval = parser.parseFile(\"test/test_cases/$BASENAME.pal\");
+	errorManager.printErrors();
+	" >> $OUTFILE;
+
 
 if [ "$FIRSTLETTER" = "b" ]
 then
