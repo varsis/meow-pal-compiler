@@ -1,0 +1,7 @@
+No Error code for:
+Test Case 5:
+1. 5 := or;
+2. a = ca;
+3 if (a := ca) then
+
+

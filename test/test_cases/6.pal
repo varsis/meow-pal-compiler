@@ -1,0 +1,17 @@
+{ Test Case 6: Test for Syntax Errors
+	Error 1: Line 14 assigning constant to variable
+	Error 2: line 15 or = if is not valid
+	Error 3: line 16 assignment in if statement}
+program test06(input, output);
+
+const
+        someConstant := 3.4;
+
+var
+        a : integer;
+
+begin
+	if (a != 4) then
+		exit();
+		
+end. 

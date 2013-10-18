@@ -5,7 +5,7 @@
 program test05(input, output);
 
 const
-        ca := 3.4;
+        ca = 3.4;
 
 var
         a : integer;
