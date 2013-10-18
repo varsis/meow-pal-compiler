@@ -5,6 +5,8 @@ var
 
 begin
         str := 'asdghkajsdghjkadshakjsdghkajsdgj\n\n\n\n\t\n\n\n\n
-               ahsdajdhgajsdhashdjadg';
+               ahsdajdhgajsdhashdjadg
+               sdklfjslkdfja;skdjlkj
+               ksdjflskdjflskdjfkldsjfklsjfkldjf';
         writeln(str);
 end.

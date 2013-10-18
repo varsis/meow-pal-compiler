@@ -305,7 +305,7 @@ matched_stat            : simple_stat
                         | WHILE expr DO matched_stat
                         | CONTINUE
                         | EXIT
-						                  | /* empty */
+			| /* empty */
                         ;
 
 /********************************************************************************
