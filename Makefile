@@ -67,7 +67,7 @@ $(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
 ################################################################################
 
 # Add new tests here. Test % must be in file $(TESTDIR)/%.cpp
-TESTS = ScannerTest ParserTest ParserTestWithFiles
+TESTS = ScannerTest ParserTest ParserTestWithFiles Checkpoint1Tests
 
 TESTS_ = $(addprefix $(TESTDIR)/,$(TESTS))
 

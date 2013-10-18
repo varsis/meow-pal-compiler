@@ -1,6 +1,6 @@
 { Test Case 0: Test for Lexical Errors 
 	Error 1: "123pi" on line 11 invalid id
-	Error 2: "2if" on line 20 invalid token
+	Error 2: "2if" on line 20 invalid id
 	Error 3: "23." on line 21 invalid number }
 
 program test0(input, output);
