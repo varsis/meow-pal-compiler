@@ -9,14 +9,14 @@ namespace Meow
 
 	ErrorManager::~ErrorManager()
 	{
-		std::multiset<Error*,classcomp>::iterator it;
+		ErrorList::iterator it;
 		for (it = m_errors.begin(); it != m_errors.end(); ++it)
 		{
 			delete *it;
 		}
 	}
 
-	const std::multiset<Error*,classcomp>* ErrorManager::getErrors() const
+	const ErrorList* ErrorManager::getErrors() const
 	{
 		return &m_errors;
 	}
@@ -30,7 +30,7 @@ namespace Meow
 
 	void ErrorManager::printErrors() const
 	{
-		std::multiset<Error*,classcomp>::iterator it;
+		ErrorList::iterator it;
 		for (it = m_errors.begin(); it != m_errors.end(); ++it)
 		{
 			(*it)->printError();

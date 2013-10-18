@@ -6,12 +6,12 @@ program test2(input, output);
 var 
 	s : string;
 begin
-	s := 'valid string with single quotes'
-	s := "invalid string with double quotes"
-	s := '\'valid string with escaped chars \n \t \''
-	s := 'invalid string with escaped char \z'
+	s := 'valid string with single quotes';
+	s := "invalid string with double quotes";
+	s := '\'valid string with escaped chars \n \t \'';
+	s := 'invalid string with escaped char \z';
 	s := 'invalid 
 		multiline 
-		string'
+		string';
 	s := 'invalid unclosed string
 end.

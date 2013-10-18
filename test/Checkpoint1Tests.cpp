@@ -17,7 +17,7 @@ namespace Meow
 	EXPECT_EQ(retval, expected);
 
 #define GET_ERRORS(expected) \
-	const multiset<Error*,classcomp>* errors = errorManager->getErrors(); \
+	const ErrorList* errors = errorManager->getErrors(); \
 	EXPECT_EQ(expected, errors->size()); \
 	multiset<Error*>::iterator errIt = errors->begin();
 
