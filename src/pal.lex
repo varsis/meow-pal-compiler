@@ -3,7 +3,8 @@
 	#include "Scanner.hpp"
 	typedef Meow::PalParser::token token;
 
-
+	static bool s_stringInvalid;
+	static bool s_stringMultiline;
 	static unsigned int s_commentStartLine;
 %}
 
@@ -11,6 +12,7 @@
 %option yylineno
 
 %x IN_COMMENT
+%x IN_STRING_LITERAL
 
 %%
 
@@ -18,11 +20,42 @@
 {
 	"}"	{ BEGIN(INITIAL); }
 	\n	{ /* Count line endings */ }
- "{" { getManager()->addError(new Error(NestedComment, "Unexpected \"{\" in comment; nested comments not allowed.", yylineno)); return 0; } 
 	<<EOF>> {
-				getManager()->addError(new Error(UnclosedComment, "Unclosed comment.", s_commentStartLine));
-				return 0;
+			getManager()->addError(new Error(UnclosedComment, "Unclosed comment.", s_commentStartLine));
+			return 0;
+		}
+	.	{ /* ignore eveything else */ }
+}
+
+<IN_STRING_LITERAL>
+{
+	\\[^nt'\\] {
+			if (!s_stringInvalid) {
+				getManager()->addError(new Error(InvalidString, "String contains invalid escapes.", s_commentStartLine));
+				s_stringInvalid = true;
 			}
+		}
+	\\'	{ /* empty */ }
+	\\n	{ /* empty */ }
+	\\t	{ /* empty */ }
+	\\\\	{ /* empty */ }
+	'	{ BEGIN(INITIAL); return token::STRING_LITERAL;  }
+	\"	{
+			getManager()->addError(new Error(InvalidString, "\" ' \" expected for string literal.", s_commentStartLine));
+			BEGIN(INITIAL);
+			return token::STRING_LITERAL;
+		}
+	\n	{ /* Count line endings */
+			if (!s_stringMultiline) {
+				getManager()->addError(new Error(MultiLineString, "Multiline string; invalid", s_commentStartLine));
+				s_stringMultiline = true;
+			}
+		}
+	<<EOF>> {
+			getManager()->addError(new Error(UnclosedString, "Unclosed string.", s_commentStartLine));
+
+		}
+		
 	.	{ /* ignore eveything else */ }
 }
 
@@ -33,6 +66,21 @@
 "{" { 
 		s_commentStartLine = yylineno;
 		BEGIN(IN_COMMENT); 
+	}
+	
+'	{
+		s_stringInvalid = false;
+		s_stringMultiline = false;
+		s_commentStartLine = yylineno;
+		BEGIN(IN_STRING_LITERAL);
+	}
+	
+\" 	{
+		s_stringInvalid = false;
+		s_stringMultiline = false;
+		s_commentStartLine = yylineno;
+		getManager()->addError(new Error(UnmatchedComment, "\" ' \" expected for string literal.", yylineno));
+		BEGIN(IN_STRING_LITERAL);
 	}
 
 "}" { getManager()->addError(new Error(UnmatchedComment, "Unexpected \"}\"; unmatched comment.", yylineno)); }
@@ -52,6 +100,8 @@
 ":=" { return token::ASSIGN; }
 "." {return token::PERIOD; }
 ".." {return token::UPTO; }
+"..." { getManager()->addError(new Error(InvalidUpTo, "Unexpected \"...\"; should be \"..\".", yylineno));
+	return token::UPTO; }
 
 "+" { return token::PLUS; }
 "-" { return token::MINUS; }
@@ -82,17 +132,13 @@
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-'(\\([nt'\\])|[^\\'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;}
-'(\\([nt'\\])|[^\\'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "Unclosed string literal.", yylineno)); }
-'(\\.|[^'\n])*' {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "String contains invalid escapes or characters.", yylineno)); }
-
 (0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { return token::REAL_CONST; }
 (0|[1-9])+ { return token::INT_CONST; }
 ([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER;  }
-([0-9]+[a-zA-Z0-9]*) { yylval->identifier = new std::string(yytext); getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno)); }
+([0-9]+[a-zA-Z0-9]*) { yylval->identifier = new std::string(yytext); getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno)); return token::IDENTIFIER; }
 
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
 ":" { return token::COLON; }
 
-. { ECHO; getManager()->addError(new Error(UnrecognizedSymbol, "Invalid symbol encountered.", yylineno)); }
+. { getManager()->addError(new Error(UnrecognizedSymbol, "Invalid symbol encountered.", yylineno)); }

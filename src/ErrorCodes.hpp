@@ -9,6 +9,7 @@ namespace Meow
 		SyntaxError,
 		UnclosedComment,
 		UnclosedString,
+		InvalidString,
 		UnrecognizedSymbol,
 		InvalidIdentifier,
 		NestedComment,
@@ -23,9 +24,14 @@ namespace Meow
 		InvalidTypeDecl,
 		InvalidVarDecl,
 		InvalidFunctDecl,
-		InvalidProcDecl
+		InvalidProcDecl,
+		InvalidUpTo,
+		InvalidArrayDecl,
+		InvalidRecordDecl,
+		InvalidEnumDecl,
+		MultiLineString
 
-		/* DECLARE ALL OTHER ERRORS HERE */
+			/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
 

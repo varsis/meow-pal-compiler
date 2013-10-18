@@ -66,22 +66,29 @@ program                 : program_head decls compound_stat PERIOD
                         ;
 
 program_head            : PROGRAM IDENTIFIER 
-							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
-							SEMICOLON
+			LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
+			SEMICOLON
                         | PROGRAM IDENTIFIER 
-							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER 
-       SEMICOLON      
+			LEFT_PAREN IDENTIFIER COMMA IDENTIFIER
+			SEMICOLON      
                         { errorManager.addError(
                          new Error(MissingProgramParentheses,
                                    "Missing \")\" after program argument list.", 
                                    scanner.lineno())); 
                         }
                         | PROGRAM IDENTIFIER 
-							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
+			LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
                         { errorManager.addError(
                          new Error(InvalidProgramHeader,
                                    "Missing \";\" after program header.", 
                                    scanner.lineno())); 
+                        }
+			| PROGRAM IDENTIFIER
+			LEFT_PAREN error RIGHT_PAREN SEMICOLON
+                        { errorManager.addError(
+                         new Error(InvalidProgramHeader,
+                                   "Error in program arguments.",
+                                   scanner.lineno()));
                         }
                         | /* empty */
                         {
@@ -153,6 +160,13 @@ simple_type             : IDENTIFIER
                         ;
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
+			| LEFT_PAREN error RIGHT_PAREN
+			{
+                            errorManager.addError(
+                                new Error(InvalidEnumDecl,
+                                          "Invalid enumeration declaration.",
+                                          scanner.lineno()));
+                        }
 			;
 
 enum_list		: IDENTIFIER
@@ -161,6 +175,21 @@ enum_list		: IDENTIFIER
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         | RECORD field_list END
+                        | RECORD field_list SEMICOLON END
+                        | RECORD error END
+                        {
+                            errorManager.addError(
+                                new Error(InvalidRecordDecl,
+                                          "Invalid record declaration.",
+                                          scanner.lineno()));
+                        }
+                        | ARRAY error OF type
+                        {
+                            errorManager.addError(
+                                new Error(InvalidArrayDecl,
+                                          "Invalid array declaration.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 index_type              : simple_type
@@ -172,6 +201,13 @@ field_list              : field
                         ;
 
 field                   : IDENTIFIER COLON type
+			| IDENTIFIER error
+			{
+                            errorManager.addError(
+                                new Error(InvalidRecordDecl,
+                                          "Invalid field declaration.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 /********************************************************************************
@@ -192,6 +228,13 @@ var_decl                : IDENTIFIER COLON type
                             errorManager.addError(
                                 new Error(InvalidVarDecl,
                                           "Use \":\" to declare variables.",
+                                          scanner.lineno()));
+                        }
+                        | IDENTIFIER error
+                        {
+                            errorManager.addError(
+                                new Error(InvalidVarDecl,
+                                          "Invalid variable declaration.",
                                           scanner.lineno()));
                         }
                         ;
@@ -232,7 +275,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                               new Error(InvalidProcDecl,
                                         "Procedure can't return a value.",
                                         scanner.lineno()));
-                        }  
+                        }
+                        | PROCEDURE error RIGHT_PAREN SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidProcDecl,
+                                        "Invalid procedure header.",
+                                        scanner.lineno()));
+                        }
+
+                        | FUNCTION error RIGHT_PAREN COLON IDENTIFIER SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidFunctDecl,
+                                        "Invalid function header.",
+                                        scanner.lineno()));
+                        }
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
@@ -306,7 +364,7 @@ matched_stat            : simple_stat
                         | WHILE expr DO matched_stat
                         | CONTINUE
                         | EXIT
-						                  | /* empty */
+			| /* empty */
                         ;
 
 /********************************************************************************

@@ -7,7 +7,6 @@
 
 namespace Meow
 {
-
 	Parser::Parser(ErrorManager* manager, bool debugFlag)
 	    : m_errorManager(manager),
 	      m_debugFlag(debugFlag)
@@ -32,7 +31,7 @@ namespace Meow
 			m_errorManager->setErrorFlag();
 		}
 
-		return retval;
+		return (int) m_errorManager->getErrorFlag();
 	}
 
 	int Parser::parseFile(std::string fileName)
