@@ -24,7 +24,6 @@ namespace Meow
             unsigned int getLineNumber() const;
             void printError();
 
-
         private:
             void setErrorString(std::string);
             void setLineNumber(unsigned int line);
