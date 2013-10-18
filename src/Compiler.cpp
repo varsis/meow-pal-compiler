@@ -9,10 +9,11 @@
 using namespace Meow;
 
 Compiler::Compiler()
-	: m_parser(&m_errorManager, false),
+	: m_parser(&m_errorManager),
 	  m_leaveASC(false),
 	  m_programListing(true), 
-	  m_runtimeArrayBoundChecking(true)
+	  m_runtimeArrayBoundChecking(true),
+	  m_debug(false)
 {
 }
 
@@ -145,11 +146,13 @@ void Compiler::printProgramListing()
 int Compiler::run(int argc, char* argv[])
 {
 	int parseResult = 0;
-	Parser parser(&m_errorManager, m_debug);
 
 	getArguments(argc, argv);
-	parseResult = parser.parseFile(m_inputFileName);
-        
+
+	m_parser.setDebugFlag(m_debug);
+
+	parseResult = m_parser.parseFile(m_inputFileName);
+
 	if (m_programListing)
 	{
 		printProgramListing();
