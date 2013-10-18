@@ -65,22 +65,29 @@ program                 : program_head decls compound_stat PERIOD
                         ;
 
 program_head            : PROGRAM IDENTIFIER 
-							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
-							SEMICOLON
+			LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
+			SEMICOLON
                         | PROGRAM IDENTIFIER 
-							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER 
-       SEMICOLON      
+			LEFT_PAREN IDENTIFIER COMMA IDENTIFIER
+			SEMICOLON      
                         { errorManager.addError(
                          new Error(MissingProgramParentheses,
                                    "Missing \")\" after program argument list.", 
                                    scanner.lineno())); 
                         }
                         | PROGRAM IDENTIFIER 
-							LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN 
+			LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
                         { errorManager.addError(
                          new Error(InvalidProgramHeader,
                                    "Missing \";\" after program header.", 
                                    scanner.lineno())); 
+                        }
+			| PROGRAM IDENTIFIER
+			LEFT_PAREN error RIGHT_PAREN SEMICOLON
+                        { errorManager.addError(
+                         new Error(InvalidProgramHeader,
+                                   "Error in program arguments.",
+                                   scanner.lineno()));
                         }
                         | /* empty */
                         {
@@ -160,6 +167,20 @@ enum_list		: IDENTIFIER
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         | RECORD field_list END
+                        | RECORD error END
+                        {
+                            errorManager.addError(
+                                new Error(InvalidRecordDecl,
+                                          "Invalid record declaration.",
+                                          scanner.lineno()));
+                        }
+                        | ARRAY error type
+                        {
+                            errorManager.addError(
+                                new Error(InvalidArrayDecl,
+                                          "Invalid array declaration.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 index_type              : simple_type

@@ -40,6 +40,11 @@
 	\\t	{ /* empty */ }
 	\\\\	{ /* empty */ }
 	'	{ BEGIN(INITIAL); return token::STRING_LITERAL;  }
+	\"	{
+			getManager()->addError(new Error(InvalidString, "\" ' \" expected for string literal.", s_commentStartLine));
+			BEGIN(INITIAL);
+			return token::STRING_LITERAL;
+		}
 	\n	{ /* Count line endings */
 			if (!s_stringMultiline) {
 				getManager()->addError(new Error(MultiLineString, "Multiline string; invalid", s_commentStartLine));
@@ -69,6 +74,14 @@
 		s_commentStartLine = yylineno;
 		BEGIN(IN_STRING_LITERAL);
 	}
+	
+\" 	{
+		s_stringInvalid = false;
+		s_stringMultiline = false;
+		s_commentStartLine = yylineno;
+		getManager()->addError(new Error(UnmatchedComment, "\" ' \" expected for string literal.", yylineno));
+		BEGIN(IN_STRING_LITERAL);
+	}
 
 "}" { getManager()->addError(new Error(UnmatchedComment, "Unexpected \"}\"; unmatched comment.", yylineno)); }
 
@@ -87,6 +100,8 @@
 ":=" { return token::ASSIGN; }
 "." {return token::PERIOD; }
 ".." {return token::UPTO; }
+"..." { getManager()->addError(new Error(InvalidUpTo, "Unexpected \"...\"; should be \"..\".", yylineno));
+	return token::UPTO; }
 
 "+" { return token::PLUS; }
 "-" { return token::MINUS; }
@@ -125,5 +140,6 @@
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
 ":" { return token::COLON; }
+
 
 . { getManager()->addError(new Error(UnrecognizedSymbol, "Invalid symbol encountered.", yylineno)); }

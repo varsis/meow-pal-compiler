@@ -25,6 +25,9 @@ namespace Meow
 	InvalidVarDecl,
 	InvalidFunctDecl,
 	InvalidProcDecl,
+	InvalidUpTo,
+	InvalidArrayDecl,
+	InvalidRecordDecl,
 	MultiLineString
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
