@@ -8,45 +8,44 @@
 namespace Meow
 {
 
-    Parser::Parser(ErrorManager* manager, bool debugFlag)
-        : m_errorManager(manager),
-	m_debugFlag(debugFlag)
-    {
-    }
+	Parser::Parser(ErrorManager* manager, bool debugFlag)
+	    : m_errorManager(manager),
+	      m_debugFlag(debugFlag)
+	{
+	}
 
-    int Parser::parseFile(std::ifstream* fileStream)
-    {
-        int retval;
-        PalScanner scanner(fileStream, m_errorManager);
+	int Parser::parseFile(std::ifstream* fileStream)
+	{
+		int retval;
+		PalScanner scanner(fileStream, m_errorManager);
 
-        PalParser parser(scanner, *m_errorManager);
-	    if(m_debugFlag)
-	    {
-		    parser.set_debug_level(1);
-	    }
-        retval = parser.parse();
-        
-        if (retval != 0) 
-        {
-          m_errorManager->setErrorFlag();
-        }
+		PalParser parser(scanner, *m_errorManager);
+		if(m_debugFlag)
+		{
+			parser.set_debug_level(1);
+		}
 
-        return retval;
-    }
+		retval = parser.parse();
 
-    int Parser::parseFile(std::string fileName)
-    {
-        std::ifstream fileStream(fileName.c_str());
+		if (retval != 0) 
+		{
+			m_errorManager->setErrorFlag();
+		}
 
-        if (fileStream == NULL || !fileStream.is_open())
-        {
-                std::cerr << "** Error: Unable to open" << fileName << "\n";
-                return -1;
-        }
+		return retval;
+	}
 
-        return parseFile(&fileStream);
-    }
-	
+	int Parser::parseFile(std::string fileName)
+	{
+		std::ifstream fileStream(fileName.c_str());
 
-	
+		if (fileStream == NULL || !fileStream.is_open())
+		{
+			std::cerr << "** Error: Unable to open" 
+			    << fileName << "\n";
+			return -1;
+		}
+
+		return parseFile(&fileStream);
+	}
 }

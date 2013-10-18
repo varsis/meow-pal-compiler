@@ -24,16 +24,16 @@ void Compiler::displayUsage()
 {
 	std::cout << "\nProgram Usage: pal [-n] file.pal\n\n";
 	std::cout << "OPTIONS:\n";
-	std::cout << "\t-n : Do not produce a program listing. Default is to produce one.\n";
+	std::cout << "\t-n : Do not produce a program listing. Default is" 
+		  << "to produce one.\n";
+	std::cout << "\t-d : Enable bison debug mode.\n";
 	std::cout << std::endl;
 }
 
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
-
-	const char* optString = "n";
-
+	const char* optString = "nd";
 	
 	if (argc == 1)
 	{
@@ -50,9 +50,12 @@ void Compiler::getArguments(int argc, char* argv[])
 			case 'n':
 				m_programListing = false;
 				break;
-
+			case 'd':
+				m_debug = true;
+				break;
 			default:
-				std::cerr << "\n* Unrecognized option: -" << opt << "\n";
+				std::cerr << "\n* Unrecognized option: -" 
+				    << opt << "\n";
 				displayUsage();
 				std::exit(-1);	
 		}
@@ -72,7 +75,8 @@ void Compiler::getArguments(int argc, char* argv[])
 
 void Compiler::printErrors()
 {
-	const std::multiset<Error*,classcomp>* errors = m_errorManager.getErrors();
+	const std::multiset<Error*,classcomp>* errors =
+	    m_errorManager.getErrors();
 	std::multiset<Error*,classcomp>::const_iterator errorIt;
 
 	for (errorIt = errors->begin(); errorIt != errors->end(); ++errorIt)
@@ -83,30 +87,34 @@ void Compiler::printErrors()
 
 void Compiler::printProgramListing()
 {
-	const std::multiset<Error*,classcomp>* errors = m_errorManager.getErrors();
-
+	const std::multiset<Error*,classcomp>* errors = 
+		m_errorManager.getErrors();
 	std::ifstream inputFileStream(m_inputFileName.c_str());
+
+	unsigned int lineCount = 1;
+	std::string currentLine;
+	std::multiset<Error*,classcomp>::const_iterator errorIt;
 
 	// open file
 	if (!inputFileStream.is_open())
 	{
-		std::cerr << "** Error: Unable to find " << m_inputFileName << "\n";
+		std::cerr << "** Error: Unable to find " 
+		    << m_inputFileName << "\n";
 	}
 	else
 	{
-		unsigned int lineCount = 1;
-		std::string currentLine;
-
-		std::multiset<Error*,classcomp>::const_iterator errorIt = errors->begin();
+		errorIt = errors->begin(); 
 
 		while (std::getline(inputFileStream, currentLine))
 		{
 			// print the line
-			std::cout << lineCount << ": " << currentLine << std::endl;
+			std::cout << lineCount << ": " << currentLine 
+			    << std::endl;
 
 			// print any errors for the line
 			// assumes errors are sorted by line number
-			while (errorIt != errors->end() && (*errorIt)->getLineNumber() == lineCount)
+			while (errorIt != errors->end() && 
+			    (*errorIt)->getLineNumber() == lineCount)
 			{
 				(*errorIt)->printError();
 				++errorIt;
@@ -114,7 +122,8 @@ void Compiler::printProgramListing()
 			lineCount++;
 		}
 
-		// print errors where line number exceeds number of actual lines in the file
+		// print errors where line number exceeds number of actual 
+		// lines in the file
 		// -> when can this happen?
 		// print errors without any line number?
 		while (errorIt != errors->end())
@@ -125,34 +134,30 @@ void Compiler::printProgramListing()
 
 		if (m_errorManager.getErrorFlag()) 
 		{
-			std::cout << "pal: *** " << m_inputFileName << " has errors.\n";
+			std::cout << "pal: *** " << m_inputFileName 
+			    << " has errors.\n";
 		}
 
 		inputFileStream.close();
 	}
 }
 
-
-
 int Compiler::run(int argc, char* argv[])
 {
-	getArguments(argc, argv);
-
-	Parser parser(&m_errorManager, m_debug);
 	int parseResult = 0;
-	
+	Parser parser(&m_errorManager, m_debug);
+
+	getArguments(argc, argv);
 	parseResult = parser.parseFile(m_inputFileName);
         
 	if (m_programListing)
 	{
 		printProgramListing();
-
 	}
 	else
 	{
 		printErrors();
 	}
-
 
 	return parseResult;
 }

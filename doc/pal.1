@@ -6,7 +6,11 @@ pal \-\- compiles programs for the PAL programming language.
 .B pal 
 [
 .B -n
-] [
+] 
+[
+.B -d
+]
+[
 .I file ...
 ]
 .SH DESCRIPTION
@@ -17,6 +21,8 @@ checking yet.
 .SH OPTIONS
 .IP -n
 Do not produce a program listing. Default is to produce one.
+.IP -d
+Turns on verbose debugging for Bison.
 .SH EXAMPLES
 .B pal -n file
 Will compile the PAL program in the file, without printing a program listing.

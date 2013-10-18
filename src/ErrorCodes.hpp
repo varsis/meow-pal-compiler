@@ -6,25 +6,25 @@ namespace Meow
 	enum ErrorCode
 	{
 		OtherError,
-	  	SyntaxError,
+		SyntaxError,
 		UnclosedComment,
 		UnclosedString,
-  		UnrecognizedSymbol,
-  		InvalidIdentifier,
-  		NestedComment,
-  		UnmatchedComment,
-  		MissingProgramParentheses,
-  		MissingProgramPeriod,
-  		CStyleAssignment,
-  		MismatchedBlock,
-  		InvalidExpression,
-  		InvalidProgramHeader,
-  		InvalidConstDecl,
-  		InvalidTypeDecl,
-  		InvalidVarDecl,
-  		InvalidFunctDecl,
-  		InvalidProcDecl
-		
+		UnrecognizedSymbol,
+		InvalidIdentifier,
+		NestedComment,
+		UnmatchedComment,
+		MissingProgramParentheses,
+		MissingProgramPeriod,
+		CStyleAssignment,
+		MismatchedBlock,
+		InvalidExpression,
+		InvalidProgramHeader,
+		InvalidConstDecl,
+		InvalidTypeDecl,
+		InvalidVarDecl,
+		InvalidFunctDecl,
+		InvalidProcDecl
+
 		/* DECLARE ALL OTHER ERRORS HERE */
 	};
 }
