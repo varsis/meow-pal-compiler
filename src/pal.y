@@ -391,13 +391,6 @@ expr			: simple_expr
                         | expr LT simple_expr
                         | expr GE simple_expr
                         | expr GT simple_expr
-                        | error SEMICOLON
-                          {
-                            errorManager.addError(
-                                                  new Error(InvalidExpression,
-                                                            "Invalid expression.",
-                                                            scanner.lineno()));
-			  }
                         ;
 
 simple_expr             : term
