@@ -1,10 +1,17 @@
-{ Test Case 2: Test for Lexical Errors
-	Error 1: invalid integer on line 9 }
-
+{
+	Test Case 2: Test for Lexical Errors
+	Strings - unclosed + multiline, invalid characters, invalid quotes
+}
 program test2(input, output);
 var 
-	somevar : integer;
-	arr : array[1 .. 2] of integer;
+	s : string;
 begin
-	somevar := 47829374E10.1; // TODO is this a syntax error or semantic?
+	s := 'valid string with single quotes'
+	s := "invalid string with double quotes"
+	s := '\'valid string with escaped chars \n \t \''
+	s := 'invalid string with escaped char \z'
+	s := 'invalid 
+		multiline 
+		string'
+	s := 'invalid unclosed string
 end.

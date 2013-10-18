@@ -2,7 +2,6 @@
 	Test Case 0: Test for Lexical Errors 
 	Invalid identifiers, real constants, and symbols
 }
-
 program test0(input, output);
 var
 	a : real;

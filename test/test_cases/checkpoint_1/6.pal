@@ -1,38 +1,14 @@
-{ Test Case 6: Test for Syntax Errors
-	Error 1: Line 5 missing input variable
-	Error 2: Line 19 end has a period, should be ;
-	Error 3: Line 32 unexpected IF (missing semicolon on line 30) }
-program test06( ,output);
-const
-        someConstant = 3.4;
-type
-	aType = array [10 .. 100] of array [11 .. 12] of integer;
+{
+	Test Case 6: Test for Syntax Errors
+	Procedure returning a value
+}
+program test6(input ,output);
 
-var
-        a,b : integer;
-	b : string;
-	c : aType;
-
-function gcd (a : integer; b : integer) : real;
-	var x : integer;
+procedure foo(a : integer; b : integer) : integer;
+var 
+	x : integer;
 begin
-end.
-
+end;
 
 begin
-
-	while (a <> 20) do
-		b := c[a][13];
-
-	a := a + 1;
-
-	if(b = 'a string') then
-		exit
-
-	if (a = b or c) then;
-		b := c;
-			if (b = c) then
-			else
-			c := 5;
-
 end.

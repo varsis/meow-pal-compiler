@@ -92,7 +92,7 @@ void Compiler::printProgramListing()
 		m_errorManager.getErrors();
 	std::ifstream inputFileStream(m_inputFileName.c_str());
 
-	unsigned int lineCount = 1;
+	int lineCount = 1;
 	std::string currentLine;
 	std::multiset<Error*,classcomp>::const_iterator errorIt;
 
@@ -109,7 +109,7 @@ void Compiler::printProgramListing()
 		while (std::getline(inputFileStream, currentLine))
 		{
 			// print the line
-			std::cout << lineCount << ": " << currentLine 
+			std::cout << lineCount << ":\t" << currentLine 
 			    << std::endl;
 
 			// print any errors for the line
@@ -123,10 +123,8 @@ void Compiler::printProgramListing()
 			lineCount++;
 		}
 
-		// print errors where line number exceeds number of actual 
-		// lines in the file
-		// -> when can this happen?
-		// print errors without any line number?
+		// Print any leftover errors with no associated line number
+		// (will be sorted to end)
 		while (errorIt != errors->end())
 		{
 			(*errorIt)->printError();

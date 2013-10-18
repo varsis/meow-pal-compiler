@@ -181,7 +181,7 @@ namespace Meow
 		if (errors->size() == 1)
 		{
 			EXPECT_EQ(UnclosedComment, (*errors->begin())->getErrorCode());
-			EXPECT_EQ(3u, (*errors->begin())->getLineNumber());
+			EXPECT_EQ(3, (*errors->begin())->getLineNumber());
 		}
 	}
 
@@ -231,17 +231,17 @@ namespace Meow
 		EXPECT_EQ(2u, errors->size()); 
 
 		// should be 2 unclosed string errors
-		if (errors->size() == 2)
+		if (errors->size() == 2u)
 		{
 			multiset<Error*>::iterator errIt = errors->begin();
 
 			EXPECT_EQ(MultiLineString, (*errIt)->getErrorCode());
-			EXPECT_EQ(3u, (*errIt)->getLineNumber());
+			EXPECT_EQ(3, (*errIt)->getLineNumber());
 
 			++errIt;
 
 			EXPECT_EQ(MultiLineString, (*errIt)->getErrorCode());
-			EXPECT_EQ(5u, (*errIt)->getLineNumber());
+			EXPECT_EQ(5, (*errIt)->getLineNumber());
 		}
 	}
 

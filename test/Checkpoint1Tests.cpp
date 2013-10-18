@@ -61,20 +61,20 @@ namespace Meow
 	{
 		PARSE_FILE("test/test_cases/checkpoint_1/0.pal", Failure);
 		GET_ERRORS(3u);
-		EXPECT_ERROR(InvalidIdentifier, 11u);
-		EXPECT_ERROR(InvalidIdentifier, 20u);
+		EXPECT_ERROR(InvalidIdentifier, 11);
+		EXPECT_ERROR(InvalidIdentifier, 20);
 		// TODO
-		//EXPECT_ERROR(InvalidNumber, 21u);
+		//EXPECT_ERROR(InvalidNumber, 21);
 	}
 
 	TEST_F(Checkpoint1Tests, Test_1)
 	{
 		PARSE_FILE("test/test_cases/checkpoint_1/1.pal", Failure);
 		GET_ERRORS(3u);
-		EXPECT_ERROR(InvalidIdentifier, 12u);
-		EXPECT_ERROR(InvalidIdentifier, 13u);
+		EXPECT_ERROR(InvalidIdentifier, 12);
+		EXPECT_ERROR(InvalidIdentifier, 13);
 		// TODO
-		//EXPECT_ERROR(InvalidStringCharacter, 14u);
+		//EXPECT_ERROR(InvalidStringCharacter, 14);
 	}
 
 	TEST_F(Checkpoint1Tests, Test_2)
@@ -82,7 +82,7 @@ namespace Meow
 		PARSE_FILE("test/test_cases/checkpoint_1/2.pal", Failure);
 		GET_ERRORS(1u);
 		// TODO number issue
-		EXPECT_ERROR(UnrecognizedSymbol, 9u);
+		EXPECT_ERROR(UnrecognizedSymbol, 9);
 	}
 
 	// TODO array : array[1E1 .. 2]; (syntax)
@@ -91,23 +91,23 @@ namespace Meow
 	{
 		PARSE_FILE("test/test_cases/checkpoint_1/3.pal", Failure);
 		GET_ERRORS(3u);
-		EXPECT_ERROR(UnrecognizedSymbol, 12u);
-		EXPECT_ERROR(UnrecognizedSymbol, 13u);
-		EXPECT_ERROR(UnrecognizedSymbol, 14u);
+		EXPECT_ERROR(UnrecognizedSymbol, 12);
+		EXPECT_ERROR(UnrecognizedSymbol, 13);
+		EXPECT_ERROR(UnrecognizedSymbol, 14);
 	}
 
 	TEST_F(Checkpoint1Tests, Test_4)
 	{
 		PARSE_FILE("test/test_cases/checkpoint_1/4.pal", Failure);
 		GET_ERRORS(3u);
-		EXPECT_ERROR(UnrecognizedSymbol, 13u);
+		EXPECT_ERROR(UnrecognizedSymbol, 13);
 	}
 
 	TEST_F(Checkpoint1Tests, Test_5)
 	{
 		PARSE_FILE("test/test_cases/checkpoint_1/5.pal", Failure);
 		GET_ERRORS(1u);
-		EXPECT_ERROR(InvalidExpression, 12u);
+		EXPECT_ERROR(InvalidExpression, 12);
 
 		// FIXME -- getting like 5 errors here!
 	}
@@ -116,18 +116,18 @@ namespace Meow
 	{
 		PARSE_FILE("test/test_cases/checkpoint_1/6.pal", Failure);
 		GET_ERRORS(4u);
-		EXPECT_ERROR(SyntaxError, 5u);
-		EXPECT_ERROR(InvalidProgramHeader, 5u);
-		EXPECT_ERROR(InvalidProcDecl, 19u);
-		EXPECT_ERROR(SyntaxError, 32u);
+		EXPECT_ERROR(SyntaxError, 5);
+		EXPECT_ERROR(InvalidProgramHeader, 5);
+		EXPECT_ERROR(InvalidProcDecl, 19);
+		EXPECT_ERROR(SyntaxError, 32);
 	}
 
 	TEST_F(Checkpoint1Tests, Test_7)
 	{
 		PARSE_FILE("test/test_cases/checkpoint_1/7.pal", Failure);
 		GET_ERRORS(3u);
-		EXPECT_ERROR(SyntaxError, 19u);
-		EXPECT_ERROR(InvalidExpression, 19u);
-		EXPECT_ERROR(SyntaxError, 21u);
+		EXPECT_ERROR(SyntaxError, 19);
+		EXPECT_ERROR(InvalidExpression, 19);
+		EXPECT_ERROR(SyntaxError, 21);
 	}
 }
