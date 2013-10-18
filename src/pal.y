@@ -259,7 +259,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                               new Error(InvalidProcDecl,
                                         "Procedure can't return a value.",
                                         scanner.lineno()));
-                        }  
+                        }
+                        | PROCEDURE error RIGHT_PAREN SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidProcDecl,
+                                        "Invalid procedure header.",
+                                        scanner.lineno()));
+                        }
+
+                        | FUNCTION error RIGHT_PAREN COLON IDENTIFIER SEMICOLON
+                        {
+                          errorManager.addError(
+                              new Error(InvalidFunctDecl,
+                                        "Invalid function header.",
+                                        scanner.lineno()));
+                        }
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
