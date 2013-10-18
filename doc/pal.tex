@@ -104,6 +104,13 @@ errors at the lexical level:
 	  as an error. 
 	% TODO can we detect other invalid identifiers?
 
+  \item[Invalid character]
+	  If the scanner detects an unknown character, such as \texttt{!} or
+   \texttt{\#}, it returns an error indicating that an unrecognized
+   character was found. It easily recovers from this error and
+   continues on. 
+
+
 \end{description}
 
 \section*{Syntax Analysis}
