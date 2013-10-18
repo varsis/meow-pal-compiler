@@ -1,0 +1,59 @@
+#!/usr/bin/python
+
+import sys
+
+# from pal.tab.h, must update if tokens are changed!
+tokens = {
+	258 : "IDENTIFIER",
+    	259 : "STRING_LITERAL",
+    	260 : "ASSIGN",
+    	261 : "LEFT_BRACKET",
+    	262 : "RIGHT_BRACKET",
+    	263 : "LEFT_PAREN",
+    	264 : "RIGHT_PAREN",
+    	265 : "COLON",
+    	266 : "SEMICOLON",
+    	267 : "COMMA",
+    	268 : "PERIOD",
+    	269 : "UPTO",
+    	270 : "LE",
+    	271 : "GE",
+    	272 : "NE",
+    	273 : "EQ",
+    	274 : "LT",
+    	275 : "GT",
+    	276 : "PLUS",
+    	277 : "MINUS",
+    	278 : "MULTIPLY",
+    	279 : "REAL_DIVIDE",
+    	280 : "INT_DIVIDE",
+    	281 : "MOD",
+    	282 : "DIV",
+    	283 : "AND",
+    	284 : "ARRAY",
+    	285 : "CONST",
+    	286 : "CONTINUE",
+    	287 : "DO",
+    	288 : "ELSE",
+    	289 : "END",
+    	290 : "EXIT",
+    	291 : "FUNCTION",
+    	292 : "IF",
+    	293 : "NOT",
+    	294 : "OF",
+    	295 : "OR",
+    	296 : "PROCEDURE",
+    	297 : "PROGRAM",
+    	298 : "RECORD",
+    	299 : "THEN",
+    	300 : "TYPE",
+    	301 : "VAR",
+    	302 : "WHILE",
+    	303 : "PAL_BEGIN",
+    	304 : "INT_CONST",
+	305 : "REAL_CONST"
+}
+
+
+code = int(sys.argv[1])
+print code, tokens[code]

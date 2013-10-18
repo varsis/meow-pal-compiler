@@ -6,6 +6,8 @@
 	static bool s_stringInvalid;
 	static bool s_stringMultiline;
 	static unsigned int s_commentStartLine;
+	static int s_scannerReturnPosition;
+	static int s_scannerReturnLine;
 %}
 
 %option nodefault yyclass="PalScanner" noyywrap c++
@@ -39,21 +41,57 @@
 	\\n	{ /* empty */ }
 	\\t	{ /* empty */ }
 	\\\\	{ /* empty */ }
-	'	{ BEGIN(INITIAL); return token::STRING_LITERAL;  }
+	'	{
+			if (s_stringMultiline)
+			{
+				// resume scanning from saved position
+				yyin->seekg(s_scannerReturnPosition);
+				yylineno = s_scannerReturnLine;
+			}
+
+			BEGIN(INITIAL);
+			return token::STRING_LITERAL;
+		}
 	\"	{
 			getManager()->addError(new Error(InvalidString, "\" ' \" expected for string literal.", s_commentStartLine));
+
+			if (s_stringMultiline)
+			{
+				// resume scanning from saved position
+				yyin->seekg(s_scannerReturnPosition);
+				yylineno = s_scannerReturnLine;
+			}
+
 			BEGIN(INITIAL);
 			return token::STRING_LITERAL;
 		}
 	\n	{ /* Count line endings */
-			if (!s_stringMultiline) {
-				getManager()->addError(new Error(MultiLineString, "Multiline string; invalid", s_commentStartLine));
+			if (!s_stringMultiline)
+			{
+				getManager()->addError(new Error(MultiLineString, "Unclosed / Multiline string; invalid", s_commentStartLine));
 				s_stringMultiline = true;
+
+				// save position to resume scanning from
+				s_scannerReturnPosition = yyin->tellg();
+				s_scannerReturnLine = yylineno;
 			}
 		}
 	<<EOF>> {
-			getManager()->addError(new Error(UnclosedString, "Unclosed string.", s_commentStartLine));
+			if (!s_stringMultiline)
+			{
+				getManager()->addError(new Error(UnclosedString, "Unclosed string.", s_commentStartLine));
+			}
 
+			if (s_stringMultiline)
+			{
+				// resume scanning from saved position
+				yyin->seekg(s_scannerReturnPosition);
+				yylineno = s_scannerReturnLine;
+				BEGIN(INITIAL);
+				return token::STRING_LITERAL;
+			}
+
+			return 0;
 		}
 		
 	.	{ /* ignore eveything else */ }

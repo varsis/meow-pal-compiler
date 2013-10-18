@@ -26,6 +26,11 @@ namespace Meow
 
 		retval = parser.parse();
 
+		// Parser might have signaled an error and given up,
+		// but we can keep running scanner to the EOF to find more lexical errors
+		PalParser::semantic_type yylval;
+		while (scanner.yylex(&yylval));
+
 		if (retval != 0) 
 		{
 			m_errorManager->setErrorFlag();

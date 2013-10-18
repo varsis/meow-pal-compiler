@@ -28,35 +28,26 @@ namespace Meow
 			PalScanner(FLEX_STD istream* arg_yyin, ErrorManager * manager)
 				: yyFlexLexer(arg_yyin, 0)
 			{
-                this->m_manager = manager;
+				this->m_manager = manager;
 			}
 
 			// save the pointer to yylval so we can change it, and invoke scanner
 			virtual int yylex(PalParser::semantic_type * lval)
 			{
 				yylval = lval;
-				return yylex();
+				int token = yylex();
+				return token;
 			}
-		
+
 		private:
 			virtual int yylex();
 
-            ErrorManager * getManager() 
+			ErrorManager * getManager() 
 			{
-                //assert(m_manager != 0);
-                // If no manager make one
-                if(m_manager == NULL)
-                {
-                    // Return the new one.
-                   return m_manager = new ErrorManager();
-                }
-                else
-                {
-					// Otherwise return it.
-                    return m_manager;
-                }
+				return m_manager;
 			};
-            ErrorManager * m_manager;
+
+			ErrorManager * m_manager;
 			// point to yylval (provided by Bison in overloaded yylex)
 			PalParser::semantic_type * yylval;
 	};

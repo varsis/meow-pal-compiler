@@ -235,12 +235,12 @@ namespace Meow
 		{
 			multiset<Error*>::iterator errIt = errors->begin();
 
-			EXPECT_EQ(UnclosedString, (*errIt)->getErrorCode());
+			EXPECT_EQ(MultiLineString, (*errIt)->getErrorCode());
 			EXPECT_EQ(3u, (*errIt)->getLineNumber());
 
 			++errIt;
 
-			EXPECT_EQ(UnclosedString, (*errIt)->getErrorCode());
+			EXPECT_EQ(MultiLineString, (*errIt)->getErrorCode());
 			EXPECT_EQ(5u, (*errIt)->getLineNumber());
 		}
 	}
