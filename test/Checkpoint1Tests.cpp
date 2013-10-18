@@ -12,6 +12,21 @@ namespace Meow
 	typedef PalParser::token token;
 	typedef PalParser::token_type token_type;
 
+#define PARSE_FILE(filename, expected) \
+	int retval = parser->parseFile(filename); \
+	EXPECT_EQ(retval, expected);
+
+#define GET_ERRORS(expected) \
+	const multiset<Error*,classcomp>* errors = errorManager->getErrors(); \
+	EXPECT_EQ(expected, errors->size()); \
+	multiset<Error*>::iterator errIt = errors->begin();
+
+#define EXPECT_ERROR(errorcode, linenumber) \
+	ASSERT_NE(errIt, errors->end());\
+	EXPECT_EQ(errorcode, (*errIt)->getErrorCode());\
+	EXPECT_EQ(linenumber, (*errIt)->getLineNumber());\
+	++errIt
+
 	enum ParseRetval
 	{
 		Success = 0,
@@ -44,37 +59,75 @@ namespace Meow
 
 	TEST_F(Checkpoint1Tests, Test_0)
 	{
-		int retval = parser->parseFile("test/test_cases/checkpoint_1/0.pal");
+		PARSE_FILE("test/test_cases/checkpoint_1/0.pal", Failure);
+		GET_ERRORS(3u);
+		EXPECT_ERROR(InvalidIdentifier, 11u);
+		EXPECT_ERROR(InvalidIdentifier, 20u);
+		// TODO
+		//EXPECT_ERROR(InvalidNumber, 21u);
+	}
 
-		const multiset<Error*,classcomp>* errors = errorManager->getErrors();
-		
-		// Should fail to parse
-		EXPECT_EQ(1, retval);
+	TEST_F(Checkpoint1Tests, Test_1)
+	{
+		PARSE_FILE("test/test_cases/checkpoint_1/1.pal", Failure);
+		GET_ERRORS(3u);
+		EXPECT_ERROR(InvalidIdentifier, 12u);
+		EXPECT_ERROR(InvalidIdentifier, 13u);
+		// TODO
+		//EXPECT_ERROR(InvalidStringCharacter, 14u);
+	}
 
-		// Should have 3 errors
-		EXPECT_EQ(3u, errors->size()); 
+	TEST_F(Checkpoint1Tests, Test_2)
+	{
+		PARSE_FILE("test/test_cases/checkpoint_1/2.pal", Failure);
+		GET_ERRORS(1u);
+		// TODO number issue
+		EXPECT_ERROR(UnrecognizedSymbol, 9u);
+	}
 
-		multiset<Error*>::iterator errIt = errors->begin();
-		Error* error;
+	// TODO array : array[1E1 .. 2]; (syntax)
 
-		ASSERT_NE(errIt, errors->end());
+	TEST_F(Checkpoint1Tests, Test_3)
+	{
+		PARSE_FILE("test/test_cases/checkpoint_1/3.pal", Failure);
+		GET_ERRORS(3u);
+		EXPECT_ERROR(UnrecognizedSymbol, 12u);
+		EXPECT_ERROR(UnrecognizedSymbol, 13u);
+		EXPECT_ERROR(UnrecognizedSymbol, 14u);
+	}
 
-		error = *errIt;
+	TEST_F(Checkpoint1Tests, Test_4)
+	{
+		PARSE_FILE("test/test_cases/checkpoint_1/4.pal", Failure);
+		GET_ERRORS(3u);
+		EXPECT_ERROR(UnrecognizedSymbol, 13u);
+	}
 
-		EXPECT_EQ(InvalidIdentifier, error->getErrorCode());
-		EXPECT_EQ(11u, error->getLineNumber());
+	TEST_F(Checkpoint1Tests, Test_5)
+	{
+		PARSE_FILE("test/test_cases/checkpoint_1/5.pal", Failure);
+		GET_ERRORS(1u);
+		EXPECT_ERROR(InvalidExpression, 12u);
 
-		ASSERT_NE(errIt, errors->end());
-		error = *(errIt++);
+		// FIXME -- getting like 5 errors here!
+	}
 
-		EXPECT_EQ(InvalidIdentifier, error->getErrorCode());
-		EXPECT_EQ(20u, error->getLineNumber());
+	TEST_F(Checkpoint1Tests, Test_6)
+	{
+		PARSE_FILE("test/test_cases/checkpoint_1/6.pal", Failure);
+		GET_ERRORS(4u);
+		EXPECT_ERROR(SyntaxError, 5u);
+		EXPECT_ERROR(InvalidProgramHeader, 5u);
+		EXPECT_ERROR(InvalidProcDecl, 19u);
+		EXPECT_ERROR(SyntaxError, 32u);
+	}
 
-		ASSERT_NE(errIt, errors->end());
-		error = *(errIt++);
-
-		// TODO InvalidNumber
-		EXPECT_EQ(SyntaxError, error->getErrorCode());
-		EXPECT_EQ(21u, error->getLineNumber());
+	TEST_F(Checkpoint1Tests, Test_7)
+	{
+		PARSE_FILE("test/test_cases/checkpoint_1/7.pal", Failure);
+		GET_ERRORS(3u);
+		EXPECT_ERROR(SyntaxError, 19u);
+		EXPECT_ERROR(InvalidExpression, 19u);
+		EXPECT_ERROR(SyntaxError, 21u);
 	}
 }
