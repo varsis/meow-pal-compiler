@@ -34,8 +34,9 @@ EXPONENT	E[+-]?{DIGIT}+
 
 <IN_STRING_LITERAL>
 {
-	\\[^nt'\\] {
-			if (!s_stringInvalid) {
+	\\[^nt'\\] 	{
+			if (!s_stringInvalid)
+			{
 				getManager()->addError(new Error(InvalidString, "String contains invalid escapes.", s_commentStartLine));
 				s_stringInvalid = true;
 			}
@@ -100,11 +101,11 @@ EXPONENT	E[+-]?{DIGIT}+
 	.	{ /* ignore eveything else */ }
 }
 
-[ \t] { ; /* Ignore whitespace */ }
+[ \t] 	{ ; /* Ignore whitespace */ }
 \n 	{ ; /* Count line endings */ }
 "//".*[^\n] { ; /* Ignore single line comments */ }
 
-"{" { 
+"{" 	{ 
 		s_commentStartLine = yylineno;
 		BEGIN(IN_COMMENT); 
 	}
@@ -141,8 +142,10 @@ EXPONENT	E[+-]?{DIGIT}+
 ":=" { return token::ASSIGN; }
 "." {return token::PERIOD; }
 ".." {return token::UPTO; }
-".."[\.]* { getManager()->addError(new Error(InvalidUpTo, "Too many dots; should be \"..\".", yylineno));
-	return token::UPTO; }
+".."[\.]* {
+	getManager()->addError(new Error(InvalidUpTo, "Too many dots; should be \"..\".", yylineno));
+	return token::UPTO;
+	}
 
 "+" { return token::PLUS; }
 "-" { return token::MINUS; }
@@ -178,7 +181,6 @@ EXPONENT	E[+-]?{DIGIT}+
 
 ([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER; }
 ([0-9]+[a-zA-Z0-9]*) 	{ 
-				yylval->identifier = new std::string(yytext);
 				getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno));
 				return token::IDENTIFIER; 
 			}

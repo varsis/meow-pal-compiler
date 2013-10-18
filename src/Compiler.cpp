@@ -87,8 +87,7 @@ void Compiler::printErrors()
 
 void Compiler::printProgramListing()
 {
-	const ErrorList* errors = 
-		m_errorManager.getErrors();
+	const ErrorList* errors = m_errorManager.getErrors();
 	std::ifstream inputFileStream(m_inputFileName.c_str());
 
 	int lineCount = 1;
@@ -98,8 +97,7 @@ void Compiler::printProgramListing()
 	// open file
 	if (!inputFileStream.is_open())
 	{
-		std::cerr << "** Error: Unable to find " 
-		    << m_inputFileName << "\n";
+		std::cerr << "** Error: Unable to find " << m_inputFileName << "\n";
 	}
 	else
 	{

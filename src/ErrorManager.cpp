@@ -21,7 +21,6 @@ namespace Meow
 		return &m_errors;
 	}
 
-
 	void ErrorManager::addError(Error* inputError)
 	{
 		m_errors.insert(inputError);
