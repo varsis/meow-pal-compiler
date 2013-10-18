@@ -2,7 +2,7 @@
 #include <fstream>
 #include "Parser.hpp"
 #include "Scanner.hpp"
-#include "errormanager.hpp"
+#include "ErrorManager.hpp"
 #include "pal.tab.h"
 
 namespace Meow

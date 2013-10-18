@@ -1,4 +1,4 @@
-#include "errormanager.hpp"
+#include "ErrorManager.hpp"
 
 namespace Meow
 {

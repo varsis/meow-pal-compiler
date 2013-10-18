@@ -20,10 +20,11 @@
 }
 
 %code {
-	#include "errormanager.hpp"
-	#include "error.hpp"
- 	#include "errorcodes.hpp"
  	#include "Scanner.hpp"
+
+	#include "ErrorManager.hpp"
+	#include "Error.hpp"
+ 	#include "ErrorCodes.hpp"
 
 	#define YYDEBUG 1
 	// Prototype for the yylex function

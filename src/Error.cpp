@@ -1,4 +1,4 @@
-#include "error.hpp"
+#include "Error.hpp"
 using namespace Meow;
 
 Error::Error(std::string inputString)
