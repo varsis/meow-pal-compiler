@@ -174,6 +174,7 @@ enum_list		: IDENTIFIER
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         | RECORD field_list END
+                        | RECORD field_list SEMICOLON END
                         | RECORD error END
                         {
                             errorManager.addError(
@@ -199,6 +200,13 @@ field_list              : field
                         ;
 
 field                   : IDENTIFIER COLON type
+			| IDENTIFIER error
+			{
+                            errorManager.addError(
+                                new Error(InvalidRecordDecl,
+                                          "Invalid field declaration.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 /********************************************************************************
