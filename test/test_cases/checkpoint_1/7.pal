@@ -1,6 +1,6 @@
 {
-	Test Case 7: Test for Syntax Errors
-	Invalid array type decalaration
+ Test Case 7: Test for Syntax Errors
+ Line 13: Invalid array declaration
 }
 program test7(input ,output);
 

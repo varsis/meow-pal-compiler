@@ -1,6 +1,6 @@
 {
-	Test Case 6: Test for Syntax Errors
-	Procedure returning a value
+ Test Case 6: Test for Syntax Errors
+ Line 7: Procedure trying to claim a return valuee
 }
 program test6(input ,output);
 
