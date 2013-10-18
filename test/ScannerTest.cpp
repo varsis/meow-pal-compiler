@@ -128,6 +128,31 @@ namespace Meow
 		EXPECT_TOKEN(token::PERIOD);
 	}
 
+	TEST_F(ScannerTest, TestValidRealConstants)
+	{
+		initTest("test/test_cases/btestValidRealConstants.pal");
+
+		EXPECT_TOKEN(token::REAL_CONST);
+		EXPECT_TOKEN(token::REAL_CONST);
+		EXPECT_TOKEN(token::REAL_CONST);
+		EXPECT_TOKEN(token::REAL_CONST);
+		EXPECT_TOKEN(token::REAL_CONST);
+		EXPECT_TOKEN(token::REAL_CONST);
+		EXPECT_TOKEN(token::REAL_CONST);
+	}
+
+	TEST_F(ScannerTest, TestValidIntegerConstants)
+	{
+		initTest("test/test_cases/btestValidIntegerConstants.pal");
+
+
+		EXPECT_TOKEN(token::INT_CONST);
+		EXPECT_TOKEN(token::INT_CONST);
+		EXPECT_TOKEN(token::INT_CONST);
+		EXPECT_TOKEN(token::INT_CONST);
+		EXPECT_TOKEN(token::INT_CONST);
+	}
+
 	TEST_F(ScannerTest, TestUnclosedComment)
 	{
 		initTest("test/test_cases/btestUnclosedComment.pal");
