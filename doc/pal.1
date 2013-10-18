@@ -1,32 +1,47 @@
 .\" Manpage for pal.
-.TH man 8 "06 September 2013" "0.0.1" "pal"
+.TH man 8 "18 October 2013" "0.1.0" "pal"
 .SH NAME
 pal \-\- compiles programs for the PAL programming language.
 .SH SYNOPSIS
 .B pal 
 [
 .B -n
+]
+[
+.B -S
+]
+[
+.B -a
 ] 
 [
 .B -d
 ]
 [
-.I file ...
+.I FILE ...
 ]
 .SH DESCRIPTION
 Parses a
 .B PAL
-program and is able to detect some error based on syntax. No symantic
+program and is able to detect some errors based on syntax. No semantic
 checking yet.
 .SH OPTIONS
 .IP -n
 Do not produce a program listing. Default is to produce one.
 .IP -d
 Turns on verbose debugging for Bison.
+.IP -S
+Leaves Asc code in FILE.asc instead of removing it.
+.IP -a
+Turns off run-time array bounds checking. Default is to do run-time
+array bounds checking.
 .SH EXAMPLES
-.B pal -n file
-Will compile the PAL program in the file, without printing a program listing.
+.B pal FILE  :
+Will compile the PAL program in FILE. Will print program listing,
+remove Asc code, and do run-time array bounds checking, as per the
+default. Will print errors in-line with the program listing. Option -n
+will suppress the program listing but not the error messages.
+
 .SH BUGS
-Does not actually compile anything yet....
-.SH AUTHOR
+Does not compile code.
+.SH AUTHORS
 Chris Pavlicek, Connor Moreside, Mike Armstrong, and Steve Jahns
