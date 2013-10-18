@@ -18,7 +18,6 @@
 {
 	"}"	{ BEGIN(INITIAL); }
 	\n	{ /* Count line endings */ }
- "{" { getManager()->addError(new Error(NestedComment, "Unexpected \"{\" in comment; nested comments not allowed.", yylineno)); return 0; } 
 	<<EOF>> {
 				getManager()->addError(new Error(UnclosedComment, "Unclosed comment.", s_commentStartLine));
 				return 0;
