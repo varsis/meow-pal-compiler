@@ -84,11 +84,12 @@
 
 '(\\([nt'\\])|[^\\'\n])*' {yylval->stringLiteral = new std::string(yytext); return token::STRING_LITERAL;}
 '(\\([nt'\\])|[^\\'\n])* {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "Unclosed string literal.", yylineno)); }
+'(\\.|[^'\n])*' {yylval->stringLiteral = new std::string(yytext); getManager()->addError(new Error(UnclosedString, "String contains invalid escapes or characters.", yylineno)); }
 
 (0|[1-9])+((\.[0-9]+)|([E][-+]?[0-9]+))+ { return token::REAL_CONST; }
 (0|[1-9])+ { return token::INT_CONST; }
-([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER; }
-([0-9_]*[a-zA-Z_0-9]*) { yylval->identifier = new std::string(yytext); getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not contain underscores or begin with numbers.", yylineno)); }
+([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER;  }
+([0-9]+[a-zA-Z0-9]*) { yylval->identifier = new std::string(yytext); getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno)); }
 
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }

@@ -1,0 +1,6 @@
+program btest026(input, output);
+type
+        a : integer;
+        a := integer;
+begin
+end.
