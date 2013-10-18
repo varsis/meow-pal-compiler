@@ -1,6 +1,6 @@
 { Test Case 5: Test for Syntax Errors
 	Error 1: Line 14 assigning constant to variable
-	Error 2: line 15 or = if is not valid
+	Error 2: line 15 a = ca is not valid
 	Error 3: line 16 assignment in if statement}
 program test05(input, output);
 

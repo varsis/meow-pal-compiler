@@ -4,4 +4,17 @@ Test Case 5:
 2. a = ca;
 3 if (a := ca) then
 
+No Error Code for:
+Test Case 5
+1. Invalid Quotes if(b = "a string")then
+2.exit missing quotes
+3. missing else
 
+{ Test Case 6: Test for Syntax Errors
+	Error 1: Line 5 missing input variable
+	Error 2: Line 19 end has a period, should be ;
+	Error 3: Line 28 exit missing }
+{ Test Case 7: Test for Syntax Errors
+	Error 1: Line 17 missing ()
+	Error 2: Line 23 missing right expression
+	Error 3: Line 28 exit missing }

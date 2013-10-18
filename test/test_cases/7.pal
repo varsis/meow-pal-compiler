@@ -1,0 +1,21 @@
+{ Test Case 7: Test for Syntax Errors
+	Error 1: Line 17 missing ()
+	Error 2: Line 23 missing right expression
+	Error 3: Line 28 exit missing }
+program test07(input ,output);
+
+var
+        a,b : integer;
+	b : string;
+	
+function s() : string;
+begin
+	s := string;
+end;
+
+begin
+
+	s();
+	a := c + ;
+end.
+end.

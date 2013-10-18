@@ -51,3 +51,4 @@ void Error::printError() {
     std::cout << "ERROR -- (Line " << getLineNumber() << ") : " << getErrorString() << "\n";
 }
 
+
