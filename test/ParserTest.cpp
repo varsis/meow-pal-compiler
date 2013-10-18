@@ -37,8 +37,10 @@ namespace Meow
 			virtual void TearDown()
 			{
 				scanner.setTokens(tokens);
-				ASSERT_EQ(expectedParseResult, parser.parse()) 
-					<< ">> Failed to parse correct input!";
+				parser.parse();
+				int errors = errorManager.getErrors()->size() > 0;
+				ASSERT_EQ(expectedParseResult, errors)
+					<< ">> Incorrect parse result!";
 			}
 
 			int expectedParseResult;
@@ -448,7 +450,6 @@ namespace Meow
 	TEST_F(TypeDeclarationTest, EnumeratedTypeDef2)
 	{
 		// type T = (1,2,3);
-		// TODO should this be legal? right now it's not ...
 		expectedParseResult = Failure;
 		tokens.push_back(token::IDENTIFIER);
 		tokens.push_back(token::EQ);

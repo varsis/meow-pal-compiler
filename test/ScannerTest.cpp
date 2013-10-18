@@ -200,7 +200,8 @@ namespace Meow
 
 		EXPECT_TOKEN(token::PAL_BEGIN);
 		
-		// TODO - tokenize the unclosed string or ignore it?
+		// Should be invalid, but we'll still get the token
+		EXPECT_TOKEN(token::STRING_LITERAL);
 
 		// Next line should tokenize fine!
 		EXPECT_TOKEN(token::IDENTIFIER);
@@ -209,9 +210,11 @@ namespace Meow
 		EXPECT_TOKEN(token::RIGHT_PAREN);
 		EXPECT_TOKEN(token::SEMICOLON);
 
-		// TODO - tokenize the unclosed string or ignore it?
 		EXPECT_TOKEN(token::IDENTIFIER);
 		EXPECT_TOKEN(token::LEFT_PAREN);
+
+		// Should be invalid, but we'll still get the token
+		EXPECT_TOKEN(token::STRING_LITERAL);
 
 		// Next line should tokenize fine!
 		EXPECT_TOKEN(token::IDENTIFIER);
