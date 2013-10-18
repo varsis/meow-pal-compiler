@@ -100,7 +100,7 @@
 ":=" { return token::ASSIGN; }
 "." {return token::PERIOD; }
 ".." {return token::UPTO; }
-"..." { getManager()->addError(new Error(InvalidUpTo, "Unexpected \"...\"; should be \"..\".", yylineno));
+".."[\.]* { getManager()->addError(new Error(InvalidUpTo, "Too many dots; should be \"..\".", yylineno));
 	return token::UPTO; }
 
 "+" { return token::PLUS; }
