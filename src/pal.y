@@ -317,6 +317,13 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
  ********************************************************************************/
 
 compound_stat           : PAL_BEGIN stat_list END
+			| error stat_list END
+			{
+                          errorManager.addError(
+                              new Error(MismatchedBlock,
+                                        "Missing \"BEGIN\" for matching \"END\".",
+                                        scanner.lineno()));
+                        }
                         ;
 
 stat_list               : stat
