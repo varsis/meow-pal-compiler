@@ -221,6 +221,13 @@ var_decl                : IDENTIFIER COLON type
                                           "Use \":\" to declare variables.",
                                           scanner.lineno()));
                         }
+                        | IDENTIFIER error
+                        {
+                            errorManager.addError(
+                                new Error(InvalidVarDecl,
+                                          "Invalid variable declaration.",
+                                          scanner.lineno()));
+                        }
                         ;
 
 /********************************************************************************
