@@ -32,7 +32,7 @@ do
         ErrorManager errorManager;
         Parser parser(&errorManager);
         int retval = parser.parseFile(\"test/test_cases/$BASENAME.pal\");
-	errorManager.printErrors();
+	//errorManager.printErrors();
 	" >> $OUTFILE;
 
 
