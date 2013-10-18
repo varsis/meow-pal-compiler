@@ -9,7 +9,7 @@
 
 namespace Meow
 {
-	struct classcomp
+	struct ErrorComparer
 	{
 		bool operator() (const Error* lhs, const Error* rhs) const
 		{
@@ -21,6 +21,8 @@ namespace Meow
 		}
 	};
 
+	typedef std::multiset<Error*,ErrorComparer> ErrorList;
+
 	class ErrorManager
 	{
 		public:
@@ -29,10 +31,12 @@ namespace Meow
 			void printErrors() const;
 			void addError(Error* inputError);
 			bool getErrorFlag() const;
-			const std::multiset<Error*,classcomp>* getErrors() const;
+
+			const ErrorList* getErrors() const;
+
 			void setErrorFlag();
 		private:
-			std::multiset<Error*,classcomp> m_errors;
+			ErrorList m_errors;
 			bool m_errorFlag;
 	};
 }

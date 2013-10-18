@@ -174,7 +174,7 @@ namespace Meow
 		EXPECT_TOKEN(0);
 
 		// should only be one error
-		const multiset<Error*,classcomp>* errors = m_errorManager->getErrors();
+		const ErrorList* errors = m_errorManager->getErrors();
 		EXPECT_EQ(1u, errors->size()); 
 
 		// should be one and only one UnclosedComment error, on line 3
@@ -227,7 +227,7 @@ namespace Meow
 		EXPECT_TOKEN(token::PERIOD);
 
 		// should be 2 errors
-		const multiset<Error*,classcomp>* errors = m_errorManager->getErrors();
+		const ErrorList* errors = m_errorManager->getErrors();
 		EXPECT_EQ(2u, errors->size()); 
 
 		// should be 2 unclosed string errors
