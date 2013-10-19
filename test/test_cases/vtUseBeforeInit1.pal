@@ -1,0 +1,6 @@
+program test(input, output);
+var
+        a : array[1..30] of char;
+begin
+        writeln(a);
+end.

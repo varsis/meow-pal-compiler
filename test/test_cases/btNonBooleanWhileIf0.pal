@@ -1,0 +1,12 @@
+program test(input, output);
+
+var
+        a : array[1..90] of char;
+
+begin
+        a[1] := 30;
+        while (a) do
+        begin
+                writeln('a');
+        end;
+end.

@@ -1,0 +1,24 @@
+program test(input, output);
+type
+        person = record
+        a : integer;
+        b : real;
+        c : char;
+        end;
+
+var
+        baz : person;
+
+function foo() : person;
+var
+        bar : person;
+begin
+        bar.a := 50;
+        bar.b := 3.12;
+        bar.c := 'c';
+        foo := bar;
+end;
+
+begin
+        baz := foo();
+end.

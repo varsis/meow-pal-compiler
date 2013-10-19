@@ -1,0 +1,13 @@
+program test(input, output);
+var
+        a : integer;
+
+function foo() : real;
+begin
+        foo := 3.14159;
+end;
+
+begin
+        a := foo();
+        writeln(a);
+end.

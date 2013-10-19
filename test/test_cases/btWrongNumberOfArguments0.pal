@@ -1,0 +1,14 @@
+program test(input, output);
+
+var
+        a : integer;
+
+function bar(a : integer) : integer;
+begin
+        writeln(a);
+        bar := 0;
+end;
+
+begin
+        a := bar(100, 300);
+end.

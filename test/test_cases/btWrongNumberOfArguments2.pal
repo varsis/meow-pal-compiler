@@ -1,0 +1,10 @@
+program test(input, output);
+
+procedure foo(a : integer; b : integer);
+begin
+        writeln(a, b);
+end;
+
+begin
+        foo();
+end.

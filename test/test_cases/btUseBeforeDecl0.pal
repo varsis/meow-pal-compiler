@@ -1,0 +1,7 @@
+program test(input, output);
+
+begin
+        a := 0;
+        c := 0;
+        
+end.

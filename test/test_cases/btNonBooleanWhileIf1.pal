@@ -1,0 +1,18 @@
+program test(input, output);
+type
+        list = array[1..10] of char;
+
+function blah() : list;
+var
+        foo : list;
+begin
+        foo[1] := 'a';
+        blah := foo;
+end;
+
+begin
+        while (blah()) do
+        begin
+                writeln('a');
+        end;
+end.
