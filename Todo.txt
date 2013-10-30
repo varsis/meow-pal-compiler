@@ -1,0 +1,33 @@
+Potential Nodes to add:
+* ProcedureDeclaration
+* EnumeratedType
+* SimpleType
+* EnumList
+* ParameterDeclaration
+* ParameterDeclarationList (add to ASTListTypes)
+* ProcedureCall
+* If
+* While
+* Continue
+* Exit
+* LessThan
+* LessThanEqual
+* NotEqual
+* GreaterThan
+* GreatherThanEqual
+* UnaryPlus
+* Negative
+* Add
+* Subtract
+* Multiply
+* And
+* Or
+* RealDivide
+* IntegerDivide
+* Mode
+* Not
+* IntegerLiteral
+* BooleanLiteral
+* CharacterLiteral
+
++ more most likely
