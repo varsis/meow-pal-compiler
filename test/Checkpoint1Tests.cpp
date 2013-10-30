@@ -4,7 +4,7 @@
 #include "../src/Error.hpp"
 #include "../src/ErrorManager.hpp"
 #include "../src/Parser.hpp"
-#include "../src/pal.tab.h"
+#include "../src/pal.tab.hpp"
 
 using namespace std;
 namespace Meow

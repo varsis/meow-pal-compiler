@@ -1,6 +1,6 @@
 #include <vector>
 #include "MockScanner.h"
-#include "../src/pal.tab.h"
+#include "../src/pal.tab.hpp"
 
 using namespace std;
 

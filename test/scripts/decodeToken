@@ -2,7 +2,7 @@
 
 import sys
 
-# from pal.tab.h, must update if tokens are changed!
+# from pal.tab.hpp, must update if tokens are changed!
 tokens = {
 	258 : "IDENTIFIER",
     	259 : "STRING_LITERAL",

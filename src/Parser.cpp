@@ -3,7 +3,7 @@
 #include "Parser.hpp"
 #include "Scanner.hpp"
 #include "ErrorManager.hpp"
-#include "pal.tab.h"
+#include "pal.tab.hpp"
 
 namespace Meow
 {

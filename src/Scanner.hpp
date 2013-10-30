@@ -17,7 +17,7 @@
 #define YY_DECL int Meow::PalScanner::yylex()
 
 // Include Bison for types / tokens
-#include "pal.tab.h"
+#include "pal.tab.hpp"
 
 namespace Meow
 {
