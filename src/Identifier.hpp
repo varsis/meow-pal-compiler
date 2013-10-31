@@ -2,11 +2,16 @@
 #define IDENTIFIER_HPP
 
 #include <string>
-#include "LineNumberInformation.hpp"
+#include "ASTNode.hpp"
 
 namespace Meow
 {
-	class Identifier : public LineNumberInformation {
+	class Visitor;
+	class TypeVisitor;
+	class Type;
+
+	class Identifier : public ASTNode
+	{
 		public:
 			Identifier(int lineNumber, const char* identifierName);
 		

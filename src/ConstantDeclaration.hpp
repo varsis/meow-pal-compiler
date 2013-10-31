@@ -1,18 +1,25 @@
 #ifndef CONSTANTDECLARATION_HPP
 #define CONSTANTDECLARATION_HPP
 
-class Type;
-class Expression;
-class Identifier;
-
 #include <string>
-#include "LineNumberInformation.hpp"
+#include "ASTNode.hpp"
 
 namespace Meow
 {
-	class ConstantDeclaration : public LineNumberInformation {
+
+	class Type;
+	class Expression;
+	class Identifier;
+	class Visitor;
+	class TypeVisitor;
+
+	class ConstantDeclaration : public ASTNode
+	{
 		public:
-			ConstantDeclaration(int lineNumber, Type* type, Identifier* identifer, Expression* expression);
+			ConstantDeclaration(int lineNumber,
+								Type* type,
+								Identifier*identifer,
+								Expression* expression);
 		
 			void accept(Visitor visitor);
 			const Type* accept(TypeVisitor typeVisitor);

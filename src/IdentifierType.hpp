@@ -3,22 +3,25 @@
 
 #include <string>
 #include "Type.hpp"
-#include "LineNumberInformation.hpp"
+#include "ASTNode.hpp"
 
-class Visitor;
-class TypeVisitor;
-
-class IdentifierType : public Type, public LineNumberInformation
+namespace Meow
 {
-	public:
-		IdentifierType(unsigned int lineNumber, const char* identiferTypeName);
-		
-		void accept(Visitor vistor);
-		Type* accept(TypeVisitor typeVisitor);
-		std::string toString() const;
-		
-	private:
-		std::string identiferTypeName;
-};
+	class Visitor;
+	class TypeVisitor;
+
+	class IdentifierType : public Type
+	{
+		public:
+			IdentifierType(unsigned int lineNumber, const char* identiferTypeName);
+			
+			virtual void accept(Visitor visitor);
+			virtual Type* accept(TypeVisitor typeVisitor);
+			std::string toString() const;
+			
+		private:
+			std::string identiferTypeName;
+	};
+}
 
 #endif

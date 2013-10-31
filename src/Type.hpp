@@ -1,18 +1,19 @@
 #ifndef TYPE_HPP
 #define TYPE_HPP
 
-#include "LineNumberInformation.hpp"
+#include "ASTNode.hpp"
 
 // Forward Declarations
-class Visitor;
-class TypeVisitor;
-
 namespace Meow
 {
-	class Type : public LineNumberInformation {
+	class Visitor;
+	class TypeVisitor;
+
+	class Type : public ASTNode
+	{
 		public:
 			virtual void accept(Visitor visitor) = 0;
-			virtual Type accept(TypeVisitor visitor) = 0;
+			virtual Type* accept(TypeVisitor visitor) = 0;
 	};
 }
 

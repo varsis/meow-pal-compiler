@@ -1,5 +1,6 @@
 CXX = g++
-CFLAGS = -g -Wall -pthread -MMD -MP -MG 
+CFLAGS = -g -Wall -pthread 
+DEPGEN = -MM -MD -MP -MG 
 
 OBJDIR = ./obj
 SRCDIR = ./src
@@ -30,6 +31,7 @@ $(BINDIR)/$(EXE): $(OBJDIR)/main.o $(OBJS)
 -include $(DEP)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(DEPGEN) -o $(@:.o=.d) -c $<
 	$(CXX) $(CFLAGS) -o $@ -c $<
 
 # Lexer/Parser source generation...
@@ -74,6 +76,7 @@ $(TESTDIR)/AllTests: $(TEST_OBJS) $(TEST_SUPPORT_OBJS)
 # Test utilities
 
 $(TESTDIR)/MockScanner.o: $(TESTDIR)/MockScanner.cpp
+	$(CXX) $(DEPGEN) -o $(@:.o=.d) -c $<
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 $(TESTDIR)/test-main.a : $(TESTDIR)/gmock-gtest-all.o $(TESTDIR)/gmock_main.o

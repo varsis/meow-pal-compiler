@@ -3,7 +3,16 @@
 
 namespace Meow
 {
-	class Visitor {
+
+	class Program;
+	class ConstantDeclaration;
+	class Identifier;
+	class IdentifierType;
+	class TypeDeclaration;
+	class VariableDeclaration;
+
+	class Visitor
+	{
 		public:
 			virtual void visit(const Program* prog) = 0;
 			virtual void visit(const ConstantDeclaration* constantDecl) = 0;
