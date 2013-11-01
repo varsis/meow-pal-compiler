@@ -3,11 +3,22 @@
 
 #include <vector>
 
-typedef vector<Expression*> ExpressionList;
-typedef vector<Statement*> StatementList;
-typedef vector<ConstantDeclaration*> ConstantDeclarationList;
-typedef vector<TypeDeclaration*> TypeDeclarationList;
-typedef vector<VariableDeclaration*> VariableDeclarationList;
-typedef vector<ProcedureDeclaration*> ProcedureDeclarationList;
+namespace Meow
+{
 
+	class Expression;
+	class Statement;
+	class ConstantDeclaration;
+	class TypeDeclaration;
+	class VariableDeclaration;
+	class ProcedureDeclaration;
+
+	typedef std::vector<Expression*> ExpressionList;
+	typedef std::vector<Statement*> StatementList;
+	typedef std::vector<ConstantDeclaration*> ConstantDeclarationList;
+	typedef std::vector<TypeDeclaration*> TypeDeclarationList;
+	typedef std::vector<VariableDeclaration*> VariableDeclarationList;
+	typedef std::vector<ProcedureDeclaration*> ProcedureDeclarationList;
+
+}
 #endif

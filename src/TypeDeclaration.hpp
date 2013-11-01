@@ -2,11 +2,17 @@
 #define TYPEDECLARATION_HPP
 
 #include <string>
-#include "LineNumberInformation.hpp"
+#include "ASTNode.hpp"
 
 namespace Meow
 {
-	class TypeDeclaration : public LineNumberInformation {
+	class Identifier;
+	class Visitor;
+	class Type;
+	class TypeVisitor;
+
+	class TypeDeclaration : public ASTNode
+	{
 		public:
 			TypeDeclaration(int lineNumber, Identifier* identifer, Type* type);
 		

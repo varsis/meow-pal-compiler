@@ -1,6 +1,7 @@
-CC = g++
 CXX = g++
-CFLAGS = -g -Wall -pthread
+CFLAGS = -g -Wall -pthread 
+DEPGEN = -MM -MD -MP -MG 
+
 OBJDIR = ./obj
 SRCDIR = ./src
 BINDIR = ./bin
@@ -19,48 +20,36 @@ FLEX = flex
 # PAL
 ################################################################################
 
-# List all object files to be generated and linked here
-# Must match name of source CPP for automatic rule to catch
-LOBJS = pal.tab.o\
-	lex.yy.o\
-	Error.o\
-	ErrorManager.o\
-	Compiler.o\
-	Parser.o
+SRC=$(wildcard $(SRCDIR)/*.cpp)
+ALLOBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRC:.cpp=.o)))
+OBJS = $(filter-out $(OBJDIR)/main.o, $(ALLOBJS))
+DEP=$(OBJS:.o=.d)
 
-OBJS = $(addprefix $(OBJDIR)/,$(LOBJS))
+$(BINDIR)/$(EXE): $(OBJDIR)/main.o $(OBJS)
+	$(CXX) -o $@ $^
 
-# For simplicity, just make (almost) everything depend on everything in the source folder
+-include $(DEP)
 
-SRCDEPS = $(SRCDIR)/* \
-		  $(SRCDIR)/lex.yy.cc \
-		  $(SRCDIR)/pal.tab.h \
-		  $(SRCDIR)/pal.tab.c
-
-all: pal
-
-pal: $(OBJDIR)/main.o $(OBJS)
-	$(CC) $(CFLAGS) -o $(BINDIR)/$(EXE) $^
-
-$(OBJDIR)/pal.tab.o: $(SRCDIR)/pal.tab.c $(SRCDEPS)
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(OBJDIR)/lex.yy.o: $(SRCDIR)/lex.yy.cc  $(SRCDEPS)
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDEPS)
-	$(CC) $(CFLAGS) -c -o $@ $<
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(DEPGEN) -o $(@:.o=.d) -c $<
+	$(CXX) $(CFLAGS) -o $@ -c $<
 
 # Lexer/Parser source generation...
+FLEXSOURCE := $(SRCDIR)/pal.lex
+BISONSOURCE := $(SRCDIR)/pal.y
 
-$(SRCDIR)/lex.yy.cc: $(SRCDIR)/pal.lex $(SRCDIR)/Scanner.hpp $(SRCDIR)/pal.tab.h
-	$(FLEX) -o $@ $(SRCDIR)/pal.lex
+FLEXDEP := $(FLEXSOURCE:.lex=.lex.ad)
+BISONDEP := $(BISONSOURCE:.y=.y.ad)
 
-$(SRCDIR)/pal.tab.h: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
-	$(BISON) -o $@ $(SRCDIR)/pal.y 
+$(FLEXDEP): %.lex.ad: %.lex
+	$(FLEX) -o $(SRCDIR)/lex.yy.cpp $<; touch $@
 
-$(SRCDIR)/pal.tab.c: $(SRCDIR)/pal.y $(SRCDIR)/Parser.hpp
-	$(BISON) -o $@ $(SRCDIR)/pal.y
+$(BISONDEP): %.y.ad: %.y
+	$(BISON) -o $(SRCDIR)/pal.tab.cpp $<; touch $@
+
+ifeq (,$(filter clean,$(MAKECMDGOALS)))
+-include $(FLEXDEP) $(BISONDEP)
+endif
 
 ################################################################################
 # Tests
@@ -78,9 +67,6 @@ TEST_SUPPORT_OBJS = $(TESTDIR)/test-main.a\
 					$(TESTDIR)/MockScanner.o\
 					$(OBJS)
 
-TEST_SUPPORT_SRCS = $(TESTDIR)/MockScanner.cpp\
-					$(TESTDIR)/MockScanner.h
-
 test: $(TESTDIR)/AllTests $(TEST_)
 	-$(TESTDIR)/AllTests
 
@@ -89,7 +75,8 @@ $(TESTDIR)/AllTests: $(TEST_OBJS) $(TEST_SUPPORT_OBJS)
 
 # Test utilities
 
-$(TESTDIR)/MockScanner.o: $(TESTDIR)/MockScanner.cpp $(SRCDEPS)
+$(TESTDIR)/MockScanner.o: $(TESTDIR)/MockScanner.cpp
+	$(CXX) $(DEPGEN) -o $(@:.o=.d) -c $<
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 $(TESTDIR)/test-main.a : $(TESTDIR)/gmock-gtest-all.o $(TESTDIR)/gmock_main.o
@@ -106,7 +93,7 @@ $(TESTDIR)/gmock-main.o: $(TESTDIR)/gmock_main.cc
 $(TESTS): % : $(TESTDIR)/%
 	-$^
 
-$(TESTDIR)/%.o: $(TESTDIR)/%.cpp $(SRCDEPS) $(TEST_SUPPORT_SRCS)
+$(TESTDIR)/%.o: $(TESTDIR)/%.cpp
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 $(TESTDIR)/%: $(TESTDIR)/%.o $(TEST_SUPPORT_OBJS)
@@ -123,13 +110,13 @@ $(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scrip
 man:
 	nroff -man doc/pal.1 | less
 
-
 zip: 	
 	cd .. ;\
 	tar czf meow-pal-compiler.tgz --exclude='.*'--exclude-vcs meow-pal-compiler;\
 	cd meow-pal-compiler
 
 doc: doc.pdf
+
 doc.pdf: doc/pal.tex
 	cd doc;\
 	epstopdf *.eps;\
@@ -140,14 +127,17 @@ clean:
 	rm -f \
 		$(OBJDIR)/* \
 		$(BINDIR)/* \
-		$(SRCDIR)/pal.tab.c\
-		$(SRCDIR)/pal.tab.h\
+		$(FLEXDEP) \
+		$(BISONDEP) \
+		$(SRCDIR)/pal.tab.cpp\
+		$(SRCDIR)/pal.tab.hpp\
 		$(SRCDIR)/position.hh\
 		$(SRCDIR)/stack.hh\
 		$(SRCDIR)/location.hh\
-		$(SRCDIR)/lex.yy.cc\
+		$(SRCDIR)/lex.yy.cpp\
 		$(TESTDIR)/*.a \
 		$(TESTDIR)/*.o \
+		$(TESTDIR)/*.d \
 		$(TESTDIR)/AllTests \
 		$(TESTDIR)/ParserTestWithFiles.cpp \
 		$(addprefix $(TESTDIR)/,$(TESTS))

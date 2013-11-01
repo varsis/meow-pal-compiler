@@ -17,12 +17,16 @@ MakefileCustomDefs
 .DS_Store
 
 # Generated Lex/Yacc sources
-pal.tab.c
-pal.tab.h
+pal.tab.cpp
+pal.tab.hpp
 position.hh
 stack.hh
 location.hh
-lex.yy.cc
+lex.yy.cpp
+
+# Generated dependency files
+*.d
+*.ad
 
 # Generated executables
 bin/pal

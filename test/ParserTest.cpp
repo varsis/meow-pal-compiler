@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "../src/pal.tab.h"
+#include "../src/pal.tab.hpp"
 #include "../src/Scanner.hpp"
 #include "../src/ErrorManager.hpp"
 #include "../src/Error.hpp"

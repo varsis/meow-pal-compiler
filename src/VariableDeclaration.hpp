@@ -2,11 +2,17 @@
 #define VARIABLEDECLARATION_HPP
 
 #include <string>
-#include "LineNumberInformation.hpp"
+#include "ASTNode.hpp"
 
 namespace Meow
 {
-	class VariableDeclaration : public LineNumberInformation {
+	class Type;
+	class Visitor;
+	class TypeVisitor;
+	class Identifier;
+
+	class VariableDeclaration : public ASTNode
+	{
 		public:
 			VariableDeclaration(int lineNumber, Identifier* identifer, Type* type);
 			~VariableDeclaration();
