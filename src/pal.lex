@@ -56,19 +56,6 @@ EXPONENT	E[+-]?{DIGIT}+
 			BEGIN(INITIAL);
 			return token::STRING_LITERAL;
 		}
-	\"	{
-			getManager()->addError(new Error(InvalidString, "\" ' \" expected for string literal.", s_commentStartLine));
-
-			if (s_stringMultiline)
-			{
-				// resume scanning from saved position
-				yyin->seekg(s_scannerReturnPosition);
-				yylineno = s_scannerReturnLine;
-			}
-
-			BEGIN(INITIAL);
-			return token::STRING_LITERAL;
-		}
 	\n	{ /* Count line endings */
 			if (!s_stringMultiline)
 			{

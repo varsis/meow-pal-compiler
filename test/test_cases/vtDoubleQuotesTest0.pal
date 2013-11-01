@@ -1,0 +1,5 @@
+program test(input, output);
+begin
+	writeln('This is not an error');
+	writeln('This is also not an error.""""""""');
+end.
