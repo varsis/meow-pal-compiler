@@ -211,6 +211,7 @@ field_list              : field
                         ;
 
 field                   : IDENTIFIER COLON type
+			| IDENTIFIER COMMA field
 			| IDENTIFIER error
 			{
                             errorManager.addError(
