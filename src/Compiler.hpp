@@ -25,6 +25,7 @@ namespace Meow
 			ErrorManager m_errorManager;
 			Parser m_parser;
 			std::string m_inputFileName;
+			std::string m_outputFileName;
 			bool m_leaveASC;
 			bool m_programListing;
 			bool m_runtimeArrayBoundChecking;

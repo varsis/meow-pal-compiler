@@ -1,0 +1,6 @@
+program test(input, output);
+const
+	a = myFunc();
+	a = 2 * myFunc();
+begin
+end.

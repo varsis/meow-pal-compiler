@@ -1,0 +1,5 @@
+program test(input, output);
+begin
+	writeln("This is not valid');
+	writeln("This """"
+end.

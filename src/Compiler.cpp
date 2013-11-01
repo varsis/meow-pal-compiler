@@ -72,16 +72,24 @@ void Compiler::getArguments(int argc, char* argv[])
 	}
 	
 	m_inputFileName = argv[optind];
+	m_outputFileName = m_inputFileName.substr(0, m_inputFileName.length()-4);
+	m_outputFileName = m_outputFileName + ".lst";
 }
 
 void Compiler::printErrors()
 {
 	const ErrorList* errors = m_errorManager.getErrors();
 	ErrorList::const_iterator errorIt;
-
+	
 	for (errorIt = errors->begin(); errorIt != errors->end(); ++errorIt)
 	{
 		(*errorIt)->printError();
+	}
+	
+	if (m_errorManager.getErrorFlag()) 
+	{
+		std::cout << "pal: *** " << m_inputFileName 
+		<< " has " << errors->size() << " errors.\n";
 	}
 }
 
@@ -93,7 +101,7 @@ void Compiler::printProgramListing()
 	int lineCount = 1;
 	std::string currentLine;
 	ErrorList::const_iterator errorIt;
-
+	
 	// open file
 	if (!inputFileStream.is_open())
 	{
@@ -101,13 +109,18 @@ void Compiler::printProgramListing()
 	}
 	else
 	{
+		// Redirect cout to file: trick borrowed from StackOverflow
+		std::ofstream outputFileStream(m_outputFileName.c_str());
+		std::streambuf *coutbuf = std::cout.rdbuf();
+		std::cout.rdbuf(outputFileStream.rdbuf());
+
 		errorIt = errors->begin(); 
 
 		while (std::getline(inputFileStream, currentLine))
 		{
-			// print the line
+			// print the line to file
 			std::cout << lineCount << ":\t" << currentLine 
-			    << std::endl;
+		    	<< std::endl;
 
 			// print any errors for the line
 			// assumes errors are sorted by line number
@@ -134,8 +147,13 @@ void Compiler::printProgramListing()
 			    << " has " << errors->size() << " errors.\n";
 		}
 
+		// Reset cout to print to the screen
+		std::cout.rdbuf(coutbuf);
 		inputFileStream.close();
+		outputFileStream.close();
 	}
+
+	printErrors();
 }
 
 int Compiler::run(int argc, char* argv[])

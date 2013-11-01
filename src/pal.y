@@ -122,8 +122,10 @@ const_decl_list         : const_decl
                         | const_decl_list SEMICOLON const_decl
                         ;
 
-const_decl              : IDENTIFIER EQ expr
-                        | IDENTIFIER ASSIGN expr
+const_decl              : IDENTIFIER EQ type_expr
+			| IDENTIFIER EQ STRING_LITERAL
+			| IDENTIFIER EQ REAL_CONST
+                        | IDENTIFIER ASSIGN type_expr
                         { errorManager.addError(
                                 new Error(InvalidConstDecl,
                                           "Use \"=\" to assign constants.",
@@ -201,7 +203,7 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         ;
 
 index_type              : simple_type
-                        | expr UPTO expr
+                        | type_expr UPTO type_expr
                         ;
 
 field_list              : field
@@ -209,6 +211,7 @@ field_list              : field
                         ;
 
 field                   : IDENTIFIER COLON type
+			| IDENTIFIER COMMA field
 			| IDENTIFIER error
 			{
                             errorManager.addError(
@@ -381,6 +384,38 @@ matched_stat            : simple_stat
 /********************************************************************************
  * Rules for expressions
  ********************************************************************************/
+
+type_expr		: type_simple_expr
+                        | type_expr EQ type_simple_expr
+                        | type_expr NE type_simple_expr
+                        | type_expr LE type_simple_expr
+                        | type_expr LT type_simple_expr
+                        | type_expr GE type_simple_expr
+                        | type_expr GT type_simple_expr
+                        ;
+
+type_simple_expr        : type_term
+                        | PLUS type_term
+                        | MINUS type_term
+                        | type_simple_expr PLUS type_term
+                        | type_simple_expr MINUS type_term
+                        | type_simple_expr OR  type_term
+                        ;
+
+type_term               : type_factor
+                        | type_term MULTIPLY type_factor
+                        | type_term REAL_DIVIDE type_factor
+                        | type_term INT_DIVIDE type_factor
+                        | type_term MOD type_factor
+                        | type_term AND type_factor
+                        ;
+
+type_factor             : var
+                        | LEFT_PAREN type_expr RIGHT_PAREN
+                        | INT_CONST 
+                        | NOT type_factor
+                        ;
+
 
 expr			: simple_expr
                         | expr EQ simple_expr

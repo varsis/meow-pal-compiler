@@ -1,0 +1,8 @@
+program test(input, output);
+type
+	a = record
+		a,b,c:integer;
+		d,e:real;
+		end;
+begin
+end.

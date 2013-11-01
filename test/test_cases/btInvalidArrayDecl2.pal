@@ -1,0 +1,6 @@
+program test(input, output);
+var
+	a : array['hello'..'stuff'] of char;
+	a : array[myFunc()..myOtherfunc()] of char;
+begin
+end.
