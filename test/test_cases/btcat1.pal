@@ -1,0 +1,50 @@
+{
+    Number lexing errors.
+
+    See http://bofh.srv.ualberta.ca/beck/c415/s_pal.pdf "Lexical Entities" 3.
+    and http://pascal-central.com/docs/iso10206.pdf Section 6.1.7
+
+    ## All errors are written in filename:line:character format ##
+
+1.pal:44:14 -- Real number needs digits before decimal point.
+1.pal:45:18 -- Real number needs also digits after decimal point not only E.
+1.pal:46:18 -- Real number needs digits after E.
+
+}
+program lexerrorNumbers(input, output);
+begin
+    { Legal numbers }
+    writeln( 123 );
+    writeln( 123.4 );
+    writeln( 123E10 );
+    writeln( 123E+10 );
+    writeln( 123E-10 );
+    writeln( 123.4E10 );
+    writeln( 123.4E+10 );
+    writeln( 123.4E-10 );
+    writeln( 0 );
+    writeln( 0.0 );
+    writeln( 0E0 );
+    writeln( 0.0E0 );
+    writeln( 0E+0 );
+    writeln( 0E-0 );
+    writeln( 0.0E+0 );
+    writeln( 0.0E-0 );
+    writeln( 000 );
+    writeln( 000.00 );
+    writeln( 1 );
+    writeln( 1E1 );
+    writeln( 1.1 );
+    writeln( 1.1E1 );
+    writeln( 01 );
+    writeln( 01E01 );
+    writeln( 01.01 );
+    writeln( 01.01E01 );
+    { Illegal numbers }
+    writeln( .999 );
+    writeln( 999.E10 );
+    writeln( 999E );
+    { LEGAL NUMBERS }
+    writeln( 1-1 );
+end.
+{ vim: set ft=pascal: }

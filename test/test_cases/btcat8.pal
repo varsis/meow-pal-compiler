@@ -1,0 +1,57 @@
+program lcg(input, output);
+{
+    Linear congruential generator, taken from Wikipedia.
+    <http://en.wikipedia.org/wiki/Linear_congruential_generator>
+	Error's in file 
+	Line 55 end requires a period
+
+}
+
+const
+    InitialSeed = 30203;
+
+var
+    GlobalSeed: Integer;
+
+function PseudoRand(var seed: Integer): Integer;
+const
+    m = 4294967296; { The 'modulus' }
+    a = 1103515245; { The 'multiplier' }
+    c = 12345;      { The 'increment' }
+begin
+    seed := (a * seed + c) mod m;
+    PseudoRand := seed
+end;
+
+procedure Main();
+    { The main procedure. Writes 10 random integers per line. }
+var
+    i: Integer;
+begin
+
+    {
+      Pal officially does not support this:
+
+        for i := 1 to 10 do
+            writeln((PseudoRand(GlobalSeed) mod 100):3)
+
+      But it does support this:
+    }
+    i := 1;
+    while i <= 10 do
+        begin
+            writeln((PseudoRand(GlobalSeed) mod 100));
+            i := i + 1
+        end
+
+end;
+
+
+{ The entry point of the program: }
+begin
+    { Initialize the random seed. }
+    GlobalSeed := InitialSeed;
+    Main()
+end
+
+{ vim: set ft=pascal: }

@@ -1,0 +1,31 @@
+program GenerateError(output,input);
+ 
+const
+	pi = 3.1415926;
+	//Lexical error
+	p.i = 6.28;
+type
+	palcolor = ( red, green, blue, black, white);
+var 
+	i : integer;
+//lexical error
+	l : Array[2..5] of Integer;
+
+ 
+procedure Print(var j : integer);
+begin
+	writeln(j);
+end;
+ 
+begin
+	Print(i);
+	color[1] := true;
+	color[2] := false;
+	color[3] := true;
+	color[4] := fal;
+	color[5] := true;
+	while (j < 2) do
+	begin
+		writeln(k);
+	end;
+end.

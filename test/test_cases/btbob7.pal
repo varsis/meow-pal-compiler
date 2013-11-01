@@ -1,0 +1,51 @@
+{
+  7.pal
+  
+  Test program for syntax errors
+  
+  See the line marked "Here's the syntax error:"
+}
+
+program test7( input, output );  { program takes input/output from terminal }
+
+type		string = array[1..7] of char;
+
+var	x	: integer;
+	y	: integer;
+	answer	: integer;
+	flag	: char;
+	str	: string;
+
+{ Here's the syntax error: invalid procedure declaration (the whole procedure) }
+function gcd( a : integer; b : integer ) : integer;
+beginplease
+		{ Note where semi-colons are legal! }
+  if b = 0 then
+    gcd := a
+  else
+    gcd := gcd( b, a mod b )
+end;
+
+function lcm( a : integer; b : integer ) : integer;
+begin
+  if (a = 0) or (b = 0) then
+    lcm := 0
+  else
+    lcm := (a * b) div gcd( a, b )
+end;
+
+begin		{ main-program }
+		{ loop until an 's' (stop) is seen - remember no EOF tests are possible.	}
+  while flag <> 's' do
+		{ while is the only loop construct allowed }
+    begin
+      if flag = 'g' then begin
+        answer := gcd( x, y );
+	str := 'Gcd of ';
+      end;
+      if flag = 'l' then begin
+        answer := lcm( x, y );
+	str := 'Lcm of ';
+      end;
+    end
+end.

@@ -1,0 +1,61 @@
+{ Errors
+
+ 1. identifier beginning with a digit (line 17)
+ 2. using a semicolon in multidimensional array reference (line 21)
+ 3. incomplete record type declaration (line 25)
+ 4. invalid relational operator << (line 37)
+ 5. missing semicolon after procedure declaration (line 39)
+ 6. mispelled "else" statement (line 48)
+ 7. one too many closing parenthesis (line 50)
+ 8. invalid function call (line 52)
+ 9. chained assignment (line 54)
+10. repeated "end" keyword (line 57)
+ 
+}
+
+{ error 1 }
+program           	xl735h2twn	( 2fy9wjvn21093NSG, sjb03i6783jgnba)
+
+const x08250jsb08026b0286o = x9714sgojv21m09	[(f00*xvws), asdf[1,76,((x<
+{ error 2 }
+	>725) mod ( asdf[5][5;19] ) )] ];
+
+type
+   { error 3 }
+   fred = record
+      name  : string;
+      age   : integer;
+      sex   : char;
+
+
+function {ignore} asdf( var j7 : x02v0sljs; snell : array [ xcv..  
+ sd] of l38nv )
+
+
+:
+
+{ error 4 }
+array[foo[(x<<b),5 mod 398]..a235] of rabidMonkeys;
+{ error 5 }
+   procedure foo( var l339s : xm020 )
+	begin end;
+begin
+end;
+	begin
+
+	if sdf[a[6,123,(x>7)][meta <> 5 mod 2]] then 
+if sdf[a[6,123,(x>7)][meta <> 5 mod 2]] then continue
+{ error 6 }
+	elseif while gibberish do exit
+{ error 7 }
+	else while (((((x<=4)))*{forfun}(235)))) do exit
+{ error 8 }
+	   asdf[];
+{ error 9 }
+a := b := c;
+
+{error 10 }
+					end end
+{fooo foo fo//const}
+
+.

@@ -1,0 +1,34 @@
+{
+
+Test 7.pal tests syntax of types etc 
+
+Included errors:
+
+7.pal:18 -- Pascal-style formatted writeln not supported in Pal.
+7.pal:19 -- Not a valid expression (looks like C postfix increment).
+7.pal:28 -- input other than white space or comment after "end." 
+}
+program types(input, output);
+var 
+	i : integer; 
+begin 
+	i := 0; 
+    	while i <= 10 do
+        begin
+            writeln((PseudoRand(GlobalSeed) mod 100):3);
+            i++; 
+        end
+		
+
+
+
+
+end.
+
+begin 
+	a := 3; 
+end;
+
+
+
+{ vim: set ft=pascal: }

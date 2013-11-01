@@ -1,0 +1,40 @@
+program GenerateError(output,input);
+ {{{{{{{{ comment }
+const
+	pi = 3.1415926;
+type
+	palcolor = ( red, green, blue, black, white);
+var 
+	i : integer;
+	l : array[2..5] of integer;
+
+ 
+procedure Print(var j : integer);
+begin
+	writeln(j);
+end;
+//syntax error
+be3gij
+	Print(i);
+	color[1] := true;
+	color[2] := false;
+	color[3] := true;
+	color[4] := fal;
+	color[5] := true;
+
+	// The program should freak out here
+	writeln(write ln_ " !");
+
+	while (j < 2) do
+	begin
+		writeln(k);
+	end;
+//syntax error
+end.
+
+var
+	i = integer;
+begin
+	i := j;
+	j = i;
+end;

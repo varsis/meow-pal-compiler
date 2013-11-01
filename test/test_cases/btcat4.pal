@@ -1,0 +1,29 @@
+{
+    Type and array parsing.
+
+    A work in progress.
+
+    TODO: Document which part of what standard this covers...
+
+    ## All errors are written in filename:line:character format ##
+
+    4.pal:20 -- Array expression is missing 'of'.
+    4.pal:26 -- Array expression has syntax error -- missing ')'.
+
+}
+program EnumSyntax(input, output);
+type
+    crew = (river, kaylee, inara, zoe); { VALID! }
+var
+    foo : array[crew] of char; { VALID! }
+    quuz: array[3.1..-6.12] of lerp; { VALID! }
+    quuz: array[1..10]; { Invalid: expected 'of'! }
+    herp: array[int] of { VALID! }
+        array[double] of { VALID! }
+        array[int] of integer; { VALID! }
+    derp: array[(ord(13-41+8 div 'shiny'))..2/0]
+        of (jubal, early); { Good gosh, I think this is valid. }
+    derp: array[(ord(13-41+8 div 'shiny')..2/0] of (jubal, early); { Invalid. }
+begin
+end.
+{ vim: set ft=pascal: }

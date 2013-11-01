@@ -1,0 +1,1031 @@
+// a very deep nested series of conditionals
+// meant to test grammar, especially no need for ; at end of block
+// should be valid
+
+program supBranch(input, output);
+begin
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+while true do
+if false then
+exit
+else if false then begin
+nest := yes;
+continue
+end
+else
+end.

@@ -1,0 +1,27 @@
+#!/usr/bin/env pal
+{
+
+Test 6.pal tests syntax of types etc 
+ 
+
+
+Included error's
+Line 1 -- # style commenting not supported in pal 
+Line 13 -- missing program name
+Line 25 -- missing ); at end of writeln 
+}
+program (input, output);
+
+const
+	maxint = 3.14159;
+	true = false;
+type
+	integer = char;
+	real = array[ 1..10 ] of boolean;
+var
+	readln : real;
+	dispose : integer;
+begin 
+	writeln('test' 
+end.
+{ vim: set ft=pascal: }

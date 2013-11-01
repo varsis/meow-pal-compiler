@@ -1,0 +1,24 @@
+{ 5.pal
+  tests procedure calls with malformed argument lists
+}
+
+program simpleprg(input, output);
+
+procedure simple(start : integer ; finish : integer);
+var
+  R : integer;
+begin
+    R:=start;
+    while R <= finish do
+    begin
+     R:= R+1;
+     writeln('found ', R);
+    end;
+end;
+
+begin
+    simple(0, , 5);
+    simple(0, 3 5);
+    simple(0 5);
+end.
+

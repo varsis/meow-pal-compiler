@@ -1,0 +1,8 @@
+//comment is ended prematurely by a carriage return
+// should be caught as invalid by the lexer
+
+program carriage(input, ouput);
+begin
+// '!!
+ ~~' 
+end.

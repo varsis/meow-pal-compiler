@@ -1,0 +1,15 @@
+//Syntax error
+program (var1, var2, var3, var4, var5, var5, var7) 
+var 
+	i : integer;
+
+//syntactic error
+begiM
+	
+	//valid, because we are not dealing with semantic
+	coloroutside = red;
+	
+end.
+
+//syntax error
+end.

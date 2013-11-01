@@ -1,0 +1,29 @@
+{
+
+Test 2.pal tests comment lexing 
+
+
+Using origonal pascal spec.   
+http://pascal-central.com/standards.html
+
+Included error's 
+Line 18 are invalid comments in pal
+Line 22, 23 invalid identifier names 
+
+}
+program commentParsing(input, output);
+begin
+    	{ This is a valid comment
+	 }
+	// writeln( 'This is a valid comment in pal' ); 
+        valid0 := 'a string'; 
+        Valid1 := 3.3; 
+        3d := 'invalid variable name'; 
+        invalid_name := 'invalid'; 
+        VALID := 'one more valid var';
+        ifVar := "valid"; 
+        Varif := "valid"; 
+        varif := "valid"; 
+        whileT := "Valid";      
+end.
+{ vim: set ft=pascal: }

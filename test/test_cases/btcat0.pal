@@ -1,0 +1,24 @@
+{
+    Character string lexing errors.
+
+    See http://pascal-central.com/docs/iso10206.pdf Section 6.1.9
+    Many of these specifications are overriden in the Pal spec:
+    see "Lexical Entities 5" for more info.
+
+    ## All errors are written in filename:line:character format ##
+
+0.pal:19:16 -- Invalid use of \ without an escape.
+0.pal:20:16 -- Newlines in strings not allowed (Section 6.1.10, Pal LE5)
+0.pal:22:13 -- C style strings are not allowed.
+
+}
+program lexerror1(input, output);
+const
+    valid0 = '`~"\'main()!{@#$%^&*-+/<>,.}'; { This is ONE string. }
+    valid1 = '\\' - ''; { Though this *is* a semantic error. }
+    invalid1 = '\hello'; { Only '\n' and '\t' are valid escapes. }
+    invalid2 = ' Newlines are considered "token-sepeartors"; this is invalid.
+begin
+    writeln("C strings are invalid.")
+end.
+{ vim: set ft=pascal: }

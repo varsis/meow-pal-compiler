@@ -1,0 +1,143 @@
+{
+ Test program 4.pal
+
+ Lexical error test 4: This one doesn't throw any errors. It appears to
+ include a whole gamut of unrecognized tokens, but they are all properly
+ embedded in strings and comments (even in the middle of lines) and should
+ have no effect whatsoever.
+
+ Expected errors: none.
+}
+
+{{ You can't nest comment blocks in braces. ]}
+// While we're at it, let's make sure this comment style works too.
+
+// program_head
+program test4 { Whee! } (b3lah, b2lah);
+
+// const_decl_part
+
+const
+	cDeclID1 = 'In the meantime, let\'s test' <> 'comparison operators';
+	cDeclID2 = 1 <= 2;
+	cDeclID3 = 1 = 2;	// I'm quite proud of this one
+	cDeclID4 = 1 >= 2 + '2340981234#$)(*&@!#)(*%#$""""""\\\\\\\'#$*&';
+
+	cDeclID5 = {@#$)(*%^)#$*&^@#$(*&!^#$)(*#&$)(*@#$^)@*#&$^}1 < 2;
+	cDeclID6 = 1 > 2//1#$)(*&!)#(*&)(%$*#&@)(#&%(*#&$!)#$*][][[[]234098
+;
+
+// type_decl_part
+type
+	// scalar_type
+	tDeclID1 = char;
+
+	// scalar_list
+	tDeclID2 = (scalar1, scalar2, scalar3,scalar4  , scalar5);
+
+	// array_type
+	tDeclID3 = array [bool] of int;
+	tDeclID4 = array [a..b] of char;
+	tDeclID5 = array [(c + d) .. ((e*f))] of bool;
+
+	// array_type, 1-item scalar_list
+	tDeclID6 = array [(g)] of whatever;
+	// array_type, first expr is of the form (var)
+	tDeclID7 = array [(the)..((((last))))] of theMohicans;
+	// array_type, first expr begins with (var)...
+	tDeclID8 = array [(a)*hazy..shade] of winter;
+
+	// array_type, scalar_list
+	tDeclID9 = array [(harry)] of fire;
+	// (lowercase 'and' is a reserved keyword)
+	tDeclID10 = array [((harry))..((potter and the)/prisoner)] of azkaban;
+
+	// structured_type, field_list
+	tDeclID11 = // This is the fun one.
+		record
+			field1: type1;
+			field2: type2;
+			field3: array[return] of theJedi
+			// no semicolon after the last one
+		end
+;
+
+// var_decl_part
+var
+	a,bunch,Of,ids,like,ducks,in,aRow : someSimpleType;
+	some,more :
+		record
+			field4: record
+					nested: quite;
+					deep: Ithink
+				end;
+			field5: whenWillThisEver
+		end;
+	colons,colons	:everywhere;
+	AND,noT,aDrop	:toDrink
+;
+
+
+// proc_decl_part
+
+procedure proc1 (param1:foo1;param2:foo2;param3:foo3);
+begin end;
+
+procedure proc2 (param1:foo1; var param2:foo2);
+begin end;
+
+procedure proc3();
+begin end;
+
+function func1 (param1:foo1;param2:foo2;param3:foo3) : output;
+begin end;
+
+// Nested proc_decls
+function func2 (param:foo) : output;
+	function func2a (paramA:fooA; paramB:fooBar) : output2a;
+		function func2a1 (paramC:fooTball) : output2a1;
+		begin
+		// single proc_invok without plist_finvok
+		// or optional semicolon for last statement
+			proc3()
+		end;
+	begin
+		// proc_invok with plist_finvok,
+		// with the optional semicolon
+		proc4((param4a), param4b, ((param4c = not aSimpleID)));
+	end;
+begin end;
+
+
+// compound_stat
+begin
+	id1 := 123.4;
+	;
+	id2 := (((((999E-10))))) ;
+	;;;;;; ;;;;;	// Arbitrary semicolons for blank statements
+	id3 := 999.10000;
+	id4 := 'Blimey, can you really put anything you want inside a string?';
+	id5 := ('Let\'s try some escape \\ sequences. \n\t \n \t Whee! \'');
+	id6 := '\\\\' mod thisIsAFuncInvok();
+	id7 := '\\\\\'' or thisIsAFuncInvok(on,drugs) and soIs(this);
+	butThisIsA(proc);
+	id8 := '// comment delimiters inside strings are {ignored}';
+
+	// var, subscripted_var, and unary operations for good measure
+	id9.x := id9.y[+suby1].yy[-suby2] div id9.z[+a-subz1].zz[-b+subz2];
+	id10[(foo)] := (id10.y[(foo2[(subfoo)])]);
+	id11[(but[Do(noT[confuse(with[a(funcInvok)])])])] := 1+2-3*4/5;
+
+	// Syntactically, these are okay outside of a loop.
+	// Semantically... uh, we'll deal with that next checkpoint.
+	continue;
+	exit;
+
+	// Control structures can't have blank statements
+	if a then b() else c();
+	if a then b();
+	if a then if b then if c then d() else e() else f();
+	while -a() do begin if +c then if d then begin end; end;
+
+end
+.

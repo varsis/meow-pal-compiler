@@ -1,0 +1,39 @@
+{
+*Program 4.pal
+*Missing words in the comands
+*Error in:
+*Line 22 Missing 'OF' after an array_type
+*Line 23 Missing 'OF' after an array_type
+*Line 30 Missing 'then; after an if statement 
+*}
+
+program pal4(Uno, Dos); 
+
+
+const
+   hola =  -9*(8/(2+(-8-2)*3));
+   hola2 =  -9.1*(-8.2/2.5+(-8.2-2.4*3.1));
+
+type 
+   hola4 =       int; 
+   hola5 =       record num1:int; num2:int end;
+
+var
+   suma,resta,multip,divi : int;
+   sum2 :      array     [(uno)]   real;
+   sum3 :      array     [a+b..-d*r]      char;
+begin
+
+procedimiento(hola, hola2, hola3);
+   if a >= (b or c) then 
+      if a > b then 
+         if a > (b-1) 
+            while b do hi(one, two, three, four)
+         else
+            a:=(b+1)
+      else 
+        c:=b
+   else 
+        a:= c+b;
+
+end.

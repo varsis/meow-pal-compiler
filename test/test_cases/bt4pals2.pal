@@ -1,0 +1,11 @@
+//meant to test multi-line string
+//legal in pascal but not pal
+//should cause invalid symbols in the lexer
+
+program s1(input, output);
+
+begin
+	a := 'du
+	de';
+
+end.

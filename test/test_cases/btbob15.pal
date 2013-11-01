@@ -1,0 +1,12 @@
+{ shows:
+ 2 lines mixing comments and strings (both should report unterminated strings
+   after a valid comment)
+ an unterminated comment
+}
+program strings(i,o);
+begin
+   {'            }'
+   { should generate error '}' }
+   {
+end.
+

@@ -1,0 +1,11 @@
+//meant to test the handling of reals in lexer
+// should be valid
+
+program reals(input,output);
+
+var
+	a,b:real;
+
+begin
+	a := -1.003E+4;
+end.

@@ -1,0 +1,25 @@
+{ This program tests that the compiler will }
+{ accept an assortment of valid comments,   }
+{ and reject invalid comments.              }   
+
+program Comment (input, outpt);
+
+begin
+
+// The following comments are correct.
+
+{ valid comment.}
+{ This too is a valid 
+  comment.}
+{\\ valid comment.}
+{ valid comment.}
+{}
+{}
+{ valid comment. \a}
+{ valid comment.  {\a }   
+
+// The following should cause problems. 
+
+{
+                           
+end.

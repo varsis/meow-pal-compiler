@@ -1,0 +1,84 @@
+{* File:	4.pal
+ * Created:	Oct 15/00
+ * Modified:	Oct 15/00
+ * 
+ * Class: CMPUT 415
+ * Group: Chris Cumming
+ *        Kit Barton
+ *        Jason Gunthorpe
+ *        Andrew Pearse
+ *
+ * Lex Errors:    None 
+ * Syntax Errors: Line 58 - Unmatched begin, error will likely be on another line
+ * 		  Line 72 - Unmatched end.
+ *
+ * Description:
+ *	Checks nested records and functions.  Has a unmatched begin but
+ *	out of scope later is has a mismatched end.  Should flag an error
+ *      but where we don't know.
+ *}
+
+program syntax1(input, output);
+
+var
+  x : integer;
+
+
+// Ada function
+function Ada(x1 : integer; x2 : integer) : integer;
+
+const
+  Name = 5 + 4;
+
+type
+  number = integer;  
+ 
+  nestRec = record
+    c : char
+  end;
+
+  // Check nested records
+  myRec = record
+    n : integer;
+    e : real;
+    nextRec : nestRec;
+    nextRec2 : record
+      cc : char
+    end;
+    w : string
+  end;
+
+var
+  x : integer;
+  num : number;
+  
+  // Nested Chris function, contains unmatched begin
+  function Chris(y1 : integer; y2 : integer) : char;
+    var n : number;
+
+    begin
+      Chris := Ada (n, n);
+      while n > 0 do
+      begin
+        begin  // Error Unmatched begin
+      end;
+    end;
+  
+
+begin
+  Ada := x1 + x2 div x;
+end;
+
+
+{ Main Body }
+begin
+  if Chris(x, x) = Ada(x,x) then
+    writeln('Go on date', x);
+  end;  			// Error Unmatched end
+
+  x := Ada(3, Ada(3, arr1[4]));
+  x := Ada(x, ((x)));
+
+  E := 4 + Ada((44),')');
+
+end.

@@ -1,0 +1,9 @@
+//meant to test string regex
+//tab character is legal inside a string in pal
+// should not produce any errors
+
+program tabstr(input,output);
+const
+	a = 'tab	tab';
+begin
+end.

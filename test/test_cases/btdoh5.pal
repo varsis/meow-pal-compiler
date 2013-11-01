@@ -1,0 +1,11 @@
+//syntax error
+program syntaxerr0(input);
+var 
+    //syntax error
+    := hello integer;
+    hello := integer;
+begin
+//syntax error
+hello := integer := hello;
+
+end.

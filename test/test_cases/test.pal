@@ -1,0 +1,6 @@
+program test(input, output);
+var
+	a : array[1.2..3.4] of char;
+begin
+end.
+
