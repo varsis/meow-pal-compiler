@@ -1,0 +1,18 @@
+program LexicalError2(input,output);
+ 
+var 
+	//lexical error: '.' character not allowed in an identifier
+	//lexical error: '/' character not allowed in an identifier
+	//palcolor doesnt exist, but we are not dealing with semantics
+	co.lorOutside, col/or_inside : palcolor;
+
+begin
+	
+	//valid, because we are not dealing with semantic
+	coloroutside = red;
+
+	//lexical error: '_' character not allowed in an identifier
+	//Semantic problems, but valid syntax
+	first_color = RED;
+
+end.

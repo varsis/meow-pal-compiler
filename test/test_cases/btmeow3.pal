@@ -1,0 +1,14 @@
+{
+ Test Case 3: Test for Lexical Errors
+	Line 11: Invalid escape character
+ Line 12: Invalid quotes for string
+ Line 13: Two invalid quotes for string
+}
+program test3(input, output);
+var 
+	s : string;
+begin
+	s := 'invalid string with escaped char \z';
+ s := 'jkasdhjkasdh";
+ s := "asd";
+end.

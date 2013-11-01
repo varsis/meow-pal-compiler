@@ -1,0 +1,26 @@
+// tests grammar of anonymous enum type and
+// semi-colons, and declaration of params inside a function
+// errors should be on lines:
+// c: array[(red,blue)] of integer;
+// function gcd( a,b:integer ) : integer;
+
+program badFunc(input,output);
+
+var 
+	x,y:integer;
+	c: array[(red,blue)] of integer;
+
+function gcd( a,b:integer ) : integer;
+begin
+		{ Note where semi-colons are legal! }
+    if b = 0 then
+        gcd := a
+    else
+        gcd := gcd( b, a mod b )
+end;
+
+begin
+	gcd(x,y);
+	c[0][0] := 2;
+    	writeln(c[0][0]);
+end.

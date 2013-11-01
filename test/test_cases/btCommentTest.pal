@@ -1,0 +1,12 @@
+{ 
+ Test Case 1: Test for Lexical Errors
+ Line 9: Unexpected/unmatched comment close
+ Line 11: Unclosed comment
+}
+program test1(input, output);
+begin
+	{ Valid Comment }
+	} { Unexpected Comment Close }
+	// Valid Comment 
+	{ Unclosed Comment
+end.

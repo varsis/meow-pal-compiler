@@ -1,0 +1,15 @@
+{
+ Test Case 7: Test for Syntax Errors
+ Line 13: Invalid array declaration
+}
+program test7(input ,output);
+
+const
+	a = 1;
+	b = 2;
+	c = 3;
+
+type
+	arr = array[(a,b,c)] of integer;
+begin
+end.

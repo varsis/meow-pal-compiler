@@ -1,0 +1,18 @@
+{
+	Test Case 2: Test for Lexical Errors
+ Line 13: Invalid escape sequence 
+ Line 14: Invalid multiline string
+ Line 17: Unclosed string
+}
+program test2(input, output);
+var 
+	s : string;
+begin
+	s := 'valid string with single quotes';
+	s := '\'valid string with escaped chars \n \t \'';
+	s := 'invalid string with escaped char \z';
+	s := 'invalid 
+		multiline 
+		string';
+	s := 'invalid unclosed string
+end.

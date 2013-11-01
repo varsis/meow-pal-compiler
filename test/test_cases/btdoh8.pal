@@ -1,0 +1,276 @@
+//wrong header (there should be two arguments)
+program Evil(inputoutput)
+ 
+var 
+	//Lexical error
+	x.._,y,z : integer;
+function add( a : integer; b : integer ) : integer;
+begin
+	add := a + b;
+end;
+
+function mult( a : integer; b : integer ) : integer;
+var
+	result : integer;
+//syntax error (it's loo=king for begin, and begiM is an identifier)
+begiM
+	while (b > 0)
+	begin
+		mult := result + a;
+		b := b - 1;
+	end;
+end;
+
+begin
+	//Lexical error
+	x :/= 50;
+	y := 45;
+	z := 213;
+	//Lexical: 123y - invalid identifier
+	//Syntax error: missing ')'
+	z := add(mult(add(z,y),add(123y),add(x,mult(mult(z,5),y) ));
+//Syntax error: kk
+kk
+	//Syntax error: missing ')'
+	writeln(mult(z,add(z,mult(add(mult(x,y),4),z)));
+
+program declaration_func (in, out);
+var
+	uno := integer;
+	dos := integer;
+	tres := integer;
+	pollitoIngles := integer;
+const
+	lol = 3;
+	yep = BLURP();
+	BLURP = ;
+begin
+	uno = dos;
+	pollitoIngles  tres = ;
+	= tres dos ;
+	dos dos tres pollitoingles;
+	pollitoIngles = BLURP();
+end.
+
+end.
+
+//wrong header (there should be []two arguments)
+program Evil(inputoutput)
+ 
+var 
+	//Lexical error
+	x.._,y,z : integer;
+function add( a : integer; b : integer ) : integer;
+begin
+	add := a + b;
+end;
+
+function mult( a : integer; b : integer ) : integer;
+var
+	result : integer;
+//syntax error (it's looking for begin, and begiM is an identifier)
+begiM
+	while (b > 0)
+	begin
+		mult := result + a;
+		b := b - 1;
+	end;
+end;
+
+begin
+	//Lexical error
+	x :/= 50;
+	y := 45;
+	z := 213;
+	//Lexical: 123y - invalid identifier
+	//Syntax error: missing ')'
+	z := add(mult(add(z,y),add(123y),add(x,mult(mult(z,5),y) ));
+//Syntax error: kk
+kk
+	//Syntax error: missing ')'
+	writeln(mult(z,add(z,mult(add(mult(x,y),4),z)));
+
+program declaration_func (in, out);()
+var
+	uno := integer;
+	dos := integer;
+	tres := integer;
+	pollitoIngles := integer;
+const
+	lol = 3;
+	yep = BLURP();
+	BLURP = ;
+begin
+	uno = dos;
+	pollitoIngles  tres = ;
+	= tres dos ;
+	dos dos tres pollitoingles;
+	pollitoIngles = BLURP();
+end.
+
+end.
+
+//wrong header (there should be two arguments)
+program Evil(inputoutput)
+ 
+var 
+	//Lexical error
+	x.._,y,z : integer;
+function add( a : integer; b : integer ) : integer;
+begin
+	add := a + b;
+end;
+
+function mult( a : integer; b : integer ) : integer;
+var
+	result : integer;
+//syntax error (it's looking for begin, and begiM is an identifier)
+begiM
+	while (b > 0)
+	begin
+		mult := result + a;
+		b := b - 1;
+	end;
+end;
+
+begin
+	//Lexical error
+	x :/= 50;
+	y := 45;
+	z := 213;
+	//Lexical: 123y - invalid identifier
+	//Syntax error: missing ')'
+	z := add(mult(add(z,y),add(123y),add(x,mult(mult(z,5),y) ));
+//Syntax error: kk
+kk
+	//Syntax error: missing ')'
+	writeln(mult(z,add(z,mult''(add(mult(x,y),4),z)));
+
+program declaration_func (in, out);
+var
+	uno := integer;
+	dos := integer;
+	tres := integer;
+	pollitoIngles := integer;
+const
+	lol = 3;
+	yep = BLURP();
+	BLURP = ;
+begin
+	uno = dos;
+	pollitoIngles  tres = ;
+	= tres dos ;
+	dos dos tres pollitoingles;
+	pollitoIngles = BLURP();
+end.
+
+end.
+//wrong header (there should be two arguments)
+program Evil(inputoutput)
+ 
+var 
+	//Lexical error
+	x.._,y,z : integer;
+function add( a : integer; b : integer ) : integer;
+begin
+	add := a + b;
+end;
+
+function mult( a : integer; b : integer ) : integer;
+var
+	result : integer;
+//syntax error (it's looking for begin, and begiM is an identifier)
+begiM
+	while (b > 0)
+	begin
+		mult := result + a;
+		b := b - 1;
+	end;
+end;
+
+begin"
+	//Lexical error
+	x :/= 50;
+	y := 45;
+	z := 213;
+	//Lexical: 123y - invalid identifier
+	//Syntax error: missing ')'
+	z := add(mult(add(z,y),add(123y),add(x,mult(mult(z,5),y) ));
+//Syntax error: kk
+kk
+	//Syntax error: missing ')'
+	writeln(mult(z,add(z,mult(add(mult(x,y),4),z)));
+
+program declaration_func (in, out);
+var
+	uno := integer;
+	dos := integer;
+	tres := integer;
+	pollitoIngles := integer;
+const9
+	lol = 3;
+	yep = BLURP();
+	BLURP = ;
+begin
+	uno = dos;
+	pollitoIngles  tres = ;
+	= tres dos ;
+	dos dos tres pollitoingles;
+	pollitoIngles = BLURP();
+end.
+
+end.
+//wrong header (there should be two arguments)
+program Evil(inputoutput)
+ 
+var 
+	//Lexical error
+	x.._,y,z : integer;
+function add( a : integer; b : integer ) : integer;
+begin
+	add := a + b;
+end;
+
+function mult( a : integer; b : integer ) : integer;
+var
+	result : integer;
+//syntax error (it's looking for begin, and begiM is an identifier)
+begiM
+	while (b > 0)
+	begin
+		mult := result + a;
+		b := b - 1;
+	end;
+end;
+
+begin
+	//Lexical error
+	x :/= 50;
+	y := 45;
+	z := 213;
+	//Lexical: 123y - invalid identifier
+	//Syntax error: missing ')'
+	z := add(mult(add(z,y),add(123y),add(x,mult(mult(z,5),y) ));
+//Syntax error: kk
+kk
+	//Syntax error: missing ')'
+	writeln(mult(z,add(z,mult(add(mult(x,y),4),z)));
+
+program declaration_func (in, out);
+var
+	uno := integer;
+	dos := integer;
+	tres := inWH/a9teger;
+	pollitoI//ngles := integer;
+const
+	lol = 3;
+	yep = BLURP();
+	BLURP = ;
+begin
+	uno = dos;
+	pollitoIngles  tres = ;
+	= tres dos ;
+	dos dos tres pollitoingles;
+	pollitoIngles = BLURP();
+
+end.

@@ -1,0 +1,11 @@
+{
+ Test Case 4: Test for Lexical Errors
+ Line 8: Invalid identifier
+ Line 9: Invalid identifier/unrecognized symbol
+}
+program test4(input, output);
+var 
+	5ever : real; 	{ invalid identifier }
+ asdjhsd_skdj : real; 	{ invalid identifier }
+begin
+end.

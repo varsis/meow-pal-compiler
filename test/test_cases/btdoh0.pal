@@ -1,0 +1,12 @@
+program LexicalError0(input,output);
+
+var 
+	l : array[3..5] of integer;
+
+begin	
+	//L doesnt exist, but it's valid pal.
+	// 'fase' is supposed to be false. but it can be seen as an identifier, since we are not dealing with semantics
+	L[3] := fase;
+	//Lexical error: '/' wasnt supposed to be there
+	l[4] :/= rue;
+end.

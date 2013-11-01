@@ -1,0 +1,17 @@
+program test(input, output);
+var
+        a : real;
+        b : integer;
+        c :  char;
+
+procedure foo(x : char; y : integer; z : real);
+begin
+        writeln(x,y,z);
+end;
+
+begin
+        a := 3.4;
+        b := 8;
+        c := 'a';
+        foo(a,c,b);
+end.

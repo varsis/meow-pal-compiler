@@ -1,0 +1,21 @@
+{ 
+	Test Case 0: Test for Lexical Errors 
+ Line 11: Invalid identifiers
+ Line 18: Invalid real constant
+ Line 20: Invalid symbol
+}
+program test0(input, output);
+var
+	a : real;
+	i : integer;
+	5ever : real; 	{ invalid identifier }
+begin 
+	i := 000; 	{ valid int const }
+
+	a := 1E-10; 	{ valid real const }
+	a := 000.000; 	{ valid real const }
+
+	a := 1E1E1;	{ invalid real const }
+
+	a ~ 100.; 	{ invalid symbol}
+end.

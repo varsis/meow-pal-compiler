@@ -1,0 +1,13 @@
+program test(input, output);
+var
+        a : integer;
+
+procedure a();
+begin
+        writeln('a');
+end;
+
+begin
+        a();
+        a := 32;
+end.

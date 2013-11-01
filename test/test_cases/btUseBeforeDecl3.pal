@@ -1,0 +1,6 @@
+program test(input, output);
+var
+        a : undefined;
+begin
+        writeln(a);
+end.

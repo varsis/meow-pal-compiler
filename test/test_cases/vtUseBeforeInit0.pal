@@ -1,0 +1,6 @@
+program test(input, output);
+var
+        a : integer;
+begin
+        writeln(a);
+end.

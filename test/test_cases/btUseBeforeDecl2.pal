@@ -1,0 +1,7 @@
+program test(input, output);
+var
+        a : integer;
+begin
+        blah();
+        a := baz();
+end.

@@ -1,8 +1,0 @@
-program btest004(input, output);
-{ Semantic error - c not yet defined when assigning test }
-const
-        test = c;
-        c = 42;
-
-begin
-end.

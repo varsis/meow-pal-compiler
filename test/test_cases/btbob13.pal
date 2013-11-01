@@ -1,0 +1,36 @@
+{
+*************************************************************************
+*
+* Error file: 7.pal
+*
+* Error: In this program, there exists three errors. 
+*
+*        1) program bisonerr3 (input,); < Missing an output file >
+*
+*	 2) c:=Procedure(b,b,);      < Missing an argument in procedure call > 
+*
+*        3) while a=a do then        < Useless 'then' after do >
+*
+*************************************************************************
+}
+
+program bisonerr3 (input,);	// missing the output file
+
+{ this is a comment 
+  also comments .}
+
+var x:integer;
+
+begin
+
+x:= 1 + 3 ;
+
+c:=Procedure(b,b,);   		// missing an argument
+
+while a=a then 			// 'while' and 'then' not match 
+x := x + 2;
+
+
+x:=2; 
+
+end.

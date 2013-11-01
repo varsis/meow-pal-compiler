@@ -1,0 +1,7 @@
+program test(input, output);
+var
+        a : integer;
+        b : real;
+begin
+        writeln('Hello, world!');
+end.

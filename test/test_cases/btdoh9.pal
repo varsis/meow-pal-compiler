@@ -1,0 +1,49 @@
+program Mine(input,output);
+
+//Syntax error
+const a : 2+1,
+      b = 3;
+//Syntax error
+      1 = 3
+//Syntax error
+var i : integer,
+    j, k, l : char;
+ 
+procedure Print(var j : integer);
+begin
+
+j := 2.99E-10;
+//Syntax error
+v := '\asdsadasd\n';
+v := '\asdsadasd\n';
+
+WriteLn(j);
+end;
+
+
+//Syntax error
+program wreak(muahaha);
+{This program is kind of evil}
+      var evil :
+				integer;
+
+	good : integer;
+	//Lexcial error
+	so_so : integer;
+
+function add (mandinga : integer; Saint : integer) : integer;
+begin
+
+	add := mandinga + Saint; // This should be ok
+end //Syntax error
+
+begin 
+
+      evil := 5;
+      good := 10;
+      //Lexical error
+      so_so := add(good, evil);
+      write('The addition is: ', so_so);//Lexical
+      writeln();
+
+end //Syntax error

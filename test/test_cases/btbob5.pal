@@ -1,0 +1,172 @@
+{ 
+This program contains three errors:
+line 44 = initializing a constant with a function call
+line 45 = initializing a constant with a function call
+line 61 = array type defined with reals as parameters
+none of these are permissible - and yes, this is syntactic - it's never
+permissible to initialize a const value with a function call or a variable
+reference - a variable reference can't be caught without semantic analysis, 
+but you *can* disallow function calls right int the grammar.
+similarly, arrays must be indexed with ordinal expressions. reals are
+not ordinals, and you *can* catch real constants syntactically
+}
+
+// Program Head
+program Rectangle(input,output);
+
+
+// Constant Declarations
+const LENGTH = 32;
+      MINNUMBER = 5.1;
+      MAXNUMBER = 3.2;
+
+      //expression test, arithmetic & boolean values;
+      A = 1 + 2;
+      B = A - 1;
+      C = A / B;
+      D = 44 div 3;
+      E = 33 mod 2;
+      F = 44.5 * 33;
+      J = true or false;
+      K = true and false;
+      L = K <> J;
+      M = false <= J;
+      N = true >= M;
+      O = false < true;
+      P = true > true;
+      Q = ( A + B );
+      R = not true;
+      S = not J;
+      T = (true = N);
+
+      aString = 'Hello! How are you?\\';
+      otherString = 'I\'m fine.\\';
+      ABC = sqr();
+      DEF = calculate(A, B, C);
+
+
+// Type Declarations
+type  xCoordinates = real;
+      yCoordinates = real;
+      predefined   = predefinedType;
+      month        = (Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec);
+      weekdays     = integer;
+      alphabet     = char;
+
+      PaintShop    = array [boolean] of colour;
+      DaysOfMonth  = array[1..31] of integer;
+      SummerMonths = array[Jun..Aug] of boolean;
+      QuestionType = array[false..true] of integer;
+      QuestionType = array['a'..'z'] of integer;
+      QuestionType = array[10.42..9.63] of integer;
+
+      PatientRecord = record 
+		        Name: array[1..79] of char;
+			ReleaseDate: boolean;
+			DaysHere : integer;
+		        AmountOwed : real
+		      end;
+
+var  a, b, c : integer;
+     total, sum, tax : real;
+     workingMonth : month;
+     answer : QuestionType;
+     flag : boolean;
+     myRecord : PatientRecord;
+
+{ ------------------------------------------- }
+
+procedure DisplayValues();
+var aa, bb : integer;
+begin
+   aa := 44;
+   bb := (aa * 5);
+   write('The first value is ',aa);
+   writeln('The second value is ',bb);
+end ;
+
+{ ------------------------------------------- }
+
+procedure DisplayPrice(var price : real);
+begin
+   writeln('Price = ', price);
+end;
+
+{ ------------------------------------------- }
+
+procedure DisplayReceipt(var price : real; var Q1 : integer; Q2: integer; Q3: integer);
+begin
+   write('Price = ', price);
+   writeln(' Quantity1 = ', sqr(Q1) );
+   writeln(' Quantity2 = ', sqrt(Q2) );
+   writeln(' Quantity3 = ', Q3 );
+end;
+
+{ ------------------------------------------- }
+
+function GetArea() : real;
+var temp :real;
+begin
+   writel('Enter area: ');
+   readln(temp);
+   GetArea := temp;
+end;
+
+{ ------------------------------------------- }
+
+function AddTen(number1 : integer; number2: integer; number3 : integer) : integer;
+var total : integer;
+begin
+   total := number1 + number2 + number3 + 10;
+   AddTen := total;
+end;
+
+{ main program }
+begin
+  if a = 3 then
+    b := 12;
+
+  if c = false then
+    answer := true
+  else
+    answer := false;
+
+  if b < d then
+    begin
+      a := 1;
+      b := 2;
+      c := true;
+    end;
+
+  if b > d then
+    a := 0
+  else if b = c then
+    a := 1;
+
+  if jay <> moo then
+    a := round(55/2);
+
+  while a = 'no' do
+    begin
+      writeln('Still No');
+      writeln('Try again');
+      readln(answer);
+    end;
+
+  write('Enter answer: ');
+  read(answer);
+  readln();
+
+  //more expressions
+  GHI := patient.name;	
+  value := arrayName[2];
+  value := doubleArray[3,56];
+  value := threeDArray[4,24,5];
+
+  //assignment of special constants <I think>
+  anArrayVariable := values[1,2,3,4];
+  aRecordVariable := values[1,2,true,'a string'];
+
+  //This line is to screw over anyone with a fixed length buffer for strings
+  thisVarIsAssignedToAString := 'that is very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long';
+end.

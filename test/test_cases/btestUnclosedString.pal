@@ -1,7 +1,0 @@
-program testUnclosedString(input, output);
-begin
-	'This line should give an unclosed string error.
-	writeln('woof');
-	writeln('This should actually give another unclosed string error
-	writeln('woof');
-end.

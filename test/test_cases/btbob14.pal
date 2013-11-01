@@ -1,0 +1,26 @@
+{3.pal:
+ lexical error
+ program has been misspelled, as well as begin to start the
+ main program.
+}
+
+1progrm SpelCheker(input, output);
+
+var
+   input    : char;
+   goodword : char;
+   y	    : integer;
+
+begn {main program}
+   if (input = goodword) then
+      y := 1
+   else
+      y:=0
+   if (y = 1) then
+      printf("We have a god wod, you spel real good")
+   else
+      printf("u suc at spelng")
+end.
+
+
+   

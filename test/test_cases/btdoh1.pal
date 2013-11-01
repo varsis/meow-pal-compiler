@@ -1,0 +1,21 @@
+program LexicalError1(input,output);
+ 
+type
+	//lexical error: character _ not allowed in an identifier
+	pal_color = ( red, green, blue, black, white);
+var 
+	i : integer;
+
+	//lexical error: '_' character not allowed in an identifier
+	//lexical error: identifier cannot start with a digit
+	//lexical error: '_' character not allowed in an identifier
+	first_color, 2color: pal_color;
+ 
+begin	
+	//valid, because we are not dealing with semantic
+	coloroutside = red;
+
+	//Both identifiers doenst exist, but we are no dealing with semantics, so it's valid
+	fcolor = RED;
+
+end.

@@ -1,0 +1,8 @@
+program test(input, output);
+var
+        a : integer;
+        a : real;
+        a : array[1..10] of char;
+begin
+        writeln(a);
+end.

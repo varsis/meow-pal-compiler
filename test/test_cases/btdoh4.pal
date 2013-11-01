@@ -1,0 +1,12 @@
+program lex(output,input);
+
+var
+	//Lexical error
+	identifier =: integer; // This is wrong
+	char := string;
+	blue := color of array[2];
+
+begin
+	{ Do nothing }
+
+end

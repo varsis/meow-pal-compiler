@@ -1,0 +1,63 @@
+{ 
+	A super basic calculator test numbers, reals 
+	input and output 
+	etc 
+	Line 28 is an error, invalid formal parameter list 
+	Line 57+ unclosed comment 
+
+} 
+
+
+program Calc(input, output);
+
+
+procedure ADD (x: integer; y: integer); 
+var 
+	result : integer; 
+	test1, test2, test3, test4 : integer;
+begin 
+	result := x+y;
+	if result >= 0 then begin
+		writeln('Postive Number: '); 
+		end
+	else 
+		writeln('Negative Number: '); 
+end; 
+
+procedure SUB (x, y : integer);
+begin 
+	writeln( x - y ); 
+end; 
+
+procedure MUL (x: integer; y : integer); 
+var 
+	result : integer; 
+begin 
+	result := 0; 
+	while y > 0 do 
+	begin
+		y := y-1; 
+		result := result + x; 
+	end;
+	writeln ( result ); 
+end; 
+
+begin
+	writeln('Welcome to a calculator');
+	writeln('use by have 1 value + - / or * another'); 
+	writeln('for example 3 + 3');
+	writeln('3+3 entered'); 
+	ADD(3,3); 
+	ADD(3E3, 3); 
+	SUB(3,3); 
+	MUL(3,3);
+	// Just a comment... 
+	// DIV not implemented. 
+	// DIV(3,3); 
+	{ DIV[3,3);  
+	This area should not be parsed 
+	but let us see...  
+	
+end.
+
+{ vim: set ft=pascal: }

@@ -1,0 +1,10 @@
+program test(input, output);
+
+procedure blah();
+begin
+        writeln('a');
+end;
+
+begin
+        blah('ajjs');
+end.

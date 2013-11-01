@@ -1,0 +1,13 @@
+// meant to test the multi-line comment regex
+// should have invalid symbols for ' and }
+
+program c1 (input, output);
+
+begin
+	{ \\ ) 8==D
+	;
+	'abc}'
+
+
+	}
+end.

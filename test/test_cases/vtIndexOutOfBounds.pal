@@ -1,0 +1,10 @@
+program btest006(input, output);
+{ Error - array index out of bounds }
+var
+        list : array[34..67] of real;
+
+begin
+        list[34] := 45;
+        list[0] := 23;
+        writeln(list[0]);
+end.

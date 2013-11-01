@@ -1,0 +1,70 @@
+{ 
+Make sure all reserved words are ok
+see if lower case e is an error. 
+
+    ## All errors are written in filename:line:character format ##
+
+3.pal:28:26 -- Invalid record declaration because of an invalid semicolon.
+3.pal:36:18 -- Missing parameter lists.
+3.pal:67:13 -- Invalid number.
+
+}
+program ReservedWords(input, output);
+{
+   Test program for reserved words:
+   AND, ARRAY, CONST, CONTINUE, CSBEGIN, CSEND, DIV, DO, ELSE, EXIT, FUNCTION,
+   IF, MOD, NOT, OF, OR, PROCEDURE, PROGRAM, RECORD, THEN, TYPE, VAR, and WHILE.
+}
+
+const
+   size = 9;
+
+type typefoo = array[1..size] of integer;
+
+var
+   j : Integer;
+   x :record
+         defval : integer;
+         ary    : typefoo;
+      end;        
+
+function addone(var m: Integer): Integer;
+begin
+   addone := m + 1;
+end;
+
+procedure procbar;
+var
+   i : Integer;
+begin
+   i := 0;
+   while i <= size do
+   begin
+      i := i + 1;
+      writeln( 'i:', i );
+      x.ary[i] := x.defval;
+      if (i<3) or False and True then begin
+         x.ary[i] := x.ary[i] div 2;
+         continue
+      end else if not(i<=5) then begin
+         x.ary[i] := x.ary[i] mod 2;
+         exit
+      end else
+         x.ary[i] := addone( x.ary[i] );
+      writeln( 'ary[', i, ']:', x.ary[i] );
+   end;
+end;
+
+begin
+   x.defval:=7;
+   procbar();
+   j := 1;
+   while j <= size do
+   begin
+      writeln( 'x.ary[', j, ']:', x.ary[j] );
+      j := j + 1;
+   end;
+   writeln( 3e3 ); 
+end.
+
+{ vim: set ft=pascal: }

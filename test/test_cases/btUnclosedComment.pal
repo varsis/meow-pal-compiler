@@ -1,0 +1,5 @@
+program testUnclosedComment(input, output);
+begin
+        { "This shouldn't pass
+         testing." 
+end.

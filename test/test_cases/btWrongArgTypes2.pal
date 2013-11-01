@@ -1,0 +1,22 @@
+program test(input, output);
+const
+        a = 34.90;
+type
+        f = record
+        n : integer;
+        l : real;
+        end;
+        list = array[1..30] of integer;
+var
+        b : f;
+        d : list;
+
+
+procedure foo(x : list; y : f);
+begin
+        writeln(x[1], f.l);
+end;
+
+begin
+        foo(b,d);
+end.

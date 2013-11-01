@@ -1,0 +1,14 @@
+{
+ Test Case 6: Test for Syntax Errors
+ Line 7: Procedure trying to claim a return valuee
+}
+program test6(input ,output);
+
+procedure foo(a : integer; b : integer) : integer;
+var 
+	x : integer;
+begin
+end;
+
+begin
+end.

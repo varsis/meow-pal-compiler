@@ -1,0 +1,6 @@
+program btest012(input, output);
+{ Test Case: infinite loop? }
+begin
+        while() do
+                  writeln('a');
+end.

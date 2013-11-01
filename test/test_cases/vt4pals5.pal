@@ -1,0 +1,17 @@
+// meant to test record definition and access (grammar)
+// should not produce any errors
+
+program Rec(input,output);
+type
+	aRec = record
+		a,b:integer;
+		c:char;
+		end;
+var
+	myRec : aRec;
+
+begin
+	myRec.a := 1;
+	myRec.b := 2;
+	myRec.c := 'a';
+end.

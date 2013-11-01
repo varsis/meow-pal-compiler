@@ -1,0 +1,30 @@
+{
+
+Test 5.pal is a syntax test
+ 
+Errors: 
+Line 23 invalid expression
+Line 24 Can't assign valud to expression 
+Line 27 end is missing from if statement 
+
+}
+program expressions(input, output);
+var 
+	a,b : integer;
+begin
+	a := 10;
+	b := 20; 
+	a := a * b * (a + a + a + a +a ) *3; 
+	b := a / b; 
+	b := (3+ 3); 
+	a := 3 +3; 
+	a := 3 + b; 
+	a := a + b; 
+	a := 3(b);
+	a + b := 3; 
+	a := b * (3-6) -a  / ( 3/3 );  
+	writeln ( a, b);   
+	if true then begin
+	{end}	
+end.
+{ vim: set ft=pascal: }

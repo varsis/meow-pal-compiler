@@ -130,7 +130,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestValidRealConstants)
 	{
-		initTest("test/test_cases/btestValidRealConstants.pal");
+		initTest("test/test_cases/btValidRealConstants.pal");
 
 		EXPECT_TOKEN(token::REAL_CONST);
 		EXPECT_TOKEN(token::REAL_CONST);
@@ -143,7 +143,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestValidIntegerConstants)
 	{
-		initTest("test/test_cases/btestValidIntegerConstants.pal");
+		initTest("test/test_cases/btValidIntegerConstants.pal");
 
 
 		EXPECT_TOKEN(token::INT_CONST);
@@ -155,7 +155,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestUnclosedComment)
 	{
-		initTest("test/test_cases/btestUnclosedComment.pal");
+		initTest("test/test_cases/btUnclosedComment.pal");
 
 		EXPECT_TOKEN(token::PROGRAM);
 		EXPECT_TOKEN(token::IDENTIFIER);
@@ -187,7 +187,7 @@ namespace Meow
 
 	TEST_F(ScannerTest, TestUnclosedString)
 	{
-		initTest("test/test_cases/btestUnclosedString.pal");
+		initTest("test/test_cases/btUnclosedString.pal");
 
 		EXPECT_TOKEN(token::PROGRAM);
 		EXPECT_TOKEN(token::IDENTIFIER);
