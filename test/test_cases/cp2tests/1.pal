@@ -1,0 +1,28 @@
+{
+	Test case 1;
+	Errors on lines:
+	20 : Invalid field decl
+	21 : Invalid Record decl (used := instead of =)
+	24 : Missing colon, invalid variable decl
+}
+
+program test1(input, output);
+
+const
+	a = '"Hello world!"';
+	n = '\t\n\'\'';
+
+type
+	b = record
+		a,b,c:integer;
+		end;
+	c := record
+		a = integer;
+		end;
+
+var
+	a integer;
+
+begin
+	writeln(a,n);
+end.

@@ -1,0 +1,26 @@
+{
+	Test Case 6;
+	Errors on lines:
+	16 : Undeclared function use
+	21 : Undeclared variable/constant use
+	22 : Trying to call program as function
+}
+
+program test6(input, output);
+begin
+	if (true) then
+	begin	
+		exit;
+	end;
+	
+	if (myFunc()) then
+	begin
+		continue;
+	end;
+	
+	while(a) do
+	begin
+	end;
+	
+	test6(2, 2);
+end.

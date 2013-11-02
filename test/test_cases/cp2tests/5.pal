@@ -1,0 +1,15 @@
+{
+	Test case 5;
+	Errors on lines:
+	:
+	:
+	:
+}
+
+program test5(input,output);
+begin
+	while('a') do;
+	continue;
+	exit;
+end.
+

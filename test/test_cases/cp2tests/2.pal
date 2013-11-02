@@ -1,0 +1,19 @@
+{
+	Test Case 2;
+	Errors on lines:
+	12 : Use before definition
+	15 : Use before definition
+	18 : Use before definition
+}
+
+program test2(input, output);
+
+const
+	a = b;
+
+var
+	c : notdefined;
+
+begin
+	writeln(blah);
+end.

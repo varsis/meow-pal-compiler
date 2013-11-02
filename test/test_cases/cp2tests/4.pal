@@ -1,0 +1,28 @@
+{
+	Test Case 4;
+	Errors on lines:
+	13 : Constant redecl
+	17 : Variable redecl
+	23 : Procedure/Function redecl
+}
+
+program test4(input, output);
+
+const
+	a = 9;
+	a = 34;
+
+var
+	a : integer;
+	a : real;
+
+procedure first();
+begin
+end;
+
+procedure first(a:integer);
+begin
+end;
+
+begin
+end.
