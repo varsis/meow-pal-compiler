@@ -1,5 +1,5 @@
-#ifndef PROGRAM_HPP
-#define PROGRAM_HPP
+#ifndef DECLARATIONS_HPP
+#define DECLARATIONS_HPP
 
 #include "ASTNode.hpp"
 #include "ASTListTypes.hpp"
@@ -10,33 +10,30 @@ namespace Meow
 {
 	class Type; 
 	class TypeVisitor; 
-	class Declarations;
 
-	class Program : ASTNode
+	class Declarations : ASTNode
 	{
 		public:
-			Program(Declarations declarations,
-				StatementList statementList);
+			Declarations(ConstantDeclarationList constDeclList,
+				TypeDeclarationList typeDeclList,
+				VariableDeclarationList variableDeclList,
+				ProcedureDeclarationList procedureDeclList);
 
-			~Program();
+			~Declarations();
 			
 			void accept(Visitor visitor);
 			Type* accept(TypeVisitor typeVisitor);
 			
-			/*
 			const ConstantDeclarationList getConstantDeclarationList() const;
 			const TypeDeclarationList getTypeDeclarationList() const;
+			const VariableDeclarationList getVariableDeclarationList() const;
 			const ProcedureDeclarationList getProcedureDeclarationList() const;
-			*/
-			const StatementList getStatementList() const;
 		
 		private:
-			/*
 			ConstantDeclarationList constantDeclarationList;
 			TypeDeclarationList typeDeclarationList;
+			VariableDeclarationList variableDeclarationList;
 			ProcedureDeclarationList procedureDeclarationList;
-			*/
-			StatementList statementList;
 	};
 }
 #endif

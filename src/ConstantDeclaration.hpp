@@ -17,9 +17,8 @@ namespace Meow
 	{
 		public:
 			ConstantDeclaration(int lineNumber,
-								Type* type,
-								Identifier*identifer,
-								Expression* expression);
+						Identifier* identifer,
+						Expression* expression);
 		
 			void accept(Visitor visitor);
 			const Type* accept(TypeVisitor typeVisitor);

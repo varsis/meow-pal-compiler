@@ -5,12 +5,17 @@
 %define parser_class_name "PalParser"
 %parse-param { Meow::PalScanner &scanner }
 %parse-param { Meow::ErrorManager &errorManager }
+%parse-param { Meow::ParseResult &result }
 %lex-param   { Meow::PalScanner &scanner }
 
 %debug
 %error-verbose
 
 %code requires {
+
+        #include "ASTNode.hpp"
+        #include "Parser.hpp"
+
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
 	namespace Meow
@@ -38,7 +43,49 @@
 %union {
 	std::string* identifier;
         std::string* stringLiteral;
+
+        // AST nodes...
+/*
+        Meow::Declarations* Declarations;
+
+        Meow::ConstantDeclarationList* ConstantDeclarationList;
+        Meow::TypeDeclarationList* TypeDeclarationList;
+        Meow::VariableDeclarationList* VariableDeclarationList;
+        Meow::ProcedureDeclarationList* ProcedureDeclarationList;
+
+        Meow::ConstantDeclaration* ConstantDeclaration;
+        Meow::TypeDeclaration* TypeDeclaration;
+        Meow::VariableDeclaration* VariableDeclaration;
+        Meow::ProcedureDeclaration* ProcedureDeclaration;
+
+        Meow::StatementList* StatementList; // TODO remove
+        Meow::CompoundStatement* CompundStatement;
+        Meow::Statement* Statement;
+
+        Meow::LValue* LValue;
+*/
 }
+
+/*
+%type <Declarations> decls
+
+%type <ConstantDeclarationList> const_decl_part const_decl_list
+%type <ConstantDeclaration> const_decl
+
+%type <TypeDeclarationList> type_decl_part type_decl_list
+%type <TypeDeclaration> type_decl
+
+%type <VariableDeclarationList> var_decl_part var_decl_list
+%type <VariableDeclaration> var_decl
+
+%type <ProcedureDeclarationList> proc_decl_part proc_decl_list
+%type <ProcedureDeclaration> proc_decl
+
+%type <CompoundStatement> compound_stat stat_list
+%type <Statement> stat simple_stat struct_stat proc_invok
+
+%type <LValue> var
+*/
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -58,11 +105,15 @@
 %%
 
 program                 : program_head decls compound_stat PERIOD
+                        {
+                            //result.program = new Program($2, $3);
+                        }
                         | program_head decls compound_stat 
                         { errorManager.addError(
                               new Error(MissingProgramPeriod,
                                         "Expected \".\" after END", 
                                         scanner.lineno()-1)); 
+                            //result.program = new Program($2, $3);
                         }
                         ;
 
@@ -109,22 +160,50 @@ decls                   : const_decl_part
                           type_decl_part        
                           var_decl_part
                           proc_decl_part
+                        {
+                            //$$ = new Declarations($1, $2, $3, $4);
+                        }
                         ;
 
 /********************************************************************************
  * Rules for constant declarations...
  ********************************************************************************/
 const_decl_part         : CONST const_decl_list SEMICOLON
-                        |
+                        {
+                            //$$ = $2;
+                        }
+                        | /* empty */
+                        {
+                            //$$ = NULL;
+                        }
+
                         ;
 
 const_decl_list         : const_decl
+                        {
+                            //$$ = new ConstantDeclarationList(); 
+                            //$$->push_back($1);
+                        }
                         | const_decl_list SEMICOLON const_decl
+                        {
+                            //$$ = $1;
+                            //$$->push_back($3);
+                        }
                         ;
 
 const_decl              : IDENTIFIER EQ type_expr
+                        {
+                            //$$ = new ConstantDeclaration(yylineno, $1, $3);
+                        }
 			| IDENTIFIER EQ STRING_LITERAL
+                        {
+                            //$$ = new ConstantDeclaration(yylineno, $1, $3);
+                        }
 			| IDENTIFIER EQ REAL_CONST
+                        {
+                            //Identifier id = new Identifier(yylineno, $1); // TODO move this to scanner?
+                            //$$ = new ConstantDeclaration(yylineno, id, $3);
+                        }
                         | IDENTIFIER ASSIGN type_expr
                         { errorManager.addError(
                                 new Error(InvalidConstDecl,
@@ -144,11 +223,25 @@ const_decl              : IDENTIFIER EQ type_expr
  * Rules for type declarations...
  ********************************************************************************/
 type_decl_part          : TYPE type_decl_list SEMICOLON
-                        |
+                        {
+                            //$$ = $2;
+                        }
+                        | /* empty */
+                        {
+                            //$$ = NULL;
+                        }
                         ;
 
 type_decl_list          : type_decl
+                        {
+                            //$$ = new TypeDeclarationLIst() ;
+                            //$$->push_back($1);
+                        }
                         | type_decl_list SEMICOLON type_decl
+                        {
+                            //$$ = $1;
+                            //$$->push_back($3);
+                        }
                         ;
 
 type_decl               : IDENTIFIER EQ type
@@ -255,14 +348,37 @@ var_decl                : IDENTIFIER COLON type
  * Rules for procedure + function declarations...
  ********************************************************************************/
 proc_decl_part          : proc_decl_list
-                        |
+                        {
+                            //$$ = $1;
+                        }
+                        | /* empty */
+                        {
+                            //$$ = NULL;
+                        }
                         ;
 
 proc_decl_list          : proc_decl
+                        {
+                            //$$ = new ProcudureDeclarationList();
+                            //$$->push_back($1);
+                        }
                         | proc_decl_list proc_decl
+                        {
+                            //$$ = $1;
+                            //$$->push_back($2);
+                        }
                         ;
 
 proc_decl               : proc_heading decls compound_stat SEMICOLON
+                        {
+                            //$$ = new ProcedureDeclaration(yylineno, procId, returnId, returnType, statement_list 
+                            // NEED:
+                            // linenumber
+                            // procedure id
+                            // parameter list
+                            // if func: return type + id // COULD group last three into a node..
+                            // declarations
+                        }
                         | proc_heading decls compound_stat PERIOD
                         {
                           errorManager.addError(
@@ -323,10 +439,21 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
  ********************************************************************************/
 
 compound_stat           : PAL_BEGIN stat_list END
+                        {
+                            //$$ = $2;
+                        }
                         ;
 
 stat_list               : stat
+                        {
+                            //$$ = new CompoundStatement();
+                            //$$->addStatement($1);
+                        }
                         | stat_list SEMICOLON stat
+                        {
+                            //$$ = $1;
+                            //$$->addStatement($3);
+                        }
                         ;
 
 stat                    : simple_stat
@@ -336,8 +463,17 @@ stat                    : simple_stat
                         ;
 
 simple_stat             : var ASSIGN expr
+                        {
+                            //$$ = AssignStatement($1, $3);
+                        }
                         | proc_invok
+                        {
+                            //$$ = $1;
+                        }
                         | compound_stat
+                        {
+                            //$$ = $1;
+                        }
                         | var EQ expr 
                         {
                           errorManager.addError(
@@ -348,37 +484,95 @@ simple_stat             : var ASSIGN expr
                         ;
 
 var                     : IDENTIFIER
+                        {
+                            //$$ = new Variable(yylineno, $1);
+                        }
                         | var PERIOD IDENTIFIER
-                        | subscripted_var RIGHT_BRACKET
+                        {
+                            //$$ = new RecordField(yylineno, $1, $3);
+                        }
+/* NOTE: i don't think a[1,2] is actually valid for 2d array access... need to do a[1][2], right?
+*/
+                        | var LEFT_BRACKET expr RIGHT_BRACKET
+                        {
+                            //$$ = new SubscriptedVariable(yylineno, $1, $3);
+                        }
                         ;
 
-subscripted_var         : var LEFT_BRACKET expr
-                        | subscripted_var COMMA expr
+proc_invok              : IDENTIFIER args
+                        {
+                            //$$ = new ProcedureInvokation($1, $2);
+                        }
                         ;
 
-proc_invok              : plist_finvok RIGHT_PAREN
-                        | IDENTIFIER LEFT_PAREN RIGHT_PAREN
+args                    : LEFT_PAREN RIGHT_PAREN
+                        {
+                            //$$ = new Arguments();
+                        }
+                        | LEFT_PAREN arg_list RIGHT_PAREN
+                        {
+                            //$$ = $2
+                        }
                         ;
 
-plist_finvok            : IDENTIFIER LEFT_PAREN parm
-                        | plist_finvok COMMA parm
+arg_list                : expr
+                        {
+                            //$$ = new Arguments();
+                            //$$.addArg = $1;
+                        }
+                        | arg_list COMMA expr
+                        {
+                            //$$ = $1
+                            //$$.addArg = $2;
+                        }
                         ;
-
-parm                    : expr
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
+                        {
+                            //$$ = new ConditionalStatement($2, $4, $6);
+                        }
                         | IF expr THEN stat
+                        {
+                            //$$ = new ConditionalStatement($2, $4, NULL);
+                        }
                         | WHILE expr DO stat
+                        {
+                            //$$ = new WhileStatement($2, $4);
+                        }
                         | CONTINUE
+                        {
+                            //$$ = new ContinueStatment();
+                        }
                         | EXIT
+                        {
+                            //$$ = new ExitStatement();
+                        }
                         ;
 
 matched_stat            : simple_stat
+                        {
+                            //$$ = $1;
+                        }
                         | IF expr THEN matched_stat ELSE matched_stat
+                        {
+                            //$$ = new ConditionalStatement($2, $4, $6);
+                        }
                         | WHILE expr DO matched_stat
+                        {
+                            //$$ = new WhileStatement($2, $4);
+                        }
                         | CONTINUE
+                        {
+                            //$$ = new ContinueStatment();
+                        }
                         | EXIT
+                        {
+                            //$$ = new ExitStatement();
+                        }
 			| /* empty */
+                        {
+                            //$$ = NULL // ??? should we have a 'NoOp' or something?
+                        }
                         ;
 
 /********************************************************************************
@@ -387,66 +581,182 @@ matched_stat            : simple_stat
 
 type_expr		: type_simple_expr
                         | type_expr EQ type_simple_expr
+                        {
+                            //$$ = new EqualExpression($1, $3);
+                            // C++11 .... maybe??
+                            //$$ = new BinaryExpression<bool>([a,b] {return a == b;}, $1, $3);
+                        }
                         | type_expr NE type_simple_expr
+                        {
+                            //$$ = new NotEqualExpression($1, $3);
+                        }
                         | type_expr LE type_simple_expr
+                        {
+                            //$$ = new LessThanEqualExpression($1, $3);
+                        }
                         | type_expr LT type_simple_expr
+                        {
+                            //$$ = new LessThanExpression($1, $3);
+                        }
                         | type_expr GE type_simple_expr
+                        {
+                            //$$ = new GreaterThanEqualExpression($1, $3);
+                        }
                         | type_expr GT type_simple_expr
+                        {
+                            //$$ = new GreaterThanExpression($1, $3);
+                        }
                         ;
 
 type_simple_expr        : type_term
                         | PLUS type_term
+                        {
+                            //$$ = new UnaryPlus($2);
+                        }
                         | MINUS type_term
+                        {
+                            //$$ = new UnaryMinus($2);
+                        }
                         | type_simple_expr PLUS type_term
+                        {
+                            //$$ = new AddExpression($2, $3);
+                            // maybe ???
+                            //$$ = new BinaryExpression([a,b] {return a + b;},$2, $3);
+                        }
                         | type_simple_expr MINUS type_term
-                        | type_simple_expr OR  type_term
+                        {
+                            //$$ = new SubtractExpression($2, $3);
+                        }
+                        | type_simple_expr OR type_term
+                        {
+                            //$$ = new OrExpression($2, $3);
+                        }
                         ;
 
 type_term               : type_factor
                         | type_term MULTIPLY type_factor
+                        {
+                            //$$ = new MultiplyExpression($2, $3);
+                        }
                         | type_term REAL_DIVIDE type_factor
+                        {
+                            //$$ = new RealDivideExpression($2, $3);
+                        }
                         | type_term INT_DIVIDE type_factor
+                        {
+                            //$$ = new IntDivideExpression($2, $3);
+                        }
                         | type_term MOD type_factor
+                        {
+                            //$$ = new ModExpression($2, $3);
+                        }
                         | type_term AND type_factor
+                        {
+                            //$$ = new AndExpression($2, $3);
+                        }
                         ;
 
 type_factor             : var
                         | LEFT_PAREN type_expr RIGHT_PAREN
+                        {
+                            //$$ = $2;
+                        }
                         | INT_CONST 
                         | NOT type_factor
+                        {
+                            //$$ = new NotExpression($2);
+                        }
                         ;
 
 
 expr			: simple_expr
                         | expr EQ simple_expr
+                        {
+                            //$$ = new EqualExpression($1, $3);
+                            // C++11 .... maybe??
+                            //$$ = new BinaryExpression<bool>([a,b] {return a == b;}, $1, $3);
+                        }
                         | expr NE simple_expr
+                        {
+                            //$$ = new NotEqualExpression($1, $3);
+                        }
                         | expr LE simple_expr
+                        {
+                            //$$ = new LessThanEqualExpression($1, $3);
+                        }
                         | expr LT simple_expr
+                        {
+                            //$$ = new LessThanExpression($1, $3);
+                        }
                         | expr GE simple_expr
+                        {
+                            //$$ = new GreaterThanEqualExpression($1, $3);
+                        }
                         | expr GT simple_expr
+                        {
+                            //$$ = new GreaterThanExpression($1, $3);
+                        }
                         ;
 
 simple_expr             : term
                         | PLUS term
+                        {
+                            //$$ = new UnaryPlus($2);
+                        }
                         | MINUS term
+                        {
+                            //$$ = new UnaryMinus($2);
+                        }
                         | simple_expr PLUS term
+                        {
+                            //$$ = new AddExpression($2, $3);
+                            // maybe ???
+                            //$$ = new BinaryExpression([a,b] {return a + b;},$2, $3);
+                        }
                         | simple_expr MINUS term
+                        {
+                            //$$ = new SubtractExpression($2, $3);
+                        }
                         | simple_expr OR  term
+                        {
+                            //$$ = new OrExpression($2, $3);
+                        }
                         ;
 
 term                    : factor
                         | term MULTIPLY factor
+                        {
+                            //$$ = new MultiplyExpression($2, $3);
+                        }
                         | term REAL_DIVIDE factor
+                        {
+                            //$$ = new RealDivideExpression($2, $3);
+                        }
                         | term INT_DIVIDE factor
+                        {
+                            //$$ = new IntDivideExpression($2, $3);
+                        }
                         | term MOD factor
+                        {
+                            //$$ = new ModExpression($2, $3);
+                        }
                         | term AND factor
+                        {
+                            //$$ = new AndExpression($2, $3);
+                        }
                         ;
 
 factor                  : var
                         | unsigned_const
                         | LEFT_PAREN expr RIGHT_PAREN
+                        {
+                            //$$ = $2;
+                        }
                         | func_invok
                         | NOT factor
+                        {
+                            //$$ = new NotExpression($2);
+                        }
                         ;
 
 unsigned_const          : unsigned_num
@@ -457,9 +767,7 @@ unsigned_num            : INT_CONST
                         | REAL_CONST
                         ;
 
-
-func_invok              : plist_finvok RIGHT_PAREN
-                        | IDENTIFIER LEFT_PAREN RIGHT_PAREN
+func_invok              : IDENTIFIER args
                         ;
 
 %%

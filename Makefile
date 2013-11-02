@@ -42,10 +42,20 @@ FLEXDEP := $(FLEXSOURCE:.lex=.lex.ad)
 BISONDEP := $(BISONSOURCE:.y=.y.ad)
 
 $(FLEXDEP): %.lex.ad: %.lex
-	$(FLEX) -o $(SRCDIR)/lex.yy.cpp $<; touch $@
+	$(FLEX) -o $(SRCDIR)/lex.yy.cpp $<;\
+	if [ $$? -eq 0 ]; then\
+       		touch $@;\
+	else\
+       		rm $(SRCDIR)/lex.yy.cpp;\
+	fi
 
 $(BISONDEP): %.y.ad: %.y
-	$(BISON) -o $(SRCDIR)/pal.tab.cpp $<; touch $@
+	$(BISON) -o $(SRCDIR)/pal.tab.cpp $<;\
+	if [ $$? -eq 0 ]; then\
+       		touch $@;\
+	else\
+       		rm $(SRCDIR)/pal.tab.cpp;\
+	fi
 
 ifeq (,$(filter clean,$(MAKECMDGOALS)))
 -include $(FLEXDEP) $(BISONDEP)

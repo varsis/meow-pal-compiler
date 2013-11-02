@@ -23,7 +23,7 @@ namespace Meow
 		int retval;
 		PalScanner scanner(fileStream, m_errorManager);
 
-		PalParser parser(scanner, *m_errorManager);
+		PalParser parser(scanner, *m_errorManager, m_parseResult);
 
 		if(m_debugFlag)
 		{
