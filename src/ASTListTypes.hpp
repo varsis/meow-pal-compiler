@@ -12,8 +12,12 @@ namespace Meow
 	class TypeDeclaration;
 	class VariableDeclaration;
 	class ProcedureDeclaration;
+	class Identifier;
+	class Field;
 
 	typedef std::vector<Expression*> ExpressionList;
+	typedef std::vector<Identifier*> IdentifierList;
+	typedef std::vector<Field*> FieldList;
 	typedef std::vector<Statement*> StatementList;
 	typedef std::vector<ConstantDeclaration*> ConstantDeclarationList;
 	typedef std::vector<TypeDeclaration*> TypeDeclarationList;

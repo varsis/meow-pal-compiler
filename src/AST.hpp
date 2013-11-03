@@ -1,0 +1,66 @@
+#ifndef AST_HPP
+#define AST_HPP
+
+#include "ASTNode.hpp"
+#include "ASTListTypes.hpp"
+#include "Program.hpp"
+#include "Declarations.hpp"
+#include "ConstantDeclaration.hpp"
+#include "VariableDeclaration.hpp"
+#include "TypeDeclaration.hpp"
+#include "Type.hpp"
+#include "SimpleType.hpp"
+#include "EnumeratedType.hpp"
+#include "ArrayType.hpp"
+#include "ArrayTypeIndex.hpp"
+#include "ArrayRangeIndex.hpp"
+#include "RecordType.hpp"
+#include "Field.hpp"
+#include "ProcedureDeclaration.hpp"
+#include "ProcedureHeading.hpp"
+#include "ParameterList.hpp"
+#include "Parameter.hpp"
+#include "Identifier.hpp"
+#include "StringLiteral.hpp"
+#include "IntegerConstant.hpp"
+#include "RealConstant.hpp"
+#include "LValue.hpp"
+
+#include "Expression.hpp"
+#include "CompoundStatement.hpp"
+#include "AssignStatement.hpp"
+#include "ConditionalStatement.hpp"
+#include "WhileStatement.hpp"
+#include "ContinueStatement.hpp"
+#include "ExitStatement.hpp"
+
+#include "RecordField.hpp"
+#include "Variable.hpp"
+#include "SubscriptedVariable.hpp"
+
+#include "ProcedureInvocation.hpp"
+#include "FunctionInvocation.hpp"
+#include "Arguments.hpp"
+
+#include "EqualExpression.hpp"
+#include "NotEqualExpression.hpp"
+#include "LessThanEqualExpression.hpp"
+#include "LessThanExpression.hpp"
+#include "GreaterThanEqualExpression.hpp"
+#include "GreaterThanExpression.hpp"
+
+#include "UnaryPlusExpression.hpp"
+#include "UnaryMinusExpression.hpp"
+
+#include "AddExpression.hpp"
+#include "SubtractExpression.hpp"
+#include "OrExpression.hpp"
+#include "MultiplyExpression.hpp"
+#include "RealDivideExpression.hpp"
+#include "IntDivideExpression.hpp"
+#include "ModExpression.hpp"
+#include "AndExpression.hpp"
+#include "NotExpression.hpp"
+
+
+#endif

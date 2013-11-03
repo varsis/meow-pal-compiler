@@ -1,0 +1,14 @@
+program testProcWithDecls(input, output);
+
+procedure dostuff(a : integer);
+const
+        c = 'hello';
+var
+        a : integer;
+begin
+	writeln('stuff');
+end;
+
+begin
+	doStuff(1);
+end.

@@ -14,17 +14,25 @@ namespace Meow
 	class TypeDeclaration : public ASTNode
 	{
 		public:
-			TypeDeclaration(int lineNumber, Identifier* identifer, Type* type);
+			TypeDeclaration(int lineNumber, Identifier* identifier, Type* type)
+				: m_identifier(identifier)
+				, m_type(type)
+			{
+			}
 		
-			void accept(Visitor visitor);
-			const Type* accept(TypeVisitor typeVisitor);
+			void accept(Visitor* visitor);
+			const Type* accept(TypeVisitor* typeVisitor);
 
-			const Identifier* get_identifier() const;
-			const Type* get_type() const;
+			const Identifier* getIdentifier() const
+			{	
+				return m_identifier;
+			}
+
+			const Type* getType() const;
 		
 		private:
-			Identifier* identifier;
-			Type* type;
+			Identifier* m_identifier;
+			Type* m_type;
 	};
 }
 

@@ -2,6 +2,7 @@
 
 #include "../src/pal.tab.hpp"
 #include "../src/Scanner.hpp"
+#include "../src/Parser.hpp"
 #include "../src/ErrorManager.hpp"
 #include "../src/Error.hpp"
 #include "MockScanner.h"
@@ -24,7 +25,7 @@ namespace Meow
 		protected:
 
 			ParserTest() 
-				: parser(scanner, errorManager)
+				: parser(scanner, errorManager, parseResult)
 			{
 			}
 
@@ -47,6 +48,7 @@ namespace Meow
 
 			MockScanner scanner;
 			ErrorManager errorManager;
+			ParseResult parseResult;
 			vector<token_type> tokens;
 
 			PalParser parser;
@@ -729,5 +731,24 @@ namespace Meow
 			tokens.push_back(token::IDENTIFIER);
 			tokens.push_back(token::SEMICOLON);
 		tokens.push_back(token::END);
+	}
+
+	TEST_F(StatementsTest, ProcInvokeTest1)
+	{
+		// foo();
+		tokens.push_back(token::IDENTIFIER);
+		tokens.push_back(token::LEFT_PAREN);
+		tokens.push_back(token::RIGHT_PAREN);
+	}
+
+	TEST_F(StatementsTest, ProcInvokeTest2)
+	{
+		// foo(a, b);
+		tokens.push_back(token::IDENTIFIER);
+		tokens.push_back(token::LEFT_PAREN);
+		tokens.push_back(token::IDENTIFIER);
+		tokens.push_back(token::COMMA);
+		tokens.push_back(token::IDENTIFIER);
+		tokens.push_back(token::RIGHT_PAREN);
 	}
 }

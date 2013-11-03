@@ -15,13 +15,13 @@ namespace Meow
 		public:
 			Identifier(int lineNumber, const char* identifierName);
 		
-			void accept(Visitor visitor);
-			Type* accept(TypeVisitor typeVisitor);
+			void accept(Visitor* visitor);
+			Type* accept(TypeVisitor* typeVisitor);
 			
-			std::string toString() const;
+			inline std::string toString() const { return m_name; }
 		
 		private:
-			std::string identifierName;
+			std::string m_name;
 	};
 }
 

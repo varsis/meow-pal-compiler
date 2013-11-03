@@ -1,13 +1,33 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
-class Vistor;
+#include <string>
 
 namespace Meow
 {
-	class Expression {
+	class Visitor;
+	class TypeVisitor;
+	class Type;
+	class StringLiteral;
+	class IntegerConstant;
+	class RealConstant;
+	class LValue;
+
+	class Expression
+	{
 		public:
-			virtual void accept(Vistor v) = 0;
+			Expression() {}
+
+			// FIXME this probably should be left abstract...
+			// make new subclass for literals?
+
+			Expression(StringLiteral* literal);
+			Expression(IntegerConstant* constant);
+			Expression(RealConstant* constant);
+			Expression(LValue* value);
+
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 	};
 }
 

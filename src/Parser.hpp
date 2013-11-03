@@ -7,6 +7,12 @@
 namespace Meow
 {
 	class ErrorManager;
+	class Program;
+
+	struct ParseResult
+	{
+		Program* program;
+	};
 
 	class Parser
 	{
@@ -16,11 +22,14 @@ namespace Meow
 			int parseFile(std::string fileName);
 			int parseFile(std::ifstream* fileStream);
 
+			ParseResult* getParseResult() { return &m_parseResult; }
+
 			void setDebugFlag(bool value);
 
 		private:
 			ErrorManager* m_errorManager;
 			bool m_debugFlag;
+			ParseResult m_parseResult;
 	};
 }
 

@@ -1,6 +1,9 @@
 %{
 	#include <iostream>
 	#include "Scanner.hpp"
+
+	#include "Identifier.hpp"
+
 	typedef Meow::PalParser::token token;
 
 	static bool s_stringInvalid;
@@ -54,6 +57,9 @@ EXPONENT	E[+-]?{DIGIT}+
 			}
 
 			BEGIN(INITIAL);
+
+			yylval->StringLiteral = new StringLiteral(yylineno, yytext);
+
 			return token::STRING_LITERAL;
 		}
 	\n	{ /* Count line endings */
@@ -79,6 +85,7 @@ EXPONENT	E[+-]?{DIGIT}+
 				yyin->seekg(s_scannerReturnPosition);
 				yylineno = s_scannerReturnLine;
 				BEGIN(INITIAL);
+				yylval->StringLiteral = new StringLiteral(yylineno, yytext);
 				return token::STRING_LITERAL;
 			}
 
@@ -163,14 +170,23 @@ EXPONENT	E[+-]?{DIGIT}+
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-{DIGIT}+((\.{DIGIT}+{EXPONENT})|(\.{DIGIT}+)|{EXPONENT}) { return token::REAL_CONST; }
-{DIGIT}+ { return token::INT_CONST; }
+{DIGIT}+((\.{DIGIT}+{EXPONENT})|(\.{DIGIT}+)|{EXPONENT}) {
+															yylval->RealConstant = new Meow::RealConstant(yylineno, atof(yytext));
+															return token::REAL_CONST;
+														 }
+{DIGIT}+ {
+			yylval->IntegerConstant = new Meow::IntegerConstant(yylineno, atoi(yytext));
+			return token::INT_CONST;
+		 }
 
-([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER; }
+([a-zA-Z]+[0-9a-zA-Z]*) { 
+							yylval->identifier = new Meow::Identifier(yylineno, yytext);
+							return token::IDENTIFIER;
+						}
 ([0-9]+[a-zA-Z0-9]*) 	{ 
-				getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno));
-				return token::IDENTIFIER; 
-			}
+							getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno));
+							return token::IDENTIFIER; 
+						}
 
 "," { return token::COMMA; }
 ";" { return token::SEMICOLON; }
