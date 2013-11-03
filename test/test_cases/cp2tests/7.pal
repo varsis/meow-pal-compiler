@@ -1,0 +1,16 @@
+{
+	Test Case 7;
+	Errors on lines:
+	13 : Non-Boolean value in if
+	14 : Non-Boolean value in while
+	15 : Non-Assignment compatible types
+}
+
+program test7(input, output);
+var
+	a : integer;
+begin
+	if ('a') then;
+	while(3.444) do;
+	a := 'lsajdlajksdlashdjkahsdkjafhdjk';
+end.

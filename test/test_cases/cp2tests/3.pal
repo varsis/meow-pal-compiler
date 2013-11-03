@@ -1,0 +1,33 @@
+{
+	Test Case 3;
+	Errors on lines:
+	28 : Wrong number of arguments
+	29 : Wrong arg types
+	30 : Incompatible return type
+}
+
+program test3(input, output);
+
+var
+	a : char;
+
+procedure first();
+begin
+end;
+
+procedure second(a:integer; c:real);
+begin
+end;
+
+function third(a:integer; c:real; d:real) : integer;
+begin
+	third := 2;
+end;
+
+begin
+	first(23, 45);
+	second(23.4,'a');
+	a := third(2, 23.4, 23.5);
+end.
+
+
