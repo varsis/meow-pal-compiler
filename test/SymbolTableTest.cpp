@@ -69,4 +69,69 @@ namespace Meow
 		symbol = table.getSymbol("myVar");
 		EXPECT_EQ(symbol->getSymbolType(), "variable");
 	}
+
+	TEST(SymbolTableTest, scopeChangeTest2)
+	{
+		SymbolTable table;
+		Symbol * symbol = new Symbol("myFunc", "function");
+
+		table.addSymbol(symbol);
+
+		table.incLevel();
+		
+		symbol = new Symbol("myFunc", "function");
+
+		table.addSymbol(symbol);
+
+		symbol = NULL;
+		symbol = table.getSymbol("myFunc");
+		EXPECT_EQ(symbol->getLexLevel(), 1);
+
+		table.decLevel();
+		symbol = NULL;
+		symbol = table.getSymbol("myFunc");
+		EXPECT_EQ(symbol->getLexLevel(), 0);
+	}
+
+	TEST(SymbolTableTest, symbolLookup0)
+	{
+		SymbolTable table;
+		Symbol * symbol;
+
+		symbol = table.getSymbol("myVar");
+
+		EXPECT_EQ(symbol, (Symbol *) NULL);
+
+		symbol = new Symbol("myVar", "var");
+		table.addSymbol(symbol);
+		table.incLevel();
+		symbol = table.getSymbolCurLevel("myVar");
+
+		EXPECT_EQ(symbol, (Symbol *) NULL);
+	}
+
+	TEST(SymbolTableTest, symbolRedef)
+	{
+		SymbolTable table;
+		Symbol * symbol = new Symbol("myVar", "var");
+
+		table.addSymbol(symbol);
+		table.incLevel();
+
+		symbol = new Symbol("myVar", "function");
+		table.addSymbol(symbol);
+		
+		symbol = new Symbol("myVar", "function");
+		table.addSymbol(symbol);
+		symbol = table.getSymbol("myVar");
+		
+		EXPECT_EQ(symbol->getSymbolType(), "function");
+		
+		table.decLevel();
+		symbol = table.getSymbol("myVar");
+		
+		EXPECT_EQ(symbol->getSymbolType(), "var");
+	}
+		
+
 }

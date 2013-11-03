@@ -16,12 +16,12 @@ namespace Meow
 		m_initialized = false;
 	}
 
-	Symbol::Symbol(std::string name, std::string symbolType, int level)
+	Symbol::Symbol(std::string name, std::string symbolType)
 	{
 		m_name = name;
 		m_symbolType = symbolType;
 		m_type = "";
-		m_lexicalLevel = level;
+		m_lexicalLevel = -1;
 		m_sizeInMem = -1;
 		m_location = -1;
 		m_returnType = "";

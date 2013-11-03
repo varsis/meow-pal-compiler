@@ -20,7 +20,7 @@ namespace Meow
 
 		public:
 			Symbol();
-			Symbol(std::string, std::string, int);
+			Symbol(std::string, std::string);
 			void setName(std::string);
 			void setSymbolType(std::string);
 			void setType(std::string);
