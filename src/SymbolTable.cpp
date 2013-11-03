@@ -11,7 +11,12 @@ namespace Meow
 
 	SymbolTable::~SymbolTable()
 	{
-		m_symbolTable.erase(m_symbolTable.begin(), m_symbolTable.end());
+		std::tr1::unordered_map<std::string, EntryList*>::iterator i;
+		
+		for(i=m_symbolTable.begin(); i != m_symbolTable.end(); i++)
+		{
+			delete i->second;
+		}
 	}
 
 	void SymbolTable::addSymbol(Symbol * symbol)
@@ -40,7 +45,7 @@ namespace Meow
 		}
 
 		list = m_symbolTable[name];
-		return list->getEntry(m_currentLevel);
+		return list->getCurLevelEntry(m_currentLevel);
 	}
 
 	Symbol* SymbolTable::getSymbol(std::string name)

@@ -14,39 +14,49 @@ namespace Meow
 		}
 	}
 	
-	Symbol* EntryList::getEntry(int level)
+	Symbol* EntryList::getCurLevelEntry(int level)
 	{
-		if (level >= (int)m_list.size())
+		if (m_list.size() > 0)
 		{
-			return NULL;
+			if (m_list[m_list.size()-1]->getLexLevel() == level)
+			{
+				return m_list[m_list.size()-1];
+			}
 		}
-		return m_list[level];
+
+		return NULL;
 	}
 
 	Symbol * EntryList::getEntry()
 	{
-		for(int i=(m_list.size()-1); i>=0; i--)
+		if (m_list.size() > 0)
 		{
-			if (m_list[i] != NULL)
-			{
-				return m_list[i];
-			}
+			return m_list[m_list.size()-1];
 		}
+
 		return NULL;
 	}
 
 
 	void EntryList::addEntry(Symbol * symbol, int level)
 	{
-		for(int i=m_list.size(); i<level; i++)
-		{
-			m_list.push_back(NULL);
-		}
+		symbol->setLexLevel(level);
 		m_list.push_back(symbol);
 	}
 
 	void EntryList::setLexLevel(int level)
 	{
-		m_list.resize(level+1);
+		for(int i = (int) m_list.size()-1; i>=0; i--)
+		{
+			if (m_list[i]->getLexLevel() > level)
+			{
+				delete m_list[i];
+				m_list.resize(m_list.size()-1);
+			}
+			else
+			{
+				break;
+			}
+		}
 	}
 }

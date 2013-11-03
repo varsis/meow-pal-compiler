@@ -16,7 +16,7 @@ namespace Meow
 		Symbol * symbol = new Symbol();
 
 		symbol->setName("i");
-		symbol->setType("variable");
+		symbol->setSymbolType("variable");
 		
 		table.addSymbol(symbol);
 
@@ -32,7 +32,7 @@ namespace Meow
 		Symbol * symbol = new Symbol();
 	
 		symbol->setName("x");
-		symbol->setType("variable");
+		symbol->setSymbolType("variable");
 
 		table.addSymbol(symbol);
 		symbol = NULL;
@@ -41,7 +41,7 @@ namespace Meow
 		table.incLevel();
 		
 		symbol = table.getSymbol("x");
-		EXPECT_EQ(symbol->getType(), "variable");
+		EXPECT_EQ(symbol->getSymbolType(), "variable");
 	}
 
 	TEST(SymbolTableTest, scopeChangeTest1)
@@ -50,7 +50,7 @@ namespace Meow
 		Symbol * symbol = new Symbol();
 		
 		symbol->setName("myVar");
-		symbol->setType("variable");
+		symbol->setSymbolType("variable");
 
 		table.addSymbol(symbol);
 
@@ -58,15 +58,15 @@ namespace Meow
 		table.incLevel();
 		symbol = new Symbol();
 		symbol->setName("myVar");
-		symbol->setType("function");
+		symbol->setSymbolType("function");
 
 		table.addSymbol(symbol);
 		symbol = NULL;
 
 		symbol = table.getSymbol("myVar");
-		EXPECT_EQ(symbol->getType(), "function");
+		EXPECT_EQ(symbol->getSymbolType(), "function");
 		table.decLevel();
 		symbol = table.getSymbol("myVar");
-		EXPECT_EQ(symbol->getType(), "variable");
+		EXPECT_EQ(symbol->getSymbolType(), "variable");
 	}
 }

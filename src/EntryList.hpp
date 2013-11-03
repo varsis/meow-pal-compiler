@@ -15,7 +15,7 @@ namespace Meow
 		
 		public:
 			~EntryList();
-			Symbol* getEntry(int);
+			Symbol* getCurLevelEntry(int);
 			Symbol* getEntry();
 			void addEntry(Symbol*, int);
 			void setLexLevel(int);
