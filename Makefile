@@ -1,6 +1,6 @@
 CXX = g++
-CFLAGS = -g -Wall -pthread 
-DEPGEN = -MM -MD -MP -MG 
+CFLAGS = -g -Wall -pthread #-std=c++0x 
+DEPGEN = -MM -MD -MP -MG #-std=c++0x
 
 OBJDIR = ./obj
 SRCDIR = ./src
@@ -56,7 +56,7 @@ endif
 ################################################################################
 
 # Add new tests here. Test % must be in file $(TESTDIR)/%.cpp
-TESTS = ScannerTest ParserTest ParserTestWithFiles
+TESTS = ScannerTest ParserTest ParserTestWithFiles SymbolTableTest
 
 TESTS_ = $(addprefix $(TESTDIR)/,$(TESTS))
 
