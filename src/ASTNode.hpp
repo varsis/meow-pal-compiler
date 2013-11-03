@@ -10,7 +10,7 @@ namespace Meow
 			unsigned int getLineNumber() const;
 			void setLineNumber(unsigned int lineNumber);
 		private:
-			unsigned int lineNumber;
+			unsigned int m_lineNumber;
 	};
 }
 

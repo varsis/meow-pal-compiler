@@ -2,7 +2,10 @@
 #define VARIABLEDECLARATION_HPP
 
 #include <string>
+#include <vector>
 #include "ASTNode.hpp"
+
+using namespace std;
 
 namespace Meow
 {
@@ -14,18 +17,31 @@ namespace Meow
 	class VariableDeclaration : public ASTNode
 	{
 		public:
-			VariableDeclaration(int lineNumber, Identifier* identifer, Type* type);
+			VariableDeclaration(int lineNumber, Type* type)
+				: m_type(type)
+			{
+			}
+
 			~VariableDeclaration();
 		
-			void accept(Visitor visitor);
-			const Type* accept(TypeVisitor typeVisitor);
+			void accept(Visitor* visitor);
+			const Type* accept(TypeVisitor* typeVisitor);
 
-			const Identifier* get_identifier() const;
-			const Type* get_type() const;
+			void addIdentifier(Identifier* id)
+			{	
+				m_identifiers.push_back(id);
+			}
+
+			const vector<Identifier*>* getIdentifiers() const
+			{	
+				return &m_identifiers;
+			}
+
+			const Type* getType() const;
 		
 		private:
-			Identifier* identifier;
-			Type* type;
+			vector<Identifier*> m_identifiers;
+			Type* m_type;
 	};
 }
 

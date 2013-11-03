@@ -9,23 +9,37 @@ namespace Meow
 	class Visitor;
 	class Type;
 	class TypeVisitor;
+	class Declarations;
+	class CompoundStatement;
+	class ProcedureHeading;
 
 	// TODO -- how to differentiate between procedures and functions?
 
 	class ProcedureDeclaration : public ASTNode
 	{
 		public:
-			ProcedureDeclaration(int lineNumber, Identifier* identifer, Type* type);
+			ProcedureDeclaration(int lineNumber,
+								ProcedureHeading* heading,
+								Declarations* procedureDeclarations,
+								CompoundStatement* statements)
+				: m_heading(heading)
+				, m_declarations(procedureDeclarations)
+				, m_statements(statements)
+			{
+			}
 		
-			void accept(Visitor visitor);
-			const Type* accept(TypeVisitor typeVisitor);
+			void accept(Visitor* visitor);
+			const Type* accept(TypeVisitor* typeVisitor);
 
-			const Identifier* get_identifier() const;
-			const Type* get_type() const;
+			const ProcedureHeading* getHeading() const
+			{	
+				return m_heading;
+			}
 		
 		private:
-			Identifier* identifier;
-			Type* type;
+			ProcedureHeading* m_heading;
+			Declarations* m_declarations;
+			CompoundStatement* m_statements;
 	};
 }
 

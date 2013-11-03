@@ -66,7 +66,7 @@ endif
 ################################################################################
 
 # Add new tests here. Test % must be in file $(TESTDIR)/%.cpp
-TESTS = ScannerTest ParserTest ParserTestWithFiles
+TESTS = ScannerTest ParserTest ParserTestWithFiles ASTTest
 
 TESTS_ = $(addprefix $(TESTDIR)/,$(TESTS))
 

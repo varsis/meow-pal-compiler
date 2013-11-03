@@ -13,8 +13,8 @@
 
 %code requires {
 
-        #include "ASTNode.hpp"
         #include "Parser.hpp"
+ 	#include "AST.hpp"
 
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
@@ -26,6 +26,9 @@
 }
 
 %code {
+        //debug
+ 	#include <iostream>
+
  	#include "Scanner.hpp"
 
 	#include "ErrorManager.hpp"
@@ -41,12 +44,15 @@
 }
 
 %union {
-	std::string* identifier;
+	//std::string* identifier;
+	Meow::Identifier* identifier;
+	Meow::IntegerConstant* IntegerConstant;
+	Meow::RealConstant* RealConstant;
         std::string* stringLiteral;
 
         // AST nodes...
-/*
         Meow::Declarations* Declarations;
+        Meow::CompoundStatement* CompoundStatement;
 
         Meow::ConstantDeclarationList* ConstantDeclarationList;
         Meow::TypeDeclarationList* TypeDeclarationList;
@@ -57,38 +63,42 @@
         Meow::TypeDeclaration* TypeDeclaration;
         Meow::VariableDeclaration* VariableDeclaration;
         Meow::ProcedureDeclaration* ProcedureDeclaration;
+        Meow::ProcedureHeading* ProcedureHeading;
+        Meow::ParameterList* ParameterList;
 
-        Meow::StatementList* StatementList; // TODO remove
-        Meow::CompoundStatement* CompundStatement;
         Meow::Statement* Statement;
+        Meow::Expression* Expression;
 
         Meow::LValue* LValue;
-*/
 }
 
-/*
 %type <Declarations> decls
+%type <CompoundStatement> compound_stat stat_list
 
 %type <ConstantDeclarationList> const_decl_part const_decl_list
 %type <ConstantDeclaration> const_decl
 
 %type <TypeDeclarationList> type_decl_part type_decl_list
 %type <TypeDeclaration> type_decl
+%type <Type> type simple_type enumerated_type structured_type
 
 %type <VariableDeclarationList> var_decl_part var_decl_list
 %type <VariableDeclaration> var_decl
 
 %type <ProcedureDeclarationList> proc_decl_part proc_decl_list
 %type <ProcedureDeclaration> proc_decl
+%type <ProcedureHeading> proc_heading
+%type <ParameterList> f_parm_decl
 
-%type <CompoundStatement> compound_stat stat_list
 %type <Statement> stat simple_stat struct_stat proc_invok
+%type <Expression> expr type_expr
 
 %type <LValue> var
-*/
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
+%token <IntegerConstant> INT_CONST
+%token <RealConstant> REAL_CONST
 
 %token ASSIGN
 %token LEFT_BRACKET RIGHT_BRACKET
@@ -101,19 +111,18 @@
 %token AND ARRAY CONST CONTINUE DO ELSE END EXIT
 %token FUNCTION IF NOT OF OR PROCEDURE PROGRAM RECORD THEN
 %token TYPE VAR WHILE PAL_BEGIN
-%token INT_CONST REAL_CONST
 %%
 
 program                 : program_head decls compound_stat PERIOD
                         {
-                            //result.program = new Program($2, $3);
+                            result.program = new Program($2, $3);
                         }
                         | program_head decls compound_stat 
                         { errorManager.addError(
                               new Error(MissingProgramPeriod,
                                         "Expected \".\" after END", 
                                         scanner.lineno()-1)); 
-                            //result.program = new Program($2, $3);
+                            result.program = new Program($2, $3);
                         }
                         ;
 
@@ -161,7 +170,7 @@ decls                   : const_decl_part
                           var_decl_part
                           proc_decl_part
                         {
-                            //$$ = new Declarations($1, $2, $3, $4);
+                            $$ = new Declarations($1, $2, $3, $4);
                         }
                         ;
 
@@ -170,39 +179,38 @@ decls                   : const_decl_part
  ********************************************************************************/
 const_decl_part         : CONST const_decl_list SEMICOLON
                         {
-                            //$$ = $2;
+                            $$ = $2;
                         }
                         | /* empty */
                         {
-                            //$$ = NULL;
+                            $$ = NULL;
                         }
 
                         ;
 
 const_decl_list         : const_decl
                         {
-                            //$$ = new ConstantDeclarationList(); 
-                            //$$->push_back($1);
+                            $$ = new ConstantDeclarationList(); 
+                            $$->push_back($1);
                         }
                         | const_decl_list SEMICOLON const_decl
                         {
-                            //$$ = $1;
-                            //$$->push_back($3);
+                            $$ = $1;
+                            $$->push_back($3);
                         }
                         ;
 
 const_decl              : IDENTIFIER EQ type_expr
                         {
-                            //$$ = new ConstantDeclaration(yylineno, $1, $3);
+                            $$ = new ConstantDeclaration(scanner.lineno(), $1, $3);
                         }
 			| IDENTIFIER EQ STRING_LITERAL
                         {
-                            //$$ = new ConstantDeclaration(yylineno, $1, $3);
+                            $$ = new ConstantDeclaration(scanner.lineno(), $1, new Expression($3));
                         }
 			| IDENTIFIER EQ REAL_CONST
                         {
-                            //Identifier id = new Identifier(yylineno, $1); // TODO move this to scanner?
-                            //$$ = new ConstantDeclaration(yylineno, id, $3);
+                            $$ = new ConstantDeclaration(scanner.lineno(), $1, new Expression($3));
                         }
                         | IDENTIFIER ASSIGN type_expr
                         { errorManager.addError(
@@ -217,39 +225,47 @@ const_decl              : IDENTIFIER EQ type_expr
                                           scanner.lineno()));
                         }
                         | error { ; }
-						;
+                        ;
 
 /********************************************************************************
  * Rules for type declarations...
  ********************************************************************************/
 type_decl_part          : TYPE type_decl_list SEMICOLON
                         {
-                            //$$ = $2;
+                            $$ = $2;
                         }
                         | /* empty */
                         {
-                            //$$ = NULL;
+                            $$ = NULL;
                         }
                         ;
 
 type_decl_list          : type_decl
                         {
-                            //$$ = new TypeDeclarationLIst() ;
-                            //$$->push_back($1);
+                            $$ = new TypeDeclarationList();
+                            $$->push_back($1);
                         }
                         | type_decl_list SEMICOLON type_decl
                         {
-                            //$$ = $1;
-                            //$$->push_back($3);
+                            $$ = $1;
+                            $$->push_back($3);
                         }
                         ;
 
 type_decl               : IDENTIFIER EQ type
+                        {
+                            //$$ = new TypeDeclaration(scanner.lineno(), $1, $3);
+                            $$ = new TypeDeclaration(scanner.lineno(), $1, NULL);
+                        }
                         | IDENTIFIER ASSIGN type
-                        { errorManager.addError(
+                        {   
+                            errorManager.addError(
                                 new Error(InvalidTypeDecl,
                                           "Use \"=\" for type definitions.",
                                           scanner.lineno()));
+
+                            //$$ = new TypeDeclaration(scanner.lineno(), $1, $3);
+                            $$ = new TypeDeclaration(scanner.lineno(), $1, NULL);
                         }
                         | error { ; }
                         ;
@@ -318,15 +334,39 @@ field                   : IDENTIFIER COLON type
  * Rules for variable declarations...
  ********************************************************************************/
 var_decl_part           : VAR var_decl_list SEMICOLON 
-                        |
+                        {
+                            $$ = $2;
+                        }
+                        | /* empty */
+                        {
+                            $$ = NULL;
+                        }
                         ;
 
 var_decl_list           : var_decl
+                        {
+                            $$ = new VariableDeclarationList(); 
+                            $$->push_back($1);
+                        }
                         | var_decl_list SEMICOLON var_decl
+                        {
+                            $$ = $1;
+                            $$->push_back($3);
+                        }
                         ;
 
 var_decl                : IDENTIFIER COLON type
+                        {
+                            //$$ = new VariableDeclaration(scanner.lineno(), $3); // TODO
+                            $$ = new VariableDeclaration(scanner.lineno(), NULL);
+
+                            $$->addIdentifier($1);
+                        }
                         | IDENTIFIER COMMA var_decl
+                        {
+                            $$ = $3;
+                            $$->addIdentifier($1);
+                        }
                         | IDENTIFIER ASSIGN type
                         {
                             errorManager.addError(
@@ -349,35 +389,29 @@ var_decl                : IDENTIFIER COLON type
  ********************************************************************************/
 proc_decl_part          : proc_decl_list
                         {
-                            //$$ = $1;
+                            $$ = $1;
                         }
                         | /* empty */
                         {
-                            //$$ = NULL;
+                            $$ = NULL;
                         }
                         ;
 
 proc_decl_list          : proc_decl
                         {
-                            //$$ = new ProcudureDeclarationList();
-                            //$$->push_back($1);
+                            $$ = new ProcedureDeclarationList();
+                            $$->push_back($1);
                         }
                         | proc_decl_list proc_decl
                         {
-                            //$$ = $1;
-                            //$$->push_back($2);
+                            $$ = $1;
+                            $$->push_back($2);
                         }
                         ;
 
 proc_decl               : proc_heading decls compound_stat SEMICOLON
                         {
-                            //$$ = new ProcedureDeclaration(yylineno, procId, returnId, returnType, statement_list 
-                            // NEED:
-                            // linenumber
-                            // procedure id
-                            // parameter list
-                            // if func: return type + id // COULD group last three into a node..
-                            // declarations
+                            $$ = new ProcedureDeclaration(scanner.lineno(), $1, $2, $3);
                         }
                         | proc_heading decls compound_stat PERIOD
                         {
@@ -389,7 +423,13 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
                         ;
 
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON 
+                        {
+                            $$ = new ProcedureHeading(scanner.lineno(), $2, $3, NULL);
+                        }
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
+                        {
+                            $$ = new ProcedureHeading(scanner.lineno(), $2, $3, NULL); // TODO
+                        }
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
                           errorManager.addError(
@@ -440,6 +480,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 
 compound_stat           : PAL_BEGIN stat_list END
                         {
+                            $$ = NULL;
                             //$$ = $2;
                         }
                         ;
@@ -459,7 +500,7 @@ stat_list               : stat
 stat                    : simple_stat
                         | struct_stat
                         | error { ; }
-                        |
+                        | { $$ = NULL; }
                         ;
 
 simple_stat             : var ASSIGN expr
@@ -485,17 +526,17 @@ simple_stat             : var ASSIGN expr
 
 var                     : IDENTIFIER
                         {
-                            //$$ = new Variable(yylineno, $1);
+                            //$$ = new Variable(scanner.lineno(), $1);
                         }
                         | var PERIOD IDENTIFIER
                         {
-                            //$$ = new RecordField(yylineno, $1, $3);
+                            //$$ = new RecordField(scanner.lineno(), $1, $3);
                         }
 /* NOTE: i don't think a[1,2] is actually valid for 2d array access... need to do a[1][2], right?
 */
                         | var LEFT_BRACKET expr RIGHT_BRACKET
                         {
-                            //$$ = new SubscriptedVariable(yylineno, $1, $3);
+                            //$$ = new SubscriptedVariable(scanner.lineno(), $1, $3);
                         }
                         ;
 
@@ -768,6 +809,9 @@ unsigned_num            : INT_CONST
                         ;
 
 func_invok              : IDENTIFIER args
+                        {
+                            // $$ = new FunctionInvocation($1, $2);
+                        }
                         ;
 
 %%

@@ -14,8 +14,8 @@ namespace Meow
 	class CompoundStatement : public Statement
 	{
 		public:
-			virtual void accept(Visitor visitor) = 0;
-			virtual Type accept(TypeVisitor visitor) = 0;
+			virtual void accept(Visitor* visitor);
+			virtual Type accept(TypeVisitor* visitor);
 
 			virtual void addStatement(Statement* statement);
 	};

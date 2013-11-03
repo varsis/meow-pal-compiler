@@ -1,7 +1,6 @@
-#ifndef TYPEDECLARATION_HPP
-#define TYPEDECLARATION_HPP
+#ifndef PROCEDUREHEADING_HPP
+#define PROCEDUREHEADING_HPP
 
-#include <string>
 #include "ASTNode.hpp"
 
 namespace Meow
@@ -10,12 +9,17 @@ namespace Meow
 	class Visitor;
 	class Type;
 	class TypeVisitor;
+	class ParameterList;
 
-	class TypeDeclaration : public ASTNode
+	class ProcedureHeading : public ASTNode
 	{
 		public:
-			TypeDeclaration(int lineNumber, Identifier* identifier, Type* type)
+			ProcedureHeading(int lineNumber,
+								Identifier* identifier,
+								ParameterList* params,
+								Type* type)
 				: m_identifier(identifier)
+				, m_parameters(params)
 				, m_type(type)
 			{
 			}
@@ -32,6 +36,7 @@ namespace Meow
 		
 		private:
 			Identifier* m_identifier;
+			ParameterList* m_parameters;
 			Type* m_type;
 	};
 }

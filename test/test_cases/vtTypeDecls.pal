@@ -1,0 +1,5 @@
+program testTypeDecls(input, output);
+type
+        newType = integer;
+begin
+end.

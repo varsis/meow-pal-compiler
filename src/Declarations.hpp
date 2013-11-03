@@ -14,26 +14,41 @@ namespace Meow
 	class Declarations : ASTNode
 	{
 		public:
-			Declarations(ConstantDeclarationList constDeclList,
-				TypeDeclarationList typeDeclList,
-				VariableDeclarationList variableDeclList,
-				ProcedureDeclarationList procedureDeclList);
+			Declarations(ConstantDeclarationList* constDeclList,
+				TypeDeclarationList* typeDeclList,
+				VariableDeclarationList* variableDeclList,
+				ProcedureDeclarationList* procedureDeclList);
 
 			~Declarations();
 			
-			void accept(Visitor visitor);
-			Type* accept(TypeVisitor typeVisitor);
+			void accept(Visitor* visitor);
+			Type* accept(TypeVisitor* typeVisitor);
 			
-			const ConstantDeclarationList getConstantDeclarationList() const;
-			const TypeDeclarationList getTypeDeclarationList() const;
-			const VariableDeclarationList getVariableDeclarationList() const;
-			const ProcedureDeclarationList getProcedureDeclarationList() const;
+			const ConstantDeclarationList* getConstantDeclarationList() const
+			{
+				return m_constantDeclarationList;
+			}
+
+			const TypeDeclarationList* getTypeDeclarationList() const
+			{
+				return m_typeDeclarationList;
+			}
+
+			const VariableDeclarationList* getVariableDeclarationList() const
+			{
+				return m_variableDeclarationList;
+			}
+
+			const ProcedureDeclarationList* getProcedureDeclarationList() const
+			{
+				return m_procedureDeclarationList;
+			}
 		
 		private:
-			ConstantDeclarationList constantDeclarationList;
-			TypeDeclarationList typeDeclarationList;
-			VariableDeclarationList variableDeclarationList;
-			ProcedureDeclarationList procedureDeclarationList;
+			ConstantDeclarationList* m_constantDeclarationList;
+			TypeDeclarationList* m_typeDeclarationList;
+			VariableDeclarationList* m_variableDeclarationList;
+			ProcedureDeclarationList* m_procedureDeclarationList;
 	};
 }
 #endif

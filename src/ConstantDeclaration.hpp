@@ -3,6 +3,7 @@
 
 #include <string>
 #include "ASTNode.hpp"
+#include "RealConstant.hpp"
 
 namespace Meow
 {
@@ -19,18 +20,18 @@ namespace Meow
 			ConstantDeclaration(int lineNumber,
 						Identifier* identifer,
 						Expression* expression);
-		
-			void accept(Visitor visitor);
-			const Type* accept(TypeVisitor typeVisitor);
 
-			const Type* get_type() const;
-			const Identifier* get_identifier() const;
-			const Expression* get_expression() const;
+			void accept(Visitor* visitor);
+			const Type* accept(TypeVisitor* typeVisitor);
+
+			const Type* getType() const;
+			const Identifier* getIdentifier() const { return m_identifier; }
+			const Expression* getExtpression() const;
 		
 		private:
-			Type* type;
-			Identifier* identifier;
-			Expression* expression;
+			Type* m_type; // ???
+			Identifier* m_identifier;
+			Expression* m_expression;
 	};
 }
 
