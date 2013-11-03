@@ -44,11 +44,12 @@
 }
 
 %union {
-	//std::string* identifier;
 	Meow::Identifier* identifier;
 	Meow::IntegerConstant* IntegerConstant;
 	Meow::RealConstant* RealConstant;
         std::string* stringLiteral;
+
+        std::vector<Meow::Identifier*>* IdList;
 
         // AST nodes...
         Meow::Declarations* Declarations;
@@ -65,6 +66,12 @@
         Meow::ProcedureDeclaration* ProcedureDeclaration;
         Meow::ProcedureHeading* ProcedureHeading;
         Meow::ParameterList* ParameterList;
+        Meow::Parameter* Parameter;
+
+        Meow::Type* Type;
+        Meow::ArrayIndex* ArrayIndex;
+        Meow::Field* Field;
+        Meow::FieldList* FieldList;
 
         Meow::Statement* Statement;
         Meow::Expression* Expression;
@@ -81,6 +88,11 @@
 %type <TypeDeclarationList> type_decl_part type_decl_list
 %type <TypeDeclaration> type_decl
 %type <Type> type simple_type enumerated_type structured_type
+%type <IdList> enum_list
+%type <ArrayIndex> index_type
+
+%type <FieldList> field_list
+%type <Field> field
 
 %type <VariableDeclarationList> var_decl_part var_decl_list
 %type <VariableDeclaration> var_decl
@@ -88,7 +100,8 @@
 %type <ProcedureDeclarationList> proc_decl_part proc_decl_list
 %type <ProcedureDeclaration> proc_decl
 %type <ProcedureHeading> proc_heading
-%type <ParameterList> f_parm_decl
+%type <ParameterList> f_parm_decl f_parm_list
+%type <Parameter> f_parm
 
 %type <Statement> stat simple_stat struct_stat proc_invok
 %type <Expression> expr type_expr
@@ -254,8 +267,7 @@ type_decl_list          : type_decl
 
 type_decl               : IDENTIFIER EQ type
                         {
-                            //$$ = new TypeDeclaration(scanner.lineno(), $1, $3);
-                            $$ = new TypeDeclaration(scanner.lineno(), $1, NULL);
+                            $$ = new TypeDeclaration(scanner.lineno(), $1, $3);
                         }
                         | IDENTIFIER ASSIGN type
                         {   
@@ -264,8 +276,7 @@ type_decl               : IDENTIFIER EQ type
                                           "Use \"=\" for type definitions.",
                                           scanner.lineno()));
 
-                            //$$ = new TypeDeclaration(scanner.lineno(), $1, $3);
-                            $$ = new TypeDeclaration(scanner.lineno(), $1, NULL);
+                            $$ = new TypeDeclaration(scanner.lineno(), $1, $3);
                         }
                         | error { ; }
                         ;
@@ -276,9 +287,15 @@ type                    : simple_type
                         ;
 
 simple_type             : IDENTIFIER
+                        {
+                            $$ = new SimpleType($1);
+                        }
                         ;
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
+                        {
+                            $$ = new EnumeratedType($2);
+                        }
 			| LEFT_PAREN error RIGHT_PAREN
 			{
                             errorManager.addError(
@@ -289,12 +306,29 @@ enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
 			;
 
 enum_list		: IDENTIFIER
+                        {
+                            $$ = new std::vector<Identifier*>();
+                            $$->push_back($1);
+                        }
                         | enum_list COMMA IDENTIFIER
+                        {
+                            $$ = $1;
+                            $$->push_back($3);
+                        }
                         ;
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
+                        {
+                            $$ = new ArrayType($3, $6);
+                        }
                         | RECORD field_list END
+                        {
+                            $$ = new RecordType($2);
+                        }
                         | RECORD field_list SEMICOLON END
+                        {
+                            $$ = new RecordType($2);
+                        }
                         | RECORD error END
                         {
                             errorManager.addError(
@@ -312,15 +346,38 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         ;
 
 index_type              : simple_type
+                        {
+                            $$ = new ArrayTypeIndex($1);
+                        }
                         | type_expr UPTO type_expr
+                        {
+                            $$ = new ArrayRangeIndex($1, $3);
+                        }
                         ;
 
 field_list              : field
+                        {
+                            $$ = new FieldList();
+                            $$->push_back($1);
+                        }
                         | field_list SEMICOLON field
+                        {
+                            $$ = $1;
+                            $$->push_back($3);
+                        }
                         ;
 
 field                   : IDENTIFIER COLON type
-			| IDENTIFIER COMMA field
+                        {
+                            $$ = new Field(scanner.lineno(), $3);
+                            $$->addIdentifier($1);
+                        }
+			| IDENTIFIER COMMA field 
+                        {
+                            // FIXME - right recursive rule!
+                            $$ = $3;
+                            $$->addIdentifier($1);
+                        }
 			| IDENTIFIER error
 			{
                             errorManager.addError(
@@ -357,8 +414,7 @@ var_decl_list           : var_decl
 
 var_decl                : IDENTIFIER COLON type
                         {
-                            //$$ = new VariableDeclaration(scanner.lineno(), $3); // TODO
-                            $$ = new VariableDeclaration(scanner.lineno(), NULL);
+                            $$ = new VariableDeclaration(scanner.lineno(), $3);
 
                             $$->addIdentifier($1);
                         }
@@ -428,7 +484,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         }
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
-                            $$ = new ProcedureHeading(scanner.lineno(), $2, $3, NULL); // TODO
+                            $$ = new ProcedureHeading(scanner.lineno(), $2, $3, $5);
                         }
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
@@ -463,15 +519,36 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
+                        {
+                            $$ = $2;
+                        }
                         | LEFT_PAREN RIGHT_PAREN 
+                        {
+                            $$ = new ParameterList(scanner.lineno());
+                        }
+
                         ;
 
 f_parm_list             : f_parm
+                        {
+                            $$ = new ParameterList(scanner.lineno());
+                            $$->addParameter($1);
+                        }
                         | f_parm_list SEMICOLON f_parm
+                        {
+                            $$ = $1;
+                            $$->addParameter($3);
+                        }
                         ;
 
 f_parm                  : IDENTIFIER COLON IDENTIFIER
+                        {
+                            $$ = new Parameter(scanner.lineno(), $1, $3, false);
+                        }
                         | VAR IDENTIFIER COLON IDENTIFIER
+                        {
+                            $$ = new Parameter(scanner.lineno(), $2, $4, true);
+                        }
                         ;
 
 /********************************************************************************

@@ -37,6 +37,7 @@ test/ParserTestWithFiles
 
 # random editor temp files
 *.swp
+*.swo
 
 # latex output
 *.aux

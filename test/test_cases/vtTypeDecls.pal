@@ -1,5 +1,15 @@
 program testTypeDecls(input, output);
+const
+        a = 1;
+        b = 2;
+        c = 3;
 type
         newType = integer;
+        enumType = (a, b, c);
+        arrayType = array[0..10] of integer;
+        recordType = record
+                        a : integer;
+                        b : string;
+                        end;
 begin
 end.

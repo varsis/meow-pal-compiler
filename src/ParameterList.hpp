@@ -1,7 +1,10 @@
 #ifndef PARAMETERLIST_HPP
 #define PARAMETERLIST_HPP
 
+#include <vector>
+
 #include "ASTNode.hpp"
+#include "Parameter.hpp"
 
 namespace Meow
 {
@@ -16,12 +19,22 @@ namespace Meow
 			ParameterList(int lineNumber)
 			{
 			}
+
+			void addParameter(Parameter* param)
+			{
+				m_parameters.push_back(param);
+			}
+
+			const std::vector<Parameter*>* getParameters() const
+			{
+				return &m_parameters;
+			}
 		
 			void accept(Visitor* visitor);
 			const Type* accept(TypeVisitor* typeVisitor);
 		
 		private:
-			//vector<Parameter>* m_parameters;
+			std::vector<Parameter*> m_parameters;
 	};
 }
 

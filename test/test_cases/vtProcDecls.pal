@@ -2,7 +2,15 @@ program testProcDecls(input, output);
 
 procedure dostuff(a : integer);
 begin
+	writeln('stuff');
+end;
+
+function dostuff2(a : integer; b : integer) : string;
+begin
+	writeln('stuff');
+	dostuff2 := 'word';
 end;
 
 begin
+	doStuff(1);
 end.

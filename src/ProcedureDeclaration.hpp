@@ -13,15 +13,13 @@ namespace Meow
 	class CompoundStatement;
 	class ProcedureHeading;
 
-	// TODO -- how to differentiate between procedures and functions?
-
 	class ProcedureDeclaration : public ASTNode
 	{
 		public:
 			ProcedureDeclaration(int lineNumber,
-								ProcedureHeading* heading,
-								Declarations* procedureDeclarations,
-								CompoundStatement* statements)
+						ProcedureHeading* heading,
+						Declarations* procedureDeclarations,
+						CompoundStatement* statements)
 				: m_heading(heading)
 				, m_declarations(procedureDeclarations)
 				, m_statements(statements)
@@ -34,6 +32,11 @@ namespace Meow
 			const ProcedureHeading* getHeading() const
 			{	
 				return m_heading;
+			}
+
+			const Declarations* getDeclarations() const
+			{	
+				return m_declarations;
 			}
 		
 		private:
