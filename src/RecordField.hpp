@@ -13,14 +13,21 @@ namespace Meow
 	class TypeVisitor;
 	class Type;
 
-	class RecordField : public LValue
+	class RecordField : public LValue // TODO better names?
 	{
 		public:
-			RecordField(int lineNumber, Variable* record, Identifier* field);
+			RecordField(int lineNumber, LValue* record, Identifier* field)
+				: m_record(record)
+				, m_field(field)
+			{
+			}
 
-			virtual void accept(Visitor visitor) = 0;
-			virtual Type accept(TypeVisitor visitor) = 0;
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
+		private: 
+			LValue* m_record;
+			Identifier* m_field;
 	};
 }
 

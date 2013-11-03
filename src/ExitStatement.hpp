@@ -13,10 +13,8 @@ namespace Meow
 	class ExitStatement : public Statement
 	{
 		public:
-			ExitStatement();
-
-			virtual void accept(Visitor visitor) = 0;
-			virtual Type accept(TypeVisitor visitor) = 0;
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
 	};
 }

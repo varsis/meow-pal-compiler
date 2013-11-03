@@ -57,6 +57,9 @@ EXPONENT	E[+-]?{DIGIT}+
 			}
 
 			BEGIN(INITIAL);
+
+			yylval->StringLiteral = new StringLiteral(yylineno, yytext);
+
 			return token::STRING_LITERAL;
 		}
 	\n	{ /* Count line endings */
@@ -82,6 +85,7 @@ EXPONENT	E[+-]?{DIGIT}+
 				yyin->seekg(s_scannerReturnPosition);
 				yylineno = s_scannerReturnLine;
 				BEGIN(INITIAL);
+				yylval->StringLiteral = new StringLiteral(yylineno, yytext);
 				return token::STRING_LITERAL;
 			}
 

@@ -1,9 +1,7 @@
-#ifndef ARGUMENTS_HPP
-#define ARGUMENTS_HPP
+#ifndef UNARYMINUSEXPRESSION_HPP
+#define UNARYMINUSEXPRESSION_HPP
 
 #include "Expression.hpp"
-#include "ASTNode.hpp"
-#include "ASTListTypes.hpp"
 
 namespace Meow
 {
@@ -12,21 +10,19 @@ namespace Meow
 	class TypeVisitor;
 	class Type;
 
-	class Arguments : public ASTNode
+	class UnaryMinusExpression : public Expression
 	{
 		public:
-			Arguments() {}
-
-			void addArgument(Expression* e)
+			UnaryMinusExpression(Expression* operand)
+				: m_operand(operand)
 			{
-				m_arguments.push_back(e);
 			}
 
 			virtual void accept(Visitor* visitor) { }
 			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
-		private: 
-			ExpressionList m_arguments;
+		protected: 
+			Expression* m_operand;
 
 	};
 }

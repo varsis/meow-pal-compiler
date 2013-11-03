@@ -16,11 +16,19 @@ namespace Meow
 	class AssignStatement : public Statement
 	{
 		public:
-			AssignStatement(LValue v, Expression e);
+			AssignStatement(LValue* v, Expression* e)
+				: m_lvalue(v)
+				, m_rvalue(e)
+			{
+			}
 
-			virtual void accept(Visitor visitor) = 0;
-			virtual Type accept(TypeVisitor visitor) = 0;
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
+
+		private:
+			LValue* m_lvalue;
+			Expression* m_rvalue;
 	};
 }
 

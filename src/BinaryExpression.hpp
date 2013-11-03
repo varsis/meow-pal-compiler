@@ -1,9 +1,7 @@
-#ifndef ARGUMENTS_HPP
-#define ARGUMENTS_HPP
+#ifndef BINARYEXPRESSION_HPP
+#define BINARYEXPRESSION_HPP
 
 #include "Expression.hpp"
-#include "ASTNode.hpp"
-#include "ASTListTypes.hpp"
 
 namespace Meow
 {
@@ -12,21 +10,21 @@ namespace Meow
 	class TypeVisitor;
 	class Type;
 
-	class Arguments : public ASTNode
+	class BinaryExpression : public Expression
 	{
 		public:
-			Arguments() {}
-
-			void addArgument(Expression* e)
+			BinaryExpression(Expression* left, Expression* right)
+				: m_left(left)
+				, m_right(right)
 			{
-				m_arguments.push_back(e);
 			}
 
 			virtual void accept(Visitor* visitor) { }
 			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
-		private: 
-			ExpressionList m_arguments;
+		protected: 
+			Expression* m_left;
+			Expression* m_right;
 
 	};
 }

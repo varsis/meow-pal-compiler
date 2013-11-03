@@ -13,10 +13,8 @@ namespace Meow
 	class ContinueStatement : public Statement
 	{
 		public:
-			ContinueStatement();
-
-			virtual void accept(Visitor visitor) = 0;
-			virtual Type accept(TypeVisitor visitor) = 0;
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
 	};
 }

@@ -2,7 +2,7 @@
 #define COMPOUNDSTATEMENT_HPP
 
 #include "Statement.hpp"
-#include "ASTNode.hpp"
+#include "ASTListTypes.hpp"
 
 namespace Meow
 {
@@ -14,10 +14,27 @@ namespace Meow
 	class CompoundStatement : public Statement
 	{
 		public:
-			virtual void accept(Visitor* visitor);
-			virtual Type accept(TypeVisitor* visitor);
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
-			virtual void addStatement(Statement* statement);
+			unsigned int statementCount() const
+			{
+				return m_statements.size();
+			}
+
+			Statement* getStatement(int index) const
+			{
+				return m_statements[index];
+			}
+
+			virtual void addStatement(Statement* statement)
+			{
+				m_statements.push_back(statement);
+			}
+
+		private:
+			StatementList m_statements;
+			
 	};
 }
 

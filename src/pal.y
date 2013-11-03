@@ -47,7 +47,9 @@
 	Meow::Identifier* identifier;
 	Meow::IntegerConstant* IntegerConstant;
 	Meow::RealConstant* RealConstant;
-        std::string* stringLiteral;
+
+        //std::string* stringLiteral;
+        Meow::StringLiteral* StringLiteral;
 
         std::vector<Meow::Identifier*>* IdList;
 
@@ -76,7 +78,10 @@
         Meow::Statement* Statement;
         Meow::Expression* Expression;
 
+        Meow::Arguments* Arguments;
+
         Meow::LValue* LValue;
+        Meow::Constant* Constant;
 }
 
 %type <Declarations> decls
@@ -103,13 +108,19 @@
 %type <ParameterList> f_parm_decl f_parm_list
 %type <Parameter> f_parm
 
-%type <Statement> stat simple_stat struct_stat proc_invok
-%type <Expression> expr type_expr
+%type <Statement> stat simple_stat struct_stat proc_invok matched_stat
+%type <Expression> expr type_expr simple_expr type_simple_expr term type_term factor type_factor func_invok
+
+%type <Arguments> args arg_list
 
 %type <LValue> var
 
+
 %token <identifier> IDENTIFIER
-%token <stringLiteral> STRING_LITERAL
+
+%type <Constant> unsigned_const unsigned_num
+
+%token <StringLiteral> STRING_LITERAL
 %token <IntegerConstant> INT_CONST
 %token <RealConstant> REAL_CONST
 
@@ -557,40 +568,45 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 
 compound_stat           : PAL_BEGIN stat_list END
                         {
-                            $$ = NULL;
-                            //$$ = $2;
+                            $$ = $2;
                         }
                         ;
 
 stat_list               : stat
                         {
-                            //$$ = new CompoundStatement();
-                            //$$->addStatement($1);
+                            $$ = new CompoundStatement();
+                            if ($1)
+                            { 
+                                $$->addStatement($1);
+                            }
                         }
                         | stat_list SEMICOLON stat
                         {
-                            //$$ = $1;
-                            //$$->addStatement($3);
+                            $$ = $1;
+                            if ($3)
+                            { 
+                                $$->addStatement($3);
+                            }
                         }
                         ;
 
 stat                    : simple_stat
                         | struct_stat
                         | error { ; }
-                        | { $$ = NULL; }
+                        | /* empty */ { $$ = NULL; }
                         ;
 
 simple_stat             : var ASSIGN expr
                         {
-                            //$$ = AssignStatement($1, $3);
+                            $$ = new AssignStatement($1, $3);
                         }
                         | proc_invok
                         {
-                            //$$ = $1;
+                            $$ = $1;
                         }
                         | compound_stat
                         {
-                            //$$ = $1;
+                            $$ = $1;
                         }
                         | var EQ expr 
                         {
@@ -603,93 +619,93 @@ simple_stat             : var ASSIGN expr
 
 var                     : IDENTIFIER
                         {
-                            //$$ = new Variable(scanner.lineno(), $1);
+                            $$ = new Variable(scanner.lineno(), $1);
                         }
                         | var PERIOD IDENTIFIER
                         {
-                            //$$ = new RecordField(scanner.lineno(), $1, $3);
+                            $$ = new RecordField(scanner.lineno(), $1, $3);
                         }
 /* NOTE: i don't think a[1,2] is actually valid for 2d array access... need to do a[1][2], right?
 */
                         | var LEFT_BRACKET expr RIGHT_BRACKET
                         {
-                            //$$ = new SubscriptedVariable(scanner.lineno(), $1, $3);
+                            $$ = new SubscriptedVariable(scanner.lineno(), $1, $3);
                         }
                         ;
 
 proc_invok              : IDENTIFIER args
                         {
-                            //$$ = new ProcedureInvokation($1, $2);
+                            $$ = new ProcedureInvocation($1, $2);
                         }
                         ;
 
 args                    : LEFT_PAREN RIGHT_PAREN
                         {
-                            //$$ = new Arguments();
+                            $$ = new Arguments(); // TODO or just null?
                         }
                         | LEFT_PAREN arg_list RIGHT_PAREN
                         {
-                            //$$ = $2
+                            $$ = $2;
                         }
                         ;
 
 arg_list                : expr
                         {
-                            //$$ = new Arguments();
-                            //$$.addArg = $1;
+                            $$ = new Arguments();
+                            $$->addArgument($1);
                         }
                         | arg_list COMMA expr
                         {
-                            //$$ = $1
-                            //$$.addArg = $2;
+                            $$ = $1;
+                            $$->addArgument($3);
                         }
                         ;
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
                         {
-                            //$$ = new ConditionalStatement($2, $4, $6);
+                            $$ = new ConditionalStatement($2, $4, $6);
                         }
                         | IF expr THEN stat
                         {
-                            //$$ = new ConditionalStatement($2, $4, NULL);
+                            $$ = new ConditionalStatement($2, $4, NULL);
                         }
                         | WHILE expr DO stat
                         {
-                            //$$ = new WhileStatement($2, $4);
+                            $$ = new WhileStatement($2, $4);
                         }
                         | CONTINUE
                         {
-                            //$$ = new ContinueStatment();
+                            $$ = new ContinueStatement();
                         }
                         | EXIT
                         {
-                            //$$ = new ExitStatement();
+                            $$ = new ExitStatement();
                         }
                         ;
 
 matched_stat            : simple_stat
                         {
-                            //$$ = $1;
+                            $$ = $1;
                         }
                         | IF expr THEN matched_stat ELSE matched_stat
                         {
-                            //$$ = new ConditionalStatement($2, $4, $6);
+                            $$ = new ConditionalStatement($2, $4, $6);
                         }
                         | WHILE expr DO matched_stat
                         {
-                            //$$ = new WhileStatement($2, $4);
+                            $$ = new WhileStatement($2, $4);
                         }
                         | CONTINUE
                         {
-                            //$$ = new ContinueStatment();
+                            $$ = new ContinueStatement();
                         }
                         | EXIT
                         {
-                            //$$ = new ExitStatement();
+                            $$ = new ExitStatement();
                         }
 			| /* empty */
                         {
-                            //$$ = NULL // ??? should we have a 'NoOp' or something?
+                            $$ = NULL; // ??? should we have a 'NoOp' or something?
                         }
                         ;
 
@@ -700,89 +716,91 @@ matched_stat            : simple_stat
 type_expr		: type_simple_expr
                         | type_expr EQ type_simple_expr
                         {
-                            //$$ = new EqualExpression($1, $3);
-                            // C++11 .... maybe??
-                            //$$ = new BinaryExpression<bool>([a,b] {return a == b;}, $1, $3);
+                            $$ = new EqualExpression($1, $3);
                         }
                         | type_expr NE type_simple_expr
                         {
-                            //$$ = new NotEqualExpression($1, $3);
+                            $$ = new NotEqualExpression($1, $3);
                         }
                         | type_expr LE type_simple_expr
                         {
-                            //$$ = new LessThanEqualExpression($1, $3);
+                            $$ = new LessThanEqualExpression($1, $3);
                         }
                         | type_expr LT type_simple_expr
                         {
-                            //$$ = new LessThanExpression($1, $3);
+                            $$ = new LessThanExpression($1, $3);
                         }
                         | type_expr GE type_simple_expr
                         {
-                            //$$ = new GreaterThanEqualExpression($1, $3);
+                            $$ = new GreaterThanEqualExpression($1, $3);
                         }
                         | type_expr GT type_simple_expr
                         {
-                            //$$ = new GreaterThanExpression($1, $3);
+                            $$ = new GreaterThanExpression($1, $3);
                         }
                         ;
 
 type_simple_expr        : type_term
                         | PLUS type_term
                         {
-                            //$$ = new UnaryPlus($2);
+                            $$ = new UnaryPlusExpression($2);
                         }
                         | MINUS type_term
                         {
-                            //$$ = new UnaryMinus($2);
+                            $$ = new UnaryMinusExpression($2);
                         }
                         | type_simple_expr PLUS type_term
                         {
-                            //$$ = new AddExpression($2, $3);
-                            // maybe ???
-                            //$$ = new BinaryExpression([a,b] {return a + b;},$2, $3);
+                            $$ = new AddExpression($1, $3);
                         }
                         | type_simple_expr MINUS type_term
                         {
-                            //$$ = new SubtractExpression($2, $3);
+                            $$ = new SubtractExpression($1, $3);
                         }
                         | type_simple_expr OR type_term
                         {
-                            //$$ = new OrExpression($2, $3);
+                            $$ = new OrExpression($1, $3);
                         }
                         ;
 
 type_term               : type_factor
                         | type_term MULTIPLY type_factor
                         {
-                            //$$ = new MultiplyExpression($2, $3);
+                            $$ = new MultiplyExpression($1, $3);
                         }
                         | type_term REAL_DIVIDE type_factor
                         {
-                            //$$ = new RealDivideExpression($2, $3);
+                            $$ = new RealDivideExpression($1, $3);
                         }
                         | type_term INT_DIVIDE type_factor
                         {
-                            //$$ = new IntDivideExpression($2, $3);
+                            $$ = new IntDivideExpression($1, $3);
                         }
                         | type_term MOD type_factor
                         {
-                            //$$ = new ModExpression($2, $3);
+                            $$ = new ModExpression($1, $3);
                         }
                         | type_term AND type_factor
                         {
-                            //$$ = new AndExpression($2, $3);
+                            $$ = new AndExpression($1, $3);
                         }
                         ;
 
 type_factor             : var
+                        {
+                            $$ = new Expression($1);
+                        }
                         | LEFT_PAREN type_expr RIGHT_PAREN
                         {
-                            //$$ = $2;
+                            $$ = $2;
                         }
                         | INT_CONST 
+                        {
+                            $$ = new Expression($1);
+                        }
                         | NOT type_factor
                         {
-                            //$$ = new NotExpression($2);
+                            $$ = new NotExpression($2);
                         }
                         ;
 
@@ -790,104 +808,119 @@ type_factor             : var
 expr			: simple_expr
                         | expr EQ simple_expr
                         {
-                            //$$ = new EqualExpression($1, $3);
-                            // C++11 .... maybe??
-                            //$$ = new BinaryExpression<bool>([a,b] {return a == b;}, $1, $3);
+                            $$ = new EqualExpression($1, $3);
                         }
                         | expr NE simple_expr
                         {
-                            //$$ = new NotEqualExpression($1, $3);
+                            $$ = new NotEqualExpression($1, $3);
                         }
                         | expr LE simple_expr
                         {
-                            //$$ = new LessThanEqualExpression($1, $3);
+                            $$ = new LessThanEqualExpression($1, $3);
                         }
                         | expr LT simple_expr
                         {
-                            //$$ = new LessThanExpression($1, $3);
+                            $$ = new LessThanExpression($1, $3);
                         }
                         | expr GE simple_expr
                         {
-                            //$$ = new GreaterThanEqualExpression($1, $3);
+                            $$ = new GreaterThanEqualExpression($1, $3);
                         }
                         | expr GT simple_expr
                         {
-                            //$$ = new GreaterThanExpression($1, $3);
+                            $$ = new GreaterThanExpression($1, $3);
                         }
                         ;
 
 simple_expr             : term
                         | PLUS term
                         {
-                            //$$ = new UnaryPlus($2);
+                            $$ = new UnaryPlusExpression($2);
                         }
                         | MINUS term
                         {
-                            //$$ = new UnaryMinus($2);
+                            $$ = new UnaryMinusExpression($2);
                         }
                         | simple_expr PLUS term
                         {
-                            //$$ = new AddExpression($2, $3);
-                            // maybe ???
-                            //$$ = new BinaryExpression([a,b] {return a + b;},$2, $3);
+                            $$ = new AddExpression($1, $3);
                         }
                         | simple_expr MINUS term
                         {
-                            //$$ = new SubtractExpression($2, $3);
+                            $$ = new SubtractExpression($1, $3);
                         }
-                        | simple_expr OR  term
+                        | simple_expr OR term
                         {
-                            //$$ = new OrExpression($2, $3);
+                            $$ = new OrExpression($1, $3);
                         }
                         ;
 
 term                    : factor
                         | term MULTIPLY factor
                         {
-                            //$$ = new MultiplyExpression($2, $3);
+                            $$ = new MultiplyExpression($1, $3);
                         }
                         | term REAL_DIVIDE factor
                         {
-                            //$$ = new RealDivideExpression($2, $3);
+                            $$ = new RealDivideExpression($1, $3);
                         }
                         | term INT_DIVIDE factor
                         {
-                            //$$ = new IntDivideExpression($2, $3);
+                            $$ = new IntDivideExpression($1, $3);
                         }
                         | term MOD factor
                         {
-                            //$$ = new ModExpression($2, $3);
+                            $$ = new ModExpression($1, $3);
                         }
                         | term AND factor
                         {
-                            //$$ = new AndExpression($2, $3);
+                            $$ = new AndExpression($1, $3);
                         }
                         ;
 
 factor                  : var
+                        {
+                            $$ = new Expression($1);
+                        }
                         | unsigned_const
+                        {
+                            // FIXME ...
+                            //$$ = new Expression($1);
+                        }
                         | LEFT_PAREN expr RIGHT_PAREN
                         {
-                            //$$ = $2;
+                            $$ = $2;
                         }
                         | func_invok
                         | NOT factor
                         {
-                            //$$ = new NotExpression($2);
+                            $$ = new NotExpression($2);
                         }
                         ;
 
 unsigned_const          : unsigned_num
+                        {
+                            $$ = $1;
+                        }
                         | STRING_LITERAL
+                        {
+                            $$ = $1;
+                        }
                         ;
 
 unsigned_num            : INT_CONST
+                        {
+                            $$ = $1;
+                        }
                         | REAL_CONST
+                        {
+                            $$ = $1;
+                        }
                         ;
 
 func_invok              : IDENTIFIER args
                         {
-                            // $$ = new FunctionInvocation($1, $2);
+                            $$ = new FunctionInvocation($1, $2);
                         }
                         ;
 

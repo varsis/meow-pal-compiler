@@ -56,10 +56,9 @@ namespace Meow
 		ASSERT_NE((ParseResult*)(NULL), result);
 		ASSERT_NE((Program*)(NULL), result->program);
 
-		// TODO could we do this with a visitor?
-
 		ASSERT_NE((Program*)(NULL), result->program);
-		ASSERT_EQ((CompoundStatement*)(NULL), result->program->getStatements());
+		ASSERT_NE((CompoundStatement*)(NULL), result->program->getStatements());
+		ASSERT_EQ(0u, result->program->getStatements()->statementCount());
 	}
 
 	TEST_F(ASTTest, TestASTConstDecls)
@@ -225,5 +224,30 @@ namespace Meow
 		ASSERT_EQ(1u, decl->getDeclarations()->getVariableDeclarationList()->size());
 		ASSERT_EQ("a", decl->getDeclarations()->getVariableDeclarationList()->at(0)->getIdentifiers()->at(0)->toString());
 
+	}
+
+	TEST_F(ASTTest, TestAssign)
+	{
+		// TODO
+	}
+
+	TEST_F(ASTTest, TestProcInvoke)
+	{
+		// TODO
+	}
+
+	TEST_F(ASTTest, TestIfStatement)
+	{
+		// TODO
+	}
+
+	TEST_F(ASTTest, TestLoopStatement)
+	{
+		// TODO
+	}
+
+	TEST_F(ASTTest, TestBinaryExpressions)
+	{
+		// TODO
 	}
 }

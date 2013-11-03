@@ -4,7 +4,11 @@
 
 namespace Meow
 {
-	Expression::Expression(std::string* literal)
+	Expression::Expression(StringLiteral* literal)
+	{
+	}
+
+	Expression::Expression(IntegerConstant* constant)
 	{
 	}
 
@@ -12,7 +16,7 @@ namespace Meow
 	{
 	}
 
-	void Expression::accept(Vistor* v)
+	Expression::Expression(LValue* value)
 	{
 	}
 }

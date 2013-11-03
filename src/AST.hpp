@@ -20,10 +20,47 @@
 #include "ProcedureHeading.hpp"
 #include "ParameterList.hpp"
 #include "Parameter.hpp"
-#include "Expression.hpp"
 #include "Identifier.hpp"
+#include "StringLiteral.hpp"
 #include "IntegerConstant.hpp"
 #include "RealConstant.hpp"
 #include "LValue.hpp"
+
+#include "Expression.hpp"
+#include "CompoundStatement.hpp"
+#include "AssignStatement.hpp"
+#include "ConditionalStatement.hpp"
+#include "WhileStatement.hpp"
+#include "ContinueStatement.hpp"
+#include "ExitStatement.hpp"
+
+#include "RecordField.hpp"
+#include "Variable.hpp"
+#include "SubscriptedVariable.hpp"
+
+#include "ProcedureInvocation.hpp"
+#include "FunctionInvocation.hpp"
+#include "Arguments.hpp"
+
+#include "EqualExpression.hpp"
+#include "NotEqualExpression.hpp"
+#include "LessThanEqualExpression.hpp"
+#include "LessThanExpression.hpp"
+#include "GreaterThanEqualExpression.hpp"
+#include "GreaterThanExpression.hpp"
+
+#include "UnaryPlusExpression.hpp"
+#include "UnaryMinusExpression.hpp"
+
+#include "AddExpression.hpp"
+#include "SubtractExpression.hpp"
+#include "OrExpression.hpp"
+#include "MultiplyExpression.hpp"
+#include "RealDivideExpression.hpp"
+#include "IntDivideExpression.hpp"
+#include "ModExpression.hpp"
+#include "AndExpression.hpp"
+#include "NotExpression.hpp"
+
 
 #endif

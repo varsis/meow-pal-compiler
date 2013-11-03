@@ -17,11 +17,18 @@ namespace Meow
 	class SubscriptedVariable : public LValue
 	{
 		public:
-			SubscriptedVariable(int lineNumber, Variable* var, Expression* subscript);
+			SubscriptedVariable(int lineNumber, LValue* var, Expression* subscript)
+				: m_variable(var)
+				, m_subscript(subscript)
+			{
+			}
 
-			virtual void accept(Visitor visitor) = 0;
-			virtual Type accept(TypeVisitor visitor) = 0;
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 
+		private: 
+			LValue* m_variable;
+			Expression* m_subscript;
 	};
 }
 

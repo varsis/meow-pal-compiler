@@ -3,19 +3,31 @@
 
 #include <string>
 
-class Vistor;
-
 namespace Meow
 {
+	class Visitor;
+	class TypeVisitor;
+	class Type;
+	class StringLiteral;
+	class IntegerConstant;
 	class RealConstant;
+	class LValue;
 
-	class Expression {
+	class Expression
+	{
 		public:
+			Expression() {}
 
-			Expression(std::string* literal);
+			// FIXME this probably should be left abstract...
+			// make new subclass for literals?
+
+			Expression(StringLiteral* literal);
+			Expression(IntegerConstant* constant);
 			Expression(RealConstant* constant);
+			Expression(LValue* value);
 
-			virtual void accept(Vistor* v);
+			virtual void accept(Visitor* visitor) { }
+			virtual Type* accept(TypeVisitor* visitor) {return 0;}
 	};
 }
 
