@@ -16,9 +16,12 @@ namespace Meow
 		public:
 			ArrayType(ArrayIndex* index, Type* elementType);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private:
+			ArrayIndex* m_index;
+			Type* m_elementType;
 	};
 }
 

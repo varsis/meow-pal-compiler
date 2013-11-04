@@ -18,11 +18,11 @@ namespace Meow
 			ParameterList(int lineNumber);
 
 			void addParameter(Parameter* param);
-
 			const std::vector<Parameter*>* getParameters() const;
 		
-			void accept(Visitor* visitor);
-		
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
+
 		private:
 			std::vector<Parameter*> m_parameters;
 	};

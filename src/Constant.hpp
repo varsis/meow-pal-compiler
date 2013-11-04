@@ -7,6 +7,9 @@ namespace Meow
 {
 	class Constant : public ASTNode
 	{
+		public:
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 	};
 }
 

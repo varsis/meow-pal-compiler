@@ -17,7 +17,8 @@ namespace Meow
 		public:
 			AssignStatement(LValue* v, Expression* e);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private:
 			LValue* m_lvalue;

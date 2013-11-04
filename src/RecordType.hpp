@@ -4,7 +4,6 @@
 #include "ASTListTypes.hpp"
 #include "Type.hpp"
 
-// Forward Declarations
 namespace Meow
 {
 	class Visitor;
@@ -15,7 +14,8 @@ namespace Meow
 		public:
 			RecordType(FieldList* fields);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private:
 			FieldList* m_fields;

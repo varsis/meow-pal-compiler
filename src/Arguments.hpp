@@ -18,7 +18,8 @@ namespace Meow
 
 			void addArgument(Expression* e);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private: 
 			ExpressionList m_arguments;

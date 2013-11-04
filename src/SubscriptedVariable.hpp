@@ -18,7 +18,8 @@ namespace Meow
 		public:
 			SubscriptedVariable(int lineNumber, LValue* var, Expression* subscript);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private: 
 			LValue* m_variable;

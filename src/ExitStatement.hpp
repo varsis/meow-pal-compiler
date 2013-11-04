@@ -12,7 +12,8 @@ namespace Meow
 	class ExitStatement : public Statement
 	{
 		public:
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 	};
 }
 

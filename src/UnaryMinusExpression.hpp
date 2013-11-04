@@ -14,8 +14,8 @@ namespace Meow
 		public:
 			UnaryMinusExpression(Expression* operand);
 
-			virtual void accept(Visitor* visitor);
-
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 		protected: 
 			Expression* m_operand;
 

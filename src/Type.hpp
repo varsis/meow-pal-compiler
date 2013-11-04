@@ -11,7 +11,8 @@ namespace Meow
 	class Type : public ASTNode
 	{
 		public:
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor) = 0;
+			virtual void acceptPostOrder(Visitor* visitor) = 0;
 	};
 }
 

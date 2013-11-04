@@ -1,4 +1,5 @@
 #include "ASTNode.hpp"
+#include "Visitor.hpp"
 
 namespace Meow
 {

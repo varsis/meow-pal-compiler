@@ -6,8 +6,4 @@ namespace Meow
 	: BinaryExpression(left, right)
 	{
 	}
-	
-	void AddExpression::accept(Visitor* visitor)
-	{
-	}
 }

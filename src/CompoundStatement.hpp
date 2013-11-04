@@ -13,7 +13,8 @@ namespace Meow
 	class CompoundStatement : public Statement
 	{
 		public:
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 			unsigned int statementCount() const;
 

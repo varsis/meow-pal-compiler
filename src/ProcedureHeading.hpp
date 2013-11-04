@@ -18,7 +18,8 @@ namespace Meow
 					 ParameterList* params,
 					 Identifier* type);
 		
-			void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 			const Identifier* getIdentifier() const;
 
