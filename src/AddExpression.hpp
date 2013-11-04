@@ -13,13 +13,10 @@ namespace Meow
 	class AddExpression : public BinaryExpression
 	{
 		public:
-			AddExpression(Expression* left, Expression* right)
-				: BinaryExpression(left, right)
-			{
-			}
+			AddExpression(Expression* left, Expression* right);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 	};
 }
