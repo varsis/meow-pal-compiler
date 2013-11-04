@@ -2,7 +2,11 @@
 \usepackage[letterpaper, left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
 \usepackage{graphicx}
 \usepackage{epstopdf}
+\usepackage{enumitem}
 \usepackage{fge}
+
+\setdescription{leftmargin=\parindent, labelindent=\parindent}
+
 \begin{document}
 
 \title{PAL Compiler Documentation }
@@ -171,6 +175,62 @@ errors at the syntax level:
 	% syntax error reporting
 	% recovery strategies
 \end{description}
+
+\section*{Abstract Syntax Tree}
+
+	PalParser constructs an abstract syntax tree, where the abstract syntax tree is 
+	used for semantic analysis and code generation. 
+
+\begin{figure}[h!]
+\centering \includegraphics[width=15cm]{ast.pdf}
+\caption{TODO}
+\end{figure}
+
+\begin{figure}[h!]
+\centering \includegraphics[width=15cm]{vardecl.pdf}
+\caption{TODO}
+\end{figure}
+
+\begin{figure}[h!]
+\centering \includegraphics[width=15cm]{type.pdf}
+\caption{TODO}
+\end{figure}
+
+\begin{figure}[h!]
+\centering \includegraphics[width=15cm]{statements.pdf}
+\caption{TODO}
+\end{figure}
+
+\begin{figure}[h!]
+\centering \includegraphics[width=15cm]{expression.pdf}
+\caption{TODO}
+\end{figure}
+
+\begin{figure}[h!]
+\centering \includegraphics[width=15cm]{lvalue.pdf}
+\caption{TODO}
+\end{figure}
+
+%\subsection*{ASTNode}
+%
+%	ASTNode is the base class for all nodes in the abstract syntax tree.
+%
+%\subsection*{Program}
+%
+%	Program is the node at the root of the tree.
+%	\begin{description}
+%		\item[Declarations] The root level declarations for the program.
+%		\item[CompoundStatement] The main program statements
+%	\end{description}
+%
+%\subsection*{Declarations}
+%	\begin{description}
+%		\item[ConstantDeclarationList] List of ConstantDeclaration
+%		\item[TypeDeclarationList] List of TypeDeclaration
+%		\item[VariableDeclarationList] List of VariableDeclaration
+%		\item[ProcedureDeclarationList] List of ProcedureDeclaration
+%	\end{description}
+
 \section*{Testing}
 \begin{description}
 	% TODO
