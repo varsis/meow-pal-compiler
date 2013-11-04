@@ -1,17 +1,18 @@
 #include "AddExpression.hpp"
+#include "Expression.hpp"
 
 namespace Meow
 {
-	AddExpression(Expression* left, Expression* right)
+	AddExpression::AddExpression(Expression* left, Expression* right)
 	: BinaryExpression(left, right)
 	{
 	}
 	
-	virtual void accept(Visitor* visitor)
+	void AddExpression::accept(Visitor* visitor)
 	{
 	}
 	
-	virtual Type* accept(TypeVisitor* visitor)
+	Type* AddExpression::accept(TypeVisitor* visitor)
 	{
 		return 0;
 	}
