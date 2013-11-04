@@ -10,10 +10,4 @@ namespace Meow
 	void SubtractExpression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* SubtractExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }

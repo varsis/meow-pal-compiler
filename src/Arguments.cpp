@@ -14,9 +14,4 @@ namespace Meow
 	void Arguments::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* Arguments::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }

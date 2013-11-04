@@ -8,7 +8,6 @@ namespace Meow
 	class Identifier;
 	class Visitor;
 	class Type;
-	class TypeVisitor;
 	class Declarations;
 	class CompoundStatement;
 	class ProcedureHeading;
@@ -22,7 +21,6 @@ namespace Meow
 					     CompoundStatement* statements);
 		
 			void accept(Visitor* visitor);
-			const Type* accept(TypeVisitor* typeVisitor);
 
 			const ProcedureHeading* getHeading() const;
 

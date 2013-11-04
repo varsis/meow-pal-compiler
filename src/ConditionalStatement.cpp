@@ -15,11 +15,4 @@ namespace Meow
 	{
 	}
 	
-	Type* ConditionalStatement::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
-
-

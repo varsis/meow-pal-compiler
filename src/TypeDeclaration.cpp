@@ -11,9 +11,6 @@ namespace Meow
 	void TypeDeclaration::accept(Visitor* visitor)
 	{
 	}
-	const Type* TypeDeclaration::accept(TypeVisitor* typeVisitor)
-	{
-	}
 	
 	const Identifier* TypeDeclaration::getIdentifier() const
 	{
@@ -22,6 +19,6 @@ namespace Meow
 	
 	const Type* TypeDeclaration::getType() const
 	{
-		
+		return m_type;
 	}
 }

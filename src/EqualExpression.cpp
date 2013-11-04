@@ -10,9 +10,5 @@ namespace Meow
 	void EqualExpression::accept(Visitor* visitor)
 	{
 	}
-	Type* EqualExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 

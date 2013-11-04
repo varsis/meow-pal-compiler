@@ -8,7 +8,6 @@
 namespace Meow
 {
 	class Visitor;
-	class TypeVisitor;
 	class Identifier;
 	class Type;
 
@@ -18,7 +17,6 @@ namespace Meow
 			ArrayRangeIndex(Expression* start, Expression* end);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			Expression* m_start;

@@ -7,7 +7,6 @@
 namespace Meow
 {
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 
 	class Identifier : public ASTNode
@@ -16,9 +15,8 @@ namespace Meow
 			Identifier(int lineNumber, const char* identifierName);
 		
 			void accept(Visitor* visitor);
-			Type* accept(TypeVisitor* typeVisitor);
 			
-			inline std::string toString() const;
+			std::string toString() const;
 		
 		private:
 			std::string m_name;

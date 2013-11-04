@@ -11,10 +11,5 @@ namespace Meow
 	void SimpleType::accept(Visitor* visitor)
 	{
 	}
-	Type* SimpleType::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

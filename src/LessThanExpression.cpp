@@ -12,10 +12,5 @@ namespace Meow
 	{
 	}
 	
-	Type* LessThanExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

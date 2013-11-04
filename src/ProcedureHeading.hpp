@@ -8,7 +8,6 @@ namespace Meow
 	class Identifier;
 	class Visitor;
 	class Type;
-	class TypeVisitor;
 	class ParameterList;
 
 	class ProcedureHeading : public ASTNode
@@ -20,7 +19,6 @@ namespace Meow
 					 Identifier* type);
 		
 			void accept(Visitor* visitor);
-			const Type* accept(TypeVisitor* typeVisitor);
 
 			const Identifier* getIdentifier() const;
 

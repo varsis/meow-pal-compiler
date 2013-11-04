@@ -10,7 +10,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 
 	class RecordField : public LValue // TODO better names?
@@ -19,7 +18,6 @@ namespace Meow
 		RecordField(int lineNumber, LValue* record, Identifier* field);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			LValue* m_record;

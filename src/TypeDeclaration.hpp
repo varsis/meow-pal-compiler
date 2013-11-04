@@ -9,7 +9,6 @@ namespace Meow
 	class Identifier;
 	class Visitor;
 	class Type;
-	class TypeVisitor;
 
 	class TypeDeclaration : public ASTNode
 	{
@@ -17,7 +16,6 @@ namespace Meow
 			TypeDeclaration(int lineNumber, Identifier* identifier, Type* type);
 		
 			void accept(Visitor* visitor);
-			const Type* accept(TypeVisitor* typeVisitor);
 
 			const Identifier* getIdentifier() const;
 

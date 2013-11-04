@@ -10,10 +10,5 @@ namespace Meow
 	void MultiplyExpression::accept(Visitor* visitor)
 	{
 	}
-	Type* MultiplyExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

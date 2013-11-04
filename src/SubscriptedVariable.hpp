@@ -11,7 +11,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 
 	class SubscriptedVariable : public LValue
@@ -20,7 +19,6 @@ namespace Meow
 			SubscriptedVariable(int lineNumber, LValue* var, Expression* subscript);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			LValue* m_variable;

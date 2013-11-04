@@ -11,10 +11,6 @@ namespace Meow
 	void AssignStatement::accept(Visitor* visitor)
 	{
 	}
-	Type* AssignStatement::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 
 

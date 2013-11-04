@@ -16,10 +16,6 @@ namespace Meow
 	{
 	}
 	
-	const Type* Field::accept(TypeVisitor* typeVisitor)
-	{
-	}
-	
 	void Field::addIdentifier(Identifier* id)
 	{
 		m_identifiers.push_back(id);
@@ -32,6 +28,7 @@ namespace Meow
 	
 	const Type* Field::getType() const
 	{
+		return m_type;
 	}
 	
 }

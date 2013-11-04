@@ -76,6 +76,7 @@ namespace Meow
 		EXPECT_TOKEN(token::IDENTIFIER);
 
 		EXPECT_EQ(yylval.identifier->toString(), "test001");
+		EXPECT_EQ(yylval.identifier->toString(), "test001");
 
 		EXPECT_TOKEN(token::LEFT_PAREN);
 		EXPECT_TOKEN(token::IDENTIFIER);

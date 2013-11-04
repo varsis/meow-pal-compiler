@@ -9,7 +9,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Identifier;
 	class Type;
 
@@ -20,7 +19,6 @@ namespace Meow
 
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Identifier* m_identifier;

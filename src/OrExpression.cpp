@@ -11,8 +11,4 @@ namespace Meow
 	{
 	}
 	
-	Type* OrExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }

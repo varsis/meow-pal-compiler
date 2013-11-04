@@ -12,7 +12,6 @@ namespace Meow
 	class Expression;
 	class Identifier;
 	class Visitor;
-	class TypeVisitor;
 
 	class ConstantDeclaration : public ASTNode
 	{
@@ -22,11 +21,10 @@ namespace Meow
 						Expression* expression);
 
 			void accept(Visitor* visitor);
-			const Type* accept(TypeVisitor* typeVisitor);
 
 			const Type* getType() const;
 			const Identifier* getIdentifier() const;
-			const Expression* getExtpression() const;
+			const Expression* getExpression() const;
 		
 		private:
 			Type* m_type; // ???

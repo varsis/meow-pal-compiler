@@ -6,11 +6,6 @@ namespace Meow
 	{
 	}
 	
-	Type* CompoundStatement::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 	unsigned int CompoundStatement::statementCount() const
 	{
 		return m_statements.size();

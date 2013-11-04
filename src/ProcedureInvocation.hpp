@@ -9,7 +9,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Arguments;
 	class Type;
 
@@ -19,7 +18,6 @@ namespace Meow
 			ProcedureInvocation(Identifier* procId, Arguments* a);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Identifier* m_procedureId;

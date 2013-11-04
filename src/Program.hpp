@@ -4,12 +4,10 @@
 #include "ASTNode.hpp"
 #include "ASTListTypes.hpp"
 #include "Visitor.hpp"
-#include "CheckTypeVisitor.hpp"
 
 namespace Meow
 {
 	class Type; 
-	class TypeVisitor; 
 	class Declarations;
 	class CompoundStatement;
 
@@ -21,7 +19,6 @@ namespace Meow
 			~Program();
 			
 			void accept(Visitor* visitor);
-			Type* accept(TypeVisitor* typeVisitor);
 			
 			/*
 			const ConstantDeclarationList getConstantDeclarationList() const;

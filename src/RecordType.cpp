@@ -11,10 +11,5 @@ namespace Meow
 	void RecordType::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* RecordType::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 

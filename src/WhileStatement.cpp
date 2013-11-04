@@ -1,21 +1,16 @@
-#include "WhileStatement.cpp"
+#include "WhileStatement.hpp"
 
 namespace Meow
 {
 	
-	WhileStatement(Expression* condition,
-		       Statement* loopStatement)
-	: m_condition(condition)
-	, m_loopStatement(loopStatement)
+       WhileStatement::WhileStatement(Expression* condition, Statement* loopStatement)
+	       : m_condition(condition)
+	       , m_loopStatement(loopStatement)
 	{
 	}
 	
-	virtual void accept(Visitor* visitor)
+	void WhileStatement::accept(Visitor* visitor)
 	{
-	}
-	virtual Type* accept(TypeVisitor* visitor)
-	{
-		return 0;
 	}
 }
 

@@ -10,8 +10,4 @@ namespace Meow
 	void AddExpression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* AddExpression::accept(TypeVisitor* visitor)
-	{
-	}
 }

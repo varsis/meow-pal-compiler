@@ -6,7 +6,6 @@
 namespace Meow
 {
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 	class StringLiteral;
 	class IntegerConstant;
@@ -27,7 +26,6 @@ namespace Meow
 			Expression(LValue* value);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 	};
 }
 

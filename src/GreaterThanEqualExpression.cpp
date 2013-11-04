@@ -12,10 +12,5 @@ namespace Meow
 	{
 	}
 	
-	Type* GreaterThanEqualExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

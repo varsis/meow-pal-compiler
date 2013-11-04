@@ -25,9 +25,4 @@ namespace Meow
 	void Expression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* Expression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }

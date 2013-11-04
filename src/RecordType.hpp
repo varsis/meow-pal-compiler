@@ -8,7 +8,6 @@
 namespace Meow
 {
 	class Visitor;
-	class TypeVisitor;
 	class Identifier;
 
 	class RecordType : public Type
@@ -17,7 +16,6 @@ namespace Meow
 			RecordType(FieldList* fields);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			FieldList* m_fields;

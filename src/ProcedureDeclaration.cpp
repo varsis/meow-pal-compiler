@@ -16,9 +16,6 @@ namespace Meow
 	void ProcedureDeclaration::accept(Visitor* visitor)
 	{
 	}
-	const Type* ProcedureDeclaration::accept(TypeVisitor* typeVisitor)
-	{
-	}
 	
 	const ProcedureHeading* ProcedureDeclaration::getHeading() const
 	{

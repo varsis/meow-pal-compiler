@@ -11,9 +11,5 @@ namespace Meow
 	void RealDivideExpression::accept(Visitor* visitor)
 	{
 	}
-	Type* RealDivideExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 

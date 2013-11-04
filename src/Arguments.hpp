@@ -9,7 +9,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 
 	class Arguments : public ASTNode
@@ -20,7 +19,6 @@ namespace Meow
 			void addArgument(Expression* e);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			ExpressionList m_arguments;

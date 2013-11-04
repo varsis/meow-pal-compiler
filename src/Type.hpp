@@ -7,13 +7,11 @@
 namespace Meow
 {
 	class Visitor;
-	class TypeVisitor;
 
 	class Type : public ASTNode
 	{
 		public:
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 	};
 }
 

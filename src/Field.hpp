@@ -11,7 +11,6 @@ namespace Meow
 {
 	class Type;
 	class Visitor;
-	class TypeVisitor;
 	class Identifier;
 
 	class Field : public ASTNode
@@ -22,7 +21,6 @@ namespace Meow
 			~Field();
 		
 			void accept(Visitor* visitor);
-			const Type* accept(TypeVisitor* typeVisitor);
 
 			void addIdentifier(Identifier* id);
 

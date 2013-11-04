@@ -7,7 +7,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 
 	class ModExpression : public BinaryExpression
@@ -16,7 +15,6 @@ namespace Meow
 			ModExpression(Expression* left, Expression* right);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 	};
 }

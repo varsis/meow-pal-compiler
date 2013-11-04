@@ -23,9 +23,4 @@ namespace Meow
 	void Parameter::accept(Visitor* visitor)
 	{
 	}
-	
-	const Type* Parameter::accept(TypeVisitor* typeVisitor)
-	{
-	}
-	
 }

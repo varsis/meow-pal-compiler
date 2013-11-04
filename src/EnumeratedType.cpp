@@ -11,11 +11,5 @@ namespace Meow
 	void EnumeratedType::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* EnumeratedType::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

@@ -11,11 +11,5 @@ namespace Meow
 	void GreaterThanExpression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* GreaterThanExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

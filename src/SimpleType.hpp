@@ -7,7 +7,6 @@
 namespace Meow
 {
 	class Visitor;
-	class TypeVisitor;
 	class Identifier;
 
 	class SimpleType : public Type
@@ -16,7 +15,6 @@ namespace Meow
 			SimpleType(Identifier* name);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			Identifier* m_name;

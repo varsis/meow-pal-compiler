@@ -12,8 +12,4 @@ namespace Meow
 	{
 	}
 	
-	Type* ProcedureInvocation::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }

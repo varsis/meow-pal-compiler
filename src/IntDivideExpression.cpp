@@ -11,10 +11,6 @@ namespace Meow
 	void IntDivideExpression::accept(Visitor* visitor)
 	{
 	}
-	Type* IntDivideExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 
 

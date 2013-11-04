@@ -14,9 +14,6 @@ namespace Meow
 	void VariableDeclaration::accept(Visitor* visitor)
 	{
 	}
-	const Type* VariableDeclaration::accept(TypeVisitor* typeVisitor)
-	{
-	}
 	
 	void VariableDeclaration::addIdentifier(Identifier* id)
 	{
@@ -30,7 +27,7 @@ namespace Meow
 	
 	const Type* VariableDeclaration::getType() const
 	{
+		return m_type;
 	}
-	
 }
 

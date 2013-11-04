@@ -7,7 +7,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 
 	class LessThanEqualExpression : public BinaryExpression
@@ -16,7 +15,6 @@ namespace Meow
 		LessThanEqualExpression(Expression* left, Expression* right);
 
 		void accept(Visitor* visitor);
-		Type* accept(TypeVisitor* visitor);
 
 	};
 }

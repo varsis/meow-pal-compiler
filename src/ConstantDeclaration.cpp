@@ -13,13 +13,10 @@ namespace Meow
 	void ConstantDeclaration::accept(Visitor* visitor)
 	{
 	}
-	const Type* ConstantDeclaration::accept(TypeVisitor* typeVisitor)
-	{
-		
-	}
 	
 	const Type* ConstantDeclaration::getType() const
 	{
+		return m_type;
 	}
 	
 	const Identifier* ConstantDeclaration::getIdentifier() const
@@ -27,8 +24,9 @@ namespace Meow
 		return m_identifier;
 	}
 	
-	const Expression* ConstantDeclaration::getExtpression() const
+	const Expression* ConstantDeclaration::getExpression() const
 	{
+		return m_expression;
 	}
 }
 

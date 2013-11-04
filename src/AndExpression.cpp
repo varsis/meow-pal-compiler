@@ -11,11 +11,6 @@ namespace Meow
 	void AndExpression::accept(Visitor* visitor)
 	{
 	}
-	Type* AndExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 
 

@@ -10,10 +10,4 @@ namespace Meow
 	void ArrayRangeIndex::accept(Visitor* visitor)
 	{
 	}
-	Type* ArrayRangeIndex::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
-

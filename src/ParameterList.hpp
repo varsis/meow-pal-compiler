@@ -11,7 +11,6 @@ namespace Meow
 	class Identifier;
 	class Visitor;
 	class Type;
-	class TypeVisitor;
 
 	class ParameterList : public ASTNode
 	{
@@ -23,7 +22,6 @@ namespace Meow
 			const std::vector<Parameter*>* getParameters() const;
 		
 			void accept(Visitor* visitor);
-			const Type* accept(TypeVisitor* typeVisitor);
 		
 		private:
 			std::vector<Parameter*> m_parameters;

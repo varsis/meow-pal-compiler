@@ -12,10 +12,5 @@ namespace Meow
 	{
 	}
 	
-	Type* NotEqualExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

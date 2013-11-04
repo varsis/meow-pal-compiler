@@ -11,10 +11,4 @@ namespace Meow
 	void BinaryExpression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* BinaryExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }

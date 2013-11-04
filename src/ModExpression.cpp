@@ -10,11 +10,6 @@ namespace Meow
 	void ModExpression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* ModExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 
 

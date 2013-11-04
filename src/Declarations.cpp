@@ -15,9 +15,6 @@ namespace Meow
 	void Declarations::accept(Visitor* visitor)
 	{
 	}
-	Type* Declarations::accept(TypeVisitor* typeVisitor)
-	{
-	}
 	
 	const ConstantDeclarationList* Declarations::getConstantDeclarationList() const
 	{

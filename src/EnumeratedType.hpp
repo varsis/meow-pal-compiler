@@ -8,7 +8,6 @@
 namespace Meow
 {
 	class Visitor;
-	class TypeVisitor;
 	class Identifier;
 
 	class EnumeratedType : public Type
@@ -17,7 +16,6 @@ namespace Meow
 			EnumeratedType(IdentifierList* entries);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			IdentifierList* m_entries;

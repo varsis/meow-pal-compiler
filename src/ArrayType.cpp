@@ -10,11 +10,5 @@ namespace Meow
 	void ArrayType::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* ArrayType::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 

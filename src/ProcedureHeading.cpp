@@ -17,10 +17,6 @@ namespace Meow
 	{
 		
 	}
-	const Type* ProcedureHeading::accept(TypeVisitor* typeVisitor)
-	{
-		
-	}
 	
 	const Identifier* ProcedureHeading::getIdentifier() const
 	{

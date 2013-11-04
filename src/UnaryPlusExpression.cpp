@@ -10,9 +10,5 @@ namespace Meow
 	void UnaryPlusExpression::accept(Visitor* visitor)
 	{
 	}
-	Type* UnaryPlusExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 

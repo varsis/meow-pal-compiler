@@ -7,7 +7,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Expression;
 	class Type;
 
@@ -18,7 +17,6 @@ namespace Meow
 				       Statement* loopStatement);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Expression* m_condition;

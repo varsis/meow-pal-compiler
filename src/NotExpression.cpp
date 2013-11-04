@@ -10,10 +10,4 @@ namespace Meow
 	void NotExpression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* NotExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }

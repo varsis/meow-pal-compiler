@@ -10,7 +10,6 @@ namespace Meow
 {
 	// Forward Declarations
 	class Visitor;
-	class TypeVisitor;
 	class Type;
 
 	class AssignStatement : public Statement
@@ -19,8 +18,6 @@ namespace Meow
 			AssignStatement(LValue* v, Expression* e);
 
 			virtual void accept(Visitor* visitor);
-			virtual Type* accept(TypeVisitor* visitor);
-
 
 		private:
 			LValue* m_lvalue;

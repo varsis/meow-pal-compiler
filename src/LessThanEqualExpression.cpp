@@ -10,10 +10,5 @@ namespace Meow
 	void LessThanEqualExpression::accept(Visitor* visitor)
 	{
 	}
-	
-	Type* LessThanEqualExpression::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
 }
 

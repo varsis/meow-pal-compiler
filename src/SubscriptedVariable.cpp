@@ -10,10 +10,5 @@ namespace Meow
 	void SubscriptedVariable::accept(Visitor* visitor)
 	{
 	}
-	Type* SubscriptedVariable::accept(TypeVisitor* visitor)
-	{
-		return 0;
-	}
-	
 }
 
