@@ -17,25 +17,16 @@ namespace Meow
 	class Field : public ASTNode
 	{
 		public:
-			Field(int lineNumber, Type* type)
-				: m_type(type)
-			{
-			}
+			Field(int lineNumber, Type* type);
 
 			~Field();
 		
 			void accept(Visitor* visitor);
 			const Type* accept(TypeVisitor* typeVisitor);
 
-			void addIdentifier(Identifier* id)
-			{	
-				m_identifiers.push_back(id);
-			}
+			void addIdentifier(Identifier* id);
 
-			const vector<Identifier*>* getIdentifiers() const
-			{	
-				return &m_identifiers;
-			}
+			const vector<Identifier*>* getIdentifiers() const;
 
 			const Type* getType() const;
 		

@@ -13,13 +13,10 @@ namespace Meow
 	class UnaryMinusExpression : public Expression
 	{
 		public:
-			UnaryMinusExpression(Expression* operand)
-				: m_operand(operand)
-			{
-			}
+			UnaryMinusExpression(Expression* operand);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		protected: 
 			Expression* m_operand;

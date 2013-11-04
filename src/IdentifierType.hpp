@@ -15,8 +15,8 @@ namespace Meow
 		public:
 			IdentifierType(unsigned int lineNumber, const char* identiferTypeName);
 			
-			virtual void accept(Visitor visitor);
-			virtual Type* accept(TypeVisitor typeVisitor);
+			virtual void accept(Visitor * visitor);
+			virtual Type* accept(TypeVisitor * typeVisitor);
 			std::string toString() const;
 			
 		private:

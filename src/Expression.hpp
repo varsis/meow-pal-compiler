@@ -16,7 +16,7 @@ namespace Meow
 	class Expression
 	{
 		public:
-			Expression() {}
+			Expression();
 
 			// FIXME this probably should be left abstract...
 			// make new subclass for literals?
@@ -26,8 +26,8 @@ namespace Meow
 			Expression(RealConstant* constant);
 			Expression(LValue* value);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 	};
 }
 

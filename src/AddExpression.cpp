@@ -1,5 +1,4 @@
 #include "AddExpression.hpp"
-#include "Expression.hpp"
 
 namespace Meow
 {
@@ -14,9 +13,5 @@ namespace Meow
 	
 	Type* AddExpression::accept(TypeVisitor* visitor)
 	{
-		return 0;
 	}
-	
 }
-
-

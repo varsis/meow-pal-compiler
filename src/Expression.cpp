@@ -1,9 +1,11 @@
-#include <string>
 #include "Expression.hpp"
-#include "RealConstant.hpp"
 
 namespace Meow
 {
+	Expression::Expression()
+	{
+	}
+	
 	Expression::Expression(StringLiteral* literal)
 	{
 	}
@@ -18,5 +20,14 @@ namespace Meow
 
 	Expression::Expression(LValue* value)
 	{
+	}
+	
+	void Expression::accept(Visitor* visitor)
+	{
+	}
+	
+	Type* Expression::accept(TypeVisitor* visitor)
+	{
+		return 0;
 	}
 }

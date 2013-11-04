@@ -15,14 +15,10 @@ namespace Meow
 	{
 		public:
 			WhileStatement(Expression* condition,
-					Statement* loopStatement)
-				: m_condition(condition)
-				, m_loopStatement(loopStatement)
-			{
-			}
+				       Statement* loopStatement);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Expression* m_condition;

@@ -15,14 +15,10 @@ namespace Meow
 	class ArrayRangeIndex : public ArrayIndex
 	{
 		public:
-			ArrayRangeIndex(Expression* start, Expression* end)
-				: m_start(start)
-				, m_end(end)
-			{
-			}
+			ArrayRangeIndex(Expression* start, Expression* end);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			Expression* m_start;

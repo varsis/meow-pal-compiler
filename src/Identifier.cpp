@@ -7,4 +7,9 @@ namespace Meow
 	{
 		//setLineNumber(lineNumber);
 	}
+	
+	std::string Identifier::toString() const
+	{
+		return m_name;
+	}
 }

@@ -25,7 +25,7 @@ namespace Meow
 			const Type* accept(TypeVisitor* typeVisitor);
 
 			const Type* getType() const;
-			const Identifier* getIdentifier() const { return m_identifier; }
+			const Identifier* getIdentifier() const;
 			const Expression* getExtpression() const;
 		
 		private:

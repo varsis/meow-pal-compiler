@@ -15,32 +15,18 @@ namespace Meow
 	{
 		public:
 			ProcedureHeading(int lineNumber,
-					Identifier* identifier,
-					ParameterList* params,
-					Identifier* type)
-				: m_identifier(identifier)
-				, m_parameters(params)
-				, m_type(type)
-			{
-			}
+					 Identifier* identifier,
+					 ParameterList* params,
+					 Identifier* type);
 		
 			void accept(Visitor* visitor);
 			const Type* accept(TypeVisitor* typeVisitor);
 
-			const Identifier* getIdentifier() const
-			{	
-				return m_identifier;
-			}
+			const Identifier* getIdentifier() const;
 
-			const ParameterList* getParameters() const
-			{	
-				return m_parameters;
-			}
+			const ParameterList* getParameters() const;
 
-			const Identifier* getType() const
-			{
-				return m_type;
-			}
+			const Identifier* getType() const;
 		
 		private:
 			Identifier* m_identifier;

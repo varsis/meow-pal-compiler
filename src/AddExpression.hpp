@@ -9,7 +9,7 @@ namespace Meow
 	class Visitor;
 	class TypeVisitor;
 	class Type;
-
+	
 	class AddExpression : public BinaryExpression
 	{
 		public:
@@ -17,8 +17,6 @@ namespace Meow
 
 			virtual void accept(Visitor* visitor);
 			virtual Type* accept(TypeVisitor* visitor);
-
 	};
 }
-
 #endif

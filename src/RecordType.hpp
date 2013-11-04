@@ -14,13 +14,10 @@ namespace Meow
 	class RecordType : public Type
 	{
 		public:
-			RecordType(FieldList* fields)
-				: m_fields(fields)
-			{
-			}
+			RecordType(FieldList* fields);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			FieldList* m_fields;

@@ -16,19 +16,11 @@ namespace Meow
 	class ParameterList : public ASTNode
 	{
 		public:
-			ParameterList(int lineNumber)
-			{
-			}
+			ParameterList(int lineNumber);
 
-			void addParameter(Parameter* param)
-			{
-				m_parameters.push_back(param);
-			}
+			void addParameter(Parameter* param);
 
-			const std::vector<Parameter*>* getParameters() const
-			{
-				return &m_parameters;
-			}
+			const std::vector<Parameter*>* getParameters() const;
 		
 			void accept(Visitor* visitor);
 			const Type* accept(TypeVisitor* typeVisitor);

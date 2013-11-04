@@ -18,7 +18,7 @@ namespace Meow
 			void accept(Visitor* visitor);
 			Type* accept(TypeVisitor* typeVisitor);
 			
-			inline std::string toString() const { return m_name; }
+			inline std::string toString() const;
 		
 		private:
 			std::string m_name;

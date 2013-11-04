@@ -15,13 +15,10 @@ namespace Meow
 	class ArrayTypeIndex : public ArrayIndex
 	{
 		public:
-			ArrayTypeIndex(Type* indexType)
-				: m_type(indexType)
-			{
-			}
+			ArrayTypeIndex(Type* indexType);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			Type* m_type;

@@ -13,14 +13,9 @@ namespace Meow
 	class BinaryExpression : public Expression
 	{
 		public:
-			BinaryExpression(Expression* left, Expression* right)
-				: m_left(left)
-				, m_right(right)
-			{
-			}
-
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			BinaryExpression(Expression* left, Expression* right);
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		protected: 
 			Expression* m_left;

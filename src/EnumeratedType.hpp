@@ -14,13 +14,10 @@ namespace Meow
 	class EnumeratedType : public Type
 	{
 		public:
-			EnumeratedType(IdentifierList* entries)
-				: m_entries(entries)
-			{
-			}
+			EnumeratedType(IdentifierList* entries);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			IdentifierList* m_entries;

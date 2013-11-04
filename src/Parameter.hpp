@@ -13,15 +13,10 @@ namespace Meow
 	class Parameter : public ASTNode
 	{
 		public:
-			Parameter(int lineNumber, Identifier* name, Identifier* type, bool varParam)
-				: m_name(name)
-				, m_type(type)
-				, m_varParam(varParam)
-			{
-			}
+			Parameter(int lineNumber, Identifier* name, Identifier* type, bool varParam);
 
-			Identifier* getName() { return m_name; }
-			Identifier* getType() { return m_type; }
+			Identifier* getName();
+			Identifier* getType();
 
 			void accept(Visitor* visitor);
 			const Type* accept(TypeVisitor* typeVisitor);

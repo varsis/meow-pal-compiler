@@ -16,14 +16,11 @@ namespace Meow
 	class Variable : public LValue
 	{
 		public:
-			Variable(int lineNumber, Identifier* id)
-				: m_identifier(id)
-			{
-			}
+			Variable(int lineNumber, Identifier* id);
 
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Identifier* m_identifier;

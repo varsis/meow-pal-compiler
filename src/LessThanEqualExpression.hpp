@@ -13,13 +13,10 @@ namespace Meow
 	class LessThanEqualExpression : public BinaryExpression
 	{
 		public:
-			LessThanEqualExpression(Expression* left, Expression* right)
-				: BinaryExpression(left, right)
-			{
-			}
+		LessThanEqualExpression(Expression* left, Expression* right);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+		void accept(Visitor* visitor);
+		Type* accept(TypeVisitor* visitor);
 
 	};
 }

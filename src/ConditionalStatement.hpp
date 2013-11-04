@@ -15,16 +15,11 @@ namespace Meow
 	{
 		public:
 			ConditionalStatement(Expression* condition,
-					Statement* thenStatement,
-					Statement* elseStatement)
-				: m_condition(condition)
-				, m_thenStatement(thenStatement)
-				, m_elseStatement(elseStatement)
-			{
-			}
+					     Statement* thenStatement,
+					     Statement* elseStatement);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Expression* m_condition;

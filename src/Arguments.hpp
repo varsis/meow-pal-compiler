@@ -15,15 +15,12 @@ namespace Meow
 	class Arguments : public ASTNode
 	{
 		public:
-			Arguments() {}
+			Arguments();
 
-			void addArgument(Expression* e)
-			{
-				m_arguments.push_back(e);
-			}
+			void addArgument(Expression* e);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			ExpressionList m_arguments;

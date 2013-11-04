@@ -24,25 +24,13 @@ namespace Meow
 			void accept(Visitor* visitor);
 			Type* accept(TypeVisitor* typeVisitor);
 			
-			const ConstantDeclarationList* getConstantDeclarationList() const
-			{
-				return m_constantDeclarationList;
-			}
+			const ConstantDeclarationList* getConstantDeclarationList() const;
 
-			const TypeDeclarationList* getTypeDeclarationList() const
-			{
-				return m_typeDeclarationList;
-			}
+			const TypeDeclarationList* getTypeDeclarationList() const;
 
-			const VariableDeclarationList* getVariableDeclarationList() const
-			{
-				return m_variableDeclarationList;
-			}
+			const VariableDeclarationList* getVariableDeclarationList() const;
 
-			const ProcedureDeclarationList* getProcedureDeclarationList() const
-			{
-				return m_procedureDeclarationList;
-			}
+			const ProcedureDeclarationList* getProcedureDeclarationList() const;
 		
 		private:
 			ConstantDeclarationList* m_constantDeclarationList;

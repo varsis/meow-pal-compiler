@@ -14,8 +14,8 @@ namespace Meow
 	class LValue : public ASTNode
 	{
 		public:
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 	};
 }

@@ -13,13 +13,10 @@ namespace Meow
 	class EqualExpression : public BinaryExpression
 	{
 		public:
-			EqualExpression(Expression* left, Expression* right)
-				: BinaryExpression(left, right)
-			{
-			}
+			EqualExpression(Expression* left, Expression* right);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 	};
 }
 

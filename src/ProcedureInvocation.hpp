@@ -16,14 +16,10 @@ namespace Meow
 	class ProcedureInvocation : public Statement
 	{
 		public:
-			ProcedureInvocation(Identifier* procId, Arguments* a)
-				: m_procedureId(procId)
-				, m_arguments(a)
-			{
-			}
+			ProcedureInvocation(Identifier* procId, Arguments* a);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Identifier* m_procedureId;

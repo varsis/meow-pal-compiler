@@ -16,14 +16,10 @@ namespace Meow
 	class FunctionInvocation : public Expression
 	{
 		public:
-			FunctionInvocation(Identifier* name, Arguments* a)
-				: m_functionId(name)
-				, m_arguments(a)
-			{
-			}
+			FunctionInvocation(Identifier* name, Arguments* a);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private: 
 			Identifier* m_functionId;

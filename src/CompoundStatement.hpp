@@ -14,28 +14,18 @@ namespace Meow
 	class CompoundStatement : public Statement
 	{
 		public:
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
-			unsigned int statementCount() const
-			{
-				return m_statements.size();
-			}
+			unsigned int statementCount() const;
 
-			Statement* getStatement(int index) const
-			{
-				return m_statements[index];
-			}
+			Statement* getStatement(int index) const;
 
-			virtual void addStatement(Statement* statement)
-			{
-				m_statements.push_back(statement);
-			}
-
+			virtual void addStatement(Statement* statement);
 		private:
 			StatementList m_statements;
-			
+		
+
 	};
 }
-
 #endif

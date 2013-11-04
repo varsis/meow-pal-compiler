@@ -17,27 +17,16 @@ namespace Meow
 	{
 		public:
 			ProcedureDeclaration(int lineNumber,
-						ProcedureHeading* heading,
-						Declarations* procedureDeclarations,
-						CompoundStatement* statements)
-				: m_heading(heading)
-				, m_declarations(procedureDeclarations)
-				, m_statements(statements)
-			{
-			}
+					     ProcedureHeading* heading,
+					     Declarations* procedureDeclarations,
+					     CompoundStatement* statements);
 		
 			void accept(Visitor* visitor);
 			const Type* accept(TypeVisitor* typeVisitor);
 
-			const ProcedureHeading* getHeading() const
-			{	
-				return m_heading;
-			}
+			const ProcedureHeading* getHeading() const;
 
-			const Declarations* getDeclarations() const
-			{	
-				return m_declarations;
-			}
+			const Declarations* getDeclarations() const;
 		
 		private:
 			ProcedureHeading* m_heading;

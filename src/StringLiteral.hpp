@@ -11,15 +11,9 @@ namespace Meow
 	class StringLiteral : public Constant
 	{
 		public:
-			StringLiteral(int lineNumber, char* value)
-				: m_value(value)
-			{
-			}
+			StringLiteral(int lineNumber, char* value);
 
-			std::string getValue()
-			{
-				return m_value;
-			}
+			std::string getValue();
 
 		private:
 			std::string m_value;

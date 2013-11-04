@@ -13,13 +13,10 @@ namespace Meow
 	class SimpleType : public Type
 	{
 		public:
-			SimpleType(Identifier* name)
-				: m_name(name)
-			{
-			}
+			SimpleType(Identifier* name);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 		private:
 			Identifier* m_name;

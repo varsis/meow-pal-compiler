@@ -13,13 +13,10 @@ namespace Meow
 	class IntDivideExpression : public BinaryExpression
 	{
 		public:
-			IntDivideExpression(Expression* left, Expression* right)
-				: BinaryExpression(left, right)
-			{
-			}
+			IntDivideExpression(Expression* left, Expression* right);
 
-			virtual void accept(Visitor* visitor) { }
-			virtual Type* accept(TypeVisitor* visitor) {return 0;}
+			virtual void accept(Visitor* visitor);
+			virtual Type* accept(TypeVisitor* visitor);
 
 	};
 }
