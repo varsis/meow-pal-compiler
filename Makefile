@@ -129,7 +129,7 @@ doc: doc.pdf
 
 doc.pdf: doc/pal.tex
 	cd doc;\
-	epstopdf *.eps;\
+	./makefigures.sh;\
 	pdflatex ./pal.tex;\
 	cd ..
 
