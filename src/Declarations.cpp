@@ -21,36 +21,48 @@ namespace Meow
 	{
 		visitor->visit(this);
 
-		ConstantDeclarationList::iterator constIt;
-		for (constIt = m_constantDeclarationList->begin();
-				constIt != m_constantDeclarationList->end();
-				++constIt)
+		if (m_constantDeclarationList)
 		{
-			(*constIt)->acceptPreOrder(visitor);
+			ConstantDeclarationList::iterator constIt;
+			for (constIt = m_constantDeclarationList->begin();
+					constIt != m_constantDeclarationList->end();
+					++constIt)
+			{
+				(*constIt)->acceptPreOrder(visitor);
+			}
 		}
 
-		TypeDeclarationList::iterator typeIt;
-		for (typeIt = m_typeDeclarationList->begin();
-				typeIt != m_typeDeclarationList->end();
-				++typeIt)
+		if (m_typeDeclarationList)
 		{
-			(*typeIt)->acceptPreOrder(visitor);
+			TypeDeclarationList::iterator typeIt;
+			for (typeIt = m_typeDeclarationList->begin();
+					typeIt != m_typeDeclarationList->end();
+					++typeIt)
+			{
+				(*typeIt)->acceptPreOrder(visitor);
+			}
 		}
 
-		VariableDeclarationList::iterator varIt;
-		for (varIt = m_variableDeclarationList->begin();
-				varIt != m_variableDeclarationList->end();
-				++varIt)
+		if (m_variableDeclarationList)
 		{
-			(*varIt)->acceptPreOrder(visitor);
+			VariableDeclarationList::iterator varIt;
+			for (varIt = m_variableDeclarationList->begin();
+					varIt != m_variableDeclarationList->end();
+					++varIt)
+			{
+				(*varIt)->acceptPreOrder(visitor);
+			}
 		}
 
-		ProcedureDeclarationList::iterator procIt;
-		for (procIt = m_procedureDeclarationList->begin();
-				procIt != m_procedureDeclarationList->end();
-				++procIt)
+		if (m_procedureDeclarationList)
 		{
-			(*procIt)->acceptPreOrder(visitor);
+			ProcedureDeclarationList::iterator procIt;
+			for (procIt = m_procedureDeclarationList->begin();
+					procIt != m_procedureDeclarationList->end();
+					++procIt)
+			{
+				(*procIt)->acceptPreOrder(visitor);
+			}
 		}
 	}
 

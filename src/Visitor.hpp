@@ -65,6 +65,10 @@ namespace Meow
 	class Visitor
 	{
 		public:
+
+			void increaseLevel();
+			void decreaseLevel();
+
 			virtual void visit(const ASTNode* prog) = 0;
 			virtual void visit(const Program* prog) = 0;
 
@@ -131,6 +135,9 @@ namespace Meow
 			virtual void visit(const NotExpression*) = 0;
 
 			// Add more as we add more node types
+
+		protected:
+			unsigned int m_level;
 	};
 }
 
