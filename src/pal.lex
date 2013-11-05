@@ -1,5 +1,6 @@
 %{
 	#include <iostream>
+	#include <string>
 	#include "Scanner.hpp"
 	typedef Meow::PalParser::token token;
 
@@ -54,6 +55,7 @@ EXPONENT	E[+-]?{DIGIT}+
 			}
 
 			BEGIN(INITIAL);
+			yylval->stringLiteral = new std::string(yytext);
 			return token::STRING_LITERAL;
 		}
 	\n	{ /* Count line endings */
@@ -79,6 +81,7 @@ EXPONENT	E[+-]?{DIGIT}+
 				yyin->seekg(s_scannerReturnPosition);
 				yylineno = s_scannerReturnLine;
 				BEGIN(INITIAL);
+				yylval->stringLiteral = new std::string(yytext);
 				return token::STRING_LITERAL;
 			}
 
@@ -166,9 +169,13 @@ EXPONENT	E[+-]?{DIGIT}+
 {DIGIT}+((\.{DIGIT}+{EXPONENT})|(\.{DIGIT}+)|{EXPONENT}) { return token::REAL_CONST; }
 {DIGIT}+ { return token::INT_CONST; }
 
-([a-zA-Z]+[0-9a-zA-Z]*) { return token::IDENTIFIER; }
+([a-zA-Z]+[0-9a-zA-Z]*) { 
+				yylval->identifier = new std::string(yytext);
+				return token::IDENTIFIER;
+			}
 ([0-9]+[a-zA-Z0-9]*) 	{ 
 				getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno));
+				yylval->identifier = new std::string(yytext);
 				return token::IDENTIFIER; 
 			}
 

@@ -1,5 +1,6 @@
 #include <vector>
 #include "MockScanner.h"
+#include "../src/Parser.hpp"
 #include "../src/pal.tab.hpp"
 
 using namespace std;
@@ -15,6 +16,29 @@ namespace Meow
 	{
 		m_tokens = tokenStream;
 		m_tokenIterator = m_tokens.begin();
+	}
+
+	//--------------------------------------------------------------------------------
+	// MockScanner::yylex(yylval)
+	//--------------------------------------------------------------------------------
+	// So parser doesn't explode, provide dummy strings in yylval when necessary
+	//--------------------------------------------------------------------------------
+	int MockScanner::yylex(PalParser::semantic_type * lval)
+	{
+		int token = yylex();
+
+		switch (token)
+		{
+			case token::IDENTIFIER:
+				lval->identifier = new std::string("dummyid");
+				break;
+
+			case token::STRING_LITERAL:
+				lval->stringLiteral = new std::string("dummystring");
+				break;
+		}
+
+		return token;
 	}
 
 	//--------------------------------------------------------------------------------

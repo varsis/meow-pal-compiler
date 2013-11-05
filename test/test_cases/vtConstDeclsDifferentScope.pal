@@ -1,0 +1,12 @@
+program test(input, output);
+const
+        num = 42;
+
+procedure foo();
+const
+        num = 'fortytwo';
+begin
+end;
+
+begin
+end.

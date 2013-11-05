@@ -6,6 +6,9 @@
 
 namespace Meow
 {
+	typedef PalParser::token token;
+	typedef PalParser::token_type token_type;
+
 	class MockScanner : public PalScanner
 	{
 		public:
@@ -17,6 +20,7 @@ namespace Meow
 
 			void setTokens(std::vector<PalParser::token_type> tokenStream);
 
+			virtual int yylex(PalParser::semantic_type * lval);
 			virtual int yylex();
 
 		private:

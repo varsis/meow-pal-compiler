@@ -5,6 +5,7 @@
 %define parser_class_name "PalParser"
 %parse-param { Meow::PalScanner &scanner }
 %parse-param { Meow::ErrorManager &errorManager }
+%parse-param { Meow::SymbolTable &table }
 %lex-param   { Meow::PalScanner &scanner }
 
 %debug
@@ -17,6 +18,7 @@
 	{
 		class PalScanner;
 		class ErrorManager;
+		class SymbolTable;
 	}
 }
 
@@ -26,6 +28,7 @@
 	#include "ErrorManager.hpp"
 	#include "Error.hpp"
  	#include "ErrorCodes.hpp"
+ 	#include "SymbolTable.hpp"
 
 	#define YYDEBUG 1
 
@@ -123,22 +126,87 @@ const_decl_list         : const_decl
                         ;
 
 const_decl              : IDENTIFIER EQ type_expr
+                        {
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, ConstantSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+                        }
 			| IDENTIFIER EQ STRING_LITERAL
+                        {
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, ConstantSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+                        }
 			| IDENTIFIER EQ REAL_CONST
+                        {
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, ConstantSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+                        }
                         | IDENTIFIER ASSIGN type_expr
-                        { errorManager.addError(
-                                new Error(InvalidConstDecl,
-                                          "Use \"=\" to assign constants.",
-                                          scanner.lineno()));
+                        {       
+                                errorManager.addError(
+                                    new Error(InvalidConstDecl,
+                                              "Use \"=\" to assign constants.",
+                                              scanner.lineno()));
+
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, ConstantSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
                         }
                         | IDENTIFIER error
-                        { errorManager.addError(
-                                new Error(InvalidConstDecl,
+                        {
+                                errorManager.addError(
+                                    new Error(InvalidConstDecl,
                                           "Invalid constant declaration.",
                                           scanner.lineno()));
                         }
                         | error { ; }
-						;
+			;
 
 /********************************************************************************
  * Rules for type declarations...

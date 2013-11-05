@@ -18,9 +18,9 @@ namespace Meow
 		public:
 			SymbolTable();
 			~SymbolTable();
-			void addSymbol(Symbol *);
-			Symbol* getSymbolCurLevel(std::string);
-			Symbol* getSymbol(std::string);
+			void addSymbol(Symbol * symbol);
+			Symbol* getSymbolCurLevel(std::string name);
+			Symbol* getSymbol(std::string name);
 			int getCurLevel();
 			void incLevel();
 			void decLevel();

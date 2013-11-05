@@ -5,6 +5,7 @@ namespace Meow
 {
 	enum ErrorCode
 	{
+		// Syntax errors
 		OtherError,
 		SyntaxError,
 		UnclosedComment,
@@ -30,7 +31,10 @@ namespace Meow
 		InvalidRecordDecl,
 		InvalidEnumDecl,
 		InvalidStatement,
-		MultiLineString
+		MultiLineString,
+
+		// Semantic errors
+		IdentifierInUse
 	};
 }
 

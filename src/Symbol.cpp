@@ -4,29 +4,23 @@
 namespace Meow
 {
 	Symbol::Symbol()
+		: m_lexicalLevel(-1)
+		, m_sizeInMem(-1)
+		, m_location(-1)
+		, m_declLineno(-1)
+		, m_initialized(false)
 	{
-		m_name = "";
-		m_symbolType = "";
-		m_type = "";
-		m_lexicalLevel = -1;
-		m_sizeInMem = -1;
-		m_location = -1;
-		m_returnType = "";
-		m_declLineno = -1;
-		m_initialized = false;
 	}
 
-	Symbol::Symbol(std::string name, std::string symbolType)
+	Symbol::Symbol(std::string name, SymbolType type)
+		: m_name(name)
+		, m_symbolType(type)
+		, m_lexicalLevel(-1)
+		, m_sizeInMem(-1)
+		, m_location(-1)
+		, m_declLineno(-1)
+		, m_initialized(false)
 	{
-		m_name = name;
-		m_symbolType = symbolType;
-		m_type = "";
-		m_lexicalLevel = -1;
-		m_sizeInMem = -1;
-		m_location = -1;
-		m_returnType = "";
-		m_declLineno = -1;
-		m_initialized = false;
 	}
 		
 	void Symbol::setName(std::string name)
@@ -34,7 +28,7 @@ namespace Meow
 		m_name = name;
 	}
 
-	void Symbol::setSymbolType(std::string type)
+	void Symbol::setSymbolType(SymbolType type)
 	{
 		m_symbolType = type;
 	}
@@ -79,7 +73,7 @@ namespace Meow
 		return m_name;
 	}
 
-	std::string Symbol::getSymbolType()
+	SymbolType Symbol::getSymbolType()
 	{
 		return m_symbolType;
 	}

@@ -3,6 +3,7 @@
 #include "Parser.hpp"
 #include "Scanner.hpp"
 #include "ErrorManager.hpp"
+#include "SymbolTable.hpp"
 #include "pal.tab.hpp"
 
 namespace Meow
@@ -22,8 +23,9 @@ namespace Meow
 	{
 		int retval;
 		PalScanner scanner(fileStream, m_errorManager);
+		SymbolTable symbolTable;
 
-		PalParser parser(scanner, *m_errorManager);
+		PalParser parser(scanner, *m_errorManager, symbolTable);
 
 		if(m_debugFlag)
 		{

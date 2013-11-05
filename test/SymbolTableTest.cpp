@@ -16,7 +16,7 @@ namespace Meow
 		Symbol * symbol = new Symbol();
 
 		symbol->setName("i");
-		symbol->setSymbolType("variable");
+		symbol->setSymbolType(VariableSymbol);
 		
 		table.addSymbol(symbol);
 
@@ -32,7 +32,7 @@ namespace Meow
 		Symbol * symbol = new Symbol();
 	
 		symbol->setName("x");
-		symbol->setSymbolType("variable");
+		symbol->setSymbolType(VariableSymbol);
 
 		table.addSymbol(symbol);
 		symbol = NULL;
@@ -41,7 +41,7 @@ namespace Meow
 		table.incLevel();
 		
 		symbol = table.getSymbol("x");
-		EXPECT_EQ(symbol->getSymbolType(), "variable");
+		EXPECT_EQ(symbol->getSymbolType(), VariableSymbol);
 	}
 
 	TEST(SymbolTableTest, scopeChangeTest1)
@@ -50,7 +50,7 @@ namespace Meow
 		Symbol * symbol = new Symbol();
 		
 		symbol->setName("myVar");
-		symbol->setSymbolType("variable");
+		symbol->setSymbolType(VariableSymbol);
 
 		table.addSymbol(symbol);
 
@@ -58,28 +58,28 @@ namespace Meow
 		table.incLevel();
 		symbol = new Symbol();
 		symbol->setName("myVar");
-		symbol->setSymbolType("function");
+		symbol->setSymbolType(ProcedureSymbol);
 
 		table.addSymbol(symbol);
 		symbol = NULL;
 
 		symbol = table.getSymbol("myVar");
-		EXPECT_EQ(symbol->getSymbolType(), "function");
+		EXPECT_EQ(symbol->getSymbolType(), ProcedureSymbol);
 		table.decLevel();
 		symbol = table.getSymbol("myVar");
-		EXPECT_EQ(symbol->getSymbolType(), "variable");
+		EXPECT_EQ(symbol->getSymbolType(), VariableSymbol);
 	}
 
 	TEST(SymbolTableTest, scopeChangeTest2)
 	{
 		SymbolTable table;
-		Symbol * symbol = new Symbol("myFunc", "function");
+		Symbol * symbol = new Symbol("myFunc", ProcedureSymbol);
 
 		table.addSymbol(symbol);
 
 		table.incLevel();
 		
-		symbol = new Symbol("myFunc", "function");
+		symbol = new Symbol("myFunc", ProcedureSymbol);
 
 		table.addSymbol(symbol);
 
@@ -102,7 +102,7 @@ namespace Meow
 
 		EXPECT_EQ(symbol, (Symbol *) NULL);
 
-		symbol = new Symbol("myVar", "var");
+		symbol = new Symbol("myVar", VariableSymbol);
 		table.addSymbol(symbol);
 		table.incLevel();
 		symbol = table.getSymbolCurLevel("myVar");
@@ -113,24 +113,24 @@ namespace Meow
 	TEST(SymbolTableTest, symbolRedef)
 	{
 		SymbolTable table;
-		Symbol * symbol = new Symbol("myVar", "var");
+		Symbol * symbol = new Symbol("myVar", VariableSymbol);
 
 		table.addSymbol(symbol);
 		table.incLevel();
 
-		symbol = new Symbol("myVar", "function");
+		symbol = new Symbol("myVar", ProcedureSymbol);
 		table.addSymbol(symbol);
 		
-		symbol = new Symbol("myVar", "function");
+		symbol = new Symbol("myVar", ProcedureSymbol);
 		table.addSymbol(symbol);
 		symbol = table.getSymbol("myVar");
 		
-		EXPECT_EQ(symbol->getSymbolType(), "function");
+		EXPECT_EQ(symbol->getSymbolType(), ProcedureSymbol);
 		
 		table.decLevel();
 		symbol = table.getSymbol("myVar");
 		
-		EXPECT_EQ(symbol->getSymbolType(), "var");
+		EXPECT_EQ(symbol->getSymbolType(), VariableSymbol);
 	}
 		
 
