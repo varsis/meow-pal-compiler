@@ -35,7 +35,8 @@ namespace Meow
 
 		// Semantic errors
 		IdentifierInUse,
-		IdentifierUseBeforeDecl
+		IdentifierUseBeforeDecl,
+		InvalidExitContinue
 	};
 }
 

@@ -36,6 +36,9 @@
 	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);
 	void print_error(const std::string msg);
 	void print_value(bool value);
+
+	// Global counter for determining whether continue/exit are valid
+	int g_whileCounter;
 }
 
 %union {
@@ -574,6 +577,9 @@ parm                    : expr
 struct_stat             : IF expr THEN matched_stat ELSE stat
                         | IF expr THEN stat
                         | WHILE expr DO stat
+			{
+				g_whileCounter--;
+			}
                         | CONTINUE
                         | EXIT
                         ;
@@ -581,6 +587,9 @@ struct_stat             : IF expr THEN matched_stat ELSE stat
 matched_stat            : simple_stat
                         | IF expr THEN matched_stat ELSE matched_stat
                         | WHILE expr DO matched_stat
+			{
+				g_whileCounter--;
+			}
                         | CONTINUE
                         | EXIT
 			| /* empty */
