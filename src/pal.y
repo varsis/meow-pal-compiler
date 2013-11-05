@@ -220,12 +220,44 @@ type_decl_list          : type_decl
                         ;
 
 type_decl               : IDENTIFIER EQ type
+			{
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, TypeSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+			}
                         | IDENTIFIER ASSIGN type
                         { errorManager.addError(
                                 new Error(InvalidTypeDecl,
                                           "Use \"=\" for type definitions.",
                                           scanner.lineno()));
-                        }
+                        
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, TypeSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+
+			}
                         | error { ; }
                         ;
 
@@ -235,6 +267,9 @@ type                    : simple_type
                         ;
 
 simple_type             : IDENTIFIER
+			{
+				//TODO Make sure that this has been declared somewhere
+			}
                         ;
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
@@ -248,7 +283,39 @@ enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
 			;
 
 enum_list		: IDENTIFIER
+			{
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, TypeSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+			}
                         | enum_list COMMA IDENTIFIER
+			{
+				Symbol* sym = table.getSymbolCurLevel(*$3);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$3, TypeSymbol);
+
+                                delete $3;
+
+				table.addSymbol(sym);
+			}
                         ;
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
@@ -279,7 +346,13 @@ field_list              : field
                         ;
 
 field                   : IDENTIFIER COLON type
+			{
+				//TODO Make sure that this hasn't been declared in the RECORD before
+			}
 			| IDENTIFIER COMMA field
+			{
+				//TODO Make sure that this hasn't been declared in the RECORD before
+			}
 			| IDENTIFIER error
 			{
                             errorManager.addError(
@@ -301,17 +374,81 @@ var_decl_list           : var_decl
                         ;
 
 var_decl                : IDENTIFIER COLON type
+			{
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, TypeSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+			}
                         | IDENTIFIER COMMA var_decl
-                        | IDENTIFIER ASSIGN type
                         {
-                            errorManager.addError(
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, TypeSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+			}
+			| IDENTIFIER ASSIGN type
+                        {
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, TypeSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+				errorManager.addError(
                                 new Error(InvalidVarDecl,
                                           "Use \":\" to declare variables.",
                                           scanner.lineno()));
                         }
                         | IDENTIFIER error
                         {
-                            errorManager.addError(
+				Symbol* sym = table.getSymbolCurLevel(*$1);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$1, TypeSymbol);
+
+                                delete $1;
+
+				table.addSymbol(sym);
+				errorManager.addError(
+                                new Error(InvalidVarDecl,
+                                          "Use \":\" to declare variables.",
+                                          scanner.lineno()));
+              			errorManager.addError(
                                 new Error(InvalidVarDecl,
                                           "Invalid variable declaration.",
                                           scanner.lineno()));
