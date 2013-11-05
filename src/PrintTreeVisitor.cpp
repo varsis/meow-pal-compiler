@@ -13,7 +13,7 @@ namespace Meow
 	// Indents according to the depth of the node in the tree
 	void PrintTreeVisitor::addIndent()
 	{
-		for (unsigned int i = 0; i < m_level; ++i)
+		for (unsigned int i = 0; i < m_treeLevel; ++i)
 		{
 			cout << "  ";
 		}

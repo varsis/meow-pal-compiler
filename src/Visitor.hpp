@@ -66,8 +66,8 @@ namespace Meow
 	{
 		public:
 
-			void increaseLevel();
-			void decreaseLevel();
+			virtual void pushNode(const ASTNode* prog);
+			virtual void popNode(const ASTNode* prog);
 
 			virtual void visit(const ASTNode* prog) = 0;
 			virtual void visit(const Program* prog) = 0;
@@ -137,7 +137,7 @@ namespace Meow
 			// Add more as we add more node types
 
 		protected:
-			unsigned int m_level;
+			unsigned int m_treeLevel;
 	};
 }
 

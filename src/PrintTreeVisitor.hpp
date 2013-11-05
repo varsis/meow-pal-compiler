@@ -11,7 +11,7 @@ namespace Meow
 
 			PrintTreeVisitor();
 
-			virtual void visit(const ASTNode* prog);
+			virtual void visit(const ASTNode* node);
 			virtual void visit(const Program* prog);
 			virtual void visit(const Declarations* decls);
 			virtual void visit(const ConstantDeclaration* constantDecl);

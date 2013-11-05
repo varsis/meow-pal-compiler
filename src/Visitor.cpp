@@ -2,13 +2,13 @@
 
 namespace Meow
 {
-	void Visitor::increaseLevel()
+	void Visitor::pushNode(const ASTNode* node)
 	{
-		m_level++;
+		m_treeLevel++;
 	}
 
-	void Visitor::decreaseLevel()
+	void Visitor::popNode(const ASTNode* node)
 	{
-		m_level++;
+		m_treeLevel++;
 	}
 }

@@ -9,16 +9,16 @@ namespace Meow
 
 	void ASTNode::acceptPreOrder(Visitor* visitor)
 	{
-		visitor->increaseLevel();
+		visitor->pushNode(this);
 		acceptPreOrderInternal(visitor);
-		visitor->decreaseLevel();
+		visitor->popNode(this);
 	}
 
 	void ASTNode::acceptPostOrder(Visitor* visitor)
 	{
-		visitor->increaseLevel();
+		visitor->pushNode(this);
 		acceptPostOrderInternal(visitor);
-		visitor->decreaseLevel();
+		visitor->pushNode(this);
 	}
 
 	unsigned int ASTNode::getLineNumber() const
