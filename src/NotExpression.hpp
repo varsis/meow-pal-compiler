@@ -12,9 +12,10 @@ namespace Meow
 	class NotExpression : public Expression
 	{
 		public:
-		NotExpression(Expression* operand);
+			NotExpression(Expression* operand); 
 
-		virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		protected: 
 			Expression* m_operand;

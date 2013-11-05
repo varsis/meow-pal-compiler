@@ -20,7 +20,8 @@ namespace Meow
 
 			~VariableDeclaration();
 		
-			void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 			void addIdentifier(Identifier* id);
 

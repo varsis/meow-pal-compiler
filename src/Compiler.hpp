@@ -18,6 +18,7 @@ namespace Meow
 		private:
 			void getArguments(int argc, char* argv[]);
 			void displayUsage();
+			void printAST();
 			void printProgramListing();
 			void printErrors();
 			void removeAscOutput();
@@ -30,6 +31,7 @@ namespace Meow
 			bool m_programListing;
 			bool m_runtimeArrayBoundChecking;
 			bool m_debug;
+			bool m_printTree;
 	};
 }
 

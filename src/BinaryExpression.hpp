@@ -13,7 +13,8 @@ namespace Meow
 	{
 		public:
 			BinaryExpression(Expression* left, Expression* right);
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		protected: 
 			Expression* m_left;

@@ -20,14 +20,13 @@ namespace Meow
 						Identifier* identifer,
 						Expression* expression);
 
-			void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
-			const Type* getType() const;
 			const Identifier* getIdentifier() const;
 			const Expression* getExpression() const;
 		
 		private:
-			Type* m_type; // ???
 			Identifier* m_identifier;
 			Expression* m_expression;
 	};

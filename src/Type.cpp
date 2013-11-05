@@ -1,9 +1,8 @@
 #include "Type.hpp"
+#include "Visitor.hpp"
+#include "Identifier.hpp"
+#include "Expression.hpp"
 
-// Forward Declarations
 namespace Meow
 {
-	void Type::accept(Visitor* visitor)
-	{
-	}
 }

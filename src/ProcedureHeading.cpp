@@ -1,4 +1,7 @@
 #include "ProcedureHeading.hpp"
+#include "Visitor.hpp"
+#include "Identifier.hpp"
+#include "ParameterList.hpp"
 
 namespace Meow
 {
@@ -7,15 +10,26 @@ namespace Meow
 			 Identifier* identifier,
 			 ParameterList* params,
 			 Identifier* type)
-	: m_identifier(identifier)
-	, m_parameters(params)
-	, m_type(type)
+		: m_identifier(identifier)
+		, m_parameters(params)
+		, m_type(type)
 	{
 	}
 	
-	void ProcedureHeading::accept(Visitor* visitor)
+	void ProcedureHeading::acceptPreOrder(Visitor* visitor)
 	{
-		
+		visitor->visit(this);
+		m_identifier->acceptPreOrder(visitor);
+		m_type->acceptPreOrder(visitor);
+		m_parameters->acceptPreOrder(visitor);
+	}
+
+	void ProcedureHeading::acceptPostOrder(Visitor* visitor)
+	{
+		m_identifier->acceptPostOrder(visitor);
+		m_type->acceptPostOrder(visitor);
+		m_parameters->acceptPostOrder(visitor);
+		visitor->visit(this);
 	}
 	
 	const Identifier* ProcedureHeading::getIdentifier() const

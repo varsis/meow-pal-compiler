@@ -5,6 +5,8 @@
 
 #include "Compiler.hpp"
 #include "Parser.hpp"
+#include "Program.hpp"
+#include "PrintTreeVisitor.hpp"
 
 using namespace Meow;
 
@@ -13,7 +15,8 @@ Compiler::Compiler()
 	  m_leaveASC(false),
 	  m_programListing(true), 
 	  m_runtimeArrayBoundChecking(true),
-	  m_debug(false)
+	  m_debug(false),
+	  m_printTree(false)
 {
 }
 
@@ -28,13 +31,14 @@ void Compiler::displayUsage()
 	std::cout << "\t-n : Do not produce a program listing. Default is" 
 		  << "to produce one.\n";
 	std::cout << "\t-d : Enable bison debug mode.\n";
+	std::cout << "\t-t : Print abstract syntax tree.\n";
 	std::cout << std::endl;
 }
 
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
-	const char* optString = "nd";
+	const char* optString = "ndt";
 	
 	if (argc == 1)
 	{
@@ -53,6 +57,9 @@ void Compiler::getArguments(int argc, char* argv[])
 				break;
 			case 'd':
 				m_debug = true;
+				break;
+			case 't':
+				m_printTree = true;
 				break;
 			default:
 				std::cerr << "\n* Unrecognized option: -" 
@@ -91,6 +98,14 @@ void Compiler::printErrors()
 		std::cout << "pal: *** " << m_inputFileName 
 		<< " has " << errors->size() << " errors.\n";
 	}
+}
+
+void Compiler::printAST()
+{
+	ParseResult* result = m_parser.getParseResult();
+	PrintTreeVisitor visitor;
+	// TODO maybe think of a more elegant way of initiating this...
+	result->program->acceptPreOrder(&visitor);
 }
 
 void Compiler::printProgramListing()
@@ -165,6 +180,11 @@ int Compiler::run(int argc, char* argv[])
 	m_parser.setDebugFlag(m_debug);
 
 	parseResult = m_parser.parseFile(m_inputFileName);
+
+	if (m_printTree)
+	{
+		printAST();
+	}
 
 	if (m_programListing)
 	{

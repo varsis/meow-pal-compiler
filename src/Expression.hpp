@@ -2,6 +2,7 @@
 #define EXPRESSION_H
 
 #include <string>
+#include "ASTNode.hpp"
 
 namespace Meow
 {
@@ -12,20 +13,11 @@ namespace Meow
 	class RealConstant;
 	class LValue;
 
-	class Expression
+	class Expression : public ASTNode
 	{
 		public:
-			Expression();
-
-			// FIXME this probably should be left abstract...
-			// make new subclass for literals?
-
-			Expression(StringLiteral* literal);
-			Expression(IntegerConstant* constant);
-			Expression(RealConstant* constant);
-			Expression(LValue* value);
-
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor) = 0;
+			virtual void acceptPostOrder(Visitor* visitor) = 0;
 	};
 }
 

@@ -8,15 +8,15 @@
 
 namespace Meow
 {
-	// Forward Declarations
-	//class Visitor;
+	class Visitor;
 
 	class RealConstant : public Constant
 	{
 		public:
 			RealConstant(int lineNumber, double value);
 
-			//virtual void accept(Visitor visitor);
+		private:
+			double m_value;
 	};
 }
 

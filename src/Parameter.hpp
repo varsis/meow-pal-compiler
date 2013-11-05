@@ -17,7 +17,8 @@ namespace Meow
 			Identifier* getName();
 			Identifier* getType();
 
-			void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 		
 		private:
 			Identifier* m_name;

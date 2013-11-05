@@ -17,7 +17,8 @@ namespace Meow
 		public:
 			ProcedureInvocation(Identifier* procId, Arguments* a);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private: 
 			Identifier* m_procedureId;

@@ -11,29 +11,21 @@ namespace Meow
 	class Declarations;
 	class CompoundStatement;
 
-	class Program : ASTNode
+	class Program : public ASTNode
 	{
 		public:
 			Program(Declarations* declarations, CompoundStatement* statements);
 
 			~Program();
 			
-			void accept(Visitor* visitor);
-			
-			/*
-			const ConstantDeclarationList getConstantDeclarationList() const;
-			const TypeDeclarationList getTypeDeclarationList() const;
-			const ProcedureDeclarationList getProcedureDeclarationList() const;
-			*/
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
+
 			const CompoundStatement* getStatements() const;
 			const Declarations* getDeclarations() const;
 		
 		private:
-			/*
-			ConstantDeclarationList constantDeclarationList;
-			TypeDeclarationList typeDeclarationList;
-			ProcedureDeclarationList procedureDeclarationList;
-			*/
+
 			Declarations* m_declarations;
 			CompoundStatement* m_statements;
 	};

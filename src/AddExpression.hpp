@@ -13,8 +13,6 @@ namespace Meow
 	{
 		public:
 			AddExpression(Expression* left, Expression* right);
-
-			virtual void accept(Visitor* visitor);
 	};
 }
 #endif

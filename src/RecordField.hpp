@@ -15,9 +15,10 @@ namespace Meow
 	class RecordField : public LValue // TODO better names?
 	{
 		public:
-		RecordField(int lineNumber, LValue* record, Identifier* field);
+			RecordField(int lineNumber, LValue* record, Identifier* field);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private: 
 			LValue* m_record;

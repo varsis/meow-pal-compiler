@@ -9,7 +9,7 @@ namespace Meow
 {
 	class Type; 
 
-	class Declarations : ASTNode
+	class Declarations : public ASTNode
 	{
 		public:
 			Declarations(ConstantDeclarationList* constDeclList,
@@ -18,8 +18,9 @@ namespace Meow
 				ProcedureDeclarationList* procedureDeclList);
 
 			~Declarations();
-			
-			void accept(Visitor* visitor);
+
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 			
 			const ConstantDeclarationList* getConstantDeclarationList() const;
 

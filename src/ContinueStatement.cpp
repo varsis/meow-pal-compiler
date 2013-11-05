@@ -1,10 +1,16 @@
 #include "ContinueStatement.hpp"
+#include "Visitor.hpp"
 
 namespace Meow
 {
-	
-	void ContinueStatement::accept(Visitor* visitor)
+	void ContinueStatement::acceptPreOrder(Visitor* visitor)
 	{
+		visitor->visit(this);
+	}
+
+	void ContinueStatement::acceptPostOrder(Visitor* visitor)
+	{
+		visitor->visit(this);
 	}
 }
 

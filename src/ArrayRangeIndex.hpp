@@ -16,7 +16,8 @@ namespace Meow
 		public:
 			ArrayRangeIndex(Expression* start, Expression* end);
 
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private:
 			Expression* m_start;

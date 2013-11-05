@@ -1,6 +1,7 @@
 #include "Program.hpp"
 #include "Declarations.hpp"
 #include "CompoundStatement.hpp"
+#include "ASTListTypes.hpp"
 
 namespace Meow
 {
@@ -10,11 +11,17 @@ namespace Meow
 	{
 	}
 
-	void Program::accept(Visitor* visitor)
+	void Program::acceptPreOrder(Visitor* visitor)
 	{
-		//m_declarations->accept(visitor);
-		//m_statements->accept(visitor);
-		
+		visitor->visit(this);
+		m_declarations->acceptPreOrder(visitor);
+		m_statements->acceptPreOrder(visitor);
+	}
+
+	void Program::acceptPostOrder(Visitor* visitor)
+	{
+		m_declarations->acceptPostOrder(visitor);
+		m_statements->acceptPostOrder(visitor);
 		visitor->visit(this);
 	}
 

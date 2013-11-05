@@ -7,7 +7,6 @@
 
 namespace Meow
 {
-	// Forward Declarations
 	class Visitor;
 	class Identifier;
 	class Type;
@@ -17,8 +16,8 @@ namespace Meow
 		public:
 			Variable(int lineNumber, Identifier* id);
 
-
-			virtual void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 		private: 
 			Identifier* m_identifier;

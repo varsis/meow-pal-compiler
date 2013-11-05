@@ -2,8 +2,4 @@
 
 namespace Meow
 {
-	
-	void ArrayIndex::accept(Visitor* visitor)
-	{
-	}
 }

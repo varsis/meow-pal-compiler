@@ -20,7 +20,8 @@ namespace Meow
 					     Declarations* procedureDeclarations,
 					     CompoundStatement* statements);
 		
-			void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 
 			const ProcedureHeading* getHeading() const;
 

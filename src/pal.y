@@ -230,11 +230,11 @@ const_decl              : IDENTIFIER EQ type_expr
                         }
 			| IDENTIFIER EQ STRING_LITERAL
                         {
-                            $$ = new ConstantDeclaration(scanner.lineno(), $1, new Expression($3));
+                            $$ = new ConstantDeclaration(scanner.lineno(), $1, new ConstantExpression($3));
                         }
 			| IDENTIFIER EQ REAL_CONST
                         {
-                            $$ = new ConstantDeclaration(scanner.lineno(), $1, new Expression($3));
+                            $$ = new ConstantDeclaration(scanner.lineno(), $1, new ConstantExpression($3));
                         }
                         | IDENTIFIER ASSIGN type_expr
                         { errorManager.addError(
@@ -625,7 +625,7 @@ var                     : IDENTIFIER
                         {
                             $$ = new RecordField(scanner.lineno(), $1, $3);
                         }
-/* NOTE: i don't think a[1,2] is actually valid for 2d array access... need to do a[1][2], right?
+/* TODO: i don't think a[1,2] is actually valid for 2d array access... need to do a[1][2], right?
 */
                         | var LEFT_BRACKET expr RIGHT_BRACKET
                         {
@@ -788,7 +788,7 @@ type_term               : type_factor
 
 type_factor             : var
                         {
-                            $$ = new Expression($1);
+                            $$ = new SimpleExpression($1);
                         }
                         | LEFT_PAREN type_expr RIGHT_PAREN
                         {
@@ -796,7 +796,7 @@ type_factor             : var
                         }
                         | INT_CONST 
                         {
-                            $$ = new Expression($1);
+                            $$ = new ConstantExpression($1);
                         }
                         | NOT type_factor
                         {
@@ -880,12 +880,11 @@ term                    : factor
 
 factor                  : var
                         {
-                            $$ = new Expression($1);
+                            $$ = new SimpleExpression($1);
                         }
                         | unsigned_const
                         {
-                            // FIXME ...
-                            //$$ = new Expression($1);
+                            $$ = new ConstantExpression($1);
                         }
                         | LEFT_PAREN expr RIGHT_PAREN
                         {

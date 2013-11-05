@@ -14,7 +14,8 @@ namespace Meow
 		public:
 			Identifier(int lineNumber, const char* identifierName);
 		
-			void accept(Visitor* visitor);
+			virtual void acceptPreOrder(Visitor* visitor);
+			virtual void acceptPostOrder(Visitor* visitor);
 			
 			std::string toString() const;
 		

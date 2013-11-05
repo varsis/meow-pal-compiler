@@ -12,7 +12,6 @@ namespace Meow
 	{
 		public:
 			StringLiteral(int lineNumber, char* value);
-
 			std::string getValue();
 
 		private:
