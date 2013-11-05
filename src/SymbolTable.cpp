@@ -5,12 +5,10 @@
 namespace Meow
 {
 	SymbolTable::SymbolTable()
-		: m_booleanType("boolean")
-		, m_integerType("integer")
-		, m_realType("real")
-		, m_charType("char")
 	{
 		m_currentLevel = 0;
+
+		// TODO - add raw predefined types to table
 	}
 
 	SymbolTable::~SymbolTable()
@@ -98,25 +96,70 @@ namespace Meow
 		return m_currentLevel;
 	}
 
-	TypeSymbol* SymbolTable::getOpResultType(Operator op, TypeSymbol* type)
+	// unary operators
+	Type* SymbolTable::getOpResultType(Operator op, Type* type)
 	{
-		return getOpResultType(op, type, NULL);
+		switch (op)
+		{
+			case OpPLUS:
+				if (type == getRawRealType() || type == getRawIntegerType())
+				{
+					return type;
+				}
+				break;
+
+			case OpMINUS:
+				if (type == getRawRealType() || type == getRawIntegerType())
+				{
+					return type;
+				}
+				break;
+
+			case OpNOT:
+				// TODO eg how to treat type newBool = boolean;
+				// can we treat newBool like predefined boolean as long as we don't mix the types?
+				if (type == getRawBooleanType())
+				{
+					return type;
+				}
+
+				break;
+
+			default:
+				break;
+		}
+
+		return NULL;
 	}
 
-	TypeSymbol* SymbolTable::getOpResultType(Operator op, TypeSymbol* leftType, TypeSymbol* rightType)
+	Type* SymbolTable::getOpResultType(Operator op, Type* leftType, Type* rightType)
 	{
 
 		// TODO what ops do record types support? anything?
 
 		switch (op)
 		{
-			// TODO treat unary plus differently than binary plus?
+			// comparison ops
+			case OpEQ:
+			case OpNE:
+			case OpLE:
+			case OpLT:
+			case OpGE:
+			case OpGT:
+				if (checkCompatible(leftType, rightType))
+				{
+					return getRawBooleanType();
+				}
+				break;
 
+			// arithmetic ops
+
+			// TODO can't you collapse ADD/SUB/MULT together?
 			case OpADD:
 				if (checkCompatible(leftType, rightType))
 				{
 					// TODO eg how to treat type newInt = integer;
-					// can we add newInts together? would need TypeSymbol to define getRawType()
+					// can we add newInts together? would need Type to define getRawType()
 					// so we know if addition is valid or not
 
 					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
@@ -201,27 +244,17 @@ namespace Meow
 				}
 				break;
 
-			case OpEQ:
+			// logical ops
+			case OpOR:
+			case OpAND:
 				if (checkCompatible(leftType, rightType))
 				{
-					return getRawBooleanType(); // the predefined 'boolean' type
+					if (leftType == getRawBooleanType() && rightType == getRawBooleanType())
+					{
+						return getRawBooleanType();
+					}
 				}
 				break;
-
-				// TODO for <, >, etc
-
-			case OpNOT:
-
-				// TODO eg how to treat type newBool = boolean;
-				// can we treat newBool like predefined boolean as long as we don't mix the types?
-				if (leftType == getRawBooleanType())
-				{
-					return leftType;
-				}
-
-				break;
-
-				// TODO for AND, OR
 
 			default:
 				break;
@@ -232,7 +265,7 @@ namespace Meow
 		return NULL;
 	}
 
-	bool SymbolTable::checkCompatible(TypeSymbol* ltype, TypeSymbol* rtype)
+	bool SymbolTable::checkCompatible(Type* ltype, Type* rtype)
 	{
 		// see section on types in pal reference
 
@@ -262,7 +295,7 @@ namespace Meow
 		return false;
 	}
 
-	bool SymbolTable::checkAssignmentCompatible(TypeSymbol* ltype, TypeSymbol* rtype)
+	bool SymbolTable::checkAssignmentCompatible(Type* ltype, Type* rtype)
 	{
 		// TODO see section on types in pal reference
 		return false;

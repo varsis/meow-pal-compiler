@@ -28,7 +28,6 @@ void Compiler::displayUsage()
 	std::cout << "\t-n : Do not produce a program listing. Default is" 
 		  << "to produce one.\n";
 	std::cout << "\t-d : Enable bison debug mode.\n";
-	std::cout << "\t-t : Print abstract syntax tree.\n";
 	std::cout << std::endl;
 }
 

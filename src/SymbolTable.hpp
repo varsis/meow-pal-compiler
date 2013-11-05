@@ -17,6 +17,9 @@ namespace Meow
 		OpGE,
 		OpGT,
 
+		OpPLUS,
+		OpMINUS,
+
 		OpADD,
 		OpSUBTRACT,
 		OpMULTIPLY,
@@ -25,8 +28,8 @@ namespace Meow
 		OpMOD,
 
 		OpNOT,
-
-			// etc..
+		OpAND,
+		OpOR
 	};
 
 	class SymbolTable
@@ -45,24 +48,23 @@ namespace Meow
 			void incLevel();
 			void decLevel();
 
-			TypeSymbol* getOpResultType(Operator op, TypeSymbol* type);
-			TypeSymbol* getOpResultType(Operator op, TypeSymbol* leftType, TypeSymbol* rightType);
+			Type* getOpResultType(Operator op, Type* type);
+			Type* getOpResultType(Operator op, Type* leftType, Type* rightType);
 
-			bool checkCompatible(TypeSymbol* ltype, TypeSymbol* rtype);
-			bool checkAssignmentCompatible(TypeSymbol* ltype, TypeSymbol* rtype);
+			bool checkCompatible(Type* ltype, Type* rtype);
+			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
 
-			TypeSymbol* getRawBooleanType() { return &m_booleanType; }
-			TypeSymbol* getRawIntegerType() { return &m_integerType; }
-			TypeSymbol* getRawRealType() { return &m_realType; }
-			TypeSymbol* getRawCharType() { return &m_charType; }
+			Type* getRawBooleanType() { return &m_booleanType; }
+			Type* getRawIntegerType() { return &m_integerType; }
+			Type* getRawRealType() { return &m_realType; }
+			Type* getRawCharType() { return &m_charType; }
 		private:
 
 			// Predefined raw types
-			TypeSymbol m_booleanType;
-			TypeSymbol m_integerType;
-			TypeSymbol m_realType;
-			TypeSymbol m_charType;
-			// TODO check for more?
+			Type m_booleanType;
+			Type m_integerType;
+			Type m_realType;
+			Type m_charType;
 	};
 }
 

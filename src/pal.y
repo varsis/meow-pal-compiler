@@ -19,7 +19,7 @@
 		class PalScanner;
 		class ErrorManager;
 		class SymbolTable;
-		class TypeSymbol;
+		class Type;
 	}
 }
 
@@ -43,10 +43,10 @@
 	std::string* identifier;
         std::string* stringLiteral;
 
-        TypeSymbol* typeSymbol;
+        Type* type;
 }
 
-%type <typeSymbol> simple_expr term factor unsigned_const unsigned_num
+%type <type> expr simple_expr term factor unsigned_const unsigned_num
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -141,7 +141,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, Symbol::Constant);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -158,7 +158,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, Symbol::Constant);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -175,7 +175,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, Symbol::Constant);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -197,7 +197,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, Symbol::Constant);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -510,41 +510,91 @@ type_factor             : var
 
 expr			: simple_expr
                         {
-                            // $$ = $1
+                            $$ = $1;
                         }
                         | expr EQ simple_expr
                         {
-                            // TODO need something in symbol table that takes type id's
-                            // and some kind of operation enum, checks the current type symbols
-                            // and returns resulting type id if compatible and null if not compatible
+                            Type* result = table.getOpResultType(OpEQ, $1, $3);
 
-                            // check $1.type, $3.type EQ compatible
-                            // $$.type = "boolean"
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         | expr NE simple_expr
                         {
-                            // check $1.type, $3.type NE compatible
-                            // $$.type = "boolean"
+                            Type* result = table.getOpResultType(OpNE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         | expr LE simple_expr
                         {
-                            // check $1.type, $3.type LE compatible
-                            // $$.type = "boolean"
+                            Type* result = table.getOpResultType(OpLE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         | expr LT simple_expr
                         {
-                            // check $1.type, $3.type LT compatible
-                            // $$.type = "boolean"
+                            Type* result = table.getOpResultType(OpLT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         | expr GE simple_expr
                         {
-                            // check $1.type, $3.type GE compatible
-                            // $$.type = "boolean"
+                            Type* result = table.getOpResultType(OpGE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         | expr GT simple_expr
                         {
-                            // check $1.type, $3.type GT compatible
-                            // $$.type = "boolean"
+                            Type* result = table.getOpResultType(OpGT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         ;
 
@@ -554,17 +604,35 @@ simple_expr             : term
                         }
                         | PLUS term
                         {
-                            // verify term is PLUS compatible
-                            // $$ = $2
+                            Type* result = table.getOpResultType(OpPLUS, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         | MINUS term
                         {
-                            // verify term is MINUS compatible
-                            // $$ = $2
+                            Type* result = table.getOpResultType(OpMINUS, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         | simple_expr PLUS term
                         {
-                            TypeSymbol* result = table.getOpResultType(OpADD, $1, $3);
+                            Type* result = table.getOpResultType(OpADD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -578,7 +646,7 @@ simple_expr             : term
                         }
                         | simple_expr MINUS term
                         {
-                            TypeSymbol* result = table.getOpResultType(OpSUBTRACT, $1, $3);
+                            Type* result = table.getOpResultType(OpSUBTRACT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -592,8 +660,17 @@ simple_expr             : term
                         }
                         | simple_expr OR term
                         {
-                            // verify $1.type and $3.type are OR compatible
-                            // $$.type = "boolean" ??
+                            Type* result = table.getOpResultType(OpOR, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'or'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         ;
 
@@ -603,7 +680,7 @@ term                    : factor
                         }
                         | term MULTIPLY factor
                         {
-                            TypeSymbol* result = table.getOpResultType(OpMULTIPLY, $1, $3);
+                            Type* result = table.getOpResultType(OpMULTIPLY, $1, $3);
 
                             if (result == NULL)
                             {
@@ -617,7 +694,7 @@ term                    : factor
                         }
                         | term REAL_DIVIDE factor
                         {
-                            TypeSymbol* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
+                            Type* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -631,7 +708,7 @@ term                    : factor
                         }
                         | term INT_DIVIDE factor
                         {
-                            TypeSymbol* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
+                            Type* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -645,7 +722,7 @@ term                    : factor
                         }
                         | term MOD factor
                         {
-                            TypeSymbol* result = table.getOpResultType(OpMOD, $1, $3);
+                            Type* result = table.getOpResultType(OpMOD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -659,10 +736,17 @@ term                    : factor
                         }
                         | term AND factor
                         {
-                            // get type of term
-                            // get type of factor
-                            // check that two types are AND compatible
-                            // $$.type = "boolean"
+                            Type* result = table.getOpResultType(OpAND, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'and'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         ;
 
@@ -684,8 +768,17 @@ factor                  : var
                         }
                         | NOT factor
                         {
-                            // verify $2.type is NOT compatible
-                            // $$ = $2 (unless NOT can change type...)
+                            Type* result = table.getOpResultType(OpNOT, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for not.",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
                         }
                         ;
 

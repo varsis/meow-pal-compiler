@@ -2,6 +2,7 @@
 #define SYMBOL_HPP
 
 #include <string>
+#include "Type.hpp"
 
 namespace Meow
 {
@@ -11,31 +12,33 @@ namespace Meow
 
 			enum SymbolType
 			{
-				Constant,
-				Type,
-				Variable,
-				Procedure
+				ConstantSymbol,
+				TypeSymbol,
+				VariableSymbol,
+				ProcedureSymbol
 			};
 
 			Symbol();
 			Symbol(std::string name, SymbolType type);
+
 			void setName(std::string name);
 			void setSymbolType(SymbolType type);
+			void setType(Type* type);
 			void setType(std::string type);
 			void setLexLevel(int);
 			void setSizeInMem(int);
 			void setLocation(int);
-			void setReturnType(std::string returnType);
+			void setReturnType(Type* returnType);
 			void setDeclLineno(int);
 			void setInitialized();
 
 			std::string getName();
 			SymbolType getSymbolType();
-			std::string getType();
+			Type* getType();
 			int getLexLevel();
 			int getSizeInMem();
 			int getLocation();
-			std::string getReturnType();
+			Type* getReturnType();
 			int getDeclLineno();
 			bool getInitialized();
 
@@ -43,36 +46,14 @@ namespace Meow
 			std::string m_name;
 			SymbolType m_symbolType;
 			int m_lexicalLevel;		
-			std::string m_type;
+			Type* m_type;
 			int m_sizeInMem;
 			int m_location;
-			std::string m_returnType;
+			Type* m_returnType;
 			int m_declLineno;
 			bool m_initialized;
 
 	};
-
-	class TypeSymbol : public Symbol
-	{
-		public: 
-			TypeSymbol()
-			{
-				m_symbolType = Type;
-			}
-
-			TypeSymbol(std::string name)
-				: Symbol(name, Type)
-			{
-			}
-
-			SymbolType getSymbolType() { return Symbol::Type; }
-
-			// maybe..
-			// TypeSymbol* getRawType();
-
-	};
-
-	
 }
 
 #endif

@@ -1,0 +1,12 @@
+program test(input, output);
+var
+        a : boolean;
+begin
+	a := 1 < false;
+	a := false > 1.0;
+	a := false > 1;
+	a := false >= 1;
+	a := false <= 1;
+	a := false <> 1;
+	a := false = 1;
+end.
