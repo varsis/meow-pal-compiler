@@ -25,7 +25,7 @@ namespace Meow
 		protected:
 
 			ParserTest() 
-				: parser(scanner, errorManager, parseResult)
+				: parser(scanner, errorManager)
 			{
 			}
 
@@ -48,7 +48,6 @@ namespace Meow
 
 			MockScanner scanner;
 			ErrorManager errorManager;
-			ParseResult parseResult;
 			vector<token_type> tokens;
 
 			PalParser parser;
