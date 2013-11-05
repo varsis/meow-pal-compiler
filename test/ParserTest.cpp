@@ -40,8 +40,25 @@ namespace Meow
 			{
 				scanner.setTokens(tokens);
 				parser.parse();
-				int errors = errorManager.getErrors()->size() > 0;
-				ASSERT_EQ(expectedParseResult, errors)
+
+				int errors = 0;
+
+				ErrorList::iterator it;
+				for (it = errorManager.getErrors()->begin();
+					it != errorManager.getErrors()->end();
+					++it)
+				{
+					// Only count syntax errors!
+					if ((*it)->getErrorCode() < SemanticError)
+					{
+						if ((*it)->getErrorCode() < SemanticError)
+						++errors;
+					}
+				}
+
+				bool result = errors > 0;
+				
+				ASSERT_EQ(expectedParseResult, result)
 					<< ">> Incorrect parse result!";
 			}
 

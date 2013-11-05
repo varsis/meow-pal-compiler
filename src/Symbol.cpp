@@ -12,7 +12,7 @@ namespace Meow
 	{
 	}
 
-	Symbol::Symbol(std::string name, SymbolType type)
+	Symbol::Symbol(std::string name, Symbol::SymbolType type)
 		: m_name(name)
 		, m_symbolType(type)
 		, m_lexicalLevel(-1)
@@ -73,7 +73,7 @@ namespace Meow
 		return m_name;
 	}
 
-	SymbolType Symbol::getSymbolType()
+	Symbol::SymbolType Symbol::getSymbolType()
 	{
 		return m_symbolType;
 	}

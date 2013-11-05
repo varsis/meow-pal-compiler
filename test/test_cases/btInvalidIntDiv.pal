@@ -1,0 +1,6 @@
+program test(input, output);
+var
+        a : integer;
+begin
+	a := 5 div 1.0;
+end.

@@ -5,6 +5,10 @@
 namespace Meow
 {
 	SymbolTable::SymbolTable()
+		: m_booleanType("boolean")
+		, m_integerType("integer")
+		, m_realType("real")
+		, m_charType("char")
 	{
 		m_currentLevel = 0;
 	}
@@ -92,6 +96,176 @@ namespace Meow
 	int SymbolTable::getCurLevel()
 	{
 		return m_currentLevel;
+	}
+
+	TypeSymbol* SymbolTable::getOpResultType(Operator op, TypeSymbol* type)
+	{
+		return getOpResultType(op, type, NULL);
+	}
+
+	TypeSymbol* SymbolTable::getOpResultType(Operator op, TypeSymbol* leftType, TypeSymbol* rightType)
+	{
+
+		// TODO what ops do record types support? anything?
+
+		switch (op)
+		{
+			// TODO treat unary plus differently than binary plus?
+
+			case OpADD:
+				if (checkCompatible(leftType, rightType))
+				{
+					// TODO eg how to treat type newInt = integer;
+					// can we add newInts together? would need TypeSymbol to define getRawType()
+					// so we know if addition is valid or not
+
+					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
+						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
+					{
+						// result is real if one operand is real
+						if (leftType == getRawRealType() || rightType == getRawRealType())
+						{
+							return getRawRealType(); // the predefined real type
+						}
+
+						// otherwsie result is same type
+						return leftType;
+					}
+				}
+				break;
+
+			case OpSUBTRACT:
+				if (checkCompatible(leftType, rightType))
+				{
+					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
+						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
+					{
+						// result is real if one operand is real
+						if (leftType == getRawRealType() || rightType == getRawRealType())
+						{
+							return getRawRealType(); // the predefined real type
+						}
+
+						// otherwsie result is same type
+						return leftType;
+					}
+				}
+				break;
+
+			case OpMULTIPLY:
+				if (checkCompatible(leftType, rightType))
+				{
+					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
+						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
+					{
+						// result is real if one operand is real
+						if (leftType == getRawRealType() || rightType == getRawRealType())
+						{
+							return getRawRealType(); // the predefined real type
+						}
+
+						// otherwsie result is same type
+						return leftType;
+					}
+				}
+				break;
+
+			case OpREALDIVIDE:
+				if (checkCompatible(leftType, rightType))
+				{
+					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
+						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
+					{
+						return getRawRealType(); // the predefined real type
+					}
+				}
+				break;
+
+			case OpINTDIVIDE:
+				if (checkCompatible(leftType, rightType))
+				{
+					if (leftType == getRawIntegerType() && rightType == getRawIntegerType())
+					{
+						return getRawIntegerType();
+					}
+				}
+				break;
+
+			case OpMOD:
+				if (checkCompatible(leftType, rightType))
+				{
+					if (leftType == getRawIntegerType() && rightType == getRawIntegerType())
+					{
+						return getRawIntegerType();
+					}
+				}
+				break;
+
+			case OpEQ:
+				if (checkCompatible(leftType, rightType))
+				{
+					return getRawBooleanType(); // the predefined 'boolean' type
+				}
+				break;
+
+				// TODO for <, >, etc
+
+			case OpNOT:
+
+				// TODO eg how to treat type newBool = boolean;
+				// can we treat newBool like predefined boolean as long as we don't mix the types?
+				if (leftType == getRawBooleanType())
+				{
+					return leftType;
+				}
+
+				break;
+
+				// TODO for AND, OR
+
+			default:
+				break;
+
+		}
+
+		// if not compatible, return null
+		return NULL;
+	}
+
+	bool SymbolTable::checkCompatible(TypeSymbol* ltype, TypeSymbol* rtype)
+	{
+		// see section on types in pal reference
+
+		// compatible if they are the exact same type
+		if (ltype == rtype)
+		{
+			return true;
+		}
+
+		// if strings, compatible if the same number of components
+		/*
+		   if (ltype->isStringType() && rtype->isStringType()
+		   && ltype->componentCount == rtype->componentCount)
+		   {
+		   return true;
+		   }
+		   */
+
+		// compatable if types are the predefined integer / real types
+		if ((ltype == getRawIntegerType() || ltype == getRawRealType())
+			&& (rtype == getRawIntegerType() || rtype == getRawRealType()))
+		{
+			return  true;
+		}
+
+		// otherwise, incompatible!
+		return false;
+	}
+
+	bool SymbolTable::checkAssignmentCompatible(TypeSymbol* ltype, TypeSymbol* rtype)
+	{
+		// TODO see section on types in pal reference
+		return false;
 	}
 
 }

@@ -19,6 +19,7 @@
 		class PalScanner;
 		class ErrorManager;
 		class SymbolTable;
+		class TypeSymbol;
 	}
 }
 
@@ -41,7 +42,11 @@
 %union {
 	std::string* identifier;
         std::string* stringLiteral;
+
+        TypeSymbol* typeSymbol;
 }
+
+%type <typeSymbol> simple_expr term factor unsigned_const unsigned_num
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -136,7 +141,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::Constant);
 
                                 delete $1;
 
@@ -153,7 +158,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::Constant);
 
                                 delete $1;
 
@@ -170,7 +175,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::Constant);
 
                                 delete $1;
 
@@ -192,7 +197,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::Constant);
 
                                 delete $1;
 
@@ -416,11 +421,29 @@ simple_stat             : var ASSIGN expr
                         ;
 
 var                     : IDENTIFIER
+                        {
+                            // get symbol for identifier
+                            // get its type
+                            // $$.type = type
+                        }
                         | var PERIOD IDENTIFIER
+                        {
+                            // get symbol for $1.name
+                            // get its type
+                            // must be record!
+                            // get record field corresponding to $3
+                            // $$.type = fieldType
+                        }
                         | subscripted_var RIGHT_BRACKET
+                        {
+                            // TODO -- i don't think this subscripted_var rule is right...
+                            // it supports arrVar[1,2] for 2d array access...
+                        }
                         ;
 
 subscripted_var         : var LEFT_BRACKET expr
+                        {
+                        }
                         | subscripted_var COMMA expr
                         ;
 
@@ -486,48 +509,219 @@ type_factor             : var
 
 
 expr			: simple_expr
+                        {
+                            // $$ = $1
+                        }
                         | expr EQ simple_expr
+                        {
+                            // TODO need something in symbol table that takes type id's
+                            // and some kind of operation enum, checks the current type symbols
+                            // and returns resulting type id if compatible and null if not compatible
+
+                            // check $1.type, $3.type EQ compatible
+                            // $$.type = "boolean"
+                        }
                         | expr NE simple_expr
+                        {
+                            // check $1.type, $3.type NE compatible
+                            // $$.type = "boolean"
+                        }
                         | expr LE simple_expr
+                        {
+                            // check $1.type, $3.type LE compatible
+                            // $$.type = "boolean"
+                        }
                         | expr LT simple_expr
+                        {
+                            // check $1.type, $3.type LT compatible
+                            // $$.type = "boolean"
+                        }
                         | expr GE simple_expr
+                        {
+                            // check $1.type, $3.type GE compatible
+                            // $$.type = "boolean"
+                        }
                         | expr GT simple_expr
+                        {
+                            // check $1.type, $3.type GT compatible
+                            // $$.type = "boolean"
+                        }
                         ;
 
 simple_expr             : term
+                        {
+                            $$ = $1;
+                        }
                         | PLUS term
+                        {
+                            // verify term is PLUS compatible
+                            // $$ = $2
+                        }
                         | MINUS term
+                        {
+                            // verify term is MINUS compatible
+                            // $$ = $2
+                        }
                         | simple_expr PLUS term
+                        {
+                            TypeSymbol* result = table.getOpResultType(OpADD, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | simple_expr MINUS term
-                        | simple_expr OR  term
+                        {
+                            TypeSymbol* result = table.getOpResultType(OpSUBTRACT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
+                        | simple_expr OR term
+                        {
+                            // verify $1.type and $3.type are OR compatible
+                            // $$.type = "boolean" ??
+                        }
                         ;
 
 term                    : factor
+                        {
+                            $$ = $1;
+                        }
                         | term MULTIPLY factor
+                        {
+                            TypeSymbol* result = table.getOpResultType(OpMULTIPLY, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '*'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term REAL_DIVIDE factor
+                        {
+                            TypeSymbol* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '/'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term INT_DIVIDE factor
+                        {
+                            TypeSymbol* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'div'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term MOD factor
+                        {
+                            TypeSymbol* result = table.getOpResultType(OpMOD, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'mod'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term AND factor
+                        {
+                            // get type of term
+                            // get type of factor
+                            // check that two types are AND compatible
+                            // $$.type = "boolean"
+                        }
                         ;
 
 factor                  : var
+                        {
+                            // $$ = $1
+                        }
                         | unsigned_const
+                        {
+                            $$ = $1;
+                        }
                         | LEFT_PAREN expr RIGHT_PAREN
+                        {
+                            // $$ = $2
+                        }
                         | func_invok
+                        {
+                            // $$ = $1
+                        }
                         | NOT factor
+                        {
+                            // verify $2.type is NOT compatible
+                            // $$ = $2 (unless NOT can change type...)
+                        }
                         ;
 
 unsigned_const          : unsigned_num
+                        {
+                            $$ = $1;
+                        }
                         | STRING_LITERAL
+                        {
+                            // $$.type = "string"
+                        }
                         ;
 
 unsigned_num            : INT_CONST
+                        {
+                            // TODO do we need to treat this type special since its a literal?
+                            // eg for type myInt : int, should be able to assign with int literals.
+                            $$ = table.getRawIntegerType();
+                        }
                         | REAL_CONST
+                        {
+                            $$ = table.getRawRealType();
+                        }
                         ;
 
 
 func_invok              : plist_finvok RIGHT_PAREN
+                        {
+                            // $$ = $1
+                        }
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
+                        {
+                            // get function for id
+                            // verify it is defined
+                            // $$.type = function return type
+                        }
                         ;
 
 %%

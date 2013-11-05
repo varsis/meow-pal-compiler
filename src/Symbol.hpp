@@ -5,17 +5,18 @@
 
 namespace Meow
 {
-	enum SymbolType
-	{
-		ConstantSymbol,
-		TypeSymbol,
-		VariableSymbol,
-		ProcedureSymbol
-	};
-
 	class Symbol
 	{
 		public:
+
+			enum SymbolType
+			{
+				Constant,
+				Type,
+				Variable,
+				Procedure
+			};
+
 			Symbol();
 			Symbol(std::string name, SymbolType type);
 			void setName(std::string name);
@@ -38,7 +39,7 @@ namespace Meow
 			int getDeclLineno();
 			bool getInitialized();
 
-		private:
+		protected:
 			std::string m_name;
 			SymbolType m_symbolType;
 			int m_lexicalLevel;		
@@ -50,6 +51,28 @@ namespace Meow
 			bool m_initialized;
 
 	};
+
+	class TypeSymbol : public Symbol
+	{
+		public: 
+			TypeSymbol()
+			{
+				m_symbolType = Type;
+			}
+
+			TypeSymbol(std::string name)
+				: Symbol(name, Type)
+			{
+			}
+
+			SymbolType getSymbolType() { return Symbol::Type; }
+
+			// maybe..
+			// TypeSymbol* getRawType();
+
+	};
+
+	
 }
 
 #endif
