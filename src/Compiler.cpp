@@ -13,7 +13,8 @@ Compiler::Compiler()
 	  m_leaveASC(false),
 	  m_programListing(true), 
 	  m_runtimeArrayBoundChecking(true),
-	  m_debug(false)
+	  m_debug(false),
+	  m_printStdout(false)
 {
 }
 
@@ -34,7 +35,7 @@ void Compiler::displayUsage()
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
-	const char* optString = "ndt";
+	const char* optString = "ndtp";
 
 	if (argc == 1)
 	{
@@ -53,6 +54,9 @@ void Compiler::getArguments(int argc, char* argv[])
 				break;
 			case 'd':
 				m_debug = true;
+				break;
+			case 'p':
+				m_printStdout = true;
 				break;
 			default:
 				std::cerr << "\n* Unrecognized option: -" 
@@ -118,11 +122,16 @@ void Compiler::printProgramListing()
 	}
 	else
 	{
-		// Redirect cout to file: trick borrowed from StackOverflow
-		std::ofstream outputFileStream(m_outputFileName.c_str());
-		std::streambuf *coutbuf = std::cout.rdbuf();
-		std::cout.rdbuf(outputFileStream.rdbuf());
-
+		std::ofstream outputFileStream;
+		std::streambuf *coutbuf;
+		
+		if (!m_printStdout)
+		{
+			// Redirect cout to file: trick borrowed from StackOverflow
+			outputFileStream.open(m_outputFileName.c_str());
+			coutbuf = std::cout.rdbuf();
+			std::cout.rdbuf(outputFileStream.rdbuf());
+		}
 		errorIt = errors->begin(); 
 
 		while (std::getline(inputFileStream, currentLine))
@@ -156,13 +165,15 @@ void Compiler::printProgramListing()
 			    << " has " << errors->size() << " errors.\n";
 		}
 
-		// Reset cout to print to the screen
-		std::cout.rdbuf(coutbuf);
-		inputFileStream.close();
-		outputFileStream.close();
+		if (!m_printStdout)
+		{
+			// Reset cout to print to the screen
+			std::cout.rdbuf(coutbuf);
+			inputFileStream.close();
+			outputFileStream.close();
+		}
 	}
 
-	printErrors();
 }
 
 int Compiler::run(int argc, char* argv[])
@@ -175,11 +186,12 @@ int Compiler::run(int argc, char* argv[])
 
 	parseResult = m_parser.parseFile(m_inputFileName);
 
-	if (m_programListing)
+	if (m_programListing || m_printStdout)
 	{
 		printProgramListing();
 	}
-	else
+
+	if (!m_printStdout)
 	{
 		printErrors();
 	}
