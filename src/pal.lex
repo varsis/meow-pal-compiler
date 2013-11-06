@@ -9,6 +9,8 @@
 	static int s_commentStartLine;
 	static int s_scannerReturnPosition;
 	static int s_scannerReturnLine;
+
+	extern int g_whileCounter;
 %}
 
 %option nodefault yyclass="PalScanner" noyywrap c++
@@ -148,11 +150,28 @@ EXPONENT	E[+-]?{DIGIT}+
 "array" { return token::ARRAY; }
 "begin" { return token::PAL_BEGIN; }
 "const" { return token::CONST; }
-"continue" { return token::CONTINUE; }
-"do" { return token::DO; }
+"continue" { 
+	if (!g_whileCounter) 
+	{
+		getManager()->addError(new Error(InvalidExitContinue,
+						"Invalid continue; must be in while loop.",
+						yylineno));
+	}
+	
+	return token::CONTINUE; 
+	}
+"do" { g_whileCounter++; return token::DO; }
 "else" { return token::ELSE; }
 "end" { return token::END; }
-"exit" { return token::EXIT; }
+"exit" { 
+	if (!g_whileCounter) 
+	{
+		getManager()->addError(new Error(InvalidExitContinue,
+						"Invalid exit; must be in while loop.",
+						yylineno));
+	}
+	return token::EXIT; 
+	}
 "function" { return token::FUNCTION; }
 "if" { return token::IF; }
 "not" { return token::NOT; }

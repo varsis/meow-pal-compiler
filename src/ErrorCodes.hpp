@@ -34,7 +34,9 @@ namespace Meow
 		MultiLineString,
 
 		// Semantic errors
-		IdentifierInUse
+		IdentifierInUse,
+		IdentifierUseBeforeDecl,
+		InvalidExitContinue
 	};
 }
 
