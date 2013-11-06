@@ -22,8 +22,8 @@ namespace Meow
 	int Parser::parseFile(std::ifstream* fileStream)
 	{
 		int retval;
-		PalScanner scanner(fileStream, m_errorManager);
 		SymbolTable symbolTable;
+		PalScanner scanner(fileStream, m_errorManager, &symbolTable);
 
 		PalParser parser(scanner, *m_errorManager, symbolTable);
 

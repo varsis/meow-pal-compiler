@@ -7,6 +7,7 @@
 %parse-param { Meow::ErrorManager &errorManager }
 %parse-param { Meow::SymbolTable &table }
 %lex-param   { Meow::PalScanner &scanner }
+%lex-param   {Meow::SymbolTable &table  }
 
 %debug
 %error-verbose
@@ -34,12 +35,14 @@
 	#define YYDEBUG 1
 
 	// Prototype for the yylex function
-	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner);
+	static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner,
+			Meow::SymbolTable &table);
 	void print_error(const std::string msg);
 	void print_value(bool value);
 
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
+	int g_beginCounter;
 }
 
 %union {
@@ -485,19 +488,99 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
                         }
                         ;
 
-proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON 
+proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
+			{
+				Symbol* sym = table.getSymbolCurLevel(*$2);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+				table.addSymbol(sym);
+				table.incLevel();
+				
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+                                delete $2;
+
+				table.addSymbol(sym);
+			}
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
+			{
+				Symbol* sym = table.getSymbolCurLevel(*$2);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+				table.addSymbol(sym);
+				table.incLevel();
+				
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+                                delete $2;
+
+				table.addSymbol(sym);
+			}
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
-                          errorManager.addError(
-                              new Error(InvalidFunctDecl,
+				Symbol* sym = table.getSymbolCurLevel(*$2);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+				table.addSymbol(sym);
+				table.incLevel();
+				
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+                                delete $2;
+
+				table.addSymbol(sym);
+                          	errorManager.addError(
+                              	new Error(InvalidFunctDecl,
                                         "Function needs to return a value.",
                                         scanner.lineno()));
                         }
                         | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
-                          errorManager.addError(
-                              new Error(InvalidProcDecl,
+				Symbol* sym = table.getSymbolCurLevel(*$2);
+
+				if (sym)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Identifier was already declared at current lexical level.",
+									scanner.lineno()));
+				}
+
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+				table.addSymbol(sym);
+				table.incLevel();
+				
+				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+
+                                delete $2;
+
+				table.addSymbol(sym);
+                          	errorManager.addError(
+                              	new Error(InvalidProcDecl,
                                         "Procedure can't return a value.",
                                         scanner.lineno()));
                         }
@@ -979,7 +1062,8 @@ void Meow::PalParser::error(const Meow::PalParser::location_type &loc, const std
 // Now that we have the Parser declared, we can declare the Scanner and implement
 // the yylex function
 #include "Scanner.hpp"
-static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner)
+static int yylex(Meow::PalParser::semantic_type * yylval, Meow::PalScanner &scanner,
+		Meow::SymbolTable &table)
 {
 	return scanner.yylex(yylval);
 }

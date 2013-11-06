@@ -14,7 +14,7 @@ namespace Meow
 		public:
 
 		   	MockScanner() 
-				: PalScanner(NULL, NULL)
+				: PalScanner(NULL, NULL, NULL)
 			{
 			}
 
