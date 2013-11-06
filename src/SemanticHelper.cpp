@@ -49,6 +49,46 @@ namespace Meow
 		// writeln, readln
 	}
 
+	void SemanticHelper::defineType(string id, Type* type)
+	{
+		Symbol* typeSymbol = m_table->getSymbolCurLevel(id);
+
+		if (typeSymbol)
+		{
+			m_errorManager->addError(new Error(IdentifierInUse,
+				"Identifier was already declared at current lexical level.",
+				m_scanner->lineno()));
+		}
+
+		typeSymbol = new Symbol(id, Symbol::TypeSymbol);
+
+		typeSymbol->setType(type);
+
+		m_table->addSymbol(typeSymbol);
+	}
+
+	Type* SemanticHelper::getTypeForVarId(std::string id)
+	{
+		Symbol* symbol = m_table->getSymbol(id);
+
+		if (!symbol)
+		{
+			m_errorManager->addError(
+					new Error(SemanticError, // TODO
+						"Identifier is not defined.",
+						m_scanner->lineno()));
+
+		}
+		else
+		{
+			return symbol->getType();
+		}
+
+		// just return a raw int by default??
+		return m_table->getRawIntegerType();
+	}
+
+	// rename to typeId?
 	Type* SemanticHelper::getTypeFromID(std::string id)
 	{
 		Symbol* typeSymbol = m_table->getSymbol(id);
@@ -75,5 +115,21 @@ namespace Meow
 
 		// just return a raw int by default??
 		return m_table->getRawIntegerType();
+	}
+
+	void SemanticHelper::declareVariable(string id, Type* type)
+	{
+		Symbol* sym = m_table->getSymbolCurLevel(id);
+
+		if (sym)
+		{
+			m_errorManager->addError(new Error(IdentifierInUse,
+				"Identifier was already declared at current lexical level.",
+				m_scanner->lineno()));
+		}
+
+		sym = new Symbol(id, Symbol::VariableSymbol);
+		sym->setType(type);
+		m_table->addSymbol(sym);
 	}
 }

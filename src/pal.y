@@ -55,8 +55,8 @@
         Type* type;
 }
 
-%type <type> expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type
+%type <type> var expr simple_expr term factor unsigned_const unsigned_num
+%type <type> type simple_type var_decl
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -236,42 +236,18 @@ type_decl_list          : type_decl
 
 type_decl               : IDENTIFIER EQ type
 			{
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+				semanticHelper.defineType(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
 			}
                         | IDENTIFIER ASSIGN type
-                        { errorManager.addError(
-                                new Error(InvalidTypeDecl,
-                                          "Use \"=\" for type definitions.",
-                                          scanner.lineno()));
-                        
-				Symbol* sym = table.getSymbolCurLevel(*$1);
+                        { 
+				errorManager.addError(
+					new Error(InvalidTypeDecl,
+						  "Use \"=\" for type definitions.",
+						  scanner.lineno()));
 
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+				semanticHelper.defineType(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
-
 			}
                         | error { ; }
                         ;
@@ -283,8 +259,6 @@ type                    : simple_type
 
 simple_type             : IDENTIFIER
 			{
-				// TODO don't want it to be the SAME type...
-				// create a new type and add it to symbol table!
 				$$ = semanticHelper.getTypeFromID(*$1);
 				delete $1;
 			}
@@ -293,6 +267,8 @@ simple_type             : IDENTIFIER
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
 			{
 				// create a new enumeration type with members from enumlist
+				// this type will get copied by defineType...?
+				// need to delete this?
 			}
 			| LEFT_PAREN error RIGHT_PAREN
 			{
@@ -396,83 +372,43 @@ var_decl_list           : var_decl
 
 var_decl                : IDENTIFIER COLON type
 			{
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+                                semanticHelper.declareVariable(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
+				$$ = $3;
 			}
                         | IDENTIFIER COMMA var_decl
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+                                semanticHelper.declareVariable(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
+				$$ = $3;
 			}
 			| IDENTIFIER ASSIGN type
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+                                semanticHelper.declareVariable(*$1, $3);
                                 delete $1;
+				$$ = $3;
 
-				table.addSymbol(sym);
 				errorManager.addError(
-                                new Error(InvalidVarDecl,
-                                          "Use \":\" to declare variables.",
-                                          scanner.lineno()));
+					new Error(InvalidVarDecl,
+						  "Use \":\" to declare variables.",
+						  scanner.lineno()));
                         }
                         | IDENTIFIER error
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+				// TODO -- should we really do anything here?
+                                semanticHelper.declareVariable(*$1, NULL);
                                 delete $1;
+                                $$ = NULL;
 
-				table.addSymbol(sym);
 				errorManager.addError(
-                                new Error(InvalidVarDecl,
-                                          "Use \":\" to declare variables.",
-                                          scanner.lineno()));
+					new Error(InvalidVarDecl,
+						  "Use \":\" to declare variables.",
+						  scanner.lineno()));
+
               			errorManager.addError(
-                                new Error(InvalidVarDecl,
-                                          "Invalid variable declaration.",
-                                          scanner.lineno()));
+					new Error(InvalidVarDecl,
+						  "Invalid variable declaration.",
+						  scanner.lineno()));
                         }
                         | error { ; }
                         ;
@@ -655,9 +591,8 @@ simple_stat             : var ASSIGN expr
 
 var                     : IDENTIFIER
                         {
-                            // get symbol for identifier
-                            // get its type
-                            // $$.type = type
+				$$ = semanticHelper.getTypeForVarId(*$1);
+				delete $1;
                         }
                         | var PERIOD IDENTIFIER
                         {
@@ -991,7 +926,7 @@ term                    : factor
 
 factor                  : var
                         {
-                            // $$ = $1
+                            $$ = $1;
                         }
                         | unsigned_const
                         {

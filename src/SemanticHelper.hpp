@@ -3,6 +3,8 @@
 
 #include <string>
 
+using namespace std;
+
 namespace Meow
 {
 
@@ -19,7 +21,12 @@ namespace Meow
 					SymbolTable* table);
 
 			void addPredefinedSymbols();
-			Type* getTypeFromID(std::string id);
+
+			void defineType(string id, Type* type);
+			Type* getTypeForVarId(string id);
+			Type* getTypeFromID(string id);
+
+			void declareVariable(string id, Type* type);
 
 		private:
 			PalScanner* m_scanner;

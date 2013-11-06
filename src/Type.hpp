@@ -7,12 +7,12 @@ namespace Meow
 	{
 		public:
 
-			Type(bool primitive = false)
-				: m_primitiveType(primitive)
+			Type()
 			{
 			}
 
-			bool m_primitiveType;
+		private:
+
 	};
 }
 

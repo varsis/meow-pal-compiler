@@ -5,10 +5,6 @@
 namespace Meow
 {
 	SymbolTable::SymbolTable()
-		: m_booleanType(true)
-		, m_integerType(true)
-		, m_realType(true)
-		, m_charType(true)
 	{
 		m_currentLevel = 0;
 
@@ -120,8 +116,6 @@ namespace Meow
 				break;
 
 			case OpNOT:
-				// TODO eg how to treat type newBool = boolean;
-				// can we treat newBool like predefined boolean as long as we don't mix the types?
 				if (type == getRawBooleanType())
 				{
 					return type;
@@ -152,63 +146,28 @@ namespace Meow
 			case OpGT:
 				if (checkCompatible(leftType, rightType))
 				{
+					// TODO are these ALL defined for bools?
 					return getRawBooleanType();
 				}
 				break;
 
 			// arithmetic ops
-
-			// TODO can't you collapse ADD/SUB/MULT together?
 			case OpADD:
-				if (checkCompatible(leftType, rightType))
-				{
-					// TODO eg how to treat type newInt = integer;
-					// can we add newInts together? would need Type to define getRawType()
-					// so we know if addition is valid or not
-
-					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
-						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
-					{
-						// result is real if one operand is real
-						if (leftType == getRawRealType() || rightType == getRawRealType())
-						{
-							return getRawRealType(); // the predefined real type
-						}
-
-						// otherwsie result is same type
-						return leftType;
-					}
-				}
-				break;
-
 			case OpSUBTRACT:
-				if (checkCompatible(leftType, rightType))
-				{
-					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
-						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
-					{
-						// result is real if one operand is real
-						if (leftType == getRawRealType() || rightType == getRawRealType())
-						{
-							return getRawRealType(); // the predefined real type
-						}
-
-						// otherwsie result is same type
-						return leftType;
-					}
-				}
-				break;
-
 			case OpMULTIPLY:
 				if (checkCompatible(leftType, rightType))
 				{
-					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
-						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
+					// if their types are integer or real
+					if ((leftType == getRawIntegerType()
+						|| leftType == getRawRealType())
+						&&(rightType == getRawIntegerType()
+						|| rightType == getRawRealType()))
 					{
 						// result is real if one operand is real
-						if (leftType == getRawRealType() || rightType == getRawRealType())
+						if (leftType == getRawRealType() 
+						|| rightType == getRawRealType())
 						{
-							return getRawRealType(); // the predefined real type
+							return getRawRealType();
 						}
 
 						// otherwsie result is same type
@@ -220,8 +179,11 @@ namespace Meow
 			case OpREALDIVIDE:
 				if (checkCompatible(leftType, rightType))
 				{
-					if ((leftType == getRawIntegerType() || leftType == getRawRealType())
-						&&(rightType == getRawIntegerType() || rightType == getRawRealType()))
+					// if their types are integer or real
+					if ((leftType == getRawIntegerType()
+						|| leftType == getRawRealType())
+						&&(rightType == getRawIntegerType()
+						|| rightType == getRawRealType()))
 					{
 						return getRawRealType(); // the predefined real type
 					}
@@ -231,7 +193,8 @@ namespace Meow
 			case OpINTDIVIDE:
 				if (checkCompatible(leftType, rightType))
 				{
-					if (leftType == getRawIntegerType() && rightType == getRawIntegerType())
+					if (leftType == getRawIntegerType()
+						&& rightType == getRawIntegerType())
 					{
 						return getRawIntegerType();
 					}
@@ -241,7 +204,8 @@ namespace Meow
 			case OpMOD:
 				if (checkCompatible(leftType, rightType))
 				{
-					if (leftType == getRawIntegerType() && rightType == getRawIntegerType())
+					if (leftType == getRawIntegerType()
+						&& rightType == getRawIntegerType())
 					{
 						return getRawIntegerType();
 					}
@@ -253,7 +217,8 @@ namespace Meow
 			case OpAND:
 				if (checkCompatible(leftType, rightType))
 				{
-					if (leftType == getRawBooleanType() && rightType == getRawBooleanType())
+					if (leftType == getRawBooleanType()
+						&& rightType == getRawBooleanType())
 					{
 						return getRawBooleanType();
 					}

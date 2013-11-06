@@ -1,0 +1,10 @@
+program test(input, output);
+type
+        myInt = integer;
+var
+	a, b, c : myInt;
+begin
+	a := 1;
+	b := 2;
+	c := a + b;
+end.

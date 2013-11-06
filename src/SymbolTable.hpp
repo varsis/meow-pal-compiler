@@ -48,12 +48,15 @@ namespace Meow
 			void incLevel();
 			void decLevel();
 
+			// TODO move to semantic helper!
 			Type* getOpResultType(Operator op, Type* type);
 			Type* getOpResultType(Operator op, Type* leftType, Type* rightType);
 
+			// TODO move to semantic helper!
 			bool checkCompatible(Type* ltype, Type* rtype);
 			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
 
+			// TODO move to semantic helper!
 			Type* getRawBooleanType() { return &m_booleanType; }
 			Type* getRawIntegerType() { return &m_integerType; }
 			Type* getRawRealType() { return &m_realType; }
