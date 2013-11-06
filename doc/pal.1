@@ -17,13 +17,19 @@ pal \-\- compiles programs for the PAL programming language.
 .B -d
 ]
 [
+.B -p
+]
+[
 .I FILE ...
 ]
 .SH DESCRIPTION
 Parses a
 .B PAL
-program and is able to detect some errors based on syntax. No semantic
-checking yet.
+program and is able to detect some errors based on syntax. Does
+semantic checking of program code as well, but does not
+generate code. PAL will eventually compile programs to the
+ASC pseudo-assembly language. Written primarily in C++, and 
+uses the Bison and Flex compiler tools.
 .SH OPTIONS
 .IP -n
 Do not produce a program listing. Default is to produce one.
@@ -34,12 +40,16 @@ Leaves Asc code in FILE.asc instead of removing it.
 .IP -a
 Turns off run-time array bounds checking. Default is to do run-time
 array bounds checking.
+.IP -p
+Prints the output to standard output instead of to the listing file.
+Overrides the -n option.
 .SH EXAMPLES
 .B pal FILE  :
 Will compile the PAL program in FILE. Will print program listing,
 remove Asc code, and do run-time array bounds checking, as per the
 default. Will print errors in-line with the program listing. Option -n
-will suppress the program listing but not the error messages.
+will suppress the program listing but not the error messages. Option
+-p will send the output to stdout rather than the listing file.
 
 .SH BUGS
 Does not compile code.
