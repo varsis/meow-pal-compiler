@@ -28,6 +28,9 @@
 		class Type;
 		class Symbol;
 	}
+
+	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
+	typedef std::vector<IdTypePair*> IdTypePairList;
 }
 
 %code {
@@ -59,15 +62,21 @@
 
         std::vector<Symbol*>* symbolList;
 
+        IdTypePair* idTypePair;
+        IdTypePairList* idTypePairList;
+
         Type* type;
 }
 
 %type <type> var expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type enumerated_type var_decl 
+%type <type> type simple_type enumerated_type structured_type var_decl 
 
 %type <type> type_expr type_simple_expr type_term type_factor
 
 %type <symbolList> enum_list
+
+%type <idTypePair> field
+%type <idTypePairList> field_list
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -334,13 +343,24 @@ enum_list		: IDENTIFIER
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
 			{
-				// create a type, give it the index type + the element type
+				// return type with index type + element type
+				$$ = new Type(NULL, $6); 
+				// TODO detmine if indices matter at this point
+				// (char array compatibility?)
 			}
                         | RECORD field_list END
 			{
-				// create a type, give it list of fields
+				// TODO create a type, give it list of fields
+				$$ = new Type($2);
+				// TODO (use connor's pair list thing)?
 			}
                         | RECORD field_list SEMICOLON END
+			{
+				// TODO create a type, give it list of fields
+				$$ = new Type($2);
+				// TODO (use connor's pair list thing)?
+				// TODO both these rules are OK?
+			}
                         | RECORD error END
                         {
                             errorManager.addError(
@@ -359,16 +379,27 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
 
 index_type              : simple_type
                         {
-				// actually need VALUES here!
+				// actually need VALUES here!?
                         }
                         | type_expr UPTO type_expr
                         {
-				// actually need VALUES here!
+				// actually need VALUES here!?
                         }
                         ;
 
 field_list              : field
+			{
+				$$ = new IdTypePairList();
+				$$->push_back($1);
+			}
                         | field_list SEMICOLON field
+			{
+				$$ = $1;
+				// TODO check if id already used in field list	
+				// might want to use (unordered) map instead of list to
+				// avoid quadratic time!
+				$$->push_back($3);
+			}
                         ;
 
 field                   : IDENTIFIER COLON type
@@ -685,7 +716,7 @@ type_expr		: type_simple_expr
                         }
                         | type_expr EQ type_simple_expr
                         {
-                            Type* result = table.getOpResultType(OpEQ, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpEQ, $1, $3);
 
                             if (result == NULL)
                             {
@@ -699,7 +730,7 @@ type_expr		: type_simple_expr
                         }
                         | type_expr NE type_simple_expr
                         {
-                            Type* result = table.getOpResultType(OpNE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpNE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -713,7 +744,7 @@ type_expr		: type_simple_expr
                         }
                         | type_expr LE type_simple_expr
                         {
-                            Type* result = table.getOpResultType(OpLE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -727,7 +758,7 @@ type_expr		: type_simple_expr
                         }
                         | type_expr LT type_simple_expr
                         {
-                            Type* result = table.getOpResultType(OpLT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -741,7 +772,7 @@ type_expr		: type_simple_expr
                         }
                         | type_expr GE type_simple_expr
                         {
-                            Type* result = table.getOpResultType(OpGE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -755,7 +786,7 @@ type_expr		: type_simple_expr
                         }
                         | type_expr GT type_simple_expr
                         {
-                            Type* result = table.getOpResultType(OpGT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -775,7 +806,7 @@ type_simple_expr        : type_term
                         }
                         | PLUS type_term
                         {
-                            Type* result = table.getOpResultType(OpPLUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2);
 
                             if (result == NULL)
                             {
@@ -789,7 +820,7 @@ type_simple_expr        : type_term
                         }
                         | MINUS type_term
                         {
-                            Type* result = table.getOpResultType(OpMINUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2);
 
                             if (result == NULL)
                             {
@@ -803,7 +834,7 @@ type_simple_expr        : type_term
                         }
                         | type_simple_expr PLUS type_term
                         {
-                            Type* result = table.getOpResultType(OpADD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpADD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -817,7 +848,7 @@ type_simple_expr        : type_term
                         }
                         | type_simple_expr MINUS type_term
                         {
-                            Type* result = table.getOpResultType(OpSUBTRACT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -831,7 +862,7 @@ type_simple_expr        : type_term
                         }
                         | type_simple_expr OR  type_term
                         {
-                            Type* result = table.getOpResultType(OpOR, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpOR, $1, $3);
 
                             if (result == NULL)
                             {
@@ -851,7 +882,7 @@ type_term               : type_factor
                         }
                         | type_term MULTIPLY type_factor
                         {
-                            Type* result = table.getOpResultType(OpMULTIPLY, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1, $3);
 
                             if (result == NULL)
                             {
@@ -865,7 +896,7 @@ type_term               : type_factor
                         }
                         | type_term REAL_DIVIDE type_factor
                         {
-                            Type* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -879,7 +910,7 @@ type_term               : type_factor
                         }
                         | type_term INT_DIVIDE type_factor
                         {
-                            Type* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -893,7 +924,7 @@ type_term               : type_factor
                         }
                         | type_term MOD type_factor
                         {
-                            Type* result = table.getOpResultType(OpMOD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMOD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -907,7 +938,7 @@ type_term               : type_factor
                         }
                         | type_term AND type_factor
                         {
-                            Type* result = table.getOpResultType(OpAND, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpAND, $1, $3);
 
                             if (result == NULL)
                             {
@@ -921,11 +952,10 @@ type_term               : type_factor
                         }
                         ;
 
-type_factor             : var
+type_factor             : IDENTIFIER
 			{
-                            $$ = $1;
-				// TODO check that var is a constant?
-				// TODO can we actually have var? then we could access arrays and records and shit...
+                            //$$ = $1;
+				// TODO check that id is a constant?
 			}
                         | LEFT_PAREN type_expr RIGHT_PAREN
                         {
@@ -933,11 +963,11 @@ type_factor             : var
                         }
                         | INT_CONST 
                         {
-                            $$ = table.getRawIntegerType();
+                            $$ = semanticHelper.getIntegerType();
                         }
                         | NOT type_factor
                         {
-                            Type* result = table.getOpResultType(OpNOT, $2);
+                            Type* result = semanticHelper.getOpResultType(OpNOT, $2);
 
                             if (result == NULL)
                             {
@@ -958,7 +988,7 @@ expr			: simple_expr
                         }
                         | expr EQ simple_expr
                         {
-                            Type* result = table.getOpResultType(OpEQ, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpEQ, $1, $3);
 
                             if (result == NULL)
                             {
@@ -972,7 +1002,7 @@ expr			: simple_expr
                         }
                         | expr NE simple_expr
                         {
-                            Type* result = table.getOpResultType(OpNE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpNE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -986,7 +1016,7 @@ expr			: simple_expr
                         }
                         | expr LE simple_expr
                         {
-                            Type* result = table.getOpResultType(OpLE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1000,7 +1030,7 @@ expr			: simple_expr
                         }
                         | expr LT simple_expr
                         {
-                            Type* result = table.getOpResultType(OpLT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1014,7 +1044,7 @@ expr			: simple_expr
                         }
                         | expr GE simple_expr
                         {
-                            Type* result = table.getOpResultType(OpGE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1028,7 +1058,7 @@ expr			: simple_expr
                         }
                         | expr GT simple_expr
                         {
-                            Type* result = table.getOpResultType(OpGT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1048,7 +1078,7 @@ simple_expr             : term
                         }
                         | PLUS term
                         {
-                            Type* result = table.getOpResultType(OpPLUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2);
 
                             if (result == NULL)
                             {
@@ -1062,7 +1092,7 @@ simple_expr             : term
                         }
                         | MINUS term
                         {
-                            Type* result = table.getOpResultType(OpMINUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2);
 
                             if (result == NULL)
                             {
@@ -1076,7 +1106,7 @@ simple_expr             : term
                         }
                         | simple_expr PLUS term
                         {
-                            Type* result = table.getOpResultType(OpADD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpADD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1090,7 +1120,7 @@ simple_expr             : term
                         }
                         | simple_expr MINUS term
                         {
-                            Type* result = table.getOpResultType(OpSUBTRACT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1104,7 +1134,7 @@ simple_expr             : term
                         }
                         | simple_expr OR term
                         {
-                            Type* result = table.getOpResultType(OpOR, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpOR, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1124,7 +1154,7 @@ term                    : factor
                         }
                         | term MULTIPLY factor
                         {
-                            Type* result = table.getOpResultType(OpMULTIPLY, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1138,7 +1168,7 @@ term                    : factor
                         }
                         | term REAL_DIVIDE factor
                         {
-                            Type* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1152,7 +1182,7 @@ term                    : factor
                         }
                         | term INT_DIVIDE factor
                         {
-                            Type* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1166,7 +1196,7 @@ term                    : factor
                         }
                         | term MOD factor
                         {
-                            Type* result = table.getOpResultType(OpMOD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMOD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1180,7 +1210,7 @@ term                    : factor
                         }
                         | term AND factor
                         {
-                            Type* result = table.getOpResultType(OpAND, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpAND, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1212,7 +1242,7 @@ factor                  : var
                         }
                         | NOT factor
                         {
-                            Type* result = table.getOpResultType(OpNOT, $2);
+                            Type* result = semanticHelper.getOpResultType(OpNOT, $2);
 
                             if (result == NULL)
                             {
@@ -1238,11 +1268,11 @@ unsigned_const          : unsigned_num
 
 unsigned_num            : INT_CONST
                         {
-                            $$ = table.getRawIntegerType();
+                            $$ = semanticHelper.getIntegerType();
                         }
                         | REAL_CONST
                         {
-                            $$ = table.getRawRealType();
+                            $$ = semanticHelper.getRealType();
                         }
                         ;
 

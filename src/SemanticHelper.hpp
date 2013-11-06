@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "Type.hpp"
+
 using namespace std;
 
 namespace Meow
@@ -14,6 +16,30 @@ namespace Meow
 	class PalScanner;
 	class Type;
 	class Symbol;
+
+	enum Operator
+	{
+		OpEQ,
+		OpNE,
+		OpLE,
+		OpLT,
+		OpGE,
+		OpGT,
+
+		OpPLUS,
+		OpMINUS,
+
+		OpADD,
+		OpSUBTRACT,
+		OpMULTIPLY,
+		OpREALDIVIDE,
+		OpINTDIVIDE,
+		OpMOD,
+
+		OpNOT,
+		OpAND,
+		OpOR
+	};
 
 	class SemanticHelper
 	{
@@ -30,10 +56,30 @@ namespace Meow
 
 			void declareVariable(string id, Type* type);
 
+
+			Type* getOpResultType(Operator op, Type* type);
+			Type* getOpResultType(Operator op, Type* leftType, Type* rightType);
+
+			bool checkCompatible(Type* ltype, Type* rtype);
+			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
+
+			Type* getBooleanType() { return &m_booleanType; }
+			Type* getIntegerType() { return &m_integerType; }
+			Type* getRealType() { return &m_realType; }
+			Type* getCharType() { return &m_charType; }
+
 		private:
+
 			PalScanner* m_scanner;
 			SymbolTable* m_table;
 			ErrorManager* m_errorManager;
+
+			// Predefined simple types
+			Type m_booleanType;
+			Type m_integerType;
+			Type m_realType;
+			Type m_charType;
+
 	};
 }
 
