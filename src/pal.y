@@ -45,7 +45,6 @@
 
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
-	int g_beginCounter;
 }
 
 %union {
@@ -489,10 +488,14 @@ proc_decl_list          : proc_decl
                         ;
 
 proc_decl               : proc_heading decls compound_stat SEMICOLON
+			{
+				table.decLevel();
+			}
                         | proc_heading decls compound_stat PERIOD
                         {
-                          errorManager.addError(
-                              new Error(InvalidProcDecl,
+				table.decLevel();
+                          	errorManager.addError(
+                              	new Error(InvalidProcDecl,
                                         "Funct/proc should not end with \".\".",
                                         scanner.lineno()));
                         }
