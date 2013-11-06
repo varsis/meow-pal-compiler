@@ -24,6 +24,9 @@ stack.hh
 location.hh
 lex.yy.cpp
 
+# program listings
+*.lst
+
 # Generated dependency files
 *.d
 *.ad

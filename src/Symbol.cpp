@@ -12,7 +12,7 @@ namespace Meow
 	{
 	}
 
-	Symbol::Symbol(std::string name, SymbolType type)
+	Symbol::Symbol(std::string name, Symbol::SymbolType type)
 		: m_name(name)
 		, m_symbolType(type)
 		, m_lexicalLevel(-1)
@@ -33,7 +33,7 @@ namespace Meow
 		m_symbolType = type;
 	}
 
-	void Symbol::setType(std::string type)
+	void Symbol::setType(Type* type)
 	{
 		m_type = type;
 	}
@@ -53,7 +53,7 @@ namespace Meow
 		m_location = loc;
 	}
 
-	void Symbol::setReturnType(std::string type)
+	void Symbol::setReturnType(Type* type)
 	{
 		m_returnType = type;
 	}
@@ -73,12 +73,12 @@ namespace Meow
 		return m_name;
 	}
 
-	SymbolType Symbol::getSymbolType()
+	Symbol::SymbolType Symbol::getSymbolType()
 	{
 		return m_symbolType;
 	}
 
-	std::string Symbol::getType()
+	Type* Symbol::getType()
 	{
 		return m_type;
 	}
@@ -98,7 +98,7 @@ namespace Meow
 		return m_location;
 	}
 
-	std::string Symbol::getReturnType()
+	Type* Symbol::getReturnType()
 	{
 		return m_returnType;
 	}

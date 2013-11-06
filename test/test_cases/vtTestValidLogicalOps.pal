@@ -1,0 +1,7 @@
+program test(input, output);
+var
+        a : boolean;
+begin
+	a := true and false;
+	a := true or false;
+end.

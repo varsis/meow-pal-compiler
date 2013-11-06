@@ -1,0 +1,7 @@
+program test(input, output);
+var
+        a : boolean;
+begin
+	a := 1 and 2;
+	a := 2 or 4;
+end.

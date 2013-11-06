@@ -19,6 +19,7 @@
 		class PalScanner;
 		class ErrorManager;
 		class SymbolTable;
+		class Type;
 	}
 }
 
@@ -44,7 +45,11 @@
 %union {
 	std::string* identifier;
         std::string* stringLiteral;
+
+        Type* type;
 }
+
+%type <type> expr simple_expr term factor unsigned_const unsigned_num
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -139,7 +144,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -156,7 +161,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -173,7 +178,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -195,7 +200,7 @@ const_decl              : IDENTIFIER EQ type_expr
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, ConstantSymbol);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -233,7 +238,7 @@ type_decl               : IDENTIFIER EQ type
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, TypeSymbol);
+				sym = new Symbol(*$1, Symbol::TypeSymbol);
 
                                 delete $1;
 
@@ -254,7 +259,7 @@ type_decl               : IDENTIFIER EQ type
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, TypeSymbol);
+				sym = new Symbol(*$1, Symbol::TypeSymbol);
 
                                 delete $1;
 
@@ -296,7 +301,7 @@ enum_list		: IDENTIFIER
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, TypeSymbol);
+				sym = new Symbol(*$1, Symbol::TypeSymbol);
 
                                 delete $1;
 
@@ -313,7 +318,7 @@ enum_list		: IDENTIFIER
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$3, TypeSymbol);
+				sym = new Symbol(*$3, Symbol::TypeSymbol);
 
                                 delete $3;
 
@@ -387,7 +392,7 @@ var_decl                : IDENTIFIER COLON type
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, TypeSymbol);
+				sym = new Symbol(*$1, Symbol::TypeSymbol);
 
                                 delete $1;
 
@@ -404,7 +409,7 @@ var_decl                : IDENTIFIER COLON type
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, TypeSymbol);
+				sym = new Symbol(*$1, Symbol::TypeSymbol);
 
                                 delete $1;
 
@@ -421,7 +426,7 @@ var_decl                : IDENTIFIER COLON type
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, TypeSymbol);
+				sym = new Symbol(*$1, Symbol::TypeSymbol);
 
                                 delete $1;
 
@@ -442,7 +447,7 @@ var_decl                : IDENTIFIER COLON type
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, TypeSymbol);
+				sym = new Symbol(*$1, Symbol::TypeSymbol);
 
                                 delete $1;
 
@@ -556,11 +561,29 @@ simple_stat             : var ASSIGN expr
                         ;
 
 var                     : IDENTIFIER
+                        {
+                            // get symbol for identifier
+                            // get its type
+                            // $$.type = type
+                        }
                         | var PERIOD IDENTIFIER
+                        {
+                            // get symbol for $1.name
+                            // get its type
+                            // must be record!
+                            // get record field corresponding to $3
+                            // $$.type = fieldType
+                        }
                         | subscripted_var RIGHT_BRACKET
+                        {
+                            // TODO -- i don't think this subscripted_var rule is right...
+                            // it supports arrVar[1,2] for 2d array access...
+                        }
                         ;
 
 subscripted_var         : var LEFT_BRACKET expr
+                        {
+                        }
                         | subscripted_var COMMA expr
                         ;
 
@@ -632,48 +655,312 @@ type_factor             : var
 
 
 expr			: simple_expr
+                        {
+                            $$ = $1;
+                        }
                         | expr EQ simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpEQ, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | expr NE simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpNE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | expr LE simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpLE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | expr LT simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpLT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | expr GE simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpGE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | expr GT simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpGT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 simple_expr             : term
+                        {
+                            $$ = $1;
+                        }
                         | PLUS term
+                        {
+                            Type* result = table.getOpResultType(OpPLUS, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | MINUS term
+                        {
+                            Type* result = table.getOpResultType(OpMINUS, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | simple_expr PLUS term
+                        {
+                            Type* result = table.getOpResultType(OpADD, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | simple_expr MINUS term
-                        | simple_expr OR  term
+                        {
+                            Type* result = table.getOpResultType(OpSUBTRACT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
+                        | simple_expr OR term
+                        {
+                            Type* result = table.getOpResultType(OpOR, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'or'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 term                    : factor
+                        {
+                            $$ = $1;
+                        }
                         | term MULTIPLY factor
+                        {
+                            Type* result = table.getOpResultType(OpMULTIPLY, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '*'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term REAL_DIVIDE factor
+                        {
+                            Type* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '/'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term INT_DIVIDE factor
+                        {
+                            Type* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'div'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term MOD factor
+                        {
+                            Type* result = table.getOpResultType(OpMOD, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'mod'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | term AND factor
+                        {
+                            Type* result = table.getOpResultType(OpAND, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'and'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 factor                  : var
+                        {
+                            // $$ = $1
+                        }
                         | unsigned_const
+                        {
+                            $$ = $1;
+                        }
                         | LEFT_PAREN expr RIGHT_PAREN
+                        {
+                            // $$ = $2
+                        }
                         | func_invok
+                        {
+                            // $$ = $1
+                        }
                         | NOT factor
+                        {
+                            Type* result = table.getOpResultType(OpNOT, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for not.",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 unsigned_const          : unsigned_num
+                        {
+                            $$ = $1;
+                        }
                         | STRING_LITERAL
+                        {
+                            // $$.type = "string"
+                        }
                         ;
 
 unsigned_num            : INT_CONST
+                        {
+                            // TODO do we need to treat this type special since its a literal?
+                            // eg for type myInt : int, should be able to assign with int literals.
+                            $$ = table.getRawIntegerType();
+                        }
                         | REAL_CONST
+                        {
+                            $$ = table.getRawRealType();
+                        }
                         ;
 
 
 func_invok              : plist_finvok RIGHT_PAREN
+                        {
+                            // $$ = $1
+                        }
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
+                        {
+                            // get function for id
+                            // verify it is defined
+                            // $$.type = function return type
+                        }
                         ;
 
 %%
