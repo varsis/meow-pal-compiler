@@ -1,5 +1,3 @@
-#include <sstream>
-#include <stdarg.h>
 #include "ErrorManager.hpp"
 
 namespace Meow
