@@ -499,12 +499,12 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
 
                                 delete $2;
 
@@ -521,12 +521,12 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::FunctionSymbol);
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::FunctionSymbol);
 
                                 delete $2;
 
@@ -543,12 +543,12 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::FunctionSymbol);
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::FunctionSymbol);
 
                                 delete $2;
 
@@ -569,12 +569,12 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
-				sym = new Symbol(*$2, Symbol::ConstantSymbol);
+				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
 
                                 delete $2;
 
