@@ -14,6 +14,9 @@
 %error-verbose
 
 %code requires {
+
+ 	#include <vector>
+
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
 	namespace Meow
@@ -23,10 +26,12 @@
 		class SymbolTable;
 		class SemanticHelper;
 		class Type;
+		class Symbol;
 	}
 }
 
 %code {
+
  	#include "Scanner.hpp"
 
 	#include "SemanticHelper.hpp"
@@ -52,11 +57,17 @@
 	std::string* identifier;
         std::string* stringLiteral;
 
+        std::vector<Symbol*>* symbolList;
+
         Type* type;
 }
 
 %type <type> var expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type var_decl
+%type <type> type simple_type enumerated_type var_decl 
+
+%type <type> type_expr type_simple_expr type_term type_factor
+
+%type <symbolList> enum_list
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -266,9 +277,8 @@ simple_type             : IDENTIFIER
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
 			{
-				// create a new enumeration type with members from enumlist
-				// this type will get copied by defineType...?
-				// need to delete this?
+				$$ = new Type($2); // TODO when do we delete this? When type symbol goes out of scope?
+							// (must differentiate from predefined types, or use refcounts)
 			}
 			| LEFT_PAREN error RIGHT_PAREN
 			{
@@ -276,6 +286,7 @@ enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
                                 new Error(InvalidEnumDecl,
                                           "Invalid enumeration declaration.",
                                           scanner.lineno()));
+				// TODO int by default? or NULL?
                         }
 			;
 
@@ -295,6 +306,9 @@ enum_list		: IDENTIFIER
                                 delete $1;
 
 				table.addSymbol(sym);
+				
+				$$ = new std::vector<Symbol*>();
+				$$->push_back(sym);
 			}
                         | enum_list COMMA IDENTIFIER
 			{
@@ -312,11 +326,20 @@ enum_list		: IDENTIFIER
                                 delete $3;
 
 				table.addSymbol(sym);
+
+				$$ = $1;
+				$$->push_back(sym);
 			}
                         ;
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
+			{
+				// create a type, give it the index type + the element type
+			}
                         | RECORD field_list END
+			{
+				// create a type, give it list of fields
+			}
                         | RECORD field_list SEMICOLON END
                         | RECORD error END
                         {
@@ -335,7 +358,13 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         ;
 
 index_type              : simple_type
+                        {
+				// actually need VALUES here!
+                        }
                         | type_expr UPTO type_expr
+                        {
+				// actually need VALUES here!
+                        }
                         ;
 
 field_list              : field
@@ -651,34 +680,275 @@ matched_stat            : simple_stat
  ********************************************************************************/
 
 type_expr		: type_simple_expr
+                        {
+                            $$ = $1;
+                        }
                         | type_expr EQ type_simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpEQ, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_expr NE type_simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpNE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_expr LE type_simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpLE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_expr LT type_simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpLT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_expr GE type_simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpGE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_expr GT type_simple_expr
+                        {
+                            Type* result = table.getOpResultType(OpGT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 type_simple_expr        : type_term
+                        {
+                            $$ = $1;
+                        }
                         | PLUS type_term
+                        {
+                            Type* result = table.getOpResultType(OpPLUS, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | MINUS type_term
+                        {
+                            Type* result = table.getOpResultType(OpMINUS, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_simple_expr PLUS type_term
+                        {
+                            Type* result = table.getOpResultType(OpADD, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_simple_expr MINUS type_term
+                        {
+                            Type* result = table.getOpResultType(OpSUBTRACT, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_simple_expr OR  type_term
+                        {
+                            Type* result = table.getOpResultType(OpOR, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'or'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 type_term               : type_factor
+                        {
+                            $$ = $1;
+                        }
                         | type_term MULTIPLY type_factor
+                        {
+                            Type* result = table.getOpResultType(OpMULTIPLY, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '*'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_term REAL_DIVIDE type_factor
+                        {
+                            Type* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '/'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_term INT_DIVIDE type_factor
+                        {
+                            Type* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'div'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_term MOD type_factor
+                        {
+                            Type* result = table.getOpResultType(OpMOD, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'mod'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         | type_term AND type_factor
+                        {
+                            Type* result = table.getOpResultType(OpAND, $1, $3);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'and'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 type_factor             : var
+			{
+                            $$ = $1;
+				// TODO check that var is a constant?
+				// TODO can we actually have var? then we could access arrays and records and shit...
+			}
                         | LEFT_PAREN type_expr RIGHT_PAREN
+                        {
+                            $$ = $2;
+                        }
                         | INT_CONST 
+                        {
+                            $$ = table.getRawIntegerType();
+                        }
                         | NOT type_factor
+                        {
+                            Type* result = table.getOpResultType(OpNOT, $2);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for not.",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = result;
+                        }
                         ;
 
 
@@ -934,7 +1204,7 @@ factor                  : var
                         }
                         | LEFT_PAREN expr RIGHT_PAREN
                         {
-                            // $$ = $2
+                             $$ = $2;
                         }
                         | func_invok
                         {
@@ -968,8 +1238,6 @@ unsigned_const          : unsigned_num
 
 unsigned_num            : INT_CONST
                         {
-                            // TODO do we need to treat this type special since its a literal?
-                            // eg for type myInt : int, should be able to assign with int literals.
                             $$ = table.getRawIntegerType();
                         }
                         | REAL_CONST

@@ -1,6 +1,7 @@
 #ifndef SEMANTICHELPER_HPP
 #define SEMANTICHELPER_HPP
 
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -12,6 +13,7 @@ namespace Meow
 	class SymbolTable;
 	class PalScanner;
 	class Type;
+	class Symbol;
 
 	class SemanticHelper
 	{
