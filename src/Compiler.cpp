@@ -77,7 +77,7 @@ void Compiler::getArguments(int argc, char* argv[])
 	
 	m_inputFileName = argv[optind];
 	
-	if(m_inputFileName.find_last_of(".") >  m_inputFileName.find_last_of("/")) 
+	if((int) m_inputFileName.find_last_of(".") >  (int) m_inputFileName.find_last_of("/")) 
 	{
 		m_outputFileName = m_inputFileName.substr(0,
 			m_inputFileName.find_last_of("."));
