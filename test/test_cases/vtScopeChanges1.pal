@@ -1,0 +1,16 @@
+program test(input, output);
+var
+	a : integer;
+procedure blah();
+	var
+		a :integer;
+
+	procedure t();
+		var
+			a : integer;
+		begin
+		end;
+	begin
+	end;
+begin
+end.

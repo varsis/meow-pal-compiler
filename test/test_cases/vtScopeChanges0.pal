@@ -1,0 +1,11 @@
+program test(input, output);
+var
+	a : integer;
+procedure blah();
+var
+	a : integer;
+begin
+end;
+
+begin
+end.
