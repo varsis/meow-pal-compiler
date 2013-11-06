@@ -16,7 +16,8 @@ namespace Meow
 				ConstantSymbol,
 				TypeSymbol,
 				VariableSymbol,
-				ProcedureSymbol
+				ProcedureSymbol,
+				FunctionSymbol
 			};
 
 			class IdentifierTypePair 

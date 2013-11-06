@@ -5,6 +5,7 @@
 #include "../src/Scanner.hpp"
 #include "../src/Error.hpp"
 #include "../src/ErrorManager.hpp"
+#include "../src/SymbolTable.hpp"
 
 using namespace std;
 
@@ -44,6 +45,10 @@ namespace Meow
 				{
 					delete m_scanner;
 				}
+				if (m_symbolTable)
+				{
+					delete m_symbolTable;
+				}
 			}
 
 			void initTest(const char* fileName)
@@ -53,13 +58,15 @@ namespace Meow
 
 				if (m_input->is_open())
 				{
+					m_symbolTable = new SymbolTable();
 					m_errorManager = new ErrorManager();
-					m_scanner = new PalScanner(m_input, m_errorManager);
+					m_scanner = new PalScanner(m_input, m_errorManager, m_symbolTable);
 				}
 			}
 
 			PalParser::semantic_type yylval;
 			ErrorManager* m_errorManager;
+			SymbolTable* m_symbolTable;
 			PalScanner* m_scanner;
 			ifstream* m_input;
 	};

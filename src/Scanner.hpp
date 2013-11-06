@@ -11,6 +11,7 @@
 #include "ErrorCodes.hpp"
 #include "Error.hpp"
 #include "ErrorManager.hpp"
+#include "SymbolTable.hpp"
 
 // Override the interface for yylex since we namespaced it
 #undef YY_DECL
@@ -25,10 +26,12 @@ namespace Meow
 	{
 		public:
 
-			PalScanner(FLEX_STD istream* arg_yyin, ErrorManager * manager)
+			PalScanner(FLEX_STD istream* arg_yyin, ErrorManager * manager,
+					SymbolTable* table)
 				: yyFlexLexer(arg_yyin, 0)
 			{
 				this->m_manager = manager;
+				this->m_symbolTable = table;
 			}
 
 			// save the pointer to yylval so we can change it, and invoke scanner
@@ -48,6 +51,7 @@ namespace Meow
 			};
 
 			ErrorManager * m_manager;
+			SymbolTable * m_symbolTable;
 			// point to yylval (provided by Bison in overloaded yylex)
 			PalParser::semantic_type * yylval;
 	};

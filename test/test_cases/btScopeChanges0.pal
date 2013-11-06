@@ -1,0 +1,10 @@
+program test(input, output);
+var
+	myID : integer;
+
+procedure myID();
+begin
+end;
+
+begin
+end.
