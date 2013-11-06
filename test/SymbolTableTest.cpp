@@ -132,6 +132,46 @@ namespace Meow
 		
 		EXPECT_EQ(symbol->getSymbolType(), Symbol::VariableSymbol);
 	}
-		
+	
+	TEST(SymbolTableTest, identifierTypePairConstructorTest)
+	{
+		Symbol::IdentifierTypePair* typePair = new Symbol::IdentifierTypePair("a", NULL);
 
+		EXPECT_EQ(typePair->getName(), "a");
+		EXPECT_FALSE(typePair->getType());
+	}
+
+	TEST(SymbolTableTest, addFunctionWithParametersTest)
+	{
+		Symbol::IdentifierTypePair* parameter1 = new Symbol::IdentifierTypePair("a", NULL);
+		Symbol::IdentifierTypePair* parameter2 = new Symbol::IdentifierTypePair("b", NULL);
+
+		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
+		func->addParameter(parameter1);
+		func->addParameter(parameter2);
+
+		EXPECT_EQ(func->getParameterCount(), 2);
+	}
+
+	TEST(SymbolTableTest, getFunctionParmeterNotFoundTest)
+	{
+		Symbol::IdentifierTypePair* parameter1 = new Symbol::IdentifierTypePair("a", NULL);
+
+		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
+		func->addParameter(parameter1);
+
+		Symbol::IdentifierTypePair* searchResult = func->getParameter("b");
+		EXPECT_FALSE(searchResult);
+	}
+
+	TEST(SymbolTableTest, getFunctionParameterFoundTest)
+	{
+		Symbol::IdentifierTypePair* parameter1 = new Symbol::IdentifierTypePair("a", NULL);
+
+		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
+		func->addParameter(parameter1);
+
+		Symbol::IdentifierTypePair* searchResult = func->getParameter("a");
+		EXPECT_TRUE(searchResult);
+	}
 }

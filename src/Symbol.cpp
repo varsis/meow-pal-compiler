@@ -3,6 +3,36 @@
 
 namespace Meow
 {
+	Symbol::IdentifierTypePair::IdentifierTypePair(std::string name, Type* type)
+		: m_name(name)
+		, m_type(type)  
+	{
+	}
+
+	Symbol::IdentifierTypePair::~IdentifierTypePair()
+	{
+	}
+
+	void Symbol::IdentifierTypePair::setName(std::string name)
+	{
+		m_name = name;
+	}
+
+	void Symbol::IdentifierTypePair::setType(Type* type)
+	{
+		m_type = type;
+	}
+
+	std::string Symbol::IdentifierTypePair::getName() const
+	{
+		return m_name;
+	}
+
+	Type* Symbol::IdentifierTypePair::getType() const
+	{
+		return m_type;
+	}
+
 	Symbol::Symbol()
 		: m_lexicalLevel(-1)
 		, m_sizeInMem(-1)
@@ -68,6 +98,11 @@ namespace Meow
 		m_initialized = true;
 	}
 
+	void Symbol::addParameter(Symbol::IdentifierTypePair* parameter)
+	{
+		m_parameters.push_back(parameter);
+	}
+
 	std::string Symbol::getName()
 	{
 		return m_name;
@@ -113,5 +148,29 @@ namespace Meow
 		return m_initialized;
 	}
 
+	int Symbol::getParameterCount() const
+	{
+		return m_parameters.size();
+	}
+
+	std::vector<Symbol::IdentifierTypePair*> Symbol::getParameters() const
+	{
+		return m_parameters;
+	}
+
+	Symbol::IdentifierTypePair* Symbol::getParameter(std::string name) 
+	{
+		std::vector<Symbol::IdentifierTypePair*>::iterator it = m_parameters.begin();
+
+		for (; it != m_parameters.end(); it++)
+		{
+			if ((*it)->getName() == name)
+			{
+				return (*it);
+			}
+		}
+
+		return NULL;
+	}
 }
 
