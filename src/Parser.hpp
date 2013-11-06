@@ -7,12 +7,6 @@
 namespace Meow
 {
 	class ErrorManager;
-	class Program;
-
-	struct ParseResult
-	{
-		Program* program;
-	};
 
 	class Parser
 	{

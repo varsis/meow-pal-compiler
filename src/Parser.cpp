@@ -4,6 +4,7 @@
 #include "Scanner.hpp"
 #include "ErrorManager.hpp"
 #include "SymbolTable.hpp"
+#include "SemanticHelper.hpp"
 #include "pal.tab.hpp"
 
 namespace Meow
@@ -24,8 +25,11 @@ namespace Meow
 		int retval;
 		PalScanner scanner(fileStream, m_errorManager);
 		SymbolTable symbolTable;
+		SemanticHelper helper(&scanner, m_errorManager, &symbolTable);
 
-		PalParser parser(scanner, *m_errorManager, symbolTable);
+		helper.addPredefinedSymbols();
+
+		PalParser parser(scanner, *m_errorManager, symbolTable, helper);
 
 		if(m_debugFlag)
 		{

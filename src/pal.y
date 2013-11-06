@@ -6,6 +6,7 @@
 %parse-param { Meow::PalScanner &scanner }
 %parse-param { Meow::ErrorManager &errorManager }
 %parse-param { Meow::SymbolTable &table }
+%parse-param { Meow::SemanticHelper &semanticHelper }
 %lex-param   { Meow::PalScanner &scanner }
 
 %debug
@@ -19,6 +20,7 @@
 		class PalScanner;
 		class ErrorManager;
 		class SymbolTable;
+		class SemanticHelper;
 		class Type;
 	}
 }
@@ -26,6 +28,7 @@
 %code {
  	#include "Scanner.hpp"
 
+	#include "SemanticHelper.hpp"
 	#include "ErrorManager.hpp"
 	#include "Error.hpp"
  	#include "ErrorCodes.hpp"
@@ -50,6 +53,7 @@
 }
 
 %type <type> expr simple_expr term factor unsigned_const unsigned_num
+%type <type> type simple_type
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -276,11 +280,17 @@ type                    : simple_type
 
 simple_type             : IDENTIFIER
 			{
-				//TODO Make sure that this has been declared somewhere
+				// TODO don't want it to be the SAME type...
+				// create a new type and add it to symbol table!
+				$$ = semanticHelper.getTypeFromID(*$1);
+				delete $1;
 			}
                         ;
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
+			{
+				// create a new enumeration type with members from enumlist
+			}
 			| LEFT_PAREN error RIGHT_PAREN
 			{
                             errorManager.addError(
