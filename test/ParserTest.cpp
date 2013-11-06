@@ -5,6 +5,7 @@
 #include "../src/Parser.hpp"
 #include "../src/ErrorManager.hpp"
 #include "../src/SymbolTable.hpp"
+#include "../src/SemanticHelper.hpp"
 #include "../src/Error.hpp"
 #include "MockScanner.h"
 
@@ -26,7 +27,8 @@ namespace Meow
 		protected:
 
 			ParserTest() 
-				: parser(scanner, errorManager, symbolTable)
+				: helper(&scanner, &errorManager, &symbolTable)
+				, parser(scanner, errorManager, symbolTable, helper)
 			{
 			}
 
@@ -67,6 +69,7 @@ namespace Meow
 			MockScanner scanner;
 			ErrorManager errorManager;
 			SymbolTable symbolTable;
+			SemanticHelper helper;
 			vector<token_type> tokens;
 
 			PalParser parser;

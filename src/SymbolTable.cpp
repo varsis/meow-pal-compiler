@@ -5,6 +5,10 @@
 namespace Meow
 {
 	SymbolTable::SymbolTable()
+		: m_booleanType(true)
+		, m_integerType(true)
+		, m_realType(true)
+		, m_charType(true)
 	{
 		m_currentLevel = 0;
 
