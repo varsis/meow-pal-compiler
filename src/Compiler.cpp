@@ -35,7 +35,7 @@ void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
 	const char* optString = "ndt";
-	
+
 	if (argc == 1)
 	{
 		displayUsage();
@@ -72,8 +72,17 @@ void Compiler::getArguments(int argc, char* argv[])
 	}
 	
 	m_inputFileName = argv[optind];
-	m_outputFileName = m_inputFileName.substr(0, m_inputFileName.length()-4);
-	m_outputFileName = m_outputFileName + ".lst";
+	
+	if(m_inputFileName.find_last_of(".") >  m_inputFileName.find_last_of("/")) 
+	{
+		m_outputFileName = m_inputFileName.substr(0,
+			m_inputFileName.find_last_of("."));
+		m_outputFileName = m_outputFileName + ".lst";
+	}
+	else 
+	{
+		m_outputFileName = m_inputFileName + ".lst";
+	}
 }
 
 void Compiler::printErrors()
