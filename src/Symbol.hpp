@@ -63,7 +63,7 @@ namespace Meow
 			int getDeclLineno();
 			bool getInitialized();
 
-			int getParameterCount() const;
+			size_t getParameterCount() const;
 			std::vector<IdentifierTypePair*> getParameters() const;
 			IdentifierTypePair* getParameter(std::string name);	
 

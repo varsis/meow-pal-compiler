@@ -8,7 +8,7 @@
 %parse-param { Meow::SymbolTable &table }
 %parse-param { Meow::SemanticHelper &semanticHelper }
 %lex-param   { Meow::PalScanner &scanner }
-%lex-param   {Meow::SymbolTable &table  }
+%lex-param   { Meow::SymbolTable &table  }
 
 %debug
 %error-verbose
@@ -21,15 +21,17 @@
 
 	namespace Meow
 	{
-		
-		typedef std::vector<Symbol::IdentifierTypePair*> ParameterList;
-		typedef Symbol::IdentifierTypePair Parameter;
-
 		class PalScanner;
 		class ErrorManager;
 		class SymbolTable;
 		class SemanticHelper;
 		class Type;
+		
+		typedef std::vector<Symbol::IdentifierTypePair*> ParameterList;
+		typedef Symbol::IdentifierTypePair Parameter;
+		
+		// Will need to switch this once we start doing code gen
+		typedef std::vector<Type*> InvocationParameters;
 	}
 }
 
@@ -53,6 +55,9 @@
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
 	int g_beginCounter;
+	
+	// Keep track of current function/procedure name
+	std::string* g_currentFuncName;
 }
 
 %union {
@@ -63,12 +68,14 @@
 
 	Meow::ParameterList* parameterList;
 	Meow::Parameter* parameter;
+	Meow::InvocationParameters* invocationParameters;
 }
 
 %type <type> expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type
+%type <type> type simple_type parm
 %type <parameterList> f_parm_decl f_parm_list
 %type <parameter> f_parm
+%type <invocationParameters> plist_finvok
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -524,7 +531,6 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 
 				paramList = $3;
 
-				std::cout << "In rule: PROCEDURE IDENTIFIER f_param_decl: paramList size = " << paramList->size() << "\n";
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
@@ -558,7 +564,6 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 
 				paramList = $3;
 
-				std::cout << "In rule: PROCEDURE IDENTIFIER f_param_decl: paramList size = " << paramList->size() << "\n";
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
@@ -781,14 +786,73 @@ subscripted_var         : var LEFT_BRACKET expr
                         ;
 
 proc_invok              : plist_finvok RIGHT_PAREN
+			{
+				Symbol* procedureSymbol = table.getSymbolCurLevel(*g_currentFuncName);
+				
+				if (!procedureSymbol)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure has not been declared.",
+									scanner.lineno()));
+				}
+				
+				if (procedureSymbol && procedureSymbol->getParameterCount() != $1->size())
+				{
+					if ($1->size() < procedureSymbol->getParameterCount())
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure is missing parameters.",
+										scanner.lineno()));
+					}
+					else
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure has too many parameters.",
+										scanner.lineno()));
+					}
+				}
+				
+				delete g_currentFuncName;
+				g_currentFuncName = NULL;
+				
+			}
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
+			{
+				Symbol* procedureSymbol = table.getSymbolCurLevel(*$1);
+
+				if (!procedureSymbol)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure has not been declared.",
+									scanner.lineno()));
+				}
+				
+				if (procedureSymbol && procedureSymbol->getParameterCount() != 0)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure is missing parameters.",
+									scanner.lineno()));
+				}
+			}
                         ;
 
 plist_finvok            : IDENTIFIER LEFT_PAREN parm
+			{
+				g_currentFuncName = $1; // Store current function name
+				$$ = new InvocationParameters();
+				$$->push_back($3);
+			}
                         | plist_finvok COMMA parm
+			{
+				$$ = $1;
+				$$->push_back($3);
+			}
                         ;
 
 parm                    : expr
+			{
+				$$ = $1;
+			}
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
                         | IF expr THEN stat
@@ -1146,13 +1210,55 @@ unsigned_num            : INT_CONST
 
 func_invok              : plist_finvok RIGHT_PAREN
                         {
-                            // $$ = $1
+                            	// $$ = $1
+				Symbol* functionSymbol = table.getSymbolCurLevel(*g_currentFuncName);
+				
+				if (!functionSymbol)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure has not been declared.",
+									scanner.lineno()));
+				}
+				
+				if (functionSymbol && functionSymbol->getParameterCount() != $1->size())
+				{
+					if ($1->size() < functionSymbol->getParameterCount())
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure is missing parameters.",
+										scanner.lineno()));
+					}
+					else
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure has too many parameters.",
+										scanner.lineno()));
+					}
+				}
+				
+				delete g_currentFuncName;
+				g_currentFuncName = NULL;
                         }
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         {
                             // get function for id
                             // verify it is defined
                             // $$.type = function return type
+			    Symbol* functionSymbol = table.getSymbolCurLevel(*$1);
+
+			    if (!functionSymbol)
+			    {
+				errorManager.addError(new Error(IdentifierInUse,
+								"Function/Procedure has not been declared.",
+								scanner.lineno()));
+			    }
+				
+			    if (functionSymbol && functionSymbol->getParameterCount() != 0)
+			    {
+			    	errorManager.addError(new Error(IdentifierInUse,
+								"Function/Procedure is missing parameters.",
+								scanner.lineno()));
+			    }
                         }
                         ;
 
