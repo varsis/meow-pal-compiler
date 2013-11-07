@@ -12,7 +12,6 @@
 	static int s_scannerReturnLine;
 
 	extern int g_whileCounter;
-	extern int g_beginCounter;
 %}
 
 %option nodefault yyclass="PalScanner" noyywrap c++
@@ -150,7 +149,7 @@ EXPONENT	E[+-]?{DIGIT}+
 
 "and" { return token::AND; }
 "array" { return token::ARRAY; }
-"begin" { g_beginCounter++; return token::PAL_BEGIN; }
+"begin" { return token::PAL_BEGIN; }
 "const" { return token::CONST; }
 "continue" { 
 	if (!g_whileCounter) 
@@ -164,19 +163,7 @@ EXPONENT	E[+-]?{DIGIT}+
 	}
 "do" { g_whileCounter++; return token::DO; }
 "else" { return token::ELSE; }
-"end" {
-	if(g_beginCounter)
-	{
-		g_beginCounter--;
-	}
-
-	if(!g_beginCounter)
-	{
-		m_symbolTable->decLevel();
-	}
-
-	return token::END; 
-	}
+"end" {	return token::END; }
 "exit" { 
 	if (!g_whileCounter) 
 	{

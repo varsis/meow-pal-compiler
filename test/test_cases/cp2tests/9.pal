@@ -1,3 +1,34 @@
 {
-	Open for ideas.
+	Valid PAL program
 }
+
+program test(input, output);
+const
+	a = 89/3.4;
+	b = 'kfsdjghsafkjgskfdhgdfjkghsa';
+	c = -1;
+type
+	d = record
+		a,b,c:integer;
+		end;
+	e = array[1..200] of char;
+	f = array[1..200] of integer;
+var
+	g : e;
+	h : f;
+	i : d;
+
+procedure t(a : integer);
+	var
+		e : integer;
+		f : real;
+	procedure l();
+		var
+			e:integer;
+			f:array[1..200] of char;
+		begin
+		end;
+	begin
+	end;
+begin
+end.

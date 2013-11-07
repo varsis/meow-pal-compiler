@@ -8,12 +8,12 @@
 
 program test6(input, output);
 begin
-	if (true) then
+	while (true) do
 	begin	
 		exit;
 	end;
 	
-	if (myFunc()) then
+	while (myFunc()) do
 	begin
 		continue;
 	end;
