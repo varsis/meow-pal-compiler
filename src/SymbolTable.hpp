@@ -3,7 +3,7 @@
 
 #include "EntryList.hpp"
 #include "Symbol.hpp"
-#include <tr1/unordered_map>
+#include <unordered_map>
 #include <string>
 
 namespace Meow
@@ -11,7 +11,7 @@ namespace Meow
 	class SymbolTable
 	{
 		private:
-			std::tr1::unordered_map<std::string, EntryList*> m_symbolTable;
+			std::unordered_map<std::string, EntryList*> m_symbolTable;
 			int m_currentLevel;
 
 		public:
