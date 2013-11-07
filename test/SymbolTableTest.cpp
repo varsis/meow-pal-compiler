@@ -135,16 +135,16 @@ namespace Meow
 	
 	TEST(SymbolTableTest, identifierTypePairConstructorTest)
 	{
-		Symbol::IdentifierTypePair* typePair = new Symbol::IdentifierTypePair("a", NULL);
+		IdTypePair* typePair = new IdTypePair(new std::string("a"), NULL);
 
-		EXPECT_EQ(typePair->getName(), "a");
-		EXPECT_FALSE(typePair->getType());
+		EXPECT_EQ(*typePair->first, "a");
+		EXPECT_FALSE(typePair->second);
 	}
 
 	TEST(SymbolTableTest, addFunctionWithParametersTest)
 	{
-		Symbol::IdentifierTypePair* parameter1 = new Symbol::IdentifierTypePair("a", NULL);
-		Symbol::IdentifierTypePair* parameter2 = new Symbol::IdentifierTypePair("b", NULL);
+		IdTypePair* parameter1 = new IdTypePair(new std::string("a"), NULL);
+		IdTypePair* parameter2 = new IdTypePair(new std::string("b"), NULL);
 
 		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
 		func->addParameter(parameter1);
@@ -155,23 +155,23 @@ namespace Meow
 
 	TEST(SymbolTableTest, getFunctionParmeterNotFoundTest)
 	{
-		Symbol::IdentifierTypePair* parameter1 = new Symbol::IdentifierTypePair("a", NULL);
+		IdTypePair* parameter1 = new IdTypePair(new std::string("a"), NULL);
 
 		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
 		func->addParameter(parameter1);
 
-		Symbol::IdentifierTypePair* searchResult = func->getParameter("b");
+		IdTypePair* searchResult = func->getParameter("b");
 		EXPECT_FALSE(searchResult);
 	}
 
 	TEST(SymbolTableTest, getFunctionParameterFoundTest)
 	{
-		Symbol::IdentifierTypePair* parameter1 = new Symbol::IdentifierTypePair("a", NULL);
+		IdTypePair* parameter1 = new IdTypePair(new std::string("a"), NULL);
 
 		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
 		func->addParameter(parameter1);
 
-		Symbol::IdentifierTypePair* searchResult = func->getParameter("a");
+		IdTypePair* searchResult = func->getParameter("a");
 		EXPECT_TRUE(searchResult);
 	}
 }
