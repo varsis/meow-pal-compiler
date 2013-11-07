@@ -81,6 +81,7 @@ namespace Meow
 			std::vector<IdentifierTypePair*> m_parameters;
 
 	};
+
 }
 
 #endif

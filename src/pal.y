@@ -16,8 +16,15 @@
 %code requires {
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
+	
+	#include "Symbol.hpp"
+
 	namespace Meow
 	{
+		
+		typedef std::vector<Symbol::IdentifierTypePair*> ParameterList;
+		typedef Symbol::IdentifierTypePair Parameter;
+
 		class PalScanner;
 		class ErrorManager;
 		class SymbolTable;
@@ -53,10 +60,15 @@
         std::string* stringLiteral;
 
         Type* type;
+
+	Meow::ParameterList* parameterList;
+	Meow::Parameter* parameter;
 }
 
 %type <type> expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type
+%type <parameterList> f_parm_decl f_parm_list
+%type <parameter> f_parm
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -501,6 +513,7 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -509,12 +522,23 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
+				std::cout << "In rule: PROCEDURE IDENTIFIER f_param_decl: paramList size = " << paramList->size() << "\n";
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -523,6 +547,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -531,12 +556,23 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
+				std::cout << "In rule: PROCEDURE IDENTIFIER f_param_decl: paramList size = " << paramList->size() << "\n";
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -545,6 +581,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -553,12 +590,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -571,6 +618,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -579,12 +627,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -613,15 +671,57 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
+			{
+			  $$ = $2;
+			}
                         | LEFT_PAREN RIGHT_PAREN 
+			{
+			  $$ = new ParameterList();
+			}
                         ;
 
 f_parm_list             : f_parm
+			{
+			  $$ = new ParameterList();
+			  $$->push_back($1);
+			}
                         | f_parm_list SEMICOLON f_parm
+			{
+			  $$ = $1;
+			  $$->push_back($3);
+			}
                         ;
 
 f_parm                  : IDENTIFIER COLON IDENTIFIER
+			{
+			  //Symbol* typeSymbol = table.getSymbolCurLevel(*$3);
+
+			  //if (!typeSymbol)
+			  //{
+				// Type not defined; Invoke error manager.
+			  //}
+
+			  // TODO: Finish once Steve has user defined types done.
+			  // Type* type = typeSymbol.getIdentiferType();
+			  // $$ = new Symbol::IdentifierTypePair(*$1, type);
+			  $$ = new Parameter(*$1, NULL);
+			}
                         | VAR IDENTIFIER COLON IDENTIFIER
+			{
+			  // TODO: Need to take into account VAR once we reach code gen.
+
+			  //Symbol* typeSymbol = table.getSymbolCurLevel(*$4);
+
+			  //if (!typeSymbol)
+			  //{
+				// Type not defined; Invoke error manager.
+			  //}
+
+			  // TODO: Finish once Steve has user defined types done.
+			  // Type* type = typeSymbol.getIdentifierType();
+			  // $$ = new Symbol::IdentifierTypePair(*$2, type);
+			  $$ = new Parameter(*$2, NULL);
+			}
                         ;
 
 /********************************************************************************
