@@ -498,5 +498,14 @@ namespace Meow
 		// TODO see section on types in pal reference
 		return false;
 	}
-
+	
+	void SemanticHelper::checkBoolean(Type * t)
+	{	
+		if (t != getBooleanType())
+		{
+			m_errorManager->addError(new Error(InvalidExpression,
+					"Non-Boolean While/If clause.", 
+					m_scanner->lineno()));
+		}
+	}
 }

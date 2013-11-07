@@ -73,6 +73,7 @@ namespace Meow
 
 			bool checkCompatible(Type* ltype, Type* rtype);
 			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
+			void checkBoolean(Type *);
 
 			Type* getBooleanType() { return &m_booleanType; }
 			Type* getIntegerType() { return &m_integerType; }

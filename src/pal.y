@@ -686,9 +686,16 @@ plist_finvok            : IDENTIFIER LEFT_PAREN parm
 parm                    : expr
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
-                        | IF expr THEN stat
+                        {
+				semanticHelper.checkBoolean($2);
+			}
+			| IF expr THEN stat
+			{
+				semanticHelper.checkBoolean($2);
+			}
                         | WHILE expr DO stat
 			{
+				semanticHelper.checkBoolean($2);
 				g_whileCounter--;
 			}
                         | CONTINUE
@@ -697,8 +704,12 @@ struct_stat             : IF expr THEN matched_stat ELSE stat
 
 matched_stat            : simple_stat
                         | IF expr THEN matched_stat ELSE matched_stat
-                        | WHILE expr DO matched_stat
-			{
+                        {
+				semanticHelper.checkBoolean($2);
+			}
+			| WHILE expr DO matched_stat
+			{	
+				semanticHelper.checkBoolean($2);
 				g_whileCounter--;
 			}
                         | CONTINUE
