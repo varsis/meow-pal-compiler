@@ -60,27 +60,27 @@ namespace Meow
 		// Max 32 bit word
 		//maxintSymbol->setConstantValue(2^31);
 		m_table->addSymbol(maxintSymbol);
+
+		// PREDEFINED PROCEDURES
 		
-		Symbol* readFunctionSymbol = new Symbol("read", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//readFunctionSymbol->setType();
-		m_table->addSymbol(readFunctionSymbol);
+		Symbol* readSymbol = new Symbol("read", Symbol::ProcedureSymbol);
+		readSymbol->setIOProc(true);
+		m_table->addSymbol(readSymbol);
 		
-		Symbol* readlnFunctionSymbol = new Symbol("readln", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//readlnFunctionSymbol->setType();
-		m_table->addSymbol(readlnFunctionSymbol);
+		Symbol* readlnSymbol = new Symbol("readln", Symbol::ProcedureSymbol);
+		readlnSymbol->setIOProc(true);
+		m_table->addSymbol(readlnSymbol);
 		
-		Symbol* writelnFunctionSymbol = new Symbol("writeln", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//writelnFunctionSymbol->setType();
-		m_table->addSymbol(writelnFunctionSymbol);
+		Symbol* writelnSymbol = new Symbol("writeln", Symbol::ProcedureSymbol);
+		writelnSymbol->setIOProc(true);
+		m_table->addSymbol(writelnSymbol);
 		
-		Symbol* writeFunctionSymbol = new Symbol("write", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//writeFunctionSymbol->setType();
-		m_table->addSymbol(writeFunctionSymbol);
+		Symbol* writeSymbol = new Symbol("write", Symbol::ProcedureSymbol);
+		writeSymbol->setIOProc(true);
+		m_table->addSymbol(writeSymbol);
 		
+		// PREDEFINED FUNCTIONS
+
 		Symbol* ordFunctionSymbol = new Symbol("ord", Symbol::FunctionSymbol);
 		//TODO a Type?
 		//ordFunctionSymbol->setType();
@@ -146,17 +146,6 @@ namespace Meow
 		//lnFunctionSymbol->setType();
 		m_table->addSymbol(lnFunctionSymbol);
 
-		// add predefined procedures + functions
-		// writeln, readln
-		Symbol* writelnSymbol = new Symbol("writeln", Symbol::ProcedureSymbol);
-		// TODO specify that it is varargs
-		// TODO specify what types are compatible as args
-		//	- Simple Types - reals, ints, bools, chars
-		//	- Enum types
-		//	- Char arrays
-
-
-		m_table->addSymbol(writelnSymbol);
 	}
 
 	Symbol* SemanticHelper::getSymbol(string id, bool assertExists)
