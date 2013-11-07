@@ -209,25 +209,6 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				table.addSymbol(sym);
                         }
-			| IDENTIFIER EQ REAL_CONST
-                        {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::ConstantSymbol);
-
-				// TODO set type of constant symbol
-
-                                delete $1;
-
-				table.addSymbol(sym);
-                        }
                         | IDENTIFIER ASSIGN type_expr
                         {       
                                 errorManager.addError(
@@ -997,6 +978,11 @@ type_factor             : IDENTIFIER
                             $$.type = semanticHelper.getIntegerType();
                             $$.value.int_val = $1;
                         }
+			| REAL_CONST
+			{
+				$$.type = semanticHelper.getRealType();
+				$$.value.real_val = $1;
+			}
                         | NOT type_factor
                         {
                             Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
