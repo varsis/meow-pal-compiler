@@ -63,6 +63,10 @@ namespace Meow
 			Type* getTypeForVarId(string id);
 			Type* getTypeFromID(string id);
 
+			bool isOrdinalType(Type* t);
+			Type* makeArrayType(Type* indexType, Type* elementType);
+			Type* makeArrayType(ConstExpr start, ConstExpr end, Type* elementType);
+
 			void declareVariable(string id, Type* type);
 
 			ConstExpr getConstOpResult(Operator op, ConstExpr expr);
@@ -74,6 +78,9 @@ namespace Meow
 			bool checkCompatible(Type* ltype, Type* rtype);
 			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
 			void checkBoolean(Type *);
+
+			Type* getRecordFieldType(Type* recordType, string fieldName);
+			Type* getSubscriptedArrayType(Type* arrayType, Type* subscriptType);
 
 			Type* getBooleanType() { return &m_booleanType; }
 			Type* getIntegerType() { return &m_integerType; }

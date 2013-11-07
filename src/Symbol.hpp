@@ -3,15 +3,11 @@
 
 #include <string>
 #include <vector>
-#include "Type.hpp"
+#include "AuxiliaryTypes.hpp"
 
 namespace Meow
 {
-	union Value
-	{
-		int int_val;
-		double real_val;
-	};
+	class Type;
 
 	class Symbol
 	{
@@ -49,7 +45,6 @@ namespace Meow
 			void setName(std::string name);
 			void setSymbolType(SymbolType type);
 			void setType(Type* type);
-			void setType(std::string type);
 			void setLexLevel(int);
 			void setSizeInMem(int);
 			void setLocation(int);
@@ -69,12 +64,18 @@ namespace Meow
 			int getDeclLineno();
 			bool getInitialized();
 
-			// for procedure/function symbols...
-			size_t getParameterCount() const;
-
 			// for constant symbols..
 			void setConstantValue(Value v) { m_constValue = v; };
+			void setConstantValue(double v) { m_constValue.real_val = v; };
+			void setConstantValue(int v) { m_constValue.int_val = v; };
+
 			Value getConstantValue() { return m_constValue; };
+
+			void setStringLiteral(std::string v) { m_stringLiteral = v; };
+			std::string getStringLiteral() { return m_stringLiteral; };
+
+			// for procedure/function symbols...
+			size_t getParameterCount() const;
 			std::vector<IdentifierTypePair*> getParameters() const;
 			IdentifierTypePair* getParameter(std::string name);	
 
@@ -91,7 +92,7 @@ namespace Meow
 
 			// for constant symbols..
 			Value m_constValue;
-
+			std::string m_stringLiteral;
 
 			std::vector<IdentifierTypePair*> m_parameters;
 

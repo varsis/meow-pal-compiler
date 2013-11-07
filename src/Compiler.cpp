@@ -24,18 +24,19 @@ Compiler::~Compiler()
 
 void Compiler::displayUsage()
 {
-	std::cout << "\nProgram Usage: pal [-n] file.pal\n\n";
+	std::cout << "\nProgram Usage: pal [-ndp] file.pal\n\n";
 	std::cout << "OPTIONS:\n";
 	std::cout << "\t-n : Do not produce a program listing. Default is" 
 		  << "to produce one.\n";
 	std::cout << "\t-d : Enable bison debug mode.\n";
+	std::cout << "\t-p : Print program listing to stdout instead of file.\n";
 	std::cout << std::endl;
 }
 
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
-	const char* optString = "ndtp";
+	const char* optString = "ndp";
 
 	if (argc == 1)
 	{

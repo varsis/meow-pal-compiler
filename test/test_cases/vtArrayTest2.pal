@@ -6,5 +6,5 @@ var
 begin
         str[false] := 'a';
         str[true] := 'b';
-        writeln(str);
+        //writeln(str);
 end.

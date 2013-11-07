@@ -34,6 +34,8 @@
 		class SemanticHelper;
 		class Type;
 		class Symbol;
+
+		struct ArrayIndexRange;
 		
 		typedef std::vector<Symbol::IdentifierTypePair*> ParameterList;
 		typedef Symbol::IdentifierTypePair Parameter;
@@ -50,6 +52,12 @@
 
 	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
 	typedef std::vector<IdTypePair*> IdTypePairList;
+
+	struct FieldDecl
+	{
+		Meow::Type* type;
+		std::vector<std::string*>* fieldNames;
+	};
 }
 
 %code {
@@ -85,7 +93,10 @@
         IdTypePair* idTypePair;
         IdTypePairList* idTypePairList;
 
+        FieldDecl fieldDecl;
+
         Meow::ConstExpr constExpr;
+	ArrayIndexRange indexRange;
 
         Type* type;
 
@@ -96,12 +107,13 @@
 
 %type <type> var expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type enumerated_type structured_type var_decl parm
+%type <type> subscripted_var
 
 %type <constExpr> type_expr type_simple_expr type_term type_factor
 
 %type <symbolList> enum_list
 
-%type <idTypePair> field
+%type <fieldDecl> field
 %type <idTypePairList> field_list
 
 %type <parameterList> f_parm_decl f_parm_list
@@ -225,7 +237,10 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
-				// TODO set type of constant symbol
+				sym->setType(new Type(*$3));
+				
+				// TODO remove?
+				sym->setStringLiteral(*$3); // TODO limited to 255 by spec?
 
                                 delete $1;
 
@@ -249,7 +264,8 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
-				// TODO set type of constant symbol
+				sym->setType($3.type);
+				sym->setConstantValue($3.value);
 
                                 delete $1;
 
@@ -308,8 +324,9 @@ simple_type             : IDENTIFIER
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
 			{
-				$$ = new Type($2); // TODO when do we delete this? When type symbol goes out of scope?
-							// (must differentiate from predefined types, or use refcounts)
+// TODO when do we delete this? When type symbol goes out of scope?
+// (must differentiate from predefined types, or use refcounts)
+				$$ = new Type($2);
 			}
 			| LEFT_PAREN error RIGHT_PAREN
 			{
@@ -332,7 +349,7 @@ enum_list		: IDENTIFIER
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -352,7 +369,7 @@ enum_list		: IDENTIFIER
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$3, Symbol::TypeSymbol);
+				sym = new Symbol(*$3, Symbol::ConstantSymbol);
 
                                 delete $3;
 
@@ -363,24 +380,25 @@ enum_list		: IDENTIFIER
 			}
                         ;
 
-structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
+structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRACKET OF type
 			{
-				// return type with index type + element type
-				$$ = new Type(NULL, $6); 
-				// TODO detmine if indices matter at this point
-				// (char array compatibility?)
+				// TODO what kind of expresssions are actually allowed in type expr?
+				$$ = semanticHelper.makeArrayType($3, $5, $8);
+				// TODO - returns null if invalid! handle!
+			}
+			| ARRAY LEFT_BRACKET simple_type RIGHT_BRACKET OF type
+			{
+				// array with typed index + element type
+				$$ = semanticHelper.makeArrayType($3, $6);
+				// TODO - returns null if invalid! handle!
 			}
                         | RECORD field_list END
 			{
-				// TODO create a type, give it list of fields
 				$$ = new Type($2);
-				// TODO (use connor's pair list thing)?
 			}
                         | RECORD field_list SEMICOLON END
 			{
-				// TODO create a type, give it list of fields
 				$$ = new Type($2);
-				// TODO (use connor's pair list thing)?
 				// TODO both these rules are OK?
 			}
                         | RECORD error END
@@ -399,20 +417,14 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         }
                         ;
 
-index_type              : simple_type
-                        {
-				// actually need VALUES here!?
-                        }
-                        | type_expr UPTO type_expr
-                        {
-				// actually need VALUES here!?
-                        }
-                        ;
-
 field_list              : field
 			{
 				$$ = new IdTypePairList();
-				$$->push_back($1);
+				// TODO check if id already used in field list	
+				for (unsigned int i = 0; i < $1.fieldNames->size(); ++i)
+				{
+					$$->push_back(new IdTypePair($1.fieldNames->at(i), $1.type));
+				}
 			}
                         | field_list SEMICOLON field
 			{
@@ -420,17 +432,24 @@ field_list              : field
 				// TODO check if id already used in field list	
 				// might want to use (unordered) map instead of list to
 				// avoid quadratic time!
-				$$->push_back($3);
+				for (unsigned int i = 0; i < $3.fieldNames->size(); ++i)
+				{
+					$$->push_back(new IdTypePair($3.fieldNames->at(i), $3.type));
+				}
+				delete $3.fieldNames;
 			}
                         ;
 
 field                   : IDENTIFIER COLON type
 			{
-				//TODO Make sure that this hasn't been declared in the RECORD before
+				$$.type = $3;
+				$$.fieldNames = new std::vector<std::string*>();
+				$$.fieldNames->push_back($1);
 			}
 			| IDENTIFIER COMMA field
 			{
-				//TODO Make sure that this hasn't been declared in the RECORD before
+				$$ = $3;
+				$$.fieldNames->push_back($1);
 			}
 			| IDENTIFIER error
 			{
@@ -438,6 +457,9 @@ field                   : IDENTIFIER COLON type
                                 new Error(InvalidRecordDecl,
                                           "Invalid field declaration.",
                                           scanner.lineno()));
+
+				$$.fieldNames = new std::vector<std::string*>();
+				$$.type = semanticHelper.getIntegerType();
                         }
                         ;
 
@@ -784,23 +806,26 @@ var                     : IDENTIFIER
                         }
                         | var PERIOD IDENTIFIER
                         {
-                            // get symbol for $1.name
-                            // get its type
-                            // must be record!
-                            // get record field corresponding to $3
-                            // $$.type = fieldType
+				$$ = semanticHelper.getRecordFieldType($1, *$3);
+				delete $3;
                         }
                         | subscripted_var RIGHT_BRACKET
                         {
-                            // TODO -- i don't think this subscripted_var rule is right...
-                            // it supports arrVar[1,2] for 2d array access...
+				// TODO -- determine if accessing 2d array with arrVar[1,2] should be
+				// supported
+				$$ = $1;
                         }
                         ;
 
 subscripted_var         : var LEFT_BRACKET expr
                         {
+				$$ = semanticHelper.getSubscriptedArrayType($1, $3);
                         }
                         | subscripted_var COMMA expr
+			{
+				// TODO check/test we are doing the subscripts in the correct order!
+				$$ = semanticHelper.getSubscriptedArrayType($1, $3);
+			}
                         ;
 
 proc_invok              : plist_finvok RIGHT_PAREN
@@ -1164,6 +1189,11 @@ type_factor             : IDENTIFIER
 				
 				delete $1;
 			}
+			| STRING_LITERAL
+			{
+				// TODO - must be a single char, then we can
+				// return a char  type + value
+			}
                         | LEFT_PAREN type_expr RIGHT_PAREN
                         {
                             $$ = $2;
@@ -1480,7 +1510,7 @@ unsigned_const          : unsigned_num
                         }
                         | STRING_LITERAL
                         {
-                            // $$.type = "string"
+				$$ = new Type(*$1);
                         }
                         ;
 
