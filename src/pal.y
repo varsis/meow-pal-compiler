@@ -557,6 +557,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
+					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
 				}
 
                                 delete $2;
@@ -596,6 +597,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
+					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
 				}
 
 				delete $2;
@@ -631,6 +633,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
+					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
 				}
 
                                 delete $2;
@@ -668,6 +671,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
+					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
 				}
 
                                 delete $2;
