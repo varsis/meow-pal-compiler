@@ -1,0 +1,10 @@
+program test013(input, output);
+
+type
+        TGender = (Male, Female);
+var
+        myGender : TGender;
+
+begin
+	myGender := Male;
+end.

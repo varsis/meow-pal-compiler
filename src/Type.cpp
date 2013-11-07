@@ -8,7 +8,7 @@ namespace Meow
 		, m_symbolList(symbolList)
 	{
 		// run through list of enum symbols
-		for (unsigned int i = 1; i < symbolList->size(); ++i)
+		for (unsigned int i = 0; i < symbolList->size(); ++i)
 		{
 			// assign type to this new enum type
 			symbolList->at(i)->setType(this);

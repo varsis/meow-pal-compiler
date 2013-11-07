@@ -15,21 +15,25 @@ namespace Meow
 
 			enum TypeClass
 			{
+				SimpleType,
 				EnumeratedType,
 				ArrayType,
 				RecordType,
-				SimpleType,
+				StringLiteralType,
 			};
 
 			typedef std::pair<std::string*, Meow::Type*> IdTypePair;
 			typedef std::vector<IdTypePair*> IdTypePairList;
 
+			// Simple type
 			Type() : m_typeClass(SimpleType)
 			{
 			}
 			
+			// Enum
 			Type(std::vector<Symbol*>* symbolList);
 
+			// Array
 			Type(Type* elementType, Type* indexType)
 				: m_typeClass(ArrayType)
 				  , m_elementType(elementType)
@@ -39,6 +43,7 @@ namespace Meow
 				// element (eg false .. true, 'a' .. 'z', MININT .. MAXINT)
 			}
 
+			// Array
 			Type(Type* elementType, Type* indexType, ArrayIndexRange indexRange)
 				: m_typeClass(ArrayType)
 				, m_elementType(elementType)
@@ -47,9 +52,17 @@ namespace Meow
 			{
 			}
 
+			// Record
 			Type(IdTypePairList* fields)
-				: m_typeClass(ArrayType)
+				: m_typeClass(RecordType)
 				, m_fields(fields)
+			{
+			}
+
+			// String Literal
+			Type(std::string literal)
+				: m_typeClass(StringLiteralType)
+				, m_stringLiteral(literal)
 			{
 			}
 
@@ -90,6 +103,9 @@ namespace Meow
 				return m_fields;
 			}
 
+			// string literal
+			std::string getStringLiteral() { return m_stringLiteral; }
+
 		private:
 
 			TypeClass m_typeClass;
@@ -108,6 +124,9 @@ namespace Meow
 
 			// records
 			IdTypePairList* m_fields;
+
+			// string literal
+			std::string m_stringLiteral;
 
 	};
 }

@@ -74,8 +74,8 @@ namespace Meow
 			void setStringLiteral(std::string v) { m_stringLiteral = v; };
 			std::string getStringLiteral() { return m_stringLiteral; };
 
-			// for procedures + funcitons..
-			int getParameterCount() const;
+			// for procedure/function symbols...
+			size_t getParameterCount() const;
 			std::vector<IdentifierTypePair*> getParameters() const;
 			IdentifierTypePair* getParameter(std::string name);	
 
@@ -97,6 +97,7 @@ namespace Meow
 			std::vector<IdentifierTypePair*> m_parameters;
 
 	};
+
 }
 
 #endif

@@ -17,8 +17,10 @@ begin
         me.age := 21;
         me.gender := Male;
 
+{
         writeln('Name: ', me.name);
         writeln('Age: ', me.age);
         writeln('Gender: ', me.gender);
+}
 end.
         

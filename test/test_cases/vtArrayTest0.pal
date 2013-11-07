@@ -12,5 +12,5 @@ begin
                 i := i + 1;
         end;
 
-        writeln(list[4]);
+        list[1] := list[4];
 end.

@@ -1,0 +1,15 @@
+program test2(input, output);
+const 
+	world = 'world';
+var 
+	s, t : string;
+	s1 : array[1..10] of char;
+	s2 : array[1..10] of char;
+begin
+	s := 'hello';
+	s := world;
+	
+	s1 := 'sup';
+	s2 := 'bro';
+	s1 := s2;
+end.

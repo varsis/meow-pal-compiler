@@ -36,6 +36,15 @@ namespace Meow
 		boolSymbol->setType(getBooleanType());
 		m_table->addSymbol(boolSymbol);
 
+		// AT LEAST FOR NOW -- define a string type
+		// TODO remove this if required
+		Symbol* stringSymbol = new Symbol("string", Symbol::TypeSymbol);
+		ConstExpr stringStart = {getIntegerType(), {1}};
+		ConstExpr stringEnd = {getIntegerType(), {255}};
+		Type* stringType = makeArrayType(stringStart, stringEnd, getCharType());
+		stringSymbol->setType(stringType);
+		m_table->addSymbol(stringSymbol);
+
 		// add predefined constants
 		Symbol* trueSymbol = new Symbol("true", Symbol::ConstantSymbol);
 		trueSymbol->setType(getBooleanType());
@@ -576,8 +585,154 @@ namespace Meow
 
 	bool SemanticHelper::checkAssignmentCompatible(Type* ltype, Type* rtype)
 	{
-		// TODO see section on types in pal reference
+		if (ltype == NULL || rtype == NULL)
+		{
+			return false;
+		}
+
+		// Check string compatiblilty
+		if (ltype->getTypeClass() == Type::ArrayType)
+		{
+			// string are any char arrays with integer index starting at 1;
+			if (ltype->getElementType() == getCharType() 
+					&& ltype->getIndexType() == getIntegerType()
+					&& ltype->getIndexRange().start == 1)
+			{
+				// if we are assigning a string literal, assume its ok
+				if (rtype->getTypeClass() == Type::StringLiteralType)
+				{
+					return true;
+				}
+
+				// if we are assigning a char array, must have same indices
+				if ( rtype->getElementType() == getCharType()
+					&& rtype->getIndexType() == getIntegerType()
+					&& rtype->getIndexRange().start == 1
+					&& ltype->getIndexRange().end == rtype->getIndexRange().end)
+				{
+					return true;
+				}
+
+
+				// TODO better error
+				m_errorManager->addError(new Error(SemanticError,
+						"Assigning string with invalid type", 
+						m_scanner->lineno()));
+			}
+		}
+
+		// if rtype is a string literal with length 1, treat it as a char
+		if (rtype->getTypeClass() == Type::StringLiteralType)
+		{
+			if (rtype->getStringLiteral().size() == 1)
+			{
+				rtype = getCharType();
+			}
+		}
+
+		if (ltype == getRealType() && rtype == getIntegerType())
+		{
+			return true;
+		}
+
+		if (ltype == rtype)
+		{
+			return true;
+		}
+		
 		return false;
 	}
+	
+	void SemanticHelper::checkBoolean(Type * t)
+	{	
+		if (t != getBooleanType())
+		{
+			m_errorManager->addError(new Error(InvalidExpression,
+					"Non-Boolean While/If clause.", 
+					m_scanner->lineno()));
+		}
+	}
 
+	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName)
+	{
+		Type* fieldType = NULL;
+
+		if (recordType == NULL)
+		{
+			// TODO error, or just ignore?
+		}
+		else if (recordType->getTypeClass() != Type::RecordType)
+		{
+			// TODO ERROR type is not a record
+			m_errorManager->addError(new Error(SemanticError,
+					"Accessing field on type that is not a record", 
+					m_scanner->lineno()));
+		}
+		else
+		{
+			IdTypePairList* fields = recordType->getFields();
+
+			if (fields == NULL)
+			{
+				// ERROR - record type has no fields?
+				m_errorManager->addError(new Error(SemanticError,
+						"Record has no fields", 
+						m_scanner->lineno()));
+			}
+			else
+			{
+				// get record field corresponding to name
+				IdTypePairList::iterator it;
+				for (it = fields->begin(); it != fields->end(); ++it)
+				{
+					if ((*it)->first->compare(fieldName) == 0)
+					{
+						fieldType = (*it)->second;
+					}
+				}
+			}
+
+			if (fieldType == NULL)
+			{
+				// TODO ERROR - invalid field for record!
+				m_errorManager->addError(new Error(SemanticError,
+						"No matchin field in record",
+						m_scanner->lineno()));
+			}
+		}
+
+		return fieldType;
+	}
+
+	Type* SemanticHelper::getSubscriptedArrayType(Type* arrayType, Type* subscriptType)
+	{
+		Type* result = NULL;
+
+		if (arrayType == NULL)
+		{
+			// TODO error or just ignore and return null?
+		}
+		else if (arrayType->getTypeClass() != Type::ArrayType)
+		{
+			// TODO ERROR type is not an array
+			m_errorManager->addError(new Error(SemanticError,
+					"Subscripted variable is not an array",
+					m_scanner->lineno()));
+		}
+		else
+		{
+			// check subscript type matches index type (or is at least assignment compatible?)
+			if (!checkAssignmentCompatible(arrayType->getIndexType(), subscriptType))
+			{
+				m_errorManager->addError(new Error(SemanticError,
+						"Subscript is not compatible with array index type",
+						m_scanner->lineno()));
+			}
+			else
+			{
+				result = arrayType->getElementType();
+			}
+		}
+		return result;
+	}
 }

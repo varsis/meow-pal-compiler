@@ -2,5 +2,5 @@ program test(input, output);
 var
         a : integer;
 begin
-	a := -1.0;
+	a := -1;
 end.

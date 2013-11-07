@@ -2,8 +2,8 @@
 	Test Case 4;
 	Errors on lines:
 	13 : Constant redecl
-	17 : Variable redecl
-	23 : Procedure/Function redecl
+	16 : Variable redecl
+	22 : Procedure/Function redecl
 }
 
 program test4(input, output);
@@ -14,7 +14,6 @@ const
 
 var
 	a : integer;
-	a : real;
 
 procedure first();
 begin

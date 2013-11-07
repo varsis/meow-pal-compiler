@@ -77,12 +77,15 @@ namespace Meow
 
 			bool checkCompatible(Type* ltype, Type* rtype);
 			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
+			void checkBoolean(Type *);
+
+			Type* getRecordFieldType(Type* recordType, string fieldName);
+			Type* getSubscriptedArrayType(Type* arrayType, Type* subscriptType);
 
 			Type* getBooleanType() { return &m_booleanType; }
 			Type* getIntegerType() { return &m_integerType; }
 			Type* getRealType() { return &m_realType; }
 			Type* getCharType() { return &m_charType; }
-			Type* getStringLiteralType() { return &m_stringLiteral; }
 
 		private:
 
@@ -93,7 +96,6 @@ namespace Meow
 			// Predefined simple types
 			Type m_booleanType;
 			Type m_integerType;
-			Type m_stringLiteral;
 			Type m_realType;
 			Type m_charType;
 
