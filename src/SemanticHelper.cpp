@@ -148,6 +148,15 @@ namespace Meow
 
 		// add predefined procedures + functions
 		// writeln, readln
+		Symbol* writelnSymbol = new Symbol("writeln", Symbol::ProcedureSymbol);
+		// TODO specify that it is varargs
+		// TODO specify what types are compatible as args
+		//	- Simple Types - reals, ints, bools, chars
+		//	- Enum types
+		//	- Char arrays
+
+
+		m_table->addSymbol(writelnSymbol);
 	}
 
 	Symbol* SemanticHelper::getSymbol(string id, bool assertExists)

@@ -37,9 +37,6 @@
 
 		struct ArrayIndexRange;
 		
-		typedef std::vector<Symbol::IdentifierTypePair*> ParameterList;
-		typedef Symbol::IdentifierTypePair Parameter;
-		
 		// Will need to switch this once we start doing code gen
 		typedef std::vector<Type*> InvocationParameters;
 		
@@ -49,15 +46,6 @@
 			std::string* procedureName;
 		};
 	}
-
-	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
-	typedef std::vector<IdTypePair*> IdTypePairList;
-
-	struct FieldDecl
-	{
-		Meow::Type* type;
-		std::vector<std::string*>* fieldNames;
-	};
 }
 
 %code {
@@ -100,8 +88,9 @@
 
         Type* type;
 
-	Meow::ParameterList* parameterList;
-	Meow::Parameter* parameter;
+	Meow::IdTypePairList* parameterList;
+	Meow::IdTypePair* parameter;
+
 	Meow::ProcedureInvocation procedureInvocation;
 }
 
@@ -239,7 +228,7 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym->setType(new Type(*$3));
 				
-				// TODO remove?
+				// TODO remove? (we are passing the literal to the type constructor instead of the symbol...)
 				sym->setStringLiteral(*$3); // TODO limited to 255 by spec?
 
                                 delete $1;
@@ -544,7 +533,7 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList = NULL;
+				IdTypePairList* paramList = NULL;
 
 				if (sym)
 				{
@@ -577,7 +566,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList = NULL;
+				IdTypePairList* paramList = NULL;
 
 				if (sym)
 				{
@@ -610,7 +599,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList = NULL;
+				IdTypePairList* paramList = NULL;
 
 				if (sym)
 				{
@@ -647,7 +636,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList = NULL;
+				IdTypePairList* paramList = NULL;
 
 				if (sym)
 				{
@@ -705,13 +694,13 @@ f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
 			}
                         | LEFT_PAREN RIGHT_PAREN 
 			{
-			  $$ = new ParameterList();
+			  $$ = new IdTypePairList();
 			}
                         ;
 
 f_parm_list             : f_parm
 			{
-			  $$ = new ParameterList();
+			  $$ = new IdTypePairList();
 			  $$->push_back($1);
 			}
                         | f_parm_list SEMICOLON f_parm
@@ -723,33 +712,49 @@ f_parm_list             : f_parm
 
 f_parm                  : IDENTIFIER COLON IDENTIFIER
 			{
-			  //Symbol* typeSymbol = table.getSymbolCurLevel(*$3);
+			  // just assume integer in case of error
+			  Type* type = semanticHelper.getIntegerType();
 
-			  //if (!typeSymbol)
-			  //{
+			  Symbol* typeSymbol = table.getSymbol(*$3);
+			  if (!typeSymbol)
+			  {
 				// Type not defined; Invoke error manager.
-			  //}
+				errorManager.addError(
+					new Error(SemanticError,
+					"Undefined type",
+					scanner.lineno()));
+			  }
+			  else
+			  {
+				type = typeSymbol->getType();
+			  }
 
-			  // TODO: Finish once Steve has user defined types done.
-			  // Type* type = typeSymbol.getIdentiferType();
-			  // $$ = new Symbol::IdentifierTypePair(*$1, type);
-			  $$ = new Parameter(*$1, NULL);
+			  $$ = new IdTypePair($1, type);
 			}
                         | VAR IDENTIFIER COLON IDENTIFIER
 			{
 			  // TODO: Need to take into account VAR once we reach code gen.
 
-			  //Symbol* typeSymbol = table.getSymbolCurLevel(*$4);
+			  // just assume integer in case of error
+			  Type* type = semanticHelper.getIntegerType();
 
-			  //if (!typeSymbol)
-			  //{
+			  Symbol* typeSymbol = table.getSymbol(*$4);
+			  if (!typeSymbol)
+			  {
 				// Type not defined; Invoke error manager.
-			  //}
+				errorManager.addError(
+					new Error(SemanticError,
+					"Undefined type",
+					scanner.lineno()));
+			  }
+			  else
+			  {
+				type = typeSymbol->getType();
+			  }
 
-			  // TODO: Finish once Steve has user defined types done.
-			  // Type* type = typeSymbol.getIdentifierType();
-			  // $$ = new Symbol::IdentifierTypePair(*$2, type);
-			  $$ = new Parameter(*$2, NULL);
+			  $$ = new IdTypePair($2, type);
+
+// TODO maybe idtypepair shouldn't hold a pointer to a string -- makes memory management trickier
 			}
                         ;
 
@@ -1188,11 +1193,6 @@ type_factor             : IDENTIFIER
 				}
 				
 				delete $1;
-			}
-			| STRING_LITERAL
-			{
-				// TODO - must be a single char, then we can
-				// return a char  type + value
 			}
                         | LEFT_PAREN type_expr RIGHT_PAREN
                         {
