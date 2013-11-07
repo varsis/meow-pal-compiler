@@ -231,25 +231,6 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				table.addSymbol(sym);
                         }
-			| IDENTIFIER EQ REAL_CONST
-                        {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::ConstantSymbol);
-
-				// TODO set type of constant symbol
-
-                                delete $1;
-
-				table.addSymbol(sym);
-                        }
                         | IDENTIFIER ASSIGN type_expr
                         {       
                                 errorManager.addError(
@@ -496,7 +477,6 @@ var_decl                : IDENTIFIER COLON type
                         }
                         | IDENTIFIER error
                         {
-				// TODO -- should we really do anything here?
                                 semanticHelper.declareVariable(*$1, NULL);
                                 delete $1;
                                 $$ = NULL;
@@ -769,12 +749,29 @@ stat                    : simple_stat
                         ;
 
 simple_stat             : var ASSIGN expr
+			{
+				if (!semanticHelper.checkAssignmentCompatible($1, $3))
+				{
+					errorManager.addError(
+						new Error(InvalidAssignment,
+						"Non-assignment compatible types.",
+						scanner.lineno()));
+				}
+			}
                         | proc_invok
                         | compound_stat
                         | var EQ expr 
                         {
-                          errorManager.addError(
-                              new Error(CStyleAssignment,
+				if (!semanticHelper.checkAssignmentCompatible($1, $3))
+				{
+					errorManager.addError(
+						new Error(InvalidAssignment,
+						"Non-assignment compatible types.",
+						scanner.lineno()));
+				}
+                          
+			  	errorManager.addError(
+                              	new Error(CStyleAssignment,
                                         "C-style assignment, expected \":=\".",
                                         scanner.lineno()));
                         }
@@ -873,9 +870,16 @@ parm                    : expr
 			}
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
-                        | IF expr THEN stat
+                        {
+				semanticHelper.checkBoolean($2);
+			}
+			| IF expr THEN stat
+			{
+				semanticHelper.checkBoolean($2);
+			}
                         | WHILE expr DO stat
 			{
+				semanticHelper.checkBoolean($2);
 				g_whileCounter--;
 			}
                         | CONTINUE
@@ -884,8 +888,12 @@ struct_stat             : IF expr THEN matched_stat ELSE stat
 
 matched_stat            : simple_stat
                         | IF expr THEN matched_stat ELSE matched_stat
-                        | WHILE expr DO matched_stat
-			{
+                        {
+				semanticHelper.checkBoolean($2);
+			}
+			| WHILE expr DO matched_stat
+			{	
+				semanticHelper.checkBoolean($2);
 				g_whileCounter--;
 			}
                         | CONTINUE
@@ -1165,6 +1173,11 @@ type_factor             : IDENTIFIER
                             $$.type = semanticHelper.getIntegerType();
                             $$.value.int_val = $1;
                         }
+			| REAL_CONST
+			{
+				$$.type = semanticHelper.getRealType();
+				$$.value.real_val = $1;
+			}
                         | NOT type_factor
                         {
                             Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);

@@ -38,7 +38,8 @@ namespace Meow
 		IdentifierInUse = 28,
 		OperatorTypeMismatch = 29,
 		IdentifierUseBeforeDecl = 30,
-		InvalidExitContinue = 31
+		InvalidExitContinue = 31,
+		InvalidAssignment = 32
 	};
 }
 
