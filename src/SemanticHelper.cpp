@@ -130,6 +130,87 @@ namespace Meow
 		return getIntegerType();
 	}
 
+	bool SemanticHelper::isOrdinalType(Type* t)
+	{
+		// if it's one of the base ordinal types
+		if (t == getIntegerType() 
+				|| t == getBooleanType()
+				|| t == getCharType())
+		{
+			return true;
+		}
+
+		if (t->getTypeClass() == Type::EnumeratedType)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	Type* SemanticHelper::makeArrayType(Type* indexType, Type* elementType)
+	{
+		if (!isOrdinalType(indexType))
+		{
+			// TODO error
+			return NULL;
+		}
+
+		ArrayIndexRange range;
+		range.start = indexType->getMinValue().int_val;
+		range.end = indexType->getMaxValue().int_val;
+
+		return new Type(elementType, indexType, range);
+	}
+
+	Type* SemanticHelper::makeArrayType(ConstExpr start, ConstExpr end, Type* elementType)
+	{
+		// the start and end types need to be compatible (equal?)
+		if (!checkCompatible(start.type, end.type))
+		{
+			// TODO error
+			return NULL;
+		}
+
+		// the start and end types need to be ordinal
+		if (!isOrdinalType(start.type) || !isOrdinalType(end.type))
+		{
+			// TODO error
+			return NULL;
+		}
+	
+		Type* indexType = start.type; // TODO assume or assert types are equal?
+
+		// Check that start doesn't come after end
+		//if (indexType->getTypeClass() == Type::EnumeratedType)
+		//{
+			// check start.value doesn't come after end.value
+			// TODO values can be enums!!! fack!!
+			// hey -- but we can just treat enums like ints though right?
+		//}
+		//else if (start.value.int_val > end.value.int_val)
+		if (start.value.int_val > end.value.int_val)
+		{
+			// TODO error
+			return NULL;
+		}
+
+		ArrayIndexRange range;
+
+		//if (start.type->getTypeClass() == Type::EnumeratedType)
+		//{
+			//range.start = start.value.enum_val
+			//range.end = end.value.enum_val
+		//}
+		//else
+		{
+			range.start = start.value.int_val;
+			range.end = end.value.int_val;
+		}
+
+		return new Type(elementType, indexType, range);
+	}
+
 	void SemanticHelper::declareVariable(string id, Type* type)
 	{
 		Symbol* sym = m_table->getSymbolCurLevel(id);

@@ -63,6 +63,10 @@ namespace Meow
 			Type* getTypeForVarId(string id);
 			Type* getTypeFromID(string id);
 
+			bool isOrdinalType(Type* t);
+			Type* makeArrayType(Type* indexType, Type* elementType);
+			Type* makeArrayType(ConstExpr start, ConstExpr end, Type* elementType);
+
 			void declareVariable(string id, Type* type);
 
 			ConstExpr getConstOpResult(Operator op, ConstExpr expr);
@@ -78,6 +82,7 @@ namespace Meow
 			Type* getIntegerType() { return &m_integerType; }
 			Type* getRealType() { return &m_realType; }
 			Type* getCharType() { return &m_charType; }
+			Type* getStringLiteralType() { return &m_stringLiteral; }
 
 		private:
 
@@ -88,6 +93,7 @@ namespace Meow
 			// Predefined simple types
 			Type m_booleanType;
 			Type m_integerType;
+			Type m_stringLiteral;
 			Type m_realType;
 			Type m_charType;
 

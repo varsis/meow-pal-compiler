@@ -31,6 +31,7 @@
 		class SemanticHelper;
 		class Type;
 		class Symbol;
+		struct ArrayIndexRange;
 	}
 
 	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
@@ -72,6 +73,7 @@
         IdTypePairList* idTypePairList;
 
         Meow::ConstExpr constExpr;
+	ArrayIndexRange indexRange;
 
         Type* type;
 }
@@ -203,7 +205,8 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
-				// TODO set type of constant symbol
+				sym->setType(semanticHelper.getStringLiteralType());
+				sym->setStringLiteral(*$3); // TODO limited to 255 by spec?
 
                                 delete $1;
 
@@ -222,7 +225,8 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
-				// TODO set type of constant symbol
+				sym->setType(semanticHelper.getRealType());
+				sym->setConstantValue($3);
 
                                 delete $1;
 
@@ -246,7 +250,8 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
-				// TODO set type of constant symbol
+				sym->setType($3.type);
+				sym->setConstantValue($3.value);
 
                                 delete $1;
 
@@ -329,7 +334,7 @@ enum_list		: IDENTIFIER
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
+				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
                                 delete $1;
 
@@ -349,7 +354,7 @@ enum_list		: IDENTIFIER
 									scanner.lineno()));
 				}
 
-				sym = new Symbol(*$3, Symbol::TypeSymbol);
+				sym = new Symbol(*$3, Symbol::ConstantSymbol);
 
                                 delete $3;
 
@@ -360,24 +365,25 @@ enum_list		: IDENTIFIER
 			}
                         ;
 
-structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
+structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRACKET OF type
 			{
-				// return type with index type + element type
-				$$ = new Type(NULL, $6); 
-				// TODO detmine if indices matter at this point
-				// (char array compatibility?)
+				// TODO what kind of expresssions are actually allowed in type expr?
+				$$ = semanticHelper.makeArrayType($3, $5, $8);
+				// TODO - returns null if invalid! handle!
+			}
+			| ARRAY LEFT_BRACKET simple_type RIGHT_BRACKET OF type
+			{
+				// array with typed index + element type
+				$$ = semanticHelper.makeArrayType($3, $6);
+				// TODO - returns null if invalid! handle!
 			}
                         | RECORD field_list END
 			{
-				// TODO create a type, give it list of fields
 				$$ = new Type($2);
-				// TODO (use connor's pair list thing)?
 			}
                         | RECORD field_list SEMICOLON END
 			{
-				// TODO create a type, give it list of fields
 				$$ = new Type($2);
-				// TODO (use connor's pair list thing)?
 				// TODO both these rules are OK?
 			}
                         | RECORD error END
@@ -393,16 +399,6 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                                 new Error(InvalidArrayDecl,
                                           "Invalid array declaration.",
                                           scanner.lineno()));
-                        }
-                        ;
-
-index_type              : simple_type
-                        {
-				// actually need VALUES here!?
-                        }
-                        | type_expr UPTO type_expr
-                        {
-				// actually need VALUES here!?
                         }
                         ;
 
@@ -423,6 +419,7 @@ field_list              : field
 
 field                   : IDENTIFIER COLON type
 			{
+				$$ = new IdTypePair($1, $3);
 				//TODO Make sure that this hasn't been declared in the RECORD before
 			}
 			| IDENTIFIER COMMA field
@@ -987,6 +984,11 @@ type_factor             : IDENTIFIER
 				}
 				
 				delete $1;
+			}
+			| STRING_LITERAL
+			{
+				// TODO - must be a single char, then we can
+				// return a char  type + value
 			}
                         | LEFT_PAREN type_expr RIGHT_PAREN
                         {
