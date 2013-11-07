@@ -455,7 +455,6 @@ var_decl                : IDENTIFIER COLON type
                         }
                         | IDENTIFIER error
                         {
-				// TODO -- should we really do anything here?
                                 semanticHelper.declareVariable(*$1, NULL);
                                 delete $1;
                                 $$ = NULL;
@@ -638,12 +637,29 @@ stat                    : simple_stat
                         ;
 
 simple_stat             : var ASSIGN expr
+			{
+				if (!semanticHelper.checkAssignmentCompatible($1, $3))
+				{
+					errorManager.addError(
+						new Error(InvalidAssignment,
+						"Non-assignment compatible types.",
+						scanner.lineno()));
+				}
+			}
                         | proc_invok
                         | compound_stat
                         | var EQ expr 
                         {
-                          errorManager.addError(
-                              new Error(CStyleAssignment,
+				if (!semanticHelper.checkAssignmentCompatible($1, $3))
+				{
+					errorManager.addError(
+						new Error(InvalidAssignment,
+						"Non-assignment compatible types.",
+						scanner.lineno()));
+				}
+                          
+			  	errorManager.addError(
+                              	new Error(CStyleAssignment,
                                         "C-style assignment, expected \":=\".",
                                         scanner.lineno()));
                         }
