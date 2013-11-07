@@ -7,6 +7,12 @@
 
 namespace Meow
 {
+	union Value
+	{
+		int int_val;
+		double real_val;
+	};
+
 	class Symbol
 	{
 		public:
@@ -63,6 +69,11 @@ namespace Meow
 			int getDeclLineno();
 			bool getInitialized();
 
+			// for constant symbols..
+			void setConstantValue(Value v) { m_constValue = v; };
+			Value getConstantValue() { return m_constValue; };
+
+			// for procedures + funcitons..
 			int getParameterCount() const;
 			std::vector<IdentifierTypePair*> getParameters() const;
 			IdentifierTypePair* getParameter(std::string name);	
@@ -77,6 +88,10 @@ namespace Meow
 			Type* m_returnType;
 			int m_declLineno;
 			bool m_initialized;
+
+			// for constant symbols..
+			Value m_constValue;
+
 
 			std::vector<IdentifierTypePair*> m_parameters;
 

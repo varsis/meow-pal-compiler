@@ -8,30 +8,6 @@
 
 namespace Meow
 {
-	enum Operator
-	{
-		OpEQ,
-		OpNE,
-		OpLE,
-		OpLT,
-		OpGE,
-		OpGT,
-
-		OpPLUS,
-		OpMINUS,
-
-		OpADD,
-		OpSUBTRACT,
-		OpMULTIPLY,
-		OpREALDIVIDE,
-		OpINTDIVIDE,
-		OpMOD,
-
-		OpNOT,
-		OpAND,
-		OpOR
-	};
-
 	class SymbolTable
 	{
 		private:
@@ -48,23 +24,7 @@ namespace Meow
 			void incLevel();
 			void decLevel();
 
-			Type* getOpResultType(Operator op, Type* type);
-			Type* getOpResultType(Operator op, Type* leftType, Type* rightType);
-
-			bool checkCompatible(Type* ltype, Type* rtype);
-			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
-
-			Type* getRawBooleanType() { return &m_booleanType; }
-			Type* getRawIntegerType() { return &m_integerType; }
-			Type* getRawRealType() { return &m_realType; }
-			Type* getRawCharType() { return &m_charType; }
 		private:
-
-			// Predefined raw types
-			Type m_booleanType;
-			Type m_integerType;
-			Type m_realType;
-			Type m_charType;
 	};
 }
 

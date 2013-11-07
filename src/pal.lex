@@ -199,8 +199,14 @@ EXPONENT	E[+-]?{DIGIT}+
 "var" { return token::VAR; }
 "while" { return token::WHILE; }
 
-{DIGIT}+((\.{DIGIT}+{EXPONENT})|(\.{DIGIT}+)|{EXPONENT}) { return token::REAL_CONST; }
-{DIGIT}+ { return token::INT_CONST; }
+{DIGIT}+((\.{DIGIT}+{EXPONENT})|(\.{DIGIT}+)|{EXPONENT}) { 
+	yylval->realConst = atof(yytext);
+	return token::REAL_CONST; 
+							 }
+{DIGIT}+ {
+	yylval->intConst = atoi(yytext);
+	return token::INT_CONST;
+	 }
 
 ([a-zA-Z]+[0-9a-zA-Z]*) { 
 				yylval->identifier = new std::string(yytext);
