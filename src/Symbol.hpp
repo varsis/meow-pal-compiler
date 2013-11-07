@@ -69,12 +69,12 @@ namespace Meow
 			int getDeclLineno();
 			bool getInitialized();
 
+			// for procedure/function symbols...
+			size_t getParameterCount() const;
+
 			// for constant symbols..
 			void setConstantValue(Value v) { m_constValue = v; };
 			Value getConstantValue() { return m_constValue; };
-
-			// for procedures + funcitons..
-			int getParameterCount() const;
 			std::vector<IdentifierTypePair*> getParameters() const;
 			IdentifierTypePair* getParameter(std::string name);	
 
@@ -96,6 +96,7 @@ namespace Meow
 			std::vector<IdentifierTypePair*> m_parameters;
 
 	};
+
 }
 
 #endif

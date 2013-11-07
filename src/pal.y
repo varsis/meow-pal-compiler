@@ -8,7 +8,7 @@
 %parse-param { Meow::SymbolTable &table }
 %parse-param { Meow::SemanticHelper &semanticHelper }
 %lex-param   { Meow::PalScanner &scanner }
-%lex-param   {Meow::SymbolTable &table  }
+%lex-param   { Meow::SymbolTable &table  }
 
 %debug
 %error-verbose
@@ -23,6 +23,9 @@
 
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
+	
+	#include "Symbol.hpp"
+
 	namespace Meow
 	{
 		class PalScanner;
@@ -31,6 +34,18 @@
 		class SemanticHelper;
 		class Type;
 		class Symbol;
+		
+		typedef std::vector<Symbol::IdentifierTypePair*> ParameterList;
+		typedef Symbol::IdentifierTypePair Parameter;
+		
+		// Will need to switch this once we start doing code gen
+		typedef std::vector<Type*> InvocationParameters;
+		
+		struct ProcedureInvocation
+		{
+			InvocationParameters* params;
+			std::string* procedureName;
+		};
 	}
 
 	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
@@ -73,10 +88,14 @@
         Meow::ConstExpr constExpr;
 
         Type* type;
+
+	Meow::ParameterList* parameterList;
+	Meow::Parameter* parameter;
+	Meow::ProcedureInvocation procedureInvocation;
 }
 
 %type <type> var expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type enumerated_type structured_type var_decl 
+%type <type> type simple_type enumerated_type structured_type var_decl parm
 
 %type <constExpr> type_expr type_simple_expr type_term type_factor
 
@@ -84,6 +103,10 @@
 
 %type <idTypePair> field
 %type <idTypePairList> field_list
+
+%type <parameterList> f_parm_decl f_parm_list
+%type <parameter> f_parm
+%type <procedureInvocation> plist_finvok
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -519,6 +542,7 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -527,12 +551,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -541,6 +575,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -549,12 +584,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -563,6 +608,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -571,12 +617,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -589,6 +645,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -597,12 +654,22 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 									scanner.lineno()));
 				}
 
+				paramList = $3;
+
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
 				table.addSymbol(sym);
 				table.incLevel();
 				
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
+				for (size_t i = 0; i < paramList->size(); i++)
+				{
+					sym->addParameter(paramList->at(i));
+				}
 
                                 delete $2;
 
@@ -631,15 +698,57 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
+			{
+			  $$ = $2;
+			}
                         | LEFT_PAREN RIGHT_PAREN 
+			{
+			  $$ = new ParameterList();
+			}
                         ;
 
 f_parm_list             : f_parm
+			{
+			  $$ = new ParameterList();
+			  $$->push_back($1);
+			}
                         | f_parm_list SEMICOLON f_parm
+			{
+			  $$ = $1;
+			  $$->push_back($3);
+			}
                         ;
 
 f_parm                  : IDENTIFIER COLON IDENTIFIER
+			{
+			  //Symbol* typeSymbol = table.getSymbolCurLevel(*$3);
+
+			  //if (!typeSymbol)
+			  //{
+				// Type not defined; Invoke error manager.
+			  //}
+
+			  // TODO: Finish once Steve has user defined types done.
+			  // Type* type = typeSymbol.getIdentiferType();
+			  // $$ = new Symbol::IdentifierTypePair(*$1, type);
+			  $$ = new Parameter(*$1, NULL);
+			}
                         | VAR IDENTIFIER COLON IDENTIFIER
+			{
+			  // TODO: Need to take into account VAR once we reach code gen.
+
+			  //Symbol* typeSymbol = table.getSymbolCurLevel(*$4);
+
+			  //if (!typeSymbol)
+			  //{
+				// Type not defined; Invoke error manager.
+			  //}
+
+			  // TODO: Finish once Steve has user defined types done.
+			  // Type* type = typeSymbol.getIdentifierType();
+			  // $$ = new Symbol::IdentifierTypePair(*$2, type);
+			  $$ = new Parameter(*$2, NULL);
+			}
                         ;
 
 /********************************************************************************
@@ -698,14 +807,70 @@ subscripted_var         : var LEFT_BRACKET expr
                         ;
 
 proc_invok              : plist_finvok RIGHT_PAREN
+			{
+				Symbol* procedureSymbol = table.getSymbol(*($1.procedureName));
+				if (!procedureSymbol)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure has not been declared.",
+									scanner.lineno()));
+				}
+				
+				if (procedureSymbol && procedureSymbol->getParameterCount() != $1.params->size())
+				{
+					if ($1.params->size() < procedureSymbol->getParameterCount())
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure is missing parameters.",
+										scanner.lineno()));
+					}
+					else
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure has too many parameters.",
+										scanner.lineno()));
+					}
+				}
+				
+				delete $1.procedureName;
+			}
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
+			{
+				Symbol* procedureSymbol = table.getSymbolCurLevel(*$1);
+
+				if (!procedureSymbol)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure has not been declared.",
+									scanner.lineno()));
+				}
+				
+				if (procedureSymbol && procedureSymbol->getParameterCount() != 0)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure is missing parameters.",
+									scanner.lineno()));
+				}
+			}
                         ;
 
 plist_finvok            : IDENTIFIER LEFT_PAREN parm
+			{
+				$$.procedureName = $1;
+				$$.params = new InvocationParameters();
+				$$.params->push_back($3);
+			}
                         | plist_finvok COMMA parm
+			{
+				$$ = $1;
+				$$.params->push_back($3);
+			}
                         ;
 
 parm                    : expr
+			{
+				$$ = $1;
+			}
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
                         | IF expr THEN stat
@@ -1319,13 +1484,53 @@ unsigned_num            : INT_CONST
 
 func_invok              : plist_finvok RIGHT_PAREN
                         {
-                            // $$ = $1
+				Symbol* functionSymbol = table.getSymbolCurLevel(*$1.procedureName);
+				
+				if (!functionSymbol)
+				{
+					errorManager.addError(new Error(IdentifierInUse,
+									"Function/Procedure has not been declared.",
+									scanner.lineno()));
+				}
+				
+				if (functionSymbol && functionSymbol->getParameterCount() != $1.params->size())
+				{
+					if ($1.params->size() < functionSymbol->getParameterCount())
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure is missing parameters.",
+										scanner.lineno()));
+					}
+					else
+					{
+						errorManager.addError(new Error(IdentifierInUse,
+										"Function/Procedure has too many parameters.",
+										scanner.lineno()));
+					}
+				}
+				
+				delete $1.procedureName;
                         }
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         {
                             // get function for id
                             // verify it is defined
                             // $$.type = function return type
+			    Symbol* functionSymbol = table.getSymbolCurLevel(*$1);
+
+			    if (!functionSymbol)
+			    {
+				errorManager.addError(new Error(IdentifierInUse,
+								"Function/Procedure has not been declared.",
+								scanner.lineno()));
+			    }
+				
+			    if (functionSymbol && functionSymbol->getParameterCount() != 0)
+			    {
+			    	errorManager.addError(new Error(IdentifierInUse,
+								"Function/Procedure is missing parameters.",
+								scanner.lineno()));
+			    }
                         }
                         ;
 

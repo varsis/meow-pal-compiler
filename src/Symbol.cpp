@@ -152,7 +152,7 @@ namespace Meow
 		return m_initialized;
 	}
 
-	int Symbol::getParameterCount() const
+	size_t Symbol::getParameterCount() const
 	{
 		return m_parameters.size();
 	}
