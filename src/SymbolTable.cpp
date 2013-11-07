@@ -13,7 +13,7 @@ namespace Meow
 
 	SymbolTable::~SymbolTable()
 	{
-		std::unordered_map<std::string, EntryList*>::iterator i;
+		SymbolMap::iterator i;
 
 		// Go through the table and delete all the entry lists
 		for(i=m_symbolTable.begin(); i != m_symbolTable.end(); i++)
@@ -76,7 +76,7 @@ namespace Meow
 
 	void SymbolTable::decLevel()
 	{
-		std::unordered_map<std::string, EntryList*>::iterator i;
+		SymbolMap::iterator i;
 		
 		// Make sure that we aren't at zero since -1 scope is wrong
 		if (m_currentLevel != 0)

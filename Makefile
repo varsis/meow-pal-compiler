@@ -12,6 +12,8 @@ FLEX = flex
 
 # If you need to override flex/bison version used, specify 
 # in a file named MakefileCustomDefs
+# Also, if compiler supports <unordered_map> instead of <tr1/undordered_map>, 
+# set CFLAGS += -DNO_TR1 in MakefileCustomDefs
 -include MakefileCustomDefs
 
 .PHONY: test clean
