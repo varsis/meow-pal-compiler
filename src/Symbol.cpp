@@ -57,11 +57,6 @@ namespace Meow
 		m_location = loc;
 	}
 
-	void Symbol::setReturnType(Type* type)
-	{
-		m_returnType = type;
-	}
-
 	void Symbol::setDeclLineno(int line)
 	{
 		m_declLineno = line;
@@ -105,11 +100,6 @@ namespace Meow
 	int Symbol::getLocation()
 	{
 		return m_location;
-	}
-
-	Type* Symbol::getReturnType()
-	{
-		return m_returnType;
 	}
 
 	int Symbol::getDeclLineno()

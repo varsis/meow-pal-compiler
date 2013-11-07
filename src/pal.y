@@ -567,6 +567,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
 				IdTypePairList* paramList = NULL;
+				Type * returnType;
 
 				if (sym)
 				{
@@ -582,6 +583,11 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				{
 					sym->addParameter(paramList->at(i));
 				}
+	
+				
+				returnType = semanticHelper.getTypeFromID(*$5);
+                                
+				sym->setType(returnType);
 
 				table.addSymbol(sym);
 				table.incLevel();
@@ -592,8 +598,10 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 					sym->addParameter(paramList->at(i));
 				}
 
-                                delete $2;
+				delete $2;
+				delete $5;
 
+				sym->setType(returnType);
 				table.addSymbol(sym);
 			}
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON

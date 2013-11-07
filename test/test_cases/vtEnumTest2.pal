@@ -1,0 +1,10 @@
+program test(input, output);
+type
+	month = (Jan, Feb, Mar, Apr);
+var
+	a : month;
+
+begin
+	a := Jan;
+	a := Apr;
+end.

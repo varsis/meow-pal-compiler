@@ -31,7 +31,6 @@ namespace Meow
 			void setLexLevel(int);
 			void setSizeInMem(int);
 			void setLocation(int);
-			void setReturnType(Type* returnType);
 			void setDeclLineno(int);
 			void setInitialized();
 
@@ -41,7 +40,6 @@ namespace Meow
 			int getLexLevel();
 			int getSizeInMem();
 			int getLocation();
-			Type* getReturnType();
 			int getDeclLineno();
 			bool getInitialized();
 
@@ -68,7 +66,6 @@ namespace Meow
 			Type* m_type;
 			int m_sizeInMem;
 			int m_location;
-			Type* m_returnType;
 			int m_declLineno;
 			bool m_initialized;
 
