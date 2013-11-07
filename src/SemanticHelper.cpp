@@ -44,6 +44,98 @@ namespace Meow
 		Symbol* falseSymbol = new Symbol("false", Symbol::ConstantSymbol);
 		falseSymbol->setType(getBooleanType());
 		m_table->addSymbol(falseSymbol);
+		
+		// TODO max int value
+		Symbol* maxintSymbol = new Symbol("maxint", Symbol::ConstantSymbol);
+		maxintSymbol->setType(getIntegerType());
+		// Max 32 bit word
+		maxintSymbol->setConstantValue(2^31);
+		m_table->addSymbol(maxintSymbol);
+		
+		Symbol* readFunctionSymbol = new Symbol("read", Symbol::FunctionSymbol);
+		//TODO a Type?
+		readFunctionSymbol->setType();
+		m_table->addSymbol(readFunctionSymbol);
+		
+		Symbol* readlnFunctionSymbol = new Symbol("readln", Symbol::FunctionSymbol);
+		//TODO a Type?
+		readlnFunctionSymbol->setType();
+		m_table->addSymbol(readlnFunctionSymbol);
+		
+		Symbol* writelnFunctionSymbol = new Symbol("writeln", Symbol::FunctionSymbol);
+		//TODO a Type?
+		writelnFunctionSymbol->setType();
+		m_table->addSymbol(writelnFunctionSymbol);
+		
+		Symbol* writeFunctionSymbol = new Symbol("write", Symbol::FunctionSymbol);
+		//TODO a Type?
+		writeFunctionSymbol->setType();
+		m_table->addSymbol(writeFunctionSymbol);
+		
+		Symbol* ordFunctionSymbol = new Symbol("ord", Symbol::FunctionSymbol);
+		//TODO a Type?
+		ordFunctionSymbol->setType();
+		m_table->addSymbol(ordFunctionSymbol);
+		
+		Symbol* chrFunctionSymbol = new Symbol("chr", Symbol::FunctionSymbol);
+		//TODO a Type?
+		chrFunctionSymbol->setType();
+		m_table->addSymbol(chrFunctionSymbol);
+		
+		Symbol* truncFunctionSymbol = new Symbol("trunc", Symbol::FunctionSymbol);
+		//TODO a Type?
+		truncFunctionSymbol->setType();
+		m_table->addSymbol(truncFunctionSymbol);
+		
+		Symbol* roundFunctionSymbol = new Symbol("round", Symbol::FunctionSymbol);
+		//TODO a Type?
+		roundFunctionSymbol->setType();
+		m_table->addSymbol(roundFunctionSymbol);
+		
+		Symbol* succFunctionSymbol = new Symbol("succ", Symbol::FunctionSymbol);
+		//TODO a Type?
+		succFunctionSymbol->setType();
+		m_table->addSymbol(succFunctionSymbol);
+		
+		Symbol* predFunctionSymbol = new Symbol("pred", Symbol::FunctionSymbol);
+		//TODO a Type?
+		predFunctionSymbol->setType();
+		m_table->addSymbol(predFunctionSymbol);
+		
+		Symbol* oddFunctionSymbol = new Symbol("odd", Symbol::FunctionSymbol);
+		//TODO a Type?
+		oddFunctionSymbol->setType();
+		m_table->addSymbol(oddFunctionSymbol);
+		
+		Symbol* absFunctionSymbol = new Symbol("abs", Symbol::FunctionSymbol);
+		//TODO a Type?
+		absFunctionSymbol->setType();
+		m_table->addSymbol(absFunctionSymbol);
+		
+		Symbol* sqrFunctionSymbol = new Symbol("sqr", Symbol::FunctionSymbol);
+		//TODO a Type?
+		sqrFunctionSymbol->setType();
+		m_table->addSymbol(sqrFunctionSymbol);
+		
+		Symbol* sqrtFunctionSymbol = new Symbol("sqrt", Symbol::FunctionSymbol);
+		//TODO a Type?
+		sqrtFunctionSymbol->setType();
+		m_table->addSymbol(sqrtFunctionSymbol);
+
+		Symbol* sinFunctionSymbol = new Symbol("sin", Symbol::FunctionSymbol);
+		//TODO a Type?
+		sinFunctionSymbol->setType();
+		m_table->addSymbol(sinFunctionSymbol);
+		
+		Symbol* expFunctionSymbol = new Symbol("exp", Symbol::FunctionSymbol);
+		//TODO a Type?
+		expFunctionSymbol->setType();
+		m_table->addSymbol(expFunctionSymbol);
+		
+		Symbol* lnFunctionSymbol = new Symbol("ln", Symbol::FunctionSymbol);
+		//TODO a Type?
+		lnFunctionSymbol->setType();
+		m_table->addSymbol(lnFunctionSymbol);
 
 		// add predefined procedures + functions
 		// writeln, readln
