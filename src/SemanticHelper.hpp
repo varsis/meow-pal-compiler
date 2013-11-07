@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Type.hpp"
+#include "Symbol.hpp"
 
 using namespace std;
 
@@ -41,6 +42,12 @@ namespace Meow
 		OpOR
 	};
 
+	struct ConstExpr
+	{
+		Type* type;
+		Value value;
+	};
+
 	class SemanticHelper
 	{
 		public:
@@ -50,12 +57,16 @@ namespace Meow
 
 			void addPredefinedSymbols();
 
+			Symbol* getSymbol(string id, bool assertExists = true);
+
 			void defineType(string id, Type* type);
 			Type* getTypeForVarId(string id);
 			Type* getTypeFromID(string id);
 
 			void declareVariable(string id, Type* type);
 
+			ConstExpr getConstOpResult(Operator op, ConstExpr expr);
+			ConstExpr getConstOpResult(Operator op, ConstExpr left, ConstExpr right);
 
 			Type* getOpResultType(Operator op, Type* type);
 			Type* getOpResultType(Operator op, Type* leftType, Type* rightType);

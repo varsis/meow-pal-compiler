@@ -49,6 +49,19 @@ namespace Meow
 		// writeln, readln
 	}
 
+	Symbol* SemanticHelper::getSymbol(string id, bool assertExists)
+	{
+		Symbol* symbol = m_table->getSymbol(id);
+
+		if (assertExists && !symbol) {
+			m_errorManager->addError(new Error(SemanticError,
+				"Undefined identifier",
+				m_scanner->lineno()));
+		}
+
+		return symbol;
+	}
+
 	void SemanticHelper::defineType(string id, Type* type)
 	{
 		Symbol* typeSymbol = m_table->getSymbolCurLevel(id);
@@ -133,6 +146,175 @@ namespace Meow
 		m_table->addSymbol(sym);
 	}
 
+	// unary operators
+	ConstExpr SemanticHelper::getConstOpResult(Operator op, ConstExpr expr)
+	{
+		ConstExpr result;
+		result.type = getIntegerType();
+		result.value.int_val = 0;
+
+		switch (op)
+		{
+			case OpPLUS:
+				if (expr.type == getRealType())
+				{
+					result.value.real_val = expr.value.real_val;
+					result.type = expr.type;
+				}
+				else
+				{
+					result.value.int_val = expr.value.int_val;
+					result.type = expr.type;
+				}
+				break;
+
+			case OpMINUS:
+				if (expr.type == getRealType())
+				{
+					result.value.real_val = -expr.value.real_val;
+					result.type = expr.type;
+				}
+				else
+				{
+					result.value.int_val = -expr.value.int_val;
+					result.type = expr.type;
+				}
+				break;
+
+			case OpNOT:
+				if (expr.type == getRealType())
+				{
+					result.value.int_val = !((bool)expr.value.real_val);
+				}
+				else
+				{
+					result.value.int_val = !((bool)expr.value.int_val);
+				}
+				result.type = getBooleanType();
+				break;
+
+			default:
+				break;
+		}
+
+		return result;
+	}
+
+
+	ConstExpr SemanticHelper::getConstOpResult(Operator op, ConstExpr left, ConstExpr right)
+	{
+		ConstExpr result;
+		result.type = getIntegerType();
+		result.value.int_val = 0;
+
+		double leftValuef = (left.type == getRealType()) ? left.value.real_val : left.value.int_val;
+		double rightValuef = (right.type == getRealType()) ? right.value.real_val : right.value.int_val;
+
+		int leftValuei = (left.type == getRealType()) ? left.value.real_val : left.value.int_val;
+		int rightValuei = (right.type == getRealType()) ? right.value.real_val : right.value.int_val;
+
+		switch (op)
+		{
+			// comparison ops
+			case OpEQ:
+				result.value.int_val = leftValuef == rightValuef;
+				result.type = getBooleanType();
+				break;
+			case OpNE:
+				result.value.int_val = leftValuef != rightValuef;
+				result.type = getBooleanType();
+				break;
+			case OpLE:
+				result.value.int_val = leftValuef <= rightValuef;
+				result.type = getBooleanType();
+				break;
+			case OpLT:
+				result.value.int_val = leftValuef <= rightValuef;
+				result.type = getBooleanType();
+				break;
+			case OpGE:
+				result.value.int_val = leftValuef >= rightValuef;
+				result.type = getBooleanType();
+				break;
+			case OpGT:
+				result.value.int_val = leftValuef > rightValuef;
+				result.type = getBooleanType();
+				break;
+
+			// arithmetic ops
+			case OpADD:
+				// if one is real...
+				if (left.type == getRealType() || right.type == getRealType())
+				{
+					result.type = getRealType();
+					result.value.real_val = leftValuef + rightValuef;
+				}
+				else
+				{
+					result.type = getIntegerType();
+					result.value.int_val = leftValuei + rightValuei;
+				}
+				break;
+			case OpSUBTRACT:
+				// if one is real...
+				if (left.type == getRealType() || right.type == getRealType())
+				{
+					result.type = getRealType();
+					result.value.real_val = leftValuef - rightValuef;
+				}
+				else
+				{
+					result.type = getIntegerType();
+					result.value.int_val = leftValuei - rightValuei;
+				}
+				break;
+			case OpMULTIPLY:
+				// if one is real...
+				if (left.type == getRealType() || right.type == getRealType())
+				{
+					result.type = getRealType();
+					result.value.real_val = leftValuef * rightValuef;
+				}
+				else
+				{
+					result.type = getIntegerType();
+					result.value.int_val = leftValuei * rightValuei;
+				}
+				break;
+
+			case OpREALDIVIDE:
+				result.type = getRealType();
+				result.value.real_val = leftValuef / rightValuef;
+				break;
+
+			case OpINTDIVIDE:
+				result.type = getIntegerType();
+				result.value.real_val = leftValuei / rightValuei;
+				break;
+
+			case OpMOD:
+				result.type = getIntegerType();
+				result.value.real_val = leftValuei % rightValuei;
+				break;
+
+			// logical ops
+			case OpOR:
+				result.type = getIntegerType();
+				result.value.int_val = leftValuef || rightValuef;
+				break;
+
+			case OpAND:
+				result.type = getIntegerType();
+				result.value.int_val = leftValuef && rightValuef;
+				break;
+
+			default:
+				break;
+
+		}
+
+		return result;
+	}
 
 	// unary operators
 	Type* SemanticHelper::getOpResultType(Operator op, Type* type)
@@ -167,6 +349,7 @@ namespace Meow
 
 		return NULL;
 	}
+
 
 	Type* SemanticHelper::getOpResultType(Operator op, Type* leftType, Type* rightType)
 	{

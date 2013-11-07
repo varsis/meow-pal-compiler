@@ -16,6 +16,10 @@
 %code requires {
 
  	#include <vector>
+ 	#include <string>
+
+ 	#include "Symbol.hpp"
+	#include "SemanticHelper.hpp"
 
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
@@ -37,7 +41,6 @@
 
  	#include "Scanner.hpp"
 
-	#include "SemanticHelper.hpp"
 	#include "ErrorManager.hpp"
 	#include "Error.hpp"
  	#include "ErrorCodes.hpp"
@@ -57,6 +60,9 @@
 }
 
 %union {
+	int intConst;
+        double realConst;
+
 	std::string* identifier;
         std::string* stringLiteral;
 
@@ -65,13 +71,15 @@
         IdTypePair* idTypePair;
         IdTypePairList* idTypePairList;
 
+        Meow::ConstExpr constExpr;
+
         Type* type;
 }
 
 %type <type> var expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type enumerated_type structured_type var_decl 
 
-%type <type> type_expr type_simple_expr type_term type_factor
+%type <constExpr> type_expr type_simple_expr type_term type_factor
 
 %type <symbolList> enum_list
 
@@ -80,6 +88,9 @@
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
+
+%token <intConst> INT_CONST
+%token <realConst> REAL_CONST
 
 %token ASSIGN
 %token LEFT_BRACKET RIGHT_BRACKET
@@ -92,7 +103,6 @@
 %token AND ARRAY CONST CONTINUE DO ELSE END EXIT
 %token FUNCTION IF NOT OF OR PROCEDURE PROGRAM RECORD THEN
 %token TYPE VAR WHILE PAL_BEGIN
-%token INT_CONST REAL_CONST
 %%
 
 program                 : program_head decls compound_stat PERIOD
@@ -173,6 +183,9 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
+				sym->setType($3.type);
+				sym->setConstantValue($3.value);
+
                                 delete $1;
 
 				table.addSymbol(sym);
@@ -190,6 +203,8 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
+				// TODO set type of constant symbol
+
                                 delete $1;
 
 				table.addSymbol(sym);
@@ -206,6 +221,8 @@ const_decl              : IDENTIFIER EQ type_expr
 				}
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
+
+				// TODO set type of constant symbol
 
                                 delete $1;
 
@@ -228,6 +245,8 @@ const_decl              : IDENTIFIER EQ type_expr
 				}
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
+
+				// TODO set type of constant symbol
 
                                 delete $1;
 
@@ -716,7 +735,7 @@ type_expr		: type_simple_expr
                         }
                         | type_expr EQ type_simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpEQ, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpEQ, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -725,12 +744,12 @@ type_expr		: type_simple_expr
                                         "Incompatible types for '='",
                                         scanner.lineno()));
                             }
-                            
-                            $$ = result;
+
+                            $$ = semanticHelper.getConstOpResult(OpEQ, $1, $3);
                         }
                         | type_expr NE type_simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpNE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpNE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -740,11 +759,11 @@ type_expr		: type_simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpNE, $1, $3);
                         }
                         | type_expr LE type_simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpLE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -754,11 +773,11 @@ type_expr		: type_simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpLE, $1, $3);
                         }
                         | type_expr LT type_simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpLT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -768,11 +787,11 @@ type_expr		: type_simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpLT, $1, $3);
                         }
                         | type_expr GE type_simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpGE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -782,11 +801,11 @@ type_expr		: type_simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpGE, $1, $3);
                         }
                         | type_expr GT type_simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpGT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -796,7 +815,7 @@ type_expr		: type_simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpGT, $1, $3);
                         }
                         ;
 
@@ -806,7 +825,7 @@ type_simple_expr        : type_term
                         }
                         | PLUS type_term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2.type);
 
                             if (result == NULL)
                             {
@@ -816,11 +835,11 @@ type_simple_expr        : type_term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpPLUS, $2);
                         }
                         | MINUS type_term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2.type);
 
                             if (result == NULL)
                             {
@@ -830,11 +849,11 @@ type_simple_expr        : type_term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpMINUS, $2);
                         }
                         | type_simple_expr PLUS type_term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpADD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpADD, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -844,11 +863,11 @@ type_simple_expr        : type_term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpADD, $1, $3);
                         }
                         | type_simple_expr MINUS type_term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -858,11 +877,11 @@ type_simple_expr        : type_term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpSUBTRACT, $1, $3);
                         }
                         | type_simple_expr OR  type_term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpOR, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpOR, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -872,7 +891,7 @@ type_simple_expr        : type_term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpOR, $1, $3);
                         }
                         ;
 
@@ -882,7 +901,7 @@ type_term               : type_factor
                         }
                         | type_term MULTIPLY type_factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -892,11 +911,11 @@ type_term               : type_factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpMULTIPLY, $1, $3);
                         }
                         | type_term REAL_DIVIDE type_factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -906,11 +925,11 @@ type_term               : type_factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpREALDIVIDE, $1, $3);
                         }
                         | type_term INT_DIVIDE type_factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -920,11 +939,11 @@ type_term               : type_factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpINTDIVIDE, $1, $3);
                         }
                         | type_term MOD type_factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMOD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMOD, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -934,11 +953,11 @@ type_term               : type_factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpMOD, $1, $3);
                         }
                         | type_term AND type_factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpAND, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpAND, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -948,14 +967,26 @@ type_term               : type_factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$ = semanticHelper.getConstOpResult(OpAND, $1, $3);
                         }
                         ;
 
 type_factor             : IDENTIFIER
 			{
-                            //$$ = $1;
-				// TODO check that id is a constant?
+				Symbol* symbol = semanticHelper.getSymbol(*$1);
+				if (symbol == NULL || symbol->getSymbolType() != Symbol::ConstantSymbol)
+				{
+					// TODO error - symbol not a constant
+					$$.type = semanticHelper.getIntegerType();
+					$$.value.int_val = 0;
+				}
+				else
+				{	
+					$$.type = symbol->getType();
+					$$.value = symbol->getConstantValue();
+				}
+				
+				delete $1;
 			}
                         | LEFT_PAREN type_expr RIGHT_PAREN
                         {
@@ -963,11 +994,12 @@ type_factor             : IDENTIFIER
                         }
                         | INT_CONST 
                         {
-                            $$ = semanticHelper.getIntegerType();
+                            $$.type = semanticHelper.getIntegerType();
+                            $$.value.int_val = $1;
                         }
                         | NOT type_factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpNOT, $2);
+                            Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
 
                             if (result == NULL)
                             {
@@ -976,8 +1008,13 @@ type_factor             : IDENTIFIER
                                         "Incompatible type for not.",
                                         scanner.lineno()));
                             }
-                            
-                            $$ = result;
+
+                            $$ = semanticHelper.getConstOpResult(OpNOT, $2);
+
+			// TODO make sure we are always returning SOME type...
+			// either that or put null checks everywhere and give up 
+			// if the expression is borked
+
                         }
                         ;
 
