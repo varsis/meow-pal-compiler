@@ -1,7 +1,7 @@
 program test022(input, output);
 
 var
-        weirdArray : array[Boolean] of integer;
+        weirdArray : array[boolean] of integer;
 
 begin
         weirdArray[true] := 1;

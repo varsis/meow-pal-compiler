@@ -35,17 +35,21 @@ namespace Meow
 
 	Symbol::Symbol()
 		: m_lexicalLevel(-1)
+		, m_type(NULL)
 		, m_sizeInMem(-1)
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)
 	{
+		// TODO make sure we are initializing all pointers to null when we
+		// should!
 	}
 
 	Symbol::Symbol(std::string name, Symbol::SymbolType type)
 		: m_name(name)
 		, m_symbolType(type)
 		, m_lexicalLevel(-1)
+		, m_type(NULL)
 		, m_sizeInMem(-1)
 		, m_location(-1)
 		, m_declLineno(-1)

@@ -1,9 +1,9 @@
 {
 	Test case 5;
 	Errors on lines:
-	:
-	:
-	:
+	11 : Non-Boolean clause statement
+	12 : Continue out of while
+	13 : Exit out of while
 }
 
 program test5(input,output);

@@ -2,7 +2,7 @@ program test023(input, output);
 
 type
         letters = (a, b, c, d, e, f, g);
-        array1 = array[Boolean] of array [1..10] of array[1..23] of real;
+        array1 = array[boolean] of array [1..10] of array[1..23] of real;
 var
         a1     : array1;
 

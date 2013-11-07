@@ -14,6 +14,13 @@
 %error-verbose
 
 %code requires {
+
+ 	#include <vector>
+ 	#include <string>
+
+ 	#include "Symbol.hpp"
+	#include "SemanticHelper.hpp"
+
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
 	
@@ -26,6 +33,7 @@
 		class SymbolTable;
 		class SemanticHelper;
 		class Type;
+		class Symbol;
 		
 		typedef std::vector<Symbol::IdentifierTypePair*> ParameterList;
 		typedef Symbol::IdentifierTypePair Parameter;
@@ -39,12 +47,15 @@
 			std::string* procedureName;
 		};
 	}
+
+	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
+	typedef std::vector<IdTypePair*> IdTypePairList;
 }
 
 %code {
+
  	#include "Scanner.hpp"
 
-	#include "SemanticHelper.hpp"
 	#include "ErrorManager.hpp"
 	#include "Error.hpp"
  	#include "ErrorCodes.hpp"
@@ -60,12 +71,21 @@
 
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
-	int g_beginCounter;
 }
 
 %union {
+	int intConst;
+        double realConst;
+
 	std::string* identifier;
         std::string* stringLiteral;
+
+        std::vector<Symbol*>* symbolList;
+
+        IdTypePair* idTypePair;
+        IdTypePairList* idTypePairList;
+
+        Meow::ConstExpr constExpr;
 
         Type* type;
 
@@ -74,14 +94,25 @@
 	Meow::ProcedureInvocation procedureInvocation;
 }
 
-%type <type> expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type parm
+%type <type> var expr simple_expr term factor unsigned_const unsigned_num
+%type <type> type simple_type enumerated_type structured_type var_decl parm
+
+%type <constExpr> type_expr type_simple_expr type_term type_factor
+
+%type <symbolList> enum_list
+
+%type <idTypePair> field
+%type <idTypePairList> field_list
+
 %type <parameterList> f_parm_decl f_parm_list
 %type <parameter> f_parm
 %type <procedureInvocation> plist_finvok
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
+
+%token <intConst> INT_CONST
+%token <realConst> REAL_CONST
 
 %token ASSIGN
 %token LEFT_BRACKET RIGHT_BRACKET
@@ -94,7 +125,6 @@
 %token AND ARRAY CONST CONTINUE DO ELSE END EXIT
 %token FUNCTION IF NOT OF OR PROCEDURE PROGRAM RECORD THEN
 %token TYPE VAR WHILE PAL_BEGIN
-%token INT_CONST REAL_CONST
 %%
 
 program                 : program_head decls compound_stat PERIOD
@@ -175,6 +205,9 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
+				sym->setType($3.type);
+				sym->setConstantValue($3.value);
+
                                 delete $1;
 
 				table.addSymbol(sym);
@@ -192,6 +225,8 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
 
+				// TODO set type of constant symbol
+
                                 delete $1;
 
 				table.addSymbol(sym);
@@ -208,6 +243,8 @@ const_decl              : IDENTIFIER EQ type_expr
 				}
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
+
+				// TODO set type of constant symbol
 
                                 delete $1;
 
@@ -230,6 +267,8 @@ const_decl              : IDENTIFIER EQ type_expr
 				}
 
 				sym = new Symbol(*$1, Symbol::ConstantSymbol);
+
+				// TODO set type of constant symbol
 
                                 delete $1;
 
@@ -258,42 +297,18 @@ type_decl_list          : type_decl
 
 type_decl               : IDENTIFIER EQ type
 			{
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+				semanticHelper.defineType(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
 			}
                         | IDENTIFIER ASSIGN type
-                        { errorManager.addError(
-                                new Error(InvalidTypeDecl,
-                                          "Use \"=\" for type definitions.",
-                                          scanner.lineno()));
-                        
-				Symbol* sym = table.getSymbolCurLevel(*$1);
+                        { 
+				errorManager.addError(
+					new Error(InvalidTypeDecl,
+						  "Use \"=\" for type definitions.",
+						  scanner.lineno()));
 
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+				semanticHelper.defineType(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
-
 			}
                         | error { ; }
                         ;
@@ -305,8 +320,6 @@ type                    : simple_type
 
 simple_type             : IDENTIFIER
 			{
-				// TODO don't want it to be the SAME type...
-				// create a new type and add it to symbol table!
 				$$ = semanticHelper.getTypeFromID(*$1);
 				delete $1;
 			}
@@ -314,7 +327,8 @@ simple_type             : IDENTIFIER
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
 			{
-				// create a new enumeration type with members from enumlist
+				$$ = new Type($2); // TODO when do we delete this? When type symbol goes out of scope?
+							// (must differentiate from predefined types, or use refcounts)
 			}
 			| LEFT_PAREN error RIGHT_PAREN
 			{
@@ -322,6 +336,7 @@ enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
                                 new Error(InvalidEnumDecl,
                                           "Invalid enumeration declaration.",
                                           scanner.lineno()));
+				// TODO int by default? or NULL?
                         }
 			;
 
@@ -341,6 +356,9 @@ enum_list		: IDENTIFIER
                                 delete $1;
 
 				table.addSymbol(sym);
+				
+				$$ = new std::vector<Symbol*>();
+				$$->push_back(sym);
 			}
                         | enum_list COMMA IDENTIFIER
 			{
@@ -358,12 +376,32 @@ enum_list		: IDENTIFIER
                                 delete $3;
 
 				table.addSymbol(sym);
+
+				$$ = $1;
+				$$->push_back(sym);
 			}
                         ;
 
 structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
+			{
+				// return type with index type + element type
+				$$ = new Type(NULL, $6); 
+				// TODO detmine if indices matter at this point
+				// (char array compatibility?)
+			}
                         | RECORD field_list END
+			{
+				// TODO create a type, give it list of fields
+				$$ = new Type($2);
+				// TODO (use connor's pair list thing)?
+			}
                         | RECORD field_list SEMICOLON END
+			{
+				// TODO create a type, give it list of fields
+				$$ = new Type($2);
+				// TODO (use connor's pair list thing)?
+				// TODO both these rules are OK?
+			}
                         | RECORD error END
                         {
                             errorManager.addError(
@@ -381,11 +419,28 @@ structured_type         : ARRAY LEFT_BRACKET index_type RIGHT_BRACKET OF type
                         ;
 
 index_type              : simple_type
+                        {
+				// actually need VALUES here!?
+                        }
                         | type_expr UPTO type_expr
+                        {
+				// actually need VALUES here!?
+                        }
                         ;
 
 field_list              : field
+			{
+				$$ = new IdTypePairList();
+				$$->push_back($1);
+			}
                         | field_list SEMICOLON field
+			{
+				$$ = $1;
+				// TODO check if id already used in field list	
+				// might want to use (unordered) map instead of list to
+				// avoid quadratic time!
+				$$->push_back($3);
+			}
                         ;
 
 field                   : IDENTIFIER COLON type
@@ -418,83 +473,43 @@ var_decl_list           : var_decl
 
 var_decl                : IDENTIFIER COLON type
 			{
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+                                semanticHelper.declareVariable(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
+				$$ = $3;
 			}
                         | IDENTIFIER COMMA var_decl
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+                                semanticHelper.declareVariable(*$1, $3);
                                 delete $1;
-
-				table.addSymbol(sym);
+				$$ = $3;
 			}
 			| IDENTIFIER ASSIGN type
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+                                semanticHelper.declareVariable(*$1, $3);
                                 delete $1;
+				$$ = $3;
 
-				table.addSymbol(sym);
 				errorManager.addError(
-                                new Error(InvalidVarDecl,
-                                          "Use \":\" to declare variables.",
-                                          scanner.lineno()));
+					new Error(InvalidVarDecl,
+						  "Use \":\" to declare variables.",
+						  scanner.lineno()));
                         }
                         | IDENTIFIER error
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$1);
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				sym = new Symbol(*$1, Symbol::TypeSymbol);
-
+				// TODO -- should we really do anything here?
+                                semanticHelper.declareVariable(*$1, NULL);
                                 delete $1;
+                                $$ = NULL;
 
-				table.addSymbol(sym);
 				errorManager.addError(
-                                new Error(InvalidVarDecl,
-                                          "Use \":\" to declare variables.",
-                                          scanner.lineno()));
+					new Error(InvalidVarDecl,
+						  "Use \":\" to declare variables.",
+						  scanner.lineno()));
+
               			errorManager.addError(
-                                new Error(InvalidVarDecl,
-                                          "Invalid variable declaration.",
-                                          scanner.lineno()));
+					new Error(InvalidVarDecl,
+						  "Invalid variable declaration.",
+						  scanner.lineno()));
                         }
                         | error { ; }
                         ;
@@ -511,10 +526,14 @@ proc_decl_list          : proc_decl
                         ;
 
 proc_decl               : proc_heading decls compound_stat SEMICOLON
+			{
+				table.decLevel();
+			}
                         | proc_heading decls compound_stat PERIOD
                         {
-                          errorManager.addError(
-                              new Error(InvalidProcDecl,
+				table.decLevel();
+                          	errorManager.addError(
+                              	new Error(InvalidProcDecl,
                                         "Funct/proc should not end with \".\".",
                                         scanner.lineno()));
                         }
@@ -763,9 +782,8 @@ simple_stat             : var ASSIGN expr
 
 var                     : IDENTIFIER
                         {
-                            // get symbol for identifier
-                            // get its type
-                            // $$.type = type
+				$$ = semanticHelper.getTypeForVarId(*$1);
+				delete $1;
                         }
                         | var PERIOD IDENTIFIER
                         {
@@ -880,34 +898,292 @@ matched_stat            : simple_stat
  ********************************************************************************/
 
 type_expr		: type_simple_expr
+                        {
+                            $$ = $1;
+                        }
                         | type_expr EQ type_simple_expr
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpEQ, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '='",
+                                        scanner.lineno()));
+                            }
+
+                            $$ = semanticHelper.getConstOpResult(OpEQ, $1, $3);
+                        }
                         | type_expr NE type_simple_expr
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpNE, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpNE, $1, $3);
+                        }
                         | type_expr LE type_simple_expr
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpLE, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpLE, $1, $3);
+                        }
                         | type_expr LT type_simple_expr
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpLT, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '<'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpLT, $1, $3);
+                        }
                         | type_expr GE type_simple_expr
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpGE, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>='",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpGE, $1, $3);
+                        }
                         | type_expr GT type_simple_expr
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpGT, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '>'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpGT, $1, $3);
+                        }
                         ;
 
 type_simple_expr        : type_term
+                        {
+                            $$ = $1;
+                        }
                         | PLUS type_term
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpPLUS, $2);
+                        }
                         | MINUS type_term
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for unary '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpMINUS, $2);
+                        }
                         | type_simple_expr PLUS type_term
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpADD, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '+'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpADD, $1, $3);
+                        }
                         | type_simple_expr MINUS type_term
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '-'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpSUBTRACT, $1, $3);
+                        }
                         | type_simple_expr OR  type_term
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpOR, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'or'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpOR, $1, $3);
+                        }
                         ;
 
 type_term               : type_factor
+                        {
+                            $$ = $1;
+                        }
                         | type_term MULTIPLY type_factor
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '*'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpMULTIPLY, $1, $3);
+                        }
                         | type_term REAL_DIVIDE type_factor
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for '/'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpREALDIVIDE, $1, $3);
+                        }
                         | type_term INT_DIVIDE type_factor
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'div'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpINTDIVIDE, $1, $3);
+                        }
                         | type_term MOD type_factor
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpMOD, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'mod'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpMOD, $1, $3);
+                        }
                         | type_term AND type_factor
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpAND, $1.type, $3.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible types for 'and'",
+                                        scanner.lineno()));
+                            }
+                            
+                            $$ = semanticHelper.getConstOpResult(OpAND, $1, $3);
+                        }
                         ;
 
-type_factor             : var
+type_factor             : IDENTIFIER
+			{
+				Symbol* symbol = semanticHelper.getSymbol(*$1);
+				if (symbol == NULL || symbol->getSymbolType() != Symbol::ConstantSymbol)
+				{
+					// TODO error - symbol not a constant
+					$$.type = semanticHelper.getIntegerType();
+					$$.value.int_val = 0;
+				}
+				else
+				{	
+					$$.type = symbol->getType();
+					$$.value = symbol->getConstantValue();
+				}
+				
+				delete $1;
+			}
                         | LEFT_PAREN type_expr RIGHT_PAREN
+                        {
+                            $$ = $2;
+                        }
                         | INT_CONST 
+                        {
+                            $$.type = semanticHelper.getIntegerType();
+                            $$.value.int_val = $1;
+                        }
                         | NOT type_factor
+                        {
+                            Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
+
+                            if (result == NULL)
+                            {
+                                errorManager.addError(
+                                    new Error(OperatorTypeMismatch,
+                                        "Incompatible type for not.",
+                                        scanner.lineno()));
+                            }
+
+                            $$ = semanticHelper.getConstOpResult(OpNOT, $2);
+
+			// TODO make sure we are always returning SOME type...
+			// either that or put null checks everywhere and give up 
+			// if the expression is borked
+
+                        }
                         ;
 
 
@@ -917,7 +1193,7 @@ expr			: simple_expr
                         }
                         | expr EQ simple_expr
                         {
-                            Type* result = table.getOpResultType(OpEQ, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpEQ, $1, $3);
 
                             if (result == NULL)
                             {
@@ -931,7 +1207,7 @@ expr			: simple_expr
                         }
                         | expr NE simple_expr
                         {
-                            Type* result = table.getOpResultType(OpNE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpNE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -945,7 +1221,7 @@ expr			: simple_expr
                         }
                         | expr LE simple_expr
                         {
-                            Type* result = table.getOpResultType(OpLE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -959,7 +1235,7 @@ expr			: simple_expr
                         }
                         | expr LT simple_expr
                         {
-                            Type* result = table.getOpResultType(OpLT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -973,7 +1249,7 @@ expr			: simple_expr
                         }
                         | expr GE simple_expr
                         {
-                            Type* result = table.getOpResultType(OpGE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -987,7 +1263,7 @@ expr			: simple_expr
                         }
                         | expr GT simple_expr
                         {
-                            Type* result = table.getOpResultType(OpGT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1007,7 +1283,7 @@ simple_expr             : term
                         }
                         | PLUS term
                         {
-                            Type* result = table.getOpResultType(OpPLUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2);
 
                             if (result == NULL)
                             {
@@ -1021,7 +1297,7 @@ simple_expr             : term
                         }
                         | MINUS term
                         {
-                            Type* result = table.getOpResultType(OpMINUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2);
 
                             if (result == NULL)
                             {
@@ -1035,7 +1311,7 @@ simple_expr             : term
                         }
                         | simple_expr PLUS term
                         {
-                            Type* result = table.getOpResultType(OpADD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpADD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1049,7 +1325,7 @@ simple_expr             : term
                         }
                         | simple_expr MINUS term
                         {
-                            Type* result = table.getOpResultType(OpSUBTRACT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1063,7 +1339,7 @@ simple_expr             : term
                         }
                         | simple_expr OR term
                         {
-                            Type* result = table.getOpResultType(OpOR, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpOR, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1083,7 +1359,7 @@ term                    : factor
                         }
                         | term MULTIPLY factor
                         {
-                            Type* result = table.getOpResultType(OpMULTIPLY, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1097,7 +1373,7 @@ term                    : factor
                         }
                         | term REAL_DIVIDE factor
                         {
-                            Type* result = table.getOpResultType(OpREALDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1111,7 +1387,7 @@ term                    : factor
                         }
                         | term INT_DIVIDE factor
                         {
-                            Type* result = table.getOpResultType(OpINTDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1125,7 +1401,7 @@ term                    : factor
                         }
                         | term MOD factor
                         {
-                            Type* result = table.getOpResultType(OpMOD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMOD, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1139,7 +1415,7 @@ term                    : factor
                         }
                         | term AND factor
                         {
-                            Type* result = table.getOpResultType(OpAND, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpAND, $1, $3);
 
                             if (result == NULL)
                             {
@@ -1155,7 +1431,7 @@ term                    : factor
 
 factor                  : var
                         {
-                            // $$ = $1
+                            $$ = $1;
                         }
                         | unsigned_const
                         {
@@ -1163,7 +1439,7 @@ factor                  : var
                         }
                         | LEFT_PAREN expr RIGHT_PAREN
                         {
-                            // $$ = $2
+                             $$ = $2;
                         }
                         | func_invok
                         {
@@ -1171,7 +1447,7 @@ factor                  : var
                         }
                         | NOT factor
                         {
-                            Type* result = table.getOpResultType(OpNOT, $2);
+                            Type* result = semanticHelper.getOpResultType(OpNOT, $2);
 
                             if (result == NULL)
                             {
@@ -1197,13 +1473,11 @@ unsigned_const          : unsigned_num
 
 unsigned_num            : INT_CONST
                         {
-                            // TODO do we need to treat this type special since its a literal?
-                            // eg for type myInt : int, should be able to assign with int literals.
-                            $$ = table.getRawIntegerType();
+                            $$ = semanticHelper.getIntegerType();
                         }
                         | REAL_CONST
                         {
-                            $$ = table.getRawRealType();
+                            $$ = semanticHelper.getRealType();
                         }
                         ;
 

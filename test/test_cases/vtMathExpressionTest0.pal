@@ -3,7 +3,7 @@ program test019(input, output);
 var
         speed : real;
         age   : integer;
-        forSale : Boolean;
+        forSale : boolean;
 
 begin
         speed := (23 + 34 * 2 * (20 / 10));
