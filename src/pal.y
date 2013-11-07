@@ -32,6 +32,12 @@
 		
 		// Will need to switch this once we start doing code gen
 		typedef std::vector<Type*> InvocationParameters;
+		
+		struct ProcedureInvocation
+		{
+			InvocationParameters* params;
+			std::string* procedureName;
+		};
 	}
 }
 
@@ -55,9 +61,6 @@
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
 	int g_beginCounter;
-	
-	// Keep track of current function/procedure name
-	std::string* g_currentFuncName;
 }
 
 %union {
@@ -68,14 +71,14 @@
 
 	Meow::ParameterList* parameterList;
 	Meow::Parameter* parameter;
-	Meow::InvocationParameters* invocationParameters;
+	Meow::ProcedureInvocation procedureInvocation;
 }
 
 %type <type> expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type parm
 %type <parameterList> f_parm_decl f_parm_list
 %type <parameter> f_parm
-%type <invocationParameters> plist_finvok
+%type <procedureInvocation> plist_finvok
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -787,8 +790,7 @@ subscripted_var         : var LEFT_BRACKET expr
 
 proc_invok              : plist_finvok RIGHT_PAREN
 			{
-				Symbol* procedureSymbol = table.getSymbolCurLevel(*g_currentFuncName);
-				
+				Symbol* procedureSymbol = table.getSymbol(*($1.procedureName));
 				if (!procedureSymbol)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
@@ -796,9 +798,9 @@ proc_invok              : plist_finvok RIGHT_PAREN
 									scanner.lineno()));
 				}
 				
-				if (procedureSymbol && procedureSymbol->getParameterCount() != $1->size())
+				if (procedureSymbol && procedureSymbol->getParameterCount() != $1.params->size())
 				{
-					if ($1->size() < procedureSymbol->getParameterCount())
+					if ($1.params->size() < procedureSymbol->getParameterCount())
 					{
 						errorManager.addError(new Error(IdentifierInUse,
 										"Function/Procedure is missing parameters.",
@@ -812,9 +814,7 @@ proc_invok              : plist_finvok RIGHT_PAREN
 					}
 				}
 				
-				delete g_currentFuncName;
-				g_currentFuncName = NULL;
-				
+				delete $1.procedureName;
 			}
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
 			{
@@ -838,14 +838,14 @@ proc_invok              : plist_finvok RIGHT_PAREN
 
 plist_finvok            : IDENTIFIER LEFT_PAREN parm
 			{
-				g_currentFuncName = $1; // Store current function name
-				$$ = new InvocationParameters();
-				$$->push_back($3);
+				$$.procedureName = $1;
+				$$.params = new InvocationParameters();
+				$$.params->push_back($3);
 			}
                         | plist_finvok COMMA parm
 			{
 				$$ = $1;
-				$$->push_back($3);
+				$$.params->push_back($3);
 			}
                         ;
 
@@ -1210,8 +1210,7 @@ unsigned_num            : INT_CONST
 
 func_invok              : plist_finvok RIGHT_PAREN
                         {
-                            	// $$ = $1
-				Symbol* functionSymbol = table.getSymbolCurLevel(*g_currentFuncName);
+				Symbol* functionSymbol = table.getSymbolCurLevel(*$1.procedureName);
 				
 				if (!functionSymbol)
 				{
@@ -1220,9 +1219,9 @@ func_invok              : plist_finvok RIGHT_PAREN
 									scanner.lineno()));
 				}
 				
-				if (functionSymbol && functionSymbol->getParameterCount() != $1->size())
+				if (functionSymbol && functionSymbol->getParameterCount() != $1.params->size())
 				{
-					if ($1->size() < functionSymbol->getParameterCount())
+					if ($1.params->size() < functionSymbol->getParameterCount())
 					{
 						errorManager.addError(new Error(IdentifierInUse,
 										"Function/Procedure is missing parameters.",
@@ -1236,8 +1235,7 @@ func_invok              : plist_finvok RIGHT_PAREN
 					}
 				}
 				
-				delete g_currentFuncName;
-				g_currentFuncName = NULL;
+				delete $1.procedureName;
                         }
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         {
