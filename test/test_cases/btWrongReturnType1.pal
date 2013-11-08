@@ -7,7 +7,7 @@ type
         end;
 
 var
-        baz : person;
+        baz : integer;
 
 function foo() : person;
 var

@@ -105,6 +105,11 @@ namespace Meow
 			Type m_integerType;
 			Type m_realType;
 			Type m_charType;
+			Symbol* m_succ;
+			Symbol* m_pred;
+			Symbol* m_ord;
+			Symbol* m_abs;
+			Symbol* m_sqr;
 
 	};
 }
