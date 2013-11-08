@@ -870,6 +870,25 @@ proc_invok              : plist_finvok RIGHT_PAREN
 										scanner.lineno()));
 					}
 				}
+				else if (procedureSymbol)
+				{
+					IdTypePairList formalList;
+					Type * t1;
+					Type * t2;
+
+					formalList = procedureSymbol->getParameters();
+					for(int i=0; i<(int)$1.params->size(); i++)
+					{
+						t1 = formalList.at(i)->second;
+						t2 = $1.params->at(i);
+						if (!semanticHelper.checkAssignmentCompatible(t1, t2))
+						{
+							errorManager.addError(new Error(SemanticError,
+										"Mismatch of argument types.",
+										scanner.lineno()));
+						}
+					}
+				}
 				
 				delete $1.procedureName;
 			}
@@ -1561,6 +1580,25 @@ func_invok              : plist_finvok RIGHT_PAREN
 						errorManager.addError(new Error(IdentifierInUse,
 										"Function/Procedure has too many parameters.",
 										scanner.lineno()));
+					}
+				}
+				else if (functionSymbol)
+				{
+					IdTypePairList formalList;
+					Type * t1;
+					Type * t2;
+
+					formalList = functionSymbol->getParameters();
+					for(int i=0; i<(int)$1.params->size(); i++)
+					{
+						t1 = formalList.at(i)->second;
+						t2 = $1.params->at(i);
+						if (!semanticHelper.checkAssignmentCompatible(t1, t2))
+						{
+							errorManager.addError(new Error(SemanticError,
+										"Mismatch of argument types.",
+										scanner.lineno()));
+						}
 					}
 				}
 				
