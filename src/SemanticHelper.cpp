@@ -328,6 +328,15 @@ namespace Meow
 		return false;
 	}
 
+	bool SemanticHelper::isStringType(Type* t)
+	{
+		return	t->getTypeClass() == Type::ArrayType
+			&& t->getElementType() == getCharType()
+			&& t->getIndexType() == getIntegerType()
+			&& t->getIndexRange().start == 1
+			&& t->getIndexRange().end > 1;
+	}
+
 	Type* SemanticHelper::makeArrayType(Type* indexType, Type* elementType)
 	{
 		if (!isOrdinalType(indexType))
@@ -619,9 +628,22 @@ namespace Meow
 			case OpLT:
 			case OpGE:
 			case OpGT:
+				// must be compatible
 				if (checkCompatible(leftType, rightType))
 				{
-					return getBooleanType();
+					if ((leftType->getTypeClass() == Type::ArrayType && !isStringType(leftType))
+						|| (rightType->getTypeClass() == Type::ArrayType && !isStringType(rightType))
+						|| (rightType->getTypeClass() == Type::RecordType)
+						|| (leftType->getTypeClass() == Type::RecordType))
+					{
+						// if they are arrays (but not strings)
+						// or if they are record types, not valid!
+						return NULL;
+					}
+					else
+					{
+						return getBooleanType();
+					}
 				}
 				break;
 

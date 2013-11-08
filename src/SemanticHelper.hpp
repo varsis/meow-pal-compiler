@@ -64,6 +64,7 @@ namespace Meow
 			Type* getTypeFromID(string id);
 
 			bool isOrdinalType(Type* t);
+			bool isStringType(Type* t);
 			Type* makeArrayType(Type* indexType, Type* elementType);
 			Type* makeArrayType(ConstExpr start, ConstExpr end, Type* elementType);
 
