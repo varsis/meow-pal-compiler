@@ -61,6 +61,7 @@
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
 	vector<Meow::Symbol*> g_functionStack;
+
 }
 
 %initial-action
@@ -90,19 +91,17 @@
         Type* type;
         LValue lvalue;
 
-	//Meow::IdTypePairList* parameterList;
-	//Meow::IdTypePair* parameter;
 	ParameterList* parameterList;
 	Parameter* parameter;
 
 	Meow::ProcedureInvocation procedureInvocation;
 }
 
-%type <type> expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type enumerated_type structured_type var_decl parm
+%type <type> unsigned_const unsigned_num
+%type <type> type simple_type enumerated_type structured_type var_decl
 %type <type> func_invok
 
-%type <expression> expr simple_expr term factor unsigned_const unsigned_num
+%type <lvalue> parm expr simple_expr term factor
 
 %type <lvalue> lhs_var lhs_subscripted_var
 %type <lvalue> var subscripted_var
@@ -824,7 +823,7 @@ simple_stat             : lhs_var ASSIGN expr
 						"Cannot assign to value on left side of assignment statment.",
 						scanner.lineno()));
 				}
-				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3))
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3.type))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -845,7 +844,7 @@ simple_stat             : lhs_var ASSIGN expr
 						"Cannot assign to value on left side of assignment statment.",
 						scanner.lineno()));
 				}
-				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3))
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3.type))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -878,12 +877,12 @@ lhs_var                 : IDENTIFIER
 
 lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
                         {
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
                         }
                         | lhs_subscripted_var COMMA expr
 			{
 				// TODO check/test we are doing the subscripts in the correct order!
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
 			}
                         ;
 
@@ -905,12 +904,12 @@ var                     : IDENTIFIER
 
 subscripted_var         : var LEFT_BRACKET expr
                         {
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
                         }
                         | subscripted_var COMMA expr
 			{
 				// TODO check/test we are doing the subscripts in the correct order!
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
 			}
                         ;
 
@@ -952,15 +951,15 @@ parm                    : expr
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
                         {
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 			}
 			| IF expr THEN stat
 			{
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 			}
                         | WHILE expr DO stat
 			{
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 				g_whileCounter--;
 			}
                         | CONTINUE
@@ -970,11 +969,11 @@ struct_stat             : IF expr THEN matched_stat ELSE stat
 matched_stat            : simple_stat
                         | IF expr THEN matched_stat ELSE matched_stat
                         {
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 			}
 			| WHILE expr DO matched_stat
 			{	
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 				g_whileCounter--;
 			}
                         | CONTINUE
@@ -1282,7 +1281,7 @@ expr			: simple_expr
                         }
                         | expr EQ simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpEQ, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpEQ, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1292,11 +1291,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr NE simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpNE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpNE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1306,11 +1306,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr LE simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpLE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1320,11 +1321,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr LT simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpLT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1334,11 +1336,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr GE simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpGE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1348,11 +1351,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr GT simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpGT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1362,7 +1366,8 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 
@@ -1372,7 +1377,7 @@ simple_expr             : term
                         }
                         | PLUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2.type);
 
                             if (result == NULL)
                             {
@@ -1382,11 +1387,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | MINUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2.type);
 
                             if (result == NULL)
                             {
@@ -1396,11 +1402,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | simple_expr PLUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpADD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpADD, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1410,11 +1417,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | simple_expr MINUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1424,11 +1432,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | simple_expr OR term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpOR, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpOR, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1438,7 +1447,8 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 
@@ -1448,7 +1458,7 @@ term                    : factor
                         }
                         | term MULTIPLY factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1458,11 +1468,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term REAL_DIVIDE factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1472,11 +1483,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term INT_DIVIDE factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1486,11 +1498,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term MOD factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMOD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMOD, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1500,11 +1513,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term AND factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpAND, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpAND, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1514,17 +1528,20 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 
 factor                  : var
                         {
-                            $$ = $1.type;
+                            //$$.type = $1.type;
+                            $$ = $1;
                         }
                         | unsigned_const
                         {
-                            $$ = $1;
+                            $$.type = $1;
+                            $$.assignable = false;
                         }
                         | LEFT_PAREN expr RIGHT_PAREN
                         {
@@ -1532,11 +1549,12 @@ factor                  : var
                         }
                         | func_invok
                         {
-			     $$ = $1;
+			     $$.type = $1;
+			     $$.assignable = false;
                         }
                         | NOT factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpNOT, $2);
+                            Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
 
                             if (result == NULL)
                             {
@@ -1546,7 +1564,8 @@ factor                  : var
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 

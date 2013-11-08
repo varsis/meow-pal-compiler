@@ -33,7 +33,7 @@ namespace Meow
 	};
 
 	// Will need to switch this once we start doing code gen
-	typedef std::vector<Type*> InvocationParameters;
+	typedef std::vector<LValue> InvocationParameters;
 	
 	struct ProcedureInvocation
 	{

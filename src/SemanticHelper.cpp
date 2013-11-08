@@ -849,9 +849,9 @@ namespace Meow
 						m_scanner->lineno()));
 				}
 
-				else if (params && params->at(0) != getIntegerType() 
-					&& params->at(0)->getTypeClass() != Type::EnumeratedType
-					&& params->at(0) != getBooleanType())
+				else if (params && params->at(0).type != getIntegerType() 
+					&& params->at(0).type->getTypeClass() != Type::EnumeratedType
+					&& params->at(0).type != getBooleanType())
 				{
 					m_errorManager->addError(new Error(
 						SemanticError,
@@ -871,7 +871,7 @@ namespace Meow
 			{
 				if (params && params->size() > 0u)
 				{
-					return params->at(0);
+					return params->at(0).type;
 				}
 
 			}
@@ -917,7 +917,7 @@ namespace Meow
 			InvocationParameters::iterator it;
 			for (it = params->begin(); it != params->end(); ++it)
 			{
-				Type* paramType = *it;
+				Type* paramType = (*it).type;
 				if (paramType != NULL)
 				{
 					if (paramType->getTypeClass() == Type::SimpleType)
@@ -973,7 +973,7 @@ namespace Meow
 			for(unsigned int i = 0; i < params->size(); i++)
 			{
 				t1 = formalList.at(i).type;
-				t2 = params->at(i);
+				t2 = params->at(i).type;
 				if (!checkAssignmentCompatible(t1, t2))
 				{
 					m_errorManager->addError(new Error(SemanticError,
@@ -988,6 +988,12 @@ namespace Meow
 					{
 						m_errorManager->addError(new Error(SemanticError,
 									"Var parameter not assignable to argument type.",
+									m_scanner->lineno()));
+					}
+					else if (params->at(i).assignable == false)
+					{
+						m_errorManager->addError(new Error(SemanticError,
+									"Variable argument required for var parameter.",
 									m_scanner->lineno()));
 					}
 
