@@ -4,7 +4,8 @@
 program Rec(input,output);
 type
 	aRec = record
-		a,b:integer;
+		a : integer;
+		b:integer;
 		c:char;
 		end;
 var

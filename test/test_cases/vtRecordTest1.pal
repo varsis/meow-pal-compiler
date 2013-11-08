@@ -1,8 +1,11 @@
 program test(input, output);
 type
 	a = record
-		a,b,c:integer;
-		d,e:real;
+		a:integer;
+		b:integer;
+		c:integer;
+		d:real;
+		e:real;
 		end;
 begin
 end.

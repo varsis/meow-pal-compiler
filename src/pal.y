@@ -107,7 +107,7 @@
 
 %type <symbolList> enum_list
 
-%type <fieldDecl> field
+%type <idTypePair> field
 %type <idTypePairList> field_list
 
 %type <parameterList> f_parm_decl f_parm_list
@@ -414,11 +414,7 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
 field_list              : field
 			{
 				$$ = new IdTypePairList();
-				// TODO check if id already used in field list	
-				for (unsigned int i = 0; i < $1.fieldNames->size(); ++i)
-				{
-					$$->push_back(new IdTypePair($1.fieldNames->at(i), $1.type));
-				}
+				$$->push_back($1);
 			}
                         | field_list SEMICOLON field
 			{
@@ -426,34 +422,22 @@ field_list              : field
 				// TODO check if id already used in field list	
 				// might want to use (unordered) map instead of list to
 				// avoid quadratic time!
-				for (unsigned int i = 0; i < $3.fieldNames->size(); ++i)
-				{
-					$$->push_back(new IdTypePair($3.fieldNames->at(i), $3.type));
-				}
-				delete $3.fieldNames;
+				$$->push_back($3);
 			}
                         ;
 
 field                   : IDENTIFIER COLON type
 			{
-				$$.type = $3;
-				$$.fieldNames = new std::vector<std::string*>();
-				$$.fieldNames->push_back($1);
-			}
-			| IDENTIFIER COMMA field
-			{
-				$$ = $3;
-				$$.fieldNames->push_back($1);
+				$$ = new IdTypePair($1, $3);
 			}
 			| IDENTIFIER error
 			{
-                            errorManager.addError(
-                                new Error(InvalidRecordDecl,
-                                          "Invalid field declaration.",
-                                          scanner.lineno()));
+				errorManager.addError(
+					new Error(InvalidRecordDecl,
+						  "Invalid field declaration.",
+						  scanner.lineno()));
 
-				$$.fieldNames = new std::vector<std::string*>();
-				$$.type = semanticHelper.getIntegerType();
+				$$ = new IdTypePair($1, semanticHelper.getIntegerType());
                         }
                         ;
 
