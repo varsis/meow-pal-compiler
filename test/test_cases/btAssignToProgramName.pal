@@ -1,0 +1,5 @@
+program test(input, output);
+
+begin
+	test :=  8;
+end.

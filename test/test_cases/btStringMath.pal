@@ -1,0 +1,5 @@
+program test(input, output);
+const	
+	a = 'hjsdgjah' * 'asdgjasdgh' + 'asjkhaksjd';
+begin
+end.

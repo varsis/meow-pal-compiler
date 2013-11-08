@@ -11,6 +11,7 @@
 	static int s_scannerReturnPosition;
 	static int s_scannerReturnLine;
 
+	static std::string s_stringText;
 	extern int g_whileCounter;
 %}
 
@@ -45,10 +46,10 @@ EXPONENT	E[+-]?{DIGIT}+
 				s_stringInvalid = true;
 			}
 		}
-	\\'	{ /* empty */ }
-	\\n	{ /* empty */ }
-	\\t	{ /* empty */ }
-	\\\\	{ /* empty */ }
+	\\'	{ s_stringText.append("'"); /* empty */ }
+	\\n	{ s_stringText.append("\n");/* empty */ }
+	\\t	{ s_stringText.append("\t");/* empty */ }
+	\\\\	{ s_stringText.append("\\");/* empty */ }
 	'	{
 			if (s_stringMultiline)
 			{
@@ -58,7 +59,8 @@ EXPONENT	E[+-]?{DIGIT}+
 			}
 
 			BEGIN(INITIAL);
-			yylval->stringLiteral = new std::string(yytext);
+			yylval->stringLiteral = new std::string(s_stringText);
+			s_stringText.clear();
 			return token::STRING_LITERAL;
 		}
 	\n	{ /* Count line endings */
@@ -84,14 +86,15 @@ EXPONENT	E[+-]?{DIGIT}+
 				yyin->seekg(s_scannerReturnPosition);
 				yylineno = s_scannerReturnLine;
 				BEGIN(INITIAL);
-				yylval->stringLiteral = new std::string(yytext);
+				yylval->stringLiteral = new std::string(s_stringText);
+				s_stringText.clear();
 				return token::STRING_LITERAL;
 			}
 
 			return 0;
 		}
 		
-	.	{ /* ignore eveything else */ }
+	.	{ s_stringText.append(yytext); /* ignore eveything else */ }
 }
 
 [ \t] 	{ ; /* Ignore whitespace */ }

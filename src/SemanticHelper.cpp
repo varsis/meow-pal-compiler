@@ -216,7 +216,7 @@ namespace Meow
 		if (!symbol)
 		{
 			m_errorManager->addError(
-					new Error(SemanticError, // TODO
+					new Error(SemanticError, 
 						"Identifier is not defined.",
 						m_scanner->lineno()));
 
@@ -230,8 +230,17 @@ namespace Meow
 			if (symbol->getSymbolType() == Symbol::ProcedureSymbol)
 			{
 				m_errorManager->addError(
-						new Error(SemanticError, // TODO
+						new Error(SemanticError,
 							"Invalid reference to procedure",
+							m_scanner->lineno()));
+			}
+
+			// throw error if name is a type symbol
+			if (symbol->getSymbolType() == Symbol::TypeSymbol)
+			{
+				m_errorManager->addError(
+						new Error(SemanticError,
+							"Invalid use of type identifier.",
 							m_scanner->lineno()));
 			}
 
@@ -259,7 +268,7 @@ namespace Meow
 				else
 				{
 					m_errorManager->addError(
-							new Error(SemanticError, // TODO
+							new Error(SemanticError,
 								"Invalid reference to function",
 								m_scanner->lineno()));
 				}

@@ -1248,7 +1248,9 @@ type_factor             : IDENTIFIER
 				Symbol* symbol = semanticHelper.getSymbol(*$1);
 				if (symbol == NULL || symbol->getSymbolType() != Symbol::ConstantSymbol)
 				{
-					// TODO error - symbol not a constant
+					errorManager.addError(new Error(SemanticError,
+							"Identifer is not a constant.",
+							scanner.lineno()));
 					$$.type = semanticHelper.getIntegerType();
 					$$.value.int_val = 0;
 				}

@@ -1,0 +1,11 @@
+program test(input, output);
+type
+	a = record
+		a : integer;
+		end;
+var
+	b : a;
+
+begin
+	b := b*b+b;
+end.

@@ -1,0 +1,6 @@
+program test(i,o);
+var
+	a : integer;
+begin
+	a := 9 + integer;
+end.

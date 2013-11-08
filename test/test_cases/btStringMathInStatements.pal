@@ -1,0 +1,7 @@
+program test(input, output);
+var
+	a : string;
+
+begin
+	a := 'aklsjdalkjd' + 'ajkshdjkadhkjd' * 'asjkdha';
+end.
