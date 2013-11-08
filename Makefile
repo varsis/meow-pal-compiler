@@ -122,7 +122,7 @@ $(TESTDIR)/ParserTestWithFiles.cpp: $(TESTDIR)/test_cases/*.pal $(TESTDIR)/scrip
 man:
 	nroff -man doc/pal.1 | less
 
-zip: 	
+tar: 	
 	cd .. ;\
 	tar czf meow-pal-compiler.tgz --exclude='.*'--exclude-vcs meow-pal-compiler;\
 	cd meow-pal-compiler
