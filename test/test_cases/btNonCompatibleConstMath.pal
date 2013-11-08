@@ -1,0 +1,9 @@
+program test(input, output);
+const
+	a = 0;
+	b = 'kk';
+var
+	c : integer;
+begin
+	c := a*b;
+end.

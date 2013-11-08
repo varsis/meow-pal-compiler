@@ -1,0 +1,7 @@
+program test(input, output);
+
+var
+	a : array[1..2] of char;
+begin
+	a := a*a+a;
+end.
