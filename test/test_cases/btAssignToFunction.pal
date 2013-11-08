@@ -1,0 +1,12 @@
+program test(input, output);
+
+var
+	a : integer;
+
+procedure t();
+begin
+end;
+
+begin
+	t := a;
+end.

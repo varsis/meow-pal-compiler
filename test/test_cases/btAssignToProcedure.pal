@@ -1,0 +1,9 @@
+program test(input, output);
+
+procedure t();
+begin
+	t := 0;
+end;
+
+begin
+end.
