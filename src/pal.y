@@ -13,7 +13,8 @@
 %debug
 %error-verbose
 
-%code requires {
+%code requires 
+{
 
  	#include <vector>
  	#include <string>
@@ -39,7 +40,8 @@
 	}
 }
 
-%code {
+%code
+{
 
  	#include "Scanner.hpp"
 
@@ -60,7 +62,13 @@
 	int g_whileCounter;
 }
 
-%union {
+%initial-action
+{
+	g_whileCounter = 0;
+}
+
+%union
+{
 	int intConst;
         double realConst;
 

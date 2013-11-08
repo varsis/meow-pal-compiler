@@ -815,14 +815,15 @@ namespace Meow
 		if (!procedureSymbol)
 		{
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"Procedure has not been declared.",
+							"Procedure or function has not been declared.",
 							m_scanner->lineno()));
 		}
-		else if (procedureSymbol->getSymbolType() != Symbol::ProcedureSymbol)
+		else if (procedureSymbol->getSymbolType() != Symbol::ProcedureSymbol
+			&& procedureSymbol->getSymbolType() != Symbol::FunctionSymbol)
 		{
 			// TODO better message
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"***** is not a procedure.",
+							"***** is not a procedure or function.",
 							m_scanner->lineno()));
 		}
 		else
@@ -858,8 +859,9 @@ namespace Meow
 					}
 					else if (paramType->getTypeClass() == Type::ArrayType)
 					{
-						// must be array of char starting at index 1
-						if (paramType->getIndexType() == getCharType()
+						// must be array of char indexed by integers starting at 1
+						if (paramType->getElementType() == getCharType()
+							&& paramType->getIndexType() == getIntegerType()
 							&& paramType->getIndexRange().start == 1)
 						{
 							continue;

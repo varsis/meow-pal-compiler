@@ -150,7 +150,7 @@ namespace Meow
 		func->addParameter(parameter1);
 		func->addParameter(parameter2);
 
-		EXPECT_EQ((int) func->getParameterCount(), 2);
+		EXPECT_EQ(func->getParameterCount(), 2u);
 	}
 
 	TEST(SymbolTableTest, getFunctionParmeterNotFoundTest)
