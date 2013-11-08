@@ -51,10 +51,10 @@ namespace Meow
 			Value getConstantValue() { return m_constValue; };
 
 			// for procedures + funcitons..
-			void addParameter(IdTypePair* typePair);
+			void addParameter(Parameter p);
 			unsigned int getParameterCount() const;
-			IdTypePairList getParameters() const;
-			IdTypePair* getParameter(std::string name);	
+			ParameterList getParameters() const;
+			Parameter* getParameter(std::string name);	
 
 			void setProcClass(ProcedureClass c) { m_procedureClass = c; }
 			ProcedureClass getProcClass() { return m_procedureClass; }
@@ -74,7 +74,7 @@ namespace Meow
 
 			// for procedures/functions
 			ProcedureClass m_procedureClass;
-			IdTypePairList m_parameters;
+			ParameterList m_parameters;
 
 	};
 

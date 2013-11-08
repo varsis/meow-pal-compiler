@@ -1,0 +1,15 @@
+program test(input, output);
+
+procedure p (a : real);
+
+	procedure f (var b : real);
+	begin
+		b := 5.0;
+	end;
+
+begin
+	f(p); { fpc doesn't accept this, so assume according to spec :/ }
+end;
+
+begin
+end.

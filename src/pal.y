@@ -61,6 +61,7 @@
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
 	vector<Meow::Symbol*> g_functionStack;
+
 }
 
 %initial-action
@@ -90,15 +91,17 @@
         Type* type;
         LValue lvalue;
 
-	Meow::IdTypePairList* parameterList;
-	Meow::IdTypePair* parameter;
+	ParameterList* parameterList;
+	Parameter* parameter;
 
 	Meow::ProcedureInvocation procedureInvocation;
 }
 
-%type <type> expr simple_expr term factor unsigned_const unsigned_num
-%type <type> type simple_type enumerated_type structured_type var_decl parm
+%type <type> unsigned_const unsigned_num
+%type <type> type simple_type enumerated_type structured_type var_decl
 %type <type> func_invok
+
+%type <lvalue> parm expr simple_expr term factor
 
 %type <lvalue> lhs_var lhs_subscripted_var
 %type <lvalue> var subscripted_var
@@ -112,6 +115,7 @@
 
 %type <parameterList> f_parm_decl f_parm_list
 %type <parameter> f_parm
+
 %type <procedureInvocation> plist_finvok
 
 %token <identifier> IDENTIFIER
@@ -376,6 +380,26 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
 				// TODO what kind of expresssions are actually allowed in type expr?
 				$$ = semanticHelper.makeArrayType($3, $5, $8);
 			}
+			| ARRAY LEFT_BRACKET STRING_LITERAL UPTO STRING_LITERAL RIGHT_BRACKET OF type
+			{
+				ConstExpr start = {semanticHelper.getCharType(), {1}};
+				ConstExpr end = {semanticHelper.getCharType(), {255}}; // arbitrary ...
+
+				if ($3->size() != 1 || $5->size() != 1)
+				{
+					errorManager.addError(
+						new Error(InvalidRecordDecl,
+							  "Invalid expression in array index range.",
+							  scanner.lineno()));
+				}
+				else
+				{
+					start.value.int_val = (int) $3->at(0);
+					end.value.int_val = (int) $5->at(0);
+				}
+
+				$$ = semanticHelper.makeArrayType(start, end, $8);
+			}
 			| ARRAY LEFT_BRACKET simple_type RIGHT_BRACKET OF type
 			{
 				// array with typed index + element type
@@ -520,7 +544,7 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList;
 
 				if (sym)
 				{
@@ -544,7 +568,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
                                 delete $2;
@@ -557,7 +581,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList = NULL;
 				Type * returnType;
 
 				if (sym)
@@ -587,7 +611,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
 				delete $2;
@@ -602,7 +626,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -626,7 +650,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
                                 delete $2;
@@ -645,7 +669,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -669,7 +693,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
                                 delete $2;
@@ -721,19 +745,19 @@ f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
 			}
                         | LEFT_PAREN RIGHT_PAREN 
 			{
-			  $$ = new IdTypePairList();
+			  $$ = new ParameterList();
 			}
                         ;
 
 f_parm_list             : f_parm
 			{
-			  $$ = new IdTypePairList();
-			  $$->push_back($1);
+			  $$ = new ParameterList();
+			  $$->push_back(*$1);
 			}
                         | f_parm_list SEMICOLON f_parm
 			{
 			  $$ = $1;
-			  $$->push_back($3);
+			  $$->push_back(*$3);
 			}
                         ;
 
@@ -756,12 +780,13 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				type = typeSymbol->getType();
 			  }
 
-			  $$ = new IdTypePair($1, type);
+			  $$ = new Parameter;
+			  $$->id = *$1;
+			  $$->type = type;
+			  $$->var = false;
 			}
                         | VAR IDENTIFIER COLON IDENTIFIER
 			{
-			  // TODO: Need to take into account VAR once we reach code gen.
-
 			  // just assume integer in case of error
 			  Type* type = semanticHelper.getIntegerType();
 
@@ -779,7 +804,10 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				type = typeSymbol->getType();
 			  }
 
-			  $$ = new IdTypePair($2, type);
+			  $$ = new Parameter;
+			  $$->id = *$2;
+			  $$->type = type;
+			  $$->var = true;
 
 // TODO maybe idtypepair shouldn't hold a pointer to a string -- makes memory management trickier
 			}
@@ -813,7 +841,7 @@ simple_stat             : lhs_var ASSIGN expr
 						"Cannot assign to value on left side of assignment statment.",
 						scanner.lineno()));
 				}
-				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3))
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3.type))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -834,7 +862,7 @@ simple_stat             : lhs_var ASSIGN expr
 						"Cannot assign to value on left side of assignment statment.",
 						scanner.lineno()));
 				}
-				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3))
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3.type))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -867,12 +895,12 @@ lhs_var                 : IDENTIFIER
 
 lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
                         {
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
                         }
                         | lhs_subscripted_var COMMA expr
 			{
 				// TODO check/test we are doing the subscripts in the correct order!
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
 			}
                         ;
 
@@ -894,12 +922,12 @@ var                     : IDENTIFIER
 
 subscripted_var         : var LEFT_BRACKET expr
                         {
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
                         }
                         | subscripted_var COMMA expr
 			{
 				// TODO check/test we are doing the subscripts in the correct order!
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
 			}
                         ;
 
@@ -940,15 +968,15 @@ parm                    : expr
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
                         {
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 			}
 			| IF expr THEN stat
 			{
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 			}
                         | WHILE expr DO stat
 			{
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 				g_whileCounter--;
 			}
                         | CONTINUE
@@ -958,11 +986,11 @@ struct_stat             : IF expr THEN matched_stat ELSE stat
 matched_stat            : simple_stat
                         | IF expr THEN matched_stat ELSE matched_stat
                         {
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 			}
 			| WHILE expr DO matched_stat
 			{	
-				semanticHelper.checkBoolean($2);
+				semanticHelper.checkBoolean($2.type);
 				g_whileCounter--;
 			}
                         | CONTINUE
@@ -1270,7 +1298,7 @@ expr			: simple_expr
                         }
                         | expr EQ simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpEQ, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpEQ, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1280,11 +1308,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr NE simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpNE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpNE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1294,11 +1323,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr LE simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpLE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1308,11 +1338,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr LT simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpLT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpLT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1322,11 +1353,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr GE simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpGE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1336,11 +1368,12 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | expr GT simple_expr
                         {
-                            Type* result = semanticHelper.getOpResultType(OpGT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpGT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1350,7 +1383,8 @@ expr			: simple_expr
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 
@@ -1360,7 +1394,7 @@ simple_expr             : term
                         }
                         | PLUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2.type);
 
                             if (result == NULL)
                             {
@@ -1370,11 +1404,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | MINUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2);
+                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2.type);
 
                             if (result == NULL)
                             {
@@ -1384,11 +1419,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | simple_expr PLUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpADD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpADD, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1398,11 +1434,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | simple_expr MINUS term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1412,11 +1449,12 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | simple_expr OR term
                         {
-                            Type* result = semanticHelper.getOpResultType(OpOR, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpOR, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1426,7 +1464,8 @@ simple_expr             : term
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 
@@ -1436,7 +1475,7 @@ term                    : factor
                         }
                         | term MULTIPLY factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1446,11 +1485,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term REAL_DIVIDE factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1460,11 +1500,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term INT_DIVIDE factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1474,11 +1515,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term MOD factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpMOD, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpMOD, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1488,11 +1530,12 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         | term AND factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpAND, $1, $3);
+                            Type* result = semanticHelper.getOpResultType(OpAND, $1.type, $3.type);
 
                             if (result == NULL)
                             {
@@ -1502,17 +1545,20 @@ term                    : factor
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 
 factor                  : var
                         {
-                            $$ = $1.type;
+                            //$$.type = $1.type;
+                            $$ = $1;
                         }
                         | unsigned_const
                         {
-                            $$ = $1;
+                            $$.type = $1;
+                            $$.assignable = false;
                         }
                         | LEFT_PAREN expr RIGHT_PAREN
                         {
@@ -1520,11 +1566,12 @@ factor                  : var
                         }
                         | func_invok
                         {
-			     $$ = $1;
+			     $$.type = $1;
+			     $$.assignable = false;
                         }
                         | NOT factor
                         {
-                            Type* result = semanticHelper.getOpResultType(OpNOT, $2);
+                            Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
 
                             if (result == NULL)
                             {
@@ -1534,7 +1581,8 @@ factor                  : var
                                         scanner.lineno()));
                             }
                             
-                            $$ = result;
+                            $$.type = result;
+                            $$.assignable = false;
                         }
                         ;
 

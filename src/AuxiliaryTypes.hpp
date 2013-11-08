@@ -1,6 +1,7 @@
 #ifndef AUXTYPES_HPP
 #define AUXTYPES_HPP
 
+#include <string>
 #include <vector>
 
 namespace Meow
@@ -32,7 +33,7 @@ namespace Meow
 	};
 
 	// Will need to switch this once we start doing code gen
-	typedef std::vector<Type*> InvocationParameters;
+	typedef std::vector<LValue> InvocationParameters;
 	
 	struct ProcedureInvocation
 	{
@@ -50,5 +51,14 @@ namespace Meow
 	// For procedure/function params as well as record fields
 	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
 	typedef std::vector<IdTypePair*> IdTypePairList;
+	
+	struct Parameter
+	{
+		std::string id;
+		Type* type;
+		bool var;
+	};
+
+	typedef std::vector<Parameter> ParameterList;
 }
 #endif
