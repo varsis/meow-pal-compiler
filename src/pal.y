@@ -870,6 +870,12 @@ proc_invok              : plist_finvok RIGHT_PAREN
 										scanner.lineno()));
 					}
 				}
+				else if(procedureSymbol && procedureSymbol->getSymbolType() != Meow::Symbol::ProcedureSymbol)
+				{
+					errorManager.addError(new Error(SemanticError,
+						"Identifer is not a procedure.",
+						scanner.lineno()));
+				}
 				else if (procedureSymbol)
 				{
 					IdTypePairList formalList;
@@ -1581,6 +1587,12 @@ func_invok              : plist_finvok RIGHT_PAREN
 										"Function/Procedure has too many parameters.",
 										scanner.lineno()));
 					}
+				}
+				else if(functionSymbol && functionSymbol->getSymbolType() != Meow::Symbol::FunctionSymbol)
+				{
+					errorManager.addError(new Error(SemanticError,
+						"Identifer is not a function.",
+						scanner.lineno()));
 				}
 				else if (functionSymbol)
 				{
