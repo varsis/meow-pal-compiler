@@ -209,7 +209,7 @@ const_decl              : IDENTIFIER EQ type_expr
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$1 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -229,7 +229,7 @@ const_decl              : IDENTIFIER EQ type_expr
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$1 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -253,7 +253,7 @@ const_decl              : IDENTIFIER EQ type_expr
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$1 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -270,7 +270,7 @@ const_decl              : IDENTIFIER EQ type_expr
                         {
                                 errorManager.addError(
                                     new Error(InvalidConstDecl,
-                                          "Invalid constant declaration.",
+                                          "Invalid constant declaration for '" + *$1 + "'.",
                                           scanner.lineno()));
                         }
                         | error { ; }
@@ -340,7 +340,7 @@ enum_list		: IDENTIFIER
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$1 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -360,7 +360,7 @@ enum_list		: IDENTIFIER
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$3 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -450,7 +450,7 @@ field                   : IDENTIFIER COLON type
 			{
 				errorManager.addError(
 					new Error(InvalidRecordDecl,
-						  "Invalid field declaration.",
+						  "Invalid field declaration for '" + *$1 + "'.",
 						  scanner.lineno()));
 
 				$$ = new IdTypePair($1, semanticHelper.getIntegerType());
@@ -549,7 +549,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -587,7 +587,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -631,7 +631,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -674,7 +674,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				if (sym)
 				{
 					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier was already declared at current lexical level.",
+									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
 									scanner.lineno()));
 				}
 
@@ -772,7 +772,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				// Type not defined; Invoke error manager.
 				errorManager.addError(
 					new Error(SemanticError,
-					"Undefined type",
+					"Undefined type, '" + *$1 + "'",
 					scanner.lineno()));
 			  }
 			  else
@@ -796,7 +796,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				// Type not defined; Invoke error manager.
 				errorManager.addError(
 					new Error(SemanticError,
-					"Undefined type",
+					"Undefined type, '" + *$2 + "'",
 					scanner.lineno()));
 			  }
 			  else
@@ -834,8 +834,6 @@ simple_stat             : lhs_var ASSIGN expr
 			{
 				if (!$1.assignable)
 				{
-					// TODO would be nice if we could say more about 
-					// what we are trying to assign to... (constant, etc)
 					errorManager.addError(
 						new Error(InvalidAssignment,
 						"Cannot assign to value on left side of assignment statment.",
@@ -855,8 +853,6 @@ simple_stat             : lhs_var ASSIGN expr
                         {
 				if (!$1.assignable)
 				{
-					// TODO would be nice if we could say more about 
-					// what we are trying to assign to... (constant, etc)
 					errorManager.addError(
 						new Error(InvalidAssignment,
 						"Cannot assign to value on left side of assignment statment.",
@@ -899,7 +895,6 @@ lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
                         }
                         | lhs_subscripted_var COMMA expr
 			{
-				// TODO check/test we are doing the subscripts in the correct order!
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
 			}
                         ;
@@ -926,7 +921,6 @@ subscripted_var         : var LEFT_BRACKET expr
                         }
                         | subscripted_var COMMA expr
 			{
-				// TODO check/test we are doing the subscripts in the correct order!
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
 			}
                         ;
@@ -943,7 +937,6 @@ proc_invok              : plist_finvok RIGHT_PAREN
 			{
 				semanticHelper.checkProcedureInvocation(*$1, new InvocationParameters());
 
-				// TODO delete param list?
 				delete $1;
 			}
                         ;

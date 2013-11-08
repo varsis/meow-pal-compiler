@@ -1,0 +1,4 @@
+program btest004(input, output);
+begin
+	a := 1;
+end.

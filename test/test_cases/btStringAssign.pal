@@ -1,0 +1,7 @@
+program btest004(input, output);
+var
+	s : string;
+
+begin
+	s := 1;
+end.
