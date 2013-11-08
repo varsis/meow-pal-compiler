@@ -1,0 +1,8 @@
+program test007(input, output);
+const
+	maxint = true;
+var
+	b : boolean;
+begin
+	b := maxint;
+end.        

@@ -62,6 +62,11 @@ namespace Meow
 		maxintSymbol->setConstantValue(2147483647);
 		m_table->addSymbol(maxintSymbol);
 
+		Symbol* minintSymbol = new Symbol("minint", Symbol::ConstantSymbol);
+		minintSymbol->setType(getIntegerType());
+		minintSymbol->setConstantValue(-2147483647);
+		m_table->addSymbol(minintSymbol);
+
 		// PREDEFINED PROCEDURES
 		
 		Symbol* readSymbol = new Symbol("read", Symbol::ProcedureSymbol);

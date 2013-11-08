@@ -1,0 +1,10 @@
+program test(input ,output);
+const
+	b = 1.0;
+
+var
+	ch: char;
+
+begin
+	ch := chr(b);
+end.
