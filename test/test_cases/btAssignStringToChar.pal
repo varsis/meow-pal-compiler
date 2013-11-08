@@ -1,0 +1,8 @@
+program test(input, output);
+
+var
+	a : char;
+
+begin
+	a := 'abcdefghi';
+end.

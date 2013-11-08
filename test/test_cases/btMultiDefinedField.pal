@@ -1,0 +1,8 @@
+program test(i,o);
+type
+	a = record
+		a : integer;
+		a : real;
+		end;
+begin
+end.

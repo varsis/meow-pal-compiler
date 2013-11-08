@@ -10,7 +10,7 @@ program test7(input, output);
 var
 	a : integer;
 begin
-	if ('a') then;
-	while(3.444) do;
+	if ('a') then begin end;
+	while(3.444) do begin end;
 	a := 'lsajdlajksdlashdjkahsdkjafhdjk';
 end.

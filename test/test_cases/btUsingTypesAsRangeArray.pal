@@ -1,0 +1,5 @@
+program test(input, output);
+var
+	a : array[integer..integer] of char;
+begin
+end.

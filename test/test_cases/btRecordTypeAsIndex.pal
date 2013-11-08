@@ -1,0 +1,11 @@
+program test(input, output);
+type
+	a = record
+		a : integer;
+		b : integer;
+		end;
+var
+	f : array[a] of char;
+
+begin
+end.

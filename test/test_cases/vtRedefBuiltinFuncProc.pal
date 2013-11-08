@@ -1,0 +1,17 @@
+program test(input, output);
+
+function succ(a:integer) : integer;
+begin
+end;
+
+function pred(a:real) : boolean;
+begin
+end;
+
+procedure abs();
+begin
+end;
+
+begin
+	abs();
+end.

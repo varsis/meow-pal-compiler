@@ -9,7 +9,7 @@ const
 	c = -1;
 type
 	d = record
-		a,b,c:integer;
+		a:integer;
 		end;
 	e = array[1..200] of char;
 	f = array[1..200] of integer;

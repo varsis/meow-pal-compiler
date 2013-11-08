@@ -828,7 +828,7 @@ stat                    : simple_stat
                         | struct_stat
                         | error { ; }
                         |
-                        ;
+			;
 
 simple_stat             : lhs_var ASSIGN expr
 			{
@@ -995,7 +995,6 @@ matched_stat            : simple_stat
 			}
                         | CONTINUE
                         | EXIT
-			| /* empty */
                         ;
 
 /********************************************************************************

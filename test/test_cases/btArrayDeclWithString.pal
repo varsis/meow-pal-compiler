@@ -1,0 +1,5 @@
+program t(i,o);
+var
+	a : array ['aaaa'..'aaa'] of char;
+begin
+end.
