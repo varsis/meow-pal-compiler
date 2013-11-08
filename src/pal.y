@@ -87,7 +87,7 @@
 
 %type <type> var expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type enumerated_type structured_type var_decl parm
-%type <type> subscripted_var
+%type <type> subscripted_var func_invok
 
 %type <constExpr> type_expr type_simple_expr type_term type_factor
 
