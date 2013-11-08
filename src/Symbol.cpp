@@ -12,8 +12,6 @@ namespace Meow
 		, m_initialized(false)
 		, m_procedureClass(UserDefined)
 	{
-		// TODO make sure we are initializing all pointers to null when we
-		// should!
 	}
 
 	Symbol::Symbol(std::string name, Symbol::SymbolType type)

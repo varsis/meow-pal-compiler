@@ -5,16 +5,22 @@ const
         e = 2.718;
         p = 42;
 
+type
+	gender = (male, female);
 var
         a, b, c, d : integer;
-
+	sup : boolean;
 begin
 
         writeln(trunc(e));
         writeln(round(e));
+        writeln(ord(female));
+	a := ord(male);
         a := succ(p);
         writeln(a);
         a := pred(p);
+        a := trunc(pi);
+        a := round(pi);
         writeln(a);
         writeln(odd(p));
 end.        

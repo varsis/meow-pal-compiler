@@ -1,0 +1,16 @@
+program test(input, output);
+
+var
+	i : integer;
+
+procedure p (var a : integer);
+begin
+	a := 5;
+end;
+
+begin
+	i := 0;
+	writeln(i);
+	p(i);
+	writeln(i);
+end.

@@ -1,0 +1,13 @@
+program test(input, output);
+type 
+	r = record
+		a : integer;
+		b : integer;
+		end;
+var 
+        r1, r2 : r;
+	b : boolean;
+begin
+	b := r1 = r2;
+	b := r1 <> r2;
+end.

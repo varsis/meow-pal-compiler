@@ -12,4 +12,12 @@ begin
         writeln(abs(int));
         writeln(exp(float));
         writeln(ln(float));
+
+	int := abs(int);
+	float := abs(float);
+
+	int := abs(int);
+	float := abs(float);
+	
+	int := sqr(int);
 end.

@@ -1,0 +1,8 @@
+program test(input, output);
+var 
+        list1, list2 : array[0..10] of integer;
+	b : boolean;
+begin
+	b := list1 = list2;
+	b := list1 <> list2;
+end.

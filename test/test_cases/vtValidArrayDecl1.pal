@@ -1,0 +1,11 @@
+program test(input ,output);
+
+const
+	a = 1;
+	b = 10;
+
+type
+	arr = array[a .. b] of integer;
+
+begin
+end.

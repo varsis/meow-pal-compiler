@@ -1,0 +1,13 @@
+program test(input, output);
+
+const
+	i = 5.0;
+
+procedure p (var a : real);
+begin
+	a := 5.0;
+end;
+
+begin
+	p(i);
+end.

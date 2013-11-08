@@ -57,11 +57,9 @@ namespace Meow
 		falseSymbol->setConstantValue(0);
 		m_table->addSymbol(falseSymbol);
 		
-		// TODO max int value
 		Symbol* maxintSymbol = new Symbol("maxint", Symbol::ConstantSymbol);
 		maxintSymbol->setType(getIntegerType());
-		// Max 32 bit word
-		//maxintSymbol->setConstantValue(2^31);
+		maxintSymbol->setConstantValue(2147483647);
 		m_table->addSymbol(maxintSymbol);
 
 		// PREDEFINED PROCEDURES
@@ -608,9 +606,6 @@ namespace Meow
 
 	Type* SemanticHelper::getOpResultType(Operator op, Type* leftType, Type* rightType)
 	{
-
-		// TODO what ops do record types support? anything?
-
 		switch (op)
 		{
 			// comparison ops
@@ -622,7 +617,6 @@ namespace Meow
 			case OpGT:
 				if (checkCompatible(leftType, rightType))
 				{
-					// TODO are these ALL defined for bools?
 					return getBooleanType();
 				}
 				break;
@@ -725,9 +719,15 @@ namespace Meow
 			if (ltype->getElementType() == getCharType() 
 					&& rtype->getElementType() == getCharType())
 			{
-				// TODO
-				// both types need array index starting at one
-				// array index ends much match
+				// if we are comparing 'string' types, must have same indices (starting at 1)
+				if (ltype->getIndexType() == getIntegerType()
+					&& ltype->getIndexRange().start == 1
+					&& rtype->getIndexType() == getIntegerType()
+					&& rtype->getIndexRange().start == 1
+					&& ltype->getIndexRange().end == rtype->getIndexRange().end)
+				{
+					return true;
+				}
 			}
 		}
 
@@ -842,7 +842,7 @@ namespace Meow
 		{
 			// TODO better message
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"***** is not a function.",
+							"Symbol is not a function.",
 							m_scanner->lineno()));
 		}
 		else
@@ -1007,7 +1007,6 @@ namespace Meow
 		}
 		else if (recordType->getTypeClass() != Type::RecordType)
 		{
-			// TODO ERROR type is not a record
 			m_errorManager->addError(new Error(SemanticError,
 					"Accessing field on type that is not a record", 
 					m_scanner->lineno()));
@@ -1041,9 +1040,8 @@ namespace Meow
 
 			if (fieldType == NULL)
 			{
-				// TODO ERROR - invalid field for record!
 				m_errorManager->addError(new Error(SemanticError,
-						"No matchin field in record",
+						"Invalid field for record.",
 						m_scanner->lineno()));
 			}
 		}
@@ -1063,7 +1061,6 @@ namespace Meow
 		}
 		else if (arrayType->getTypeClass() != Type::ArrayType)
 		{
-			// TODO ERROR type is not an array
 			m_errorManager->addError(new Error(SemanticError,
 					"Subscripted variable is not an array",
 					m_scanner->lineno()));
@@ -1084,5 +1081,23 @@ namespace Meow
 			}
 		}
 		return result;
+	}
+
+	bool SemanticHelper::checkDuplicateField(IdTypePairList* fields, IdTypePair* field)
+	{
+		IdTypePairList::iterator it;
+		for (it = fields->begin(); it != fields->end(); ++it)
+		{
+			if ((*it)->first->compare(*field->first) == 0)
+			{
+				m_errorManager->addError(
+					new Error(InvalidRecordDecl,
+						  "Duplicate field name in record declaration.",
+						  m_scanner->lineno()));
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
