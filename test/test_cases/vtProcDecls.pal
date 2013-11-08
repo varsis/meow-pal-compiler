@@ -12,5 +12,5 @@ begin
 end;
 
 begin
-	doStuff(1);
+	dostuff(1);
 end.

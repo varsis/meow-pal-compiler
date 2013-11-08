@@ -310,6 +310,11 @@ namespace Meow
 		EXPECT_TOKEN(token::IDENTIFIER);
 		EXPECT_TOKEN(token::SEMICOLON);
 
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::COLON);
+		EXPECT_TOKEN(token::IDENTIFIER);
+		EXPECT_TOKEN(token::SEMICOLON);
+
 		EXPECT_TOKEN(token::PAL_BEGIN);
 
 		// i := i-1-2;

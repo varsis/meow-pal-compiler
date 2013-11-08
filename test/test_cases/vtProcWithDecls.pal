@@ -1,10 +1,10 @@
 program testProcWithDecls(input, output);
 
-procedure dostuff(a : integer);
+procedure doStuff(a : integer);
 const
         c = 'hello';
 var
-        a : integer;
+        b : integer;
 begin
 	writeln('stuff');
 end;
