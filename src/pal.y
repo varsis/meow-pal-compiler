@@ -1465,7 +1465,7 @@ factor                  : var
                         }
                         | func_invok
                         {
-                            // $$ = $1
+                            $$ = $1;
                         }
                         | NOT factor
                         {

@@ -84,9 +84,8 @@ namespace Meow
 		// PREDEFINED FUNCTIONS
 
 		Symbol* ordFunctionSymbol = new Symbol("ord", Symbol::FunctionSymbol);
+		m_ord = ordFunctionSymbol;
 		ordFunctionSymbol->setType(getIntegerType());
-		// TODO Set argument type
-		//arg = new IdTypePair();
 		m_table->addSymbol(ordFunctionSymbol);
 	
 		Symbol* chrFunctionSymbol = new Symbol("chr", Symbol::FunctionSymbol);
@@ -114,13 +113,11 @@ namespace Meow
 		m_table->addSymbol(roundFunctionSymbol);
 		
 		Symbol* succFunctionSymbol = new Symbol("succ", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//succFunctionSymbol->setType();
+		m_succ = succFunctionSymbol;
 		m_table->addSymbol(succFunctionSymbol);
 		
 		Symbol* predFunctionSymbol = new Symbol("pred", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//predFunctionSymbol->setType();
+		m_pred = predFunctionSymbol;
 		m_table->addSymbol(predFunctionSymbol);
 		
 		Symbol* oddFunctionSymbol = new Symbol("odd", Symbol::FunctionSymbol);
@@ -132,8 +129,7 @@ namespace Meow
 		m_table->addSymbol(oddFunctionSymbol);
 		
 		Symbol* absFunctionSymbol = new Symbol("abs", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//absFunctionSymbol->setType();
+		m_abs = absFunctionSymbol; // Save the symbol addr in case of redef
 		arg = new IdTypePair();
 		arg->first = NULL;
 		arg->second = getRealType();
@@ -141,8 +137,7 @@ namespace Meow
 		m_table->addSymbol(absFunctionSymbol);
 		
 		Symbol* sqrFunctionSymbol = new Symbol("sqr", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//sqrFunctionSymbol->setType();
+		m_sqr = sqrFunctionSymbol; // Save the symbol addr in case of redef
 		arg = new IdTypePair();
 		arg->first = NULL;
 		arg->second = getRealType();
@@ -251,7 +246,7 @@ namespace Meow
 		else if (typeSymbol->getSymbolType() != Symbol::TypeSymbol)
 		{
 			m_errorManager->addError(
-					new Error(SemanticError, // TODO
+					new Error(SemanticError, 
 						"Identifier is not a type.",
 						m_scanner->lineno()));
 		}
@@ -286,7 +281,10 @@ namespace Meow
 	{
 		if (!isOrdinalType(indexType))
 		{
-			// TODO error
+			m_errorManager->addError(new Error(
+					SemanticError,
+					"Indices must be ordinal types; boolean, enum, or integer.",
+					m_scanner->lineno()));
 			return NULL;
 		}
 
@@ -300,16 +298,22 @@ namespace Meow
 	Type* SemanticHelper::makeArrayType(ConstExpr start, ConstExpr end, Type* elementType)
 	{
 		// the start and end types need to be compatible (equal?)
-		if (!checkCompatible(start.type, end.type))
+		if (start.type != end.type || start.type == NULL || end.type == NULL)
 		{
-			// TODO error
+			m_errorManager->addError(new Error(
+					SemanticError,
+					"Indices must be same type.",
+					m_scanner->lineno()));
 			return NULL;
 		}
 
 		// the start and end types need to be ordinal
 		if (!isOrdinalType(start.type) || !isOrdinalType(end.type))
 		{
-			// TODO error
+			m_errorManager->addError(new Error(
+					SemanticError,
+					"Indices must be ordinal types; boolean, enum, or integer.",
+					m_scanner->lineno()));
 			return NULL;
 		}
 	
@@ -799,9 +803,44 @@ namespace Meow
 		else
 		{
 			// check arguments
-			checkInvocationArgs(functionSymbol, params);
+			if (functionSymbol == m_succ || functionSymbol == m_pred
+				|| functionSymbol == m_ord)
+			{
+				if (params && params->size() != 1)
+				{	
+					m_errorManager->addError(new Error(
+						SemanticError,
+						"Expecting 1 argument.",
+						m_scanner->lineno()));
+				}
+
+				else if (params && params->at(0) != getIntegerType() 
+					&& params->at(0)->getTypeClass() != Type::EnumeratedType
+					&& params->at(0) != getBooleanType())
+				{
+					m_errorManager->addError(new Error(
+						SemanticError,
+						"Non-compatible parameter type; must be integer, boolean, or enum.",
+						m_scanner->lineno()));
+				}
+			
+			}
+			else 
+			{
+				checkInvocationArgs(functionSymbol, params);
+			}
 
 			// get function return type
+			if (functionSymbol == m_abs || functionSymbol == m_sqr
+				|| functionSymbol == m_succ || functionSymbol == m_pred)
+			{
+				if (params && params->size() > 0u)
+				{
+					return params->at(0);
+				}
+
+			}
+
 			return functionSymbol->getType();
 		}
 

@@ -4,7 +4,7 @@ const
         size = 50;
 
 type 
-        str = array[0..size] of char;
+        str = array[1..size] of char;
 
 var
         myString : str;
