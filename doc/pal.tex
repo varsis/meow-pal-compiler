@@ -30,11 +30,11 @@
 \section*{Overview}
 
 \begin{figure}[h!]
-\centering \includegraphics[width=10cm]{uml.pdf}
+%\centering \includegraphics[width=10cm]{uml.pdf}
 \caption{General structure of the compiler's parsing components.}
 \end{figure}
 
-At this stage, our compiler source consists of 6 classes. The \texttt{Compiler} class is instantiated by 
+At this stage, our compiler source consists of 10 classes. The \texttt{Compiler} class is instantiated by 
 the program's \texttt{main()} function, and ran with the program's given command line arguments. 
 
 The \texttt{Compiler} class creates an \texttt{ErrorManager}
@@ -52,7 +52,11 @@ encounter errors during lexical and syntactical analysis, they create new
 \texttt{Error} objects with the appropriate error code and line number and
 give them to the \texttt{ErrorManager}.
 
-When parsing is finished, the \texttt{Compiler} takes the errors accumulated by
+Semantic checking is primarily completed by the \texttt{SemanticHelper} class and of course
+the symbol table (\texttt{SymbolTable}). We currently have a monolithic symbol class (\texttt{Symbol}),
+which can represent the various identifier constructs available in PAL.
+
+When parsing and semantic checking have finished, the \texttt{Compiler} takes the errors accumulated by
 the \texttt{ErrorManager} and either displays them inline with the program
 listing, or all errors in order of appearance without the program listing if 
 \texttt{pal} was invoked with the \texttt{-n} option.
@@ -176,60 +180,54 @@ errors at the syntax level:
 	% recovery strategies
 \end{description}
 
+\section*{Semantic Analysis}
+Semantic analysis first begins within the bison grammar file, \texttt{./src/pal.y}. 
+
+There exists two main classes for encapsulating information regarding the type of a particular symbol,
+and the symbol itself.
+
+Firstly, we have the monolithic \texttt{Symbol} class, which is responsible for capturing important information regarding any
+given identifier in a PAL program, including variable declarations, function declarations, enums,
+and so forth.
+
+And secondly, there is a class which encapsulates information regarding types in PAL, which was aptly named \texttt{Type}.
+This class is responsible for holding information about any type that can be declared in a valid PAL program. It has fields 
+for records, functions, primitive types...
+
+We make use of a class called \texttt{SemanticHelper} to encapsulate some of the semantic analysis 
+functionality in order to keep the grammar file relatively clean.
+
+The \texttt{SemanticHelper} performs the following functions:
+
+\begin{description}
+	
+\item[Pre-Populate Symbol Table]
+	There exists a function which populates the symbol table with various pre-defined types,
+	functions, constants, etc...
+	
+\item[Perform Type Comparisons]
+	Since the \texttt{SemanticHelper} class has a reference to the symbol table, it is able to
+	perform a type comparison between two separate constructs, such as variables, constants, etc...
+	
+\item[Add New Types To Symbol Table]
+	When a new type is encountered in a PAL program, the \texttt{SemanticHelper} is responsible for creating
+	a new \texttt{Symbol} and corresponding \texttt{Type}. This information is then added into the symbol table.
+	
+\item[Retrieve Type After Expression Evaluation]
+	During the evaluation of certain statements, the final type of the an operations must be determined in order
+	to determine type compatibility. The \texttt{SemanticHelper} is responsible for this.
+	
+%% TODO
+% Talk about construction of Symbol Table; functions, data structures, etc...
+	
+\end{description}
+
 \section*{Abstract Syntax Tree}
+
+%% Talk about failed attempt of symbol table
 
 	PalParser constructs an abstract syntax tree, where the abstract syntax tree is 
 	used for semantic analysis and code generation. 
-
-\begin{figure}[h!]
-\centering \includegraphics[width=15cm]{ast.pdf}
-\caption{TODO}
-\end{figure}
-
-\begin{figure}[h!]
-\centering \includegraphics[width=15cm]{vardecl.pdf}
-\caption{TODO}
-\end{figure}
-
-\begin{figure}[h!]
-\centering \includegraphics[width=15cm]{type.pdf}
-\caption{TODO}
-\end{figure}
-
-\begin{figure}[h!]
-\centering \includegraphics[width=15cm]{statements.pdf}
-\caption{TODO}
-\end{figure}
-
-\begin{figure}[h!]
-\centering \includegraphics[width=15cm]{expression.pdf}
-\caption{TODO}
-\end{figure}
-
-\begin{figure}[h!]
-\centering \includegraphics[width=15cm]{lvalue.pdf}
-\caption{TODO}
-\end{figure}
-
-%\subsection*{ASTNode}
-%
-%	ASTNode is the base class for all nodes in the abstract syntax tree.
-%
-%\subsection*{Program}
-%
-%	Program is the node at the root of the tree.
-%	\begin{description}
-%		\item[Declarations] The root level declarations for the program.
-%		\item[CompoundStatement] The main program statements
-%	\end{description}
-%
-%\subsection*{Declarations}
-%	\begin{description}
-%		\item[ConstantDeclarationList] List of ConstantDeclaration
-%		\item[TypeDeclarationList] List of TypeDeclaration
-%		\item[VariableDeclarationList] List of VariableDeclaration
-%		\item[ProcedureDeclarationList] List of ProcedureDeclaration
-%	\end{description}
 
 \section*{Testing}
 \begin{description}
