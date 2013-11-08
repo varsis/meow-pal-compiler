@@ -49,10 +49,12 @@ namespace Meow
 		// add predefined constants
 		Symbol* trueSymbol = new Symbol("true", Symbol::ConstantSymbol);
 		trueSymbol->setType(getBooleanType());
+		trueSymbol->setConstantValue(1);
 		m_table->addSymbol(trueSymbol);
 
 		Symbol* falseSymbol = new Symbol("false", Symbol::ConstantSymbol);
 		falseSymbol->setType(getBooleanType());
+		falseSymbol->setConstantValue(0);
 		m_table->addSymbol(falseSymbol);
 		
 		// TODO max int value
@@ -344,6 +346,10 @@ namespace Meow
 
 	Type* SemanticHelper::makeArrayType(ConstExpr start, ConstExpr end, Type* elementType)
 	{
+		ArrayIndexRange range;
+		range.start = start.value.int_val;
+		range.end = end.value.int_val;
+
 		// the start and end types need to be compatible (equal?)
 		if (start.type != end.type || start.type == NULL || end.type == NULL)
 		{
@@ -351,8 +357,11 @@ namespace Meow
 					SemanticError,
 					"Indices must be same type.",
 					m_scanner->lineno()));
-			return NULL;
+
+			return new Type(elementType, NULL, range);
 		}
+
+		Type* indexType = start.type;
 
 		// the start and end types need to be ordinal
 		if (!isOrdinalType(start.type) || !isOrdinalType(end.type))
@@ -361,37 +370,17 @@ namespace Meow
 					SemanticError,
 					"Indices must be ordinal types; boolean, enum, or integer.",
 					m_scanner->lineno()));
-			return NULL;
+			return new Type(elementType, NULL, range);
 		}
 	
-		Type* indexType = start.type; // TODO assume or assert types are equal?
-
 		// Check that start doesn't come after end
-		//if (indexType->getTypeClass() == Type::EnumeratedType)
-		//{
-			// check start.value doesn't come after end.value
-			// TODO values can be enums!!! fack!!
-			// hey -- but we can just treat enums like ints though right?
-		//}
-		//else if (start.value.int_val > end.value.int_val)
 		if (start.value.int_val > end.value.int_val)
 		{
-			// TODO error
-			return NULL;
+			m_errorManager->addError(new Error(SemanticError,
+				"Array start index is greater than end index",
+				m_scanner->lineno()));
 		}
 
-		ArrayIndexRange range;
-
-		//if (start.type->getTypeClass() == Type::EnumeratedType)
-		//{
-			//range.start = start.value.enum_val
-			//range.end = end.value.enum_val
-		//}
-		//else
-		{
-			range.start = start.value.int_val;
-			range.end = end.value.int_val;
-		}
 
 		return new Type(elementType, indexType, range);
 	}
@@ -730,12 +719,6 @@ namespace Meow
 
 		// see section on types in pal reference
 
-		// compatible if they are the exact same type
-		if (ltype == rtype)
-		{
-			return true;
-		}
-
 		// strings of the same size are compatible
 		if (ltype->getTypeClass() == Type::ArrayType && rtype->getTypeClass() == Type::ArrayType)
 		{
@@ -753,6 +736,21 @@ namespace Meow
 			&& (rtype == getIntegerType() || rtype == getRealType()))
 		{
 			return  true;
+		}
+
+		// if rtype is a string literal with length 1, treat it as a char
+		if (rtype->getTypeClass() == Type::StringLiteralType)
+		{
+			if (rtype->getStringLiteral().size() == 1)
+			{
+				rtype = getCharType();
+			}
+		}
+
+		// compatible if they are the exact same type
+		if (ltype == rtype)
+		{
+			return true;
 		}
 
 		// otherwise, incompatible!
