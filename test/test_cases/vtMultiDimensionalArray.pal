@@ -1,0 +1,11 @@
+program test028(input, output);
+const
+	s = 1;
+	e = 10;
+var
+	a,b : array[s .. e] of array[s .. e] of array[s .. e] of integer;
+
+begin
+	if(a = b) then
+		a[1][1][1] := 2;
+end.

@@ -1,0 +1,11 @@
+program test028(input, output);
+const
+	s = 11;
+	e = 10;
+var
+	a,b : array[true .. false] of array[true .. false] of integer;
+
+begin
+	if(a = b) then
+		a[true][true] := 2;
+end.

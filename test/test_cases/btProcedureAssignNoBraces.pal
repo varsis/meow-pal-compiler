@@ -1,0 +1,12 @@
+program testProcDecls(input, output);
+var 
+	a : integer;
+
+function dostuff2() : integer;
+begin
+	dostuff2 := 10;
+end;
+
+begin
+	a := dostuff2;
+end.

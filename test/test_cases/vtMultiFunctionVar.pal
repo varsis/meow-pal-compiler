@@ -1,0 +1,36 @@
+program test004(input, output);
+var 
+	a : integer;
+
+procedure pro1(i : integer);
+var
+        a : integer;
+begin
+	a := 1;
+	i := a;
+end;
+
+procedure pro2(i : integer);
+var
+        a : integer;
+begin
+	a := 1;
+	i := a;
+end;
+
+procedure pro3(i : integer);
+var
+        a : integer;
+begin
+	a := 1;
+	i := a;
+end;
+
+begin
+
+pro1(1);
+pro2(2);
+pro3(3);
+
+
+end.

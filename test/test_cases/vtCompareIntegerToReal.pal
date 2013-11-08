@@ -1,0 +1,12 @@
+program testProcDecls(input, output);
+var 
+	a,c,d,e,f,g,h,i : integer;
+	b : real;
+
+
+begin
+	if(b = a) then
+		b := a;
+		
+		
+end.
