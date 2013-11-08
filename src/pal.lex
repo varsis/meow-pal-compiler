@@ -46,10 +46,10 @@ EXPONENT	E[+-]?{DIGIT}+
 				s_stringInvalid = true;
 			}
 		}
-	\\'	{ s_stringText.append(yytext); /* empty */ }
-	\\n	{ s_stringText.append(yytext);/* empty */ }
-	\\t	{ s_stringText.append(yytext);/* empty */ }
-	\\\\	{ s_stringText.append(yytext);/* empty */ }
+	\\'	{ s_stringText.append("'"); /* empty */ }
+	\\n	{ s_stringText.append("\n");/* empty */ }
+	\\t	{ s_stringText.append("\t");/* empty */ }
+	\\\\	{ s_stringText.append("\\");/* empty */ }
 	'	{
 			if (s_stringMultiline)
 			{
