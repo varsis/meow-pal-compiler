@@ -90,8 +90,10 @@
         Type* type;
         LValue lvalue;
 
-	Meow::IdTypePairList* parameterList;
-	Meow::IdTypePair* parameter;
+	//Meow::IdTypePairList* parameterList;
+	//Meow::IdTypePair* parameter;
+	ParameterList* parameterList;
+	Parameter* parameter;
 
 	Meow::ProcedureInvocation procedureInvocation;
 }
@@ -99,6 +101,8 @@
 %type <type> expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type enumerated_type structured_type var_decl parm
 %type <type> func_invok
+
+%type <expression> expr simple_expr term factor unsigned_const unsigned_num
 
 %type <lvalue> lhs_var lhs_subscripted_var
 %type <lvalue> var subscripted_var
@@ -112,6 +116,7 @@
 
 %type <parameterList> f_parm_decl f_parm_list
 %type <parameter> f_parm
+
 %type <procedureInvocation> plist_finvok
 
 %token <identifier> IDENTIFIER
@@ -520,7 +525,7 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList;
 
 				if (sym)
 				{
@@ -544,7 +549,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
                                 delete $2;
@@ -557,7 +562,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList = NULL;
 				Type * returnType;
 
 				if (sym)
@@ -587,7 +592,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
 				delete $2;
@@ -602,7 +607,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -626,7 +631,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
                                 delete $2;
@@ -645,7 +650,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                         | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
 				Symbol* sym = table.getSymbolCurLevel(*$2);
-				IdTypePairList* paramList = NULL;
+				ParameterList* paramList = NULL;
 
 				if (sym)
 				{
@@ -669,7 +674,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(*paramList->at(i)->first, paramList->at(i)->second);
+					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
 				}
 
                                 delete $2;
@@ -721,19 +726,19 @@ f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
 			}
                         | LEFT_PAREN RIGHT_PAREN 
 			{
-			  $$ = new IdTypePairList();
+			  $$ = new ParameterList();
 			}
                         ;
 
 f_parm_list             : f_parm
 			{
-			  $$ = new IdTypePairList();
-			  $$->push_back($1);
+			  $$ = new ParameterList();
+			  $$->push_back(*$1);
 			}
                         | f_parm_list SEMICOLON f_parm
 			{
 			  $$ = $1;
-			  $$->push_back($3);
+			  $$->push_back(*$3);
 			}
                         ;
 
@@ -756,12 +761,14 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				type = typeSymbol->getType();
 			  }
 
-			  $$ = new IdTypePair($1, type);
+			  //$$ = new Parameter(*$1, type, false);
+			  $$ = new Parameter;
+			  $$->id = *$1;
+			  $$->type = type;
+			  $$->var = false;
 			}
                         | VAR IDENTIFIER COLON IDENTIFIER
 			{
-			  // TODO: Need to take into account VAR once we reach code gen.
-
 			  // just assume integer in case of error
 			  Type* type = semanticHelper.getIntegerType();
 
@@ -779,7 +786,11 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				type = typeSymbol->getType();
 			  }
 
-			  $$ = new IdTypePair($2, type);
+			  //$$ = new Parameter(*$2, type, true);
+			  $$ = new Parameter;
+			  $$->id = *$2;
+			  $$->type = type;
+			  $$->var = true;
 
 // TODO maybe idtypepair shouldn't hold a pointer to a string -- makes memory management trickier
 			}
@@ -905,6 +916,7 @@ subscripted_var         : var LEFT_BRACKET expr
 
 proc_invok              : plist_finvok RIGHT_PAREN
 			{
+				// TODO -- must know for each passed arg if it is assignable, in case there's a var param
 				semanticHelper.checkProcedureInvocation(*$1.procedureName,
 									$1.params);
 				

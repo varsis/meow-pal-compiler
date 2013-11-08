@@ -67,7 +67,7 @@ namespace Meow
 		m_initialized = true;
 	}
 
-	void Symbol::addParameter(IdTypePair* parameter)
+	void Symbol::addParameter(Parameter parameter)
 	{
 		m_parameters.push_back(parameter);
 	}
@@ -117,20 +117,20 @@ namespace Meow
 		return m_parameters.size();
 	}
 
-	IdTypePairList Symbol::getParameters() const
+	ParameterList Symbol::getParameters() const
 	{
 		return m_parameters;
 	}
 
-	IdTypePair* Symbol::getParameter(std::string name) 
+	Parameter* Symbol::getParameter(std::string name) 
 	{
-		IdTypePairList::iterator it = m_parameters.begin();
+		ParameterList::iterator it = m_parameters.begin();
 
 		for (; it != m_parameters.end(); it++)
 		{
-			if ((*it)->first->compare(name) == 0)
+			if ((*it).id.compare(name) == 0)
 			{
-				return (*it);
+				return &(*it);
 			}
 		}
 

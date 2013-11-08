@@ -18,7 +18,7 @@ namespace Meow
 
 	void SemanticHelper::addPredefinedSymbols()
 	{
-		IdTypePair * arg;
+		Parameter * arg;
 		// add predefined types
 
 		Symbol* intSymbol = new Symbol("integer", Symbol::TypeSymbol);
@@ -90,26 +90,23 @@ namespace Meow
 	
 		Symbol* chrFunctionSymbol = new Symbol("chr", Symbol::FunctionSymbol);
 		chrFunctionSymbol->setType(getCharType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getIntegerType();
-		chrFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getIntegerType();
+		chrFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(chrFunctionSymbol);
 		
 		Symbol* truncFunctionSymbol = new Symbol("trunc", Symbol::FunctionSymbol);
 		truncFunctionSymbol->setType(getIntegerType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		truncFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		truncFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(truncFunctionSymbol);
 		
 		Symbol* roundFunctionSymbol = new Symbol("round", Symbol::FunctionSymbol);
 		roundFunctionSymbol->setType(getIntegerType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		roundFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		roundFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(roundFunctionSymbol);
 		
 		Symbol* succFunctionSymbol = new Symbol("succ", Symbol::FunctionSymbol);
@@ -122,58 +119,51 @@ namespace Meow
 		
 		Symbol* oddFunctionSymbol = new Symbol("odd", Symbol::FunctionSymbol);
 		oddFunctionSymbol->setType(getBooleanType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getIntegerType();
-		oddFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getIntegerType();
+		oddFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(oddFunctionSymbol);
 		
 		Symbol* absFunctionSymbol = new Symbol("abs", Symbol::FunctionSymbol);
 		m_abs = absFunctionSymbol; // Save the symbol addr in case of redef
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		absFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		absFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(absFunctionSymbol);
 		
 		Symbol* sqrFunctionSymbol = new Symbol("sqr", Symbol::FunctionSymbol);
 		m_sqr = sqrFunctionSymbol; // Save the symbol addr in case of redef
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		sqrFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		sqrFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(sqrFunctionSymbol);
 		
 		Symbol* sqrtFunctionSymbol = new Symbol("sqrt", Symbol::FunctionSymbol);
 		sqrtFunctionSymbol->setType(getRealType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		sqrtFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		sqrtFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(sqrtFunctionSymbol);
 
 		Symbol* sinFunctionSymbol = new Symbol("sin", Symbol::FunctionSymbol);
 		sinFunctionSymbol->setType(getRealType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		sinFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		sinFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(sinFunctionSymbol);
 		
 		Symbol* expFunctionSymbol = new Symbol("exp", Symbol::FunctionSymbol);
 		expFunctionSymbol->setType(getRealType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		expFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		expFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(expFunctionSymbol);
 		
 		Symbol* lnFunctionSymbol = new Symbol("ln", Symbol::FunctionSymbol);
 		lnFunctionSymbol->setType(getRealType());
-		arg = new IdTypePair();
-		arg->first = NULL;
-		arg->second = getRealType();
-		lnFunctionSymbol->addParameter(arg);
+		arg = new Parameter();
+		arg->type = getRealType();
+		lnFunctionSymbol->addParameter(*arg);
 		m_table->addSymbol(lnFunctionSymbol);
 
 		// Make sure that builtins can be redefed
@@ -975,20 +965,33 @@ namespace Meow
 		}
 		else
 		{
-			IdTypePairList formalList;
+			ParameterList formalList;
 			Type * t1;
 			Type * t2;
 
 			formalList = fpSymbol->getParameters();
 			for(unsigned int i = 0; i < params->size(); i++)
 			{
-				t1 = formalList.at(i)->second;
+				t1 = formalList.at(i).type;
 				t2 = params->at(i);
 				if (!checkAssignmentCompatible(t1, t2))
 				{
 					m_errorManager->addError(new Error(SemanticError,
 								"Mismatch of argument types.",
 								m_scanner->lineno()));
+				}
+
+				// if param is a var param...
+				if (formalList.at(i).var == true)
+				{
+					if (!checkAssignmentCompatible(t2, t1))
+					{
+						m_errorManager->addError(new Error(SemanticError,
+									"Var parameter not assignable to argument type.",
+									m_scanner->lineno()));
+					}
+
+					// t1 must be assignable! (not a constant)
 				}
 			}
 		}
