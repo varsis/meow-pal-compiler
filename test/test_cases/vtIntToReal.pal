@@ -1,0 +1,11 @@
+program test(input, output);
+
+var
+	i : integer;
+	r : real;
+
+begin
+	i := 1;
+	r := 1;
+	r := i;
+end.

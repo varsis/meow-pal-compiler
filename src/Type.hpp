@@ -39,8 +39,6 @@ namespace Meow
 				  , m_elementType(elementType)
 				  , m_indexType(indexType)
 			{
-				// TODO m_indexRange is first element in ordinal index type to last
-				// element (eg false .. true, 'a' .. 'z', MININT .. MAXINT)
 			}
 
 			// Array

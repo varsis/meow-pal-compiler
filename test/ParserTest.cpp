@@ -544,35 +544,6 @@ namespace Meow
 		tokens.push_back(token::SEMICOLON);
 	}
 
-	TEST_F(TypeDeclarationTest, RecordDef2)
-	{
-		// T = record 
-		//		age : integer;
-		//		meow : word;
-		//		blaa : baaaa;
-		//		end;
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::EQ);
-		tokens.push_back(token::RECORD);
-
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::COLON);
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::SEMICOLON);
-
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::COLON);
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::SEMICOLON);
-
-		tokens.push_back(token::IDENTIFIER);
-		tokens.push_back(token::COLON);
-		tokens.push_back(token::IDENTIFIER);
-
-		tokens.push_back(token::END);
-		tokens.push_back(token::SEMICOLON);
-	}
-
 // Statement tests...
 
 	class StatementsTest : public ParserTest

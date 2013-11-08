@@ -7,8 +7,6 @@ namespace Meow
 	SymbolTable::SymbolTable()
 	{
 		m_currentLevel = 0;
-
-		// TODO - add raw predefined types to table
 	}
 
 	SymbolTable::~SymbolTable()

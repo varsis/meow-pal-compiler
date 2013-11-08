@@ -1,0 +1,9 @@
+program test(input ,output);
+
+const
+	a = 1.53;
+	b = 1;
+
+begin
+	writeln(ord(a));
+end.

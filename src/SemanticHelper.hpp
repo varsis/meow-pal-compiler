@@ -89,6 +89,8 @@ namespace Meow
 			Type* getRecordFieldType(Type* recordType, string fieldName, bool& assignable);
 			Type* getSubscriptedArrayType(Type* arrayType, Type* subscriptType, bool& assignable);
 
+			bool checkDuplicateField(IdTypePairList* fields, IdTypePair* field);
+
 			Type* getBooleanType() { return &m_booleanType; }
 			Type* getIntegerType() { return &m_integerType; }
 			Type* getRealType() { return &m_realType; }

@@ -233,9 +233,6 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				sym->setType(new Type(*$3));
 				
-				// TODO remove? (we are passing the literal to the type constructor instead of the symbol...)
-				sym->setStringLiteral(*$3); // TODO limited to 255 by spec?
-
                                 delete $1;
 
 				table.addSymbol(sym);
@@ -318,8 +315,8 @@ simple_type             : IDENTIFIER
 
 enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
 			{
-// TODO when do we delete this? When type symbol goes out of scope?
-// (must differentiate from predefined types, or use refcounts)
+				// TODO when do we delete this? When type symbol goes out of scope?
+				// (must differentiate from predefined types, or use refcounts)
 				$$ = new Type($2);
 			}
 			| LEFT_PAREN error RIGHT_PAREN
@@ -328,7 +325,7 @@ enumerated_type		: LEFT_PAREN enum_list RIGHT_PAREN
                                 new Error(InvalidEnumDecl,
                                           "Invalid enumeration declaration.",
                                           scanner.lineno()));
-				// TODO int by default? or NULL?
+				$$ = NULL;
                         }
 			;
 
@@ -378,13 +375,11 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
 			{
 				// TODO what kind of expresssions are actually allowed in type expr?
 				$$ = semanticHelper.makeArrayType($3, $5, $8);
-				// TODO - returns null if invalid! handle!
 			}
 			| ARRAY LEFT_BRACKET simple_type RIGHT_BRACKET OF type
 			{
 				// array with typed index + element type
 				$$ = semanticHelper.makeArrayType($3, $6);
-				// TODO - returns null if invalid! handle!
 			}
                         | RECORD field_list END
 			{
@@ -393,7 +388,6 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
                         | RECORD field_list SEMICOLON END
 			{
 				$$ = new Type($2);
-				// TODO both these rules are OK?
 			}
                         | RECORD error END
                         {
@@ -419,9 +413,7 @@ field_list              : field
                         | field_list SEMICOLON field
 			{
 				$$ = $1;
-				// TODO check if id already used in field list	
-				// might want to use (unordered) map instead of list to
-				// avoid quadratic time!
+				semanticHelper.checkDuplicateField($1, $3);
 				$$->push_back($3);
 			}
                         ;
@@ -869,8 +861,6 @@ lhs_var                 : IDENTIFIER
                         }
                         | lhs_subscripted_var RIGHT_BRACKET
                         {
-				// TODO -- determine if accessing 2d array with arrVar[1,2] should be
-				// supported
 				$$ = $1;
                         }
                         ;
@@ -898,8 +888,6 @@ var                     : IDENTIFIER
                         }
                         | subscripted_var RIGHT_BRACKET
                         {
-				// TODO -- determine if accessing 2d array with arrVar[1,2] should be
-				// supported
 				$$ = $1;
                         }
                         ;
@@ -920,7 +908,7 @@ proc_invok              : plist_finvok RIGHT_PAREN
 				semanticHelper.checkProcedureInvocation(*$1.procedureName,
 									$1.params);
 				
-				// TODO delete param list?
+				delete $1.params;
 				delete $1.procedureName;
 			}
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
@@ -928,6 +916,7 @@ proc_invok              : plist_finvok RIGHT_PAREN
 				semanticHelper.checkProcedureInvocation(*$1, new InvocationParameters());
 
 				// TODO delete param list?
+				delete $1;
 			}
                         ;
 
@@ -1271,11 +1260,6 @@ type_factor             : IDENTIFIER
                             }
 
                             $$ = semanticHelper.getConstOpResult(OpNOT, $2);
-
-			// TODO make sure we are always returning SOME type...
-			// either that or put null checks everywhere and give up 
-			// if the expression is borked
-
                         }
                         ;
 

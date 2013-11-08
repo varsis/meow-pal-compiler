@@ -50,9 +50,6 @@ namespace Meow
 
 			Value getConstantValue() { return m_constValue; };
 
-			void setStringLiteral(std::string v) { m_stringLiteral = v; };
-			std::string getStringLiteral() { return m_stringLiteral; };
-
 			// for procedures + funcitons..
 			void addParameter(IdTypePair* typePair);
 			unsigned int getParameterCount() const;
@@ -74,7 +71,6 @@ namespace Meow
 
 			// for constant symbols..
 			Value m_constValue;
-			std::string m_stringLiteral;
 
 			// for procedures/functions
 			ProcedureClass m_procedureClass;

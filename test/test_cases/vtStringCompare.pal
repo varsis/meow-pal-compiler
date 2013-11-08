@@ -1,0 +1,13 @@
+program test(input, output);
+var 
+        s1 : array[1 .. 10] of char;
+        s2 : array[1 .. 10] of char;
+	b : boolean;
+begin
+	b := s1 = s2;
+	b := s1 < s2;
+	b := s1 > s2;
+	b := s1 >= s2;
+	b := s1 <= s2;
+	b := s1 <> s2;
+end.

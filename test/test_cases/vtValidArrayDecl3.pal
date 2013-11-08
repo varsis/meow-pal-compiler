@@ -1,0 +1,10 @@
+program test(input ,output);
+
+type
+	someEnum = (a, b, c, d, e, f, g);
+
+var
+	arr : array[a .. g] of boolean;
+
+begin
+end.

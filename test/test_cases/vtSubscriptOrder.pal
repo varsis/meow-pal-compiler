@@ -1,0 +1,10 @@
+program test(input ,output);
+
+var
+	// TODO
+	// UNCOMMENTING GIVES US SEGFAULTS!
+	//a : array[1..10] of array['a' .. 'z'] of boolean;
+
+begin
+	//writeln(a[5]['s']);
+end.

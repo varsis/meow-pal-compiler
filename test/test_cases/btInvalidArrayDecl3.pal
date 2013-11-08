@@ -1,0 +1,11 @@
+program test(input ,output);
+
+var
+	a : integer;
+	b : integer;
+
+type
+	arr = array[a .. b] of integer;
+
+begin
+end.

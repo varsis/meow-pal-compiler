@@ -1,0 +1,32 @@
+program test(input ,output);
+
+const
+	a = 1.53;
+	b = 1;
+
+var
+	c : integer;
+	d : real;
+
+begin
+	writeln(ord(a));
+	writeln(succ(a));
+	writeln(pred(a));
+	writeln(ord(a));
+
+	writeln(trunc(b));
+	writeln(round(b));
+
+	c := abs(a);
+	c := ln(d);
+	c := ln(c);
+	c := sin(d);
+	c := sin(c);
+	c := exp(d);
+	c := exp(c);
+	c := sqrt(d);
+	c := sqrt(c);
+	c := sqr(d);
+	c := sqr(c);
+	c := odd(d);
+end.

@@ -1,0 +1,7 @@
+program test(input ,output);
+
+var
+	a : array['a' .. 'z'] of boolean;
+
+begin
+end.
