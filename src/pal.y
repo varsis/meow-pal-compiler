@@ -380,6 +380,26 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
 				// TODO what kind of expresssions are actually allowed in type expr?
 				$$ = semanticHelper.makeArrayType($3, $5, $8);
 			}
+			| ARRAY LEFT_BRACKET STRING_LITERAL UPTO STRING_LITERAL RIGHT_BRACKET OF type
+			{
+				ConstExpr start = {semanticHelper.getCharType(), {1}};
+				ConstExpr end = {semanticHelper.getCharType(), {255}}; // arbitrary ...
+
+				if ($3->size() != 1 || $5->size() != 1)
+				{
+					errorManager.addError(
+						new Error(InvalidRecordDecl,
+							  "Invalid expression in array index range.",
+							  scanner.lineno()));
+				}
+				else
+				{
+					start.value.int_val = (int) $3->at(0);
+					end.value.int_val = (int) $5->at(0);
+				}
+
+				$$ = semanticHelper.makeArrayType(start, end, $8);
+			}
 			| ARRAY LEFT_BRACKET simple_type RIGHT_BRACKET OF type
 			{
 				// array with typed index + element type
