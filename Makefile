@@ -1,5 +1,5 @@
 CXX = g++
-CFLAGS = -g -Wall -pthread #-std=c++0x 
+CFLAGS = -Wall -pthread #-std=c++0x -g 
 DEPGEN = -MM -MD -MP -MG #-std=c++0x
 
 OBJDIR = ./obj
