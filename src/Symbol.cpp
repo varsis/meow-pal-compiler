@@ -10,7 +10,7 @@ namespace Meow
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)
-		, m_isIOProcedure(false)
+		, m_procedureClass(UserDefined)
 	{
 		// TODO make sure we are initializing all pointers to null when we
 		// should!
@@ -25,7 +25,7 @@ namespace Meow
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)
-		, m_isIOProcedure(false)
+		, m_procedureClass(UserDefined)
 	{
 	}
 		

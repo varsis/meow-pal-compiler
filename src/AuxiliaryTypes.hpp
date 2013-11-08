@@ -25,6 +25,22 @@ namespace Meow
 		std::vector<std::string*>* fieldNames;
 	};
 
+	// Will need to switch this once we start doing code gen
+	typedef std::vector<Type*> InvocationParameters;
+	
+	struct ProcedureInvocation
+	{
+		InvocationParameters* params;
+		std::string* procedureName;
+	};
+
+	enum ProcedureClass
+	{
+		UserDefined,
+		BuiltInInput,
+		BuiltInOutput
+	};
+
 	// For procedure/function params as well as record fields
 	typedef std::pair<std::string*, Meow::Type*> IdTypePair;
 	typedef std::vector<IdTypePair*> IdTypePairList;

@@ -64,19 +64,19 @@ namespace Meow
 		// PREDEFINED PROCEDURES
 		
 		Symbol* readSymbol = new Symbol("read", Symbol::ProcedureSymbol);
-		readSymbol->setIOProc(true);
+		readSymbol->setProcClass(BuiltInInput);
 		m_table->addSymbol(readSymbol);
 		
 		Symbol* readlnSymbol = new Symbol("readln", Symbol::ProcedureSymbol);
-		readlnSymbol->setIOProc(true);
+		readlnSymbol->setProcClass(BuiltInInput);
 		m_table->addSymbol(readlnSymbol);
 		
 		Symbol* writelnSymbol = new Symbol("writeln", Symbol::ProcedureSymbol);
-		writelnSymbol->setIOProc(true);
+		writelnSymbol->setProcClass(BuiltInOutput);
 		m_table->addSymbol(writelnSymbol);
 		
 		Symbol* writeSymbol = new Symbol("write", Symbol::ProcedureSymbol);
-		writeSymbol->setIOProc(true);
+		writeSymbol->setProcClass(BuiltInOutput);
 		m_table->addSymbol(writeSymbol);
 		
 		// PREDEFINED FUNCTIONS
@@ -742,6 +742,90 @@ namespace Meow
 					m_scanner->lineno()));
 		}
 	}
+
+	void SemanticHelper::checkProcedureInvocation(string procedureName, 
+							InvocationParameters* params)
+	{	
+		Symbol* procedureSymbol = m_table->getSymbol(procedureName);
+		if (!procedureSymbol)
+		{
+			m_errorManager->addError(new Error(IdentifierInUse,
+							"Function/Procedure has not been declared.",
+							m_scanner->lineno()));
+		}
+		else if (procedureSymbol->getProcClass() == BuiltInInput
+			|| procedureSymbol->getProcClass() == BuiltInOutput)
+		{
+			// check params are all valid for a IO procedure
+			InvocationParameters::iterator it;
+			for (it = params->begin(); it != params->end(); ++it)
+			{
+				Type* paramType = *it;
+				if (paramType != NULL)
+				{
+					if (paramType->getTypeClass() == Type::SimpleType)
+					{
+						// integer, real, boolean, char all ok
+						continue;
+					}
+					else if (paramType->getTypeClass() == Type::StringLiteralType
+						&& procedureSymbol->getProcClass() == BuiltInOutput)
+					{
+						// strings are OK for built-in output procedures
+						continue;
+					}
+					else if (paramType->getTypeClass() == Type::ArrayType)
+					{
+						// must be array of char starting at index 1
+						if (paramType->getIndexType() == getCharType()
+							&& paramType->getIndexRange().start == 1)
+						{
+							continue;
+						}
+					}
+				}
+
+				m_errorManager->addError(new Error(SemanticError,
+								"Invalid argument for IO procedure.",
+								m_scanner->lineno()));
+			}
+		}
+		else if (procedureSymbol->getParameterCount() != params->size())
+		{
+			if (params->size() < procedureSymbol->getParameterCount())
+			{
+				m_errorManager->addError(new Error(IdentifierInUse,
+								"Function/Procedure is missing parameters.",
+								m_scanner->lineno()));
+			}
+			else
+			{
+				m_errorManager->addError(new Error(IdentifierInUse,
+								"Function/Procedure has too many parameters.",
+								m_scanner->lineno()));
+			}
+		}
+		else
+		{
+			IdTypePairList formalList;
+			Type * t1;
+			Type * t2;
+
+			formalList = procedureSymbol->getParameters();
+			for(unsigned int i = 0; i < params->size(); i++)
+			{
+				t1 = formalList.at(i)->second;
+				t2 = params->at(i);
+				if (!checkAssignmentCompatible(t1, t2))
+				{
+					m_errorManager->addError(new Error(SemanticError,
+								"Mismatch of argument types.",
+								m_scanner->lineno()));
+				}
+			}
+		}
+	}
+
 
 	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName)
 	{

@@ -79,6 +79,9 @@ namespace Meow
 			bool checkAssignmentCompatible(Type* ltype, Type* rtype);
 			void checkBoolean(Type *);
 
+			void checkProcedureInvocation(string procedureName, 
+							InvocationParameters* params);
+
 			Type* getRecordFieldType(Type* recordType, string fieldName);
 			Type* getSubscriptedArrayType(Type* arrayType, Type* subscriptType);
 
