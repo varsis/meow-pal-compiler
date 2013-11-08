@@ -217,17 +217,50 @@ The \texttt{SemanticHelper} performs the following functions:
 	During the evaluation of certain statements, the final type of the an operations must be determined in order
 	to determine type compatibility. The \texttt{SemanticHelper} is responsible for this.
 	
+\item [Retrieve Primitive Types]
+	Pre-defined \'raw\' types such as boolean, integer, real, etc... are retrieved using this class.
+
+\end{description}
+	
 %% TODO
 % Talk about construction of Symbol Table; functions, data structures, etc...
+
+The symbol table is contained in the \texttt{SymbolTable} class. Our symbol table was built around the C++ pre-defined
+\texttt{unordered\_map}. This was quite nice since we did not have to define our own hash map implementation, thus
+greatly reducing the chances of bugs due to improper implementation. 
+
+Within a bucket of the top level hash map, there is a class called \texttt{EntryList}. It is essentially a vector containing the definitions of symbols at various lexical levels. The symbol table's methods handle the different definitions at various
+levels with ease.
+
+The Symbol table contains the following functionality:
+
+\begin{description}
+	
+\item[Adding Symbol]
+
+\item[Finding The Definition Of A Symbol]
+
+\item[Retrieving A Symbol]
+
+\item[Retrieving The Current Lexical Level]
+
+\item[Incrementing The Lexical Level]
+
+\item[Decrementing The Lexical Level]
 	
 \end{description}
 
-\section*{Abstract Syntax Tree}
+As you can see, the \texttt{SymbolTable} and \texttt{SemanticHelper} classes work very closely together
+in order to perform semantic checking.
 
-%% Talk about failed attempt of symbol table
+\section*{Our Failed Abstract Syntax Tree}
 
-	PalParser constructs an abstract syntax tree, where the abstract syntax tree is 
-	used for semantic analysis and code generation. 
+When beginning Checkpoint 2, we started to create an AST structure so we could cleanly separate semantic analysis 
+and code generation functionality from the grammar file. Initially, it seemed like a great idea, using proper software
+engineering principles and such. As time progressed, the amount of code began to spiral out of control, leading to a
+convoluted mess of AST nodes. The amount of code need to properly build and traverse the AST was preposterous. We decided
+to start from scratch essentially. Let's just say after we reverted back to our checkpoint 1 codebase, there was over
+9 000 lines deleted! Lesson learned...
 
 \section*{Testing}
 \begin{description}
@@ -260,10 +293,10 @@ The \texttt{SemanticHelper} performs the following functions:
 		changes to the grammar or token identifiers.
 	\end{itemize}
 \item[Submitted Tests 0.pal - 9.pal]
-	Tests 0-4 contain 3 errors which are lexical. Tests 5-7 contain
-	syntax errors, and tests 8 and 9 contain valid pal programs which 
-	check tricky correct syntax. These tests are included at ''test\textbackslash 
-	test\textunderscore cases\textbackslash checkpoint\textunderscore 1''.
+	Tests 0-1 contain 3 errors which are all syntactical. Tests 2-7 contain
+	only semantic errors. Test 8 is essentially the output of a dictionary. The program header
+	is correct. Test 9 checks tricky nested declarations. These tests are included at ''test\textbackslash 
+	test\textunderscore cases\textbackslash cp2tests''.
 \end{description}
 % known bugs?
 % extra features?
