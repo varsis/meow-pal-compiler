@@ -1,0 +1,12 @@
+program test(input, output);
+
+var
+	a : boolean;
+
+function abs(a : integer; b : real) : boolean;
+begin
+end;
+
+begin
+	a := abs(2);
+end.

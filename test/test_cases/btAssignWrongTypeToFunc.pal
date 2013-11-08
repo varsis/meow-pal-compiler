@@ -1,0 +1,7 @@
+program t(i,o);
+function a() : boolean;
+	begin
+		a:=4;
+	end;
+begin
+end.

@@ -8,19 +8,11 @@
 
 program test6(input, output);
 begin
-	while (true) do
-	begin	
-		exit;
-	end;
+	while (true) do begin	exit; end;
 	
-	while (myFunc()) do
-	begin
-		continue;
-	end;
+	while (myFunc()) do begin continue; end;
 	
-	while(a) do
-	begin
-	end;
+	while(a) do begin end;
 	
 	test6(2, 2);
 end.

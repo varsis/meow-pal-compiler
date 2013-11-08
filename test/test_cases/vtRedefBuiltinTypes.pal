@@ -1,0 +1,7 @@
+program test(i,o);
+type
+	string = integer;
+	real = array[2..4] of char;
+	true = boolean;
+begin
+end.

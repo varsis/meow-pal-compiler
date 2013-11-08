@@ -1,0 +1,13 @@
+program test(input, output);
+type
+	a = record 
+		c : integer;
+		d : integer;
+		end;
+
+var
+	n : a;
+
+begin
+	c := 23;
+end.

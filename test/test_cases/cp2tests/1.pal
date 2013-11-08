@@ -14,7 +14,7 @@ const
 
 type
 	b = record
-		a,b,c:integer;
+		a:integer;
 		end;
 	c := record
 		a = integer;
