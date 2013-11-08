@@ -182,7 +182,7 @@ namespace Meow
 
 		if (assertExists && !symbol) {
 			m_errorManager->addError(new Error(SemanticError,
-				"Undefined identifier",
+				"Undefined identifier, '" + id + "'.",
 				m_scanner->lineno()));
 		}
 
@@ -196,7 +196,7 @@ namespace Meow
 		if (typeSymbol)
 		{
 			m_errorManager->addError(new Error(IdentifierInUse,
-				"Identifier was already declared at current lexical level.",
+				"Identifier, '" + id + "', was already declared at current lexical level.",
 				m_scanner->lineno()));
 		}
 
@@ -216,8 +216,8 @@ namespace Meow
 		if (!symbol)
 		{
 			m_errorManager->addError(
-					new Error(SemanticError, 
-						"Identifier is not defined.",
+					new Error(SemanticError,
+						"Identifier, '" + id + "' is not defined.",
 						m_scanner->lineno()));
 
 		}
@@ -231,7 +231,7 @@ namespace Meow
 			{
 				m_errorManager->addError(
 						new Error(SemanticError,
-							"Invalid reference to procedure",
+							"Invalid reference to procedure, '" + id + "'.",
 							m_scanner->lineno()));
 			}
 
@@ -269,7 +269,7 @@ namespace Meow
 				{
 					m_errorManager->addError(
 							new Error(SemanticError,
-								"Invalid reference to function",
+								"Invalid reference to function, '" + id + "'.",
 								m_scanner->lineno()));
 				}
 			}
@@ -289,8 +289,8 @@ namespace Meow
 		if (!typeSymbol)
 		{
 			m_errorManager->addError(
-					new Error(SemanticError, // TODO
-						"Type is not defined.",
+					new Error(SemanticError,
+						"Type, '" + id + "', is not defined.",
 						m_scanner->lineno()));
 
 		}
@@ -298,7 +298,7 @@ namespace Meow
 		{
 			m_errorManager->addError(
 					new Error(SemanticError, 
-						"Identifier is not a type.",
+						"'" + id + "' is not a type.",
 						m_scanner->lineno()));
 		}
 		else
@@ -394,7 +394,7 @@ namespace Meow
 		if (sym)
 		{
 			m_errorManager->addError(new Error(IdentifierInUse,
-				"Identifier was already declared at current lexical level.",
+				"Identifier, '" + id + "', was already declared at current lexical level.",
 				m_scanner->lineno()));
 		}
 
@@ -790,12 +790,6 @@ namespace Meow
 				{
 					return true;
 				}
-
-
-				// TODO better error
-				m_errorManager->addError(new Error(SemanticError,
-						"Assigning string with invalid type", 
-						m_scanner->lineno()));
 			}
 		}
 
@@ -837,16 +831,15 @@ namespace Meow
 		Symbol* functionSymbol = m_table->getSymbol(functionName);
 		if (!functionSymbol)
 		{
-			m_errorManager->addError(new Error(IdentifierInUse,
-							"Function has not been declared.",
+			m_errorManager->addError(new Error(SemanticError,
+							"Function '" + functionName + "' has not been declared.",
 							m_scanner->lineno()));
 
 		}
 		else if (functionSymbol->getSymbolType() != Symbol::FunctionSymbol)
 		{
-			// TODO better message
-			m_errorManager->addError(new Error(IdentifierInUse,
-							"Symbol is not a function.",
+			m_errorManager->addError(new Error(SemanticError,
+							"'" + functionName + "' is not a function.",
 							m_scanner->lineno()));
 		}
 		else
@@ -859,7 +852,7 @@ namespace Meow
 				{	
 					m_errorManager->addError(new Error(
 						SemanticError,
-						"Expecting 1 argument.",
+						"Expecting 1 argument for '" + functionName + "'.",
 						m_scanner->lineno()));
 				}
 
@@ -869,7 +862,7 @@ namespace Meow
 				{
 					m_errorManager->addError(new Error(
 						SemanticError,
-						"Non-compatible parameter type; must be integer, boolean, or enum.",
+						"Non-compatible parameter type for '" + functionName + "'; must be integer, boolean, or enum.",
 						m_scanner->lineno()));
 				}
 			
@@ -903,15 +896,14 @@ namespace Meow
 		if (!procedureSymbol)
 		{
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"Procedure or function has not been declared.",
+							"Procedure or function, '" + procedureName + "', has not been declared.",
 							m_scanner->lineno()));
 		}
 		else if (procedureSymbol->getSymbolType() != Symbol::ProcedureSymbol
 			&& procedureSymbol->getSymbolType() != Symbol::FunctionSymbol)
 		{
-			// TODO better message
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"***** is not a procedure or function.",
+							"'" + procedureName + "' is not a procedure or function.",
 							m_scanner->lineno()));
 		}
 		else
@@ -958,7 +950,7 @@ namespace Meow
 				}
 
 				m_errorManager->addError(new Error(SemanticError,
-								"Invalid argument for IO procedure.",
+								"Invalid argument for IO procedure, '" + fpSymbol->getName() + "'.",
 								m_scanner->lineno()));
 			}
 		}
@@ -967,13 +959,13 @@ namespace Meow
 			if (params->size() < fpSymbol->getParameterCount())
 			{
 				m_errorManager->addError(new Error(IdentifierInUse,
-								"Function/Procedure is missing parameters.",
+								"Function/procedure, '" + fpSymbol->getName() + "', is missing parameters.",
 								m_scanner->lineno()));
 			}
 			else
 			{
 				m_errorManager->addError(new Error(IdentifierInUse,
-								"Function/Procedure has too many parameters.",
+								"Function/procedure, '" + fpSymbol->getName() + "', has too many parameters.",
 								m_scanner->lineno()));
 			}
 		}
@@ -988,12 +980,6 @@ namespace Meow
 			{
 				t1 = formalList.at(i).type;
 				t2 = params->at(i).type;
-				if (!checkAssignmentCompatible(t1, t2))
-				{
-					m_errorManager->addError(new Error(SemanticError,
-								"Mismatch of argument types.",
-								m_scanner->lineno()));
-				}
 
 				// if param is a var param...
 				if (formalList.at(i).var == true)
@@ -1001,17 +987,23 @@ namespace Meow
 					if (!checkAssignmentCompatible(t2, t1))
 					{
 						m_errorManager->addError(new Error(SemanticError,
-									"Var parameter not assignable to argument type.",
+									"Var parameter, '" + formalList.at(i).id + "', not assignable to argument type.",
 									m_scanner->lineno()));
 					}
 					else if (params->at(i).assignable == false)
 					{
 						m_errorManager->addError(new Error(SemanticError,
-									"Variable argument required for var parameter.",
+									"Variable argument required for var parameter, '" + formalList.at(i).id + "'.",
 									m_scanner->lineno()));
 					}
 
 					// t1 must be assignable! (not a constant)
+				}
+				else if (!checkAssignmentCompatible(t1, t2))
+				{
+					m_errorManager->addError(new Error(SemanticError,
+								"Mismatch of argument types.",
+								m_scanner->lineno()));
 				}
 			}
 		}
@@ -1031,7 +1023,7 @@ namespace Meow
 		else if (recordType->getTypeClass() != Type::RecordType)
 		{
 			m_errorManager->addError(new Error(SemanticError,
-					"Accessing field on type that is not a record", 
+					"Accessing field '" + fieldName + "' on type that is not a record", 
 					m_scanner->lineno()));
 		}
 		else
@@ -1040,7 +1032,6 @@ namespace Meow
 
 			if (fields == NULL)
 			{
-				// ERROR - record type has no fields?
 				m_errorManager->addError(new Error(SemanticError,
 						"Record has no fields", 
 						m_scanner->lineno()));
@@ -1064,7 +1055,7 @@ namespace Meow
 			if (fieldType == NULL)
 			{
 				m_errorManager->addError(new Error(SemanticError,
-						"Invalid field for record.",
+						"Invalid field, '" + fieldName + "', for record.",
 						m_scanner->lineno()));
 			}
 		}
@@ -1115,7 +1106,7 @@ namespace Meow
 			{
 				m_errorManager->addError(
 					new Error(InvalidRecordDecl,
-						  "Duplicate field name in record declaration.",
+						  "Duplicate field name, '" + *(*it)->first + "', in record declaration.",
 						  m_scanner->lineno()));
 				return true;
 			}
