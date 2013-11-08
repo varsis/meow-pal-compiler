@@ -760,7 +760,6 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				type = typeSymbol->getType();
 			  }
 
-			  //$$ = new Parameter(*$1, type, false);
 			  $$ = new Parameter;
 			  $$->id = *$1;
 			  $$->type = type;
@@ -785,7 +784,6 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				type = typeSymbol->getType();
 			  }
 
-			  //$$ = new Parameter(*$2, type, true);
 			  $$ = new Parameter;
 			  $$->id = *$2;
 			  $$->type = type;
@@ -915,7 +913,6 @@ subscripted_var         : var LEFT_BRACKET expr
 
 proc_invok              : plist_finvok RIGHT_PAREN
 			{
-				// TODO -- must know for each passed arg if it is assignable, in case there's a var param
 				semanticHelper.checkProcedureInvocation(*$1.procedureName,
 									$1.params);
 				
