@@ -59,8 +59,8 @@ namespace Meow
 			IdTypePairList getParameters() const;
 			IdTypePair* getParameter(std::string name);	
 
-			void setIOProc(bool value) { m_isIOProcedure = value; }
-			bool isIOProc() { return m_isIOProcedure; }
+			void setProcClass(ProcedureClass c) { m_procedureClass = c; }
+			ProcedureClass getProcClass() { return m_procedureClass; }
 
 		protected:
 			std::string m_name;
@@ -77,7 +77,7 @@ namespace Meow
 			std::string m_stringLiteral;
 
 			// for procedures/functions
-			bool m_isIOProcedure;
+			ProcedureClass m_procedureClass;
 			IdTypePairList m_parameters;
 
 	};

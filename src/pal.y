@@ -36,15 +36,6 @@
 		class Symbol;
 
 		struct ArrayIndexRange;
-		
-		// Will need to switch this once we start doing code gen
-		typedef std::vector<Type*> InvocationParameters;
-		
-		struct ProcedureInvocation
-		{
-			InvocationParameters* params;
-			std::string* procedureName;
-		};
 	}
 }
 
@@ -96,7 +87,7 @@
 
 %type <type> var expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type enumerated_type structured_type var_decl parm
-%type <type> subscripted_var
+%type <type> subscripted_var func_invok
 
 %type <constExpr> type_expr type_simple_expr type_term type_factor
 
@@ -847,68 +838,17 @@ subscripted_var         : var LEFT_BRACKET expr
 
 proc_invok              : plist_finvok RIGHT_PAREN
 			{
-				Symbol* procedureSymbol = table.getSymbol(*($1.procedureName));
-				if (!procedureSymbol)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Function/Procedure has not been declared.",
-									scanner.lineno()));
-				}
+				semanticHelper.checkProcedureInvocation(*$1.procedureName,
+									$1.params);
 				
-				if (procedureSymbol && procedureSymbol->getParameterCount() != $1.params->size())
-				{
-					if ($1.params->size() < procedureSymbol->getParameterCount())
-					{
-						errorManager.addError(new Error(IdentifierInUse,
-										"Function/Procedure is missing parameters.",
-										scanner.lineno()));
-					}
-					else
-					{
-						errorManager.addError(new Error(IdentifierInUse,
-										"Function/Procedure has too many parameters.",
-										scanner.lineno()));
-					}
-				}
-				else if (procedureSymbol)
-				{
-					IdTypePairList formalList;
-					Type * t1;
-					Type * t2;
-
-					formalList = procedureSymbol->getParameters();
-					for(int i=0; i<(int)$1.params->size(); i++)
-					{
-						t1 = formalList.at(i)->second;
-						t2 = $1.params->at(i);
-						if (!semanticHelper.checkAssignmentCompatible(t1, t2))
-						{
-							errorManager.addError(new Error(SemanticError,
-										"Mismatch of argument types.",
-										scanner.lineno()));
-						}
-					}
-				}
-				
+				// TODO delete param list?
 				delete $1.procedureName;
 			}
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
 			{
-				Symbol* procedureSymbol = table.getSymbolCurLevel(*$1);
+				semanticHelper.checkProcedureInvocation(*$1, new InvocationParameters());
 
-				if (!procedureSymbol)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Function/Procedure has not been declared.",
-									scanner.lineno()));
-				}
-				
-				if (procedureSymbol && procedureSymbol->getParameterCount() != 0)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Function/Procedure is missing parameters.",
-									scanner.lineno()));
-				}
+				// TODO delete param list?
 			}
                         ;
 
@@ -1558,72 +1498,14 @@ unsigned_num            : INT_CONST
 
 func_invok              : plist_finvok RIGHT_PAREN
                         {
-				Symbol* functionSymbol = table.getSymbolCurLevel(*$1.procedureName);
-				
-				if (!functionSymbol)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Function/Procedure has not been declared.",
-									scanner.lineno()));
-				}
-				
-				if (functionSymbol && functionSymbol->getParameterCount() != $1.params->size())
-				{
-					if ($1.params->size() < functionSymbol->getParameterCount())
-					{
-						errorManager.addError(new Error(IdentifierInUse,
-										"Function/Procedure is missing parameters.",
-										scanner.lineno()));
-					}
-					else
-					{
-						errorManager.addError(new Error(IdentifierInUse,
-										"Function/Procedure has too many parameters.",
-										scanner.lineno()));
-					}
-				}
-				else if (functionSymbol)
-				{
-					IdTypePairList formalList;
-					Type * t1;
-					Type * t2;
-
-					formalList = functionSymbol->getParameters();
-					for(int i=0; i<(int)$1.params->size(); i++)
-					{
-						t1 = formalList.at(i)->second;
-						t2 = $1.params->at(i);
-						if (!semanticHelper.checkAssignmentCompatible(t1, t2))
-						{
-							errorManager.addError(new Error(SemanticError,
-										"Mismatch of argument types.",
-										scanner.lineno()));
-						}
-					}
-				}
-				
+				$$ = semanticHelper.checkFunctionInvocation(*$1.procedureName,
+									    $1.params);
 				delete $1.procedureName;
                         }
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         {
-                            // get function for id
-                            // verify it is defined
-                            // $$.type = function return type
-			    Symbol* functionSymbol = table.getSymbolCurLevel(*$1);
-
-			    if (!functionSymbol)
-			    {
-				errorManager.addError(new Error(IdentifierInUse,
-								"Function/Procedure has not been declared.",
-								scanner.lineno()));
-			    }
-				
-			    if (functionSymbol && functionSymbol->getParameterCount() != 0)
-			    {
-			    	errorManager.addError(new Error(IdentifierInUse,
-								"Function/Procedure is missing parameters.",
-								scanner.lineno()));
-			    }
+				$$ = semanticHelper.checkFunctionInvocation(*$1, new InvocationParameters());
+				delete $1;
                         }
                         ;
 
