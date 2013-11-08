@@ -5,5 +5,7 @@ begin
 	if (a = 'a') then
 	begin
 		writeln('sup');
-	end
+	end;
+
+	a := 'a';
 end.

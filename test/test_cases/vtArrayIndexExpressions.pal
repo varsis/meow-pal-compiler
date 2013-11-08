@@ -1,0 +1,10 @@
+program test007(input, output);
+const
+	rConst = 1.0;
+	iConst = 1;
+var
+	a : array[1 .. 10] of integer;
+	b : array[1 + 10 .. 10 + 2] of integer;
+	c : array[iConst - (99 * 2 * iConst) .. 100] of integer;
+begin
+end.        

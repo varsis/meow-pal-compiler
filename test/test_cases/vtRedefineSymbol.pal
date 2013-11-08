@@ -1,0 +1,25 @@
+program test007(input, output);
+const
+	maxint = true;
+	false = 't';
+type
+	string = boolean;
+var
+	b : string;
+
+	procedure p();
+	type
+		string = integer;
+	var
+		b : char;
+		s : string;
+	begin
+		b := 'f';	
+		b := false;
+		s := 1;
+	end;
+
+begin
+	b := true;
+	b := maxint;
+end.        

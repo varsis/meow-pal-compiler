@@ -10,6 +10,7 @@ type
 var
         a, b, c, d : integer;
 	sup : boolean;
+	ch : char;
 begin
 
         writeln(trunc(e));
@@ -23,4 +24,6 @@ begin
         a := round(pi);
         writeln(a);
         writeln(odd(p));
+
+	ch := chr(p);
 end.        
