@@ -743,6 +743,36 @@ namespace Meow
 		}
 	}
 
+	Type* SemanticHelper::checkFunctionInvocation(string functionName, 
+							InvocationParameters* params)
+	{	
+		Symbol* functionSymbol = m_table->getSymbol(functionName);
+		if (!functionSymbol)
+		{
+			m_errorManager->addError(new Error(IdentifierInUse,
+							"Function has not been declared.",
+							m_scanner->lineno()));
+
+		}
+		else if (functionSymbol->getSymbolType() != Symbol::FunctionSymbol)
+		{
+			// TODO better message
+			m_errorManager->addError(new Error(IdentifierInUse,
+							"***** is not a function.",
+							m_scanner->lineno()));
+		}
+		else
+		{
+			// check arguments
+			checkInvocationArgs(functionSymbol, params);
+
+			// get function return type
+			return functionSymbol->getType();
+		}
+
+		return NULL;  // TODO or int?
+	}
+
 	void SemanticHelper::checkProcedureInvocation(string procedureName, 
 							InvocationParameters* params)
 	{	
@@ -750,11 +780,28 @@ namespace Meow
 		if (!procedureSymbol)
 		{
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"Function/Procedure has not been declared.",
+							"Procedure has not been declared.",
 							m_scanner->lineno()));
 		}
-		else if (procedureSymbol->getProcClass() == BuiltInInput
-			|| procedureSymbol->getProcClass() == BuiltInOutput)
+		else if (procedureSymbol->getSymbolType() != Symbol::ProcedureSymbol)
+		{
+			// TODO better message
+			m_errorManager->addError(new Error(IdentifierInUse,
+							"***** is not a procedure.",
+							m_scanner->lineno()));
+		}
+		else
+		{
+			checkInvocationArgs(procedureSymbol, params);
+		}
+		
+	}
+
+	void SemanticHelper::checkInvocationArgs(Symbol* fpSymbol, 
+							InvocationParameters* params)
+	{
+		if (fpSymbol->getProcClass() == BuiltInInput
+			|| fpSymbol->getProcClass() == BuiltInOutput)
 		{
 			// check params are all valid for a IO procedure
 			InvocationParameters::iterator it;
@@ -769,7 +816,7 @@ namespace Meow
 						continue;
 					}
 					else if (paramType->getTypeClass() == Type::StringLiteralType
-						&& procedureSymbol->getProcClass() == BuiltInOutput)
+						&& fpSymbol->getProcClass() == BuiltInOutput)
 					{
 						// strings are OK for built-in output procedures
 						continue;
@@ -790,9 +837,9 @@ namespace Meow
 								m_scanner->lineno()));
 			}
 		}
-		else if (procedureSymbol->getParameterCount() != params->size())
+		else if (fpSymbol->getParameterCount() != params->size())
 		{
-			if (params->size() < procedureSymbol->getParameterCount())
+			if (params->size() < fpSymbol->getParameterCount())
 			{
 				m_errorManager->addError(new Error(IdentifierInUse,
 								"Function/Procedure is missing parameters.",
@@ -811,7 +858,7 @@ namespace Meow
 			Type * t1;
 			Type * t2;
 
-			formalList = procedureSymbol->getParameters();
+			formalList = fpSymbol->getParameters();
 			for(unsigned int i = 0; i < params->size(); i++)
 			{
 				t1 = formalList.at(i)->second;

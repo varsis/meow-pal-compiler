@@ -846,21 +846,9 @@ proc_invok              : plist_finvok RIGHT_PAREN
 			}
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
 			{
-				Symbol* procedureSymbol = table.getSymbolCurLevel(*$1);
+				semanticHelper.checkProcedureInvocation(*$1, new InvocationParameters());
 
-				if (!procedureSymbol)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Function/Procedure has not been declared.",
-									scanner.lineno()));
-				}
-				
-				if (procedureSymbol && procedureSymbol->getParameterCount() != 0)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Function/Procedure is missing parameters.",
-									scanner.lineno()));
-				}
+				// TODO delete param list?
 			}
                         ;
 
@@ -1510,32 +1498,14 @@ unsigned_num            : INT_CONST
 
 func_invok              : plist_finvok RIGHT_PAREN
                         {
-				semanticHelper.checkProcedureInvocation(*$1.procedureName,
-									$1.params);
-				// TODO get return type
+				$$ = semanticHelper.checkFunctionInvocation(*$1.procedureName,
+									    $1.params);
 				delete $1.procedureName;
                         }
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
                         {
-				// TODO get return type
-                            // get function for id
-                            // verify it is defined
-                            // $$.type = function return type
-			    Symbol* functionSymbol = table.getSymbolCurLevel(*$1);
-
-			    if (!functionSymbol)
-			    {
-				errorManager.addError(new Error(IdentifierInUse,
-								"Function/Procedure has not been declared.",
-								scanner.lineno()));
-			    }
-				
-			    if (functionSymbol && functionSymbol->getParameterCount() != 0)
-			    {
-			    	errorManager.addError(new Error(IdentifierInUse,
-								"Function/Procedure is missing parameters.",
-								scanner.lineno()));
-			    }
+				$$ = semanticHelper.checkFunctionInvocation(*$1, new InvocationParameters());
+				delete $1;
                         }
                         ;
 
