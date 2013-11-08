@@ -3,5 +3,5 @@ program test(input ,output);
 var
 	a : array[1..10] of array['a' .. 'z'] of boolean;
 begin
-	writeln(a[5]['s']);
+	writeln(a['s'][5]);
 end.
