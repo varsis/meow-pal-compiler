@@ -1,0 +1,6 @@
+program test(input, output);
+const
+	a = 0;
+begin
+	a := 9;
+end.
