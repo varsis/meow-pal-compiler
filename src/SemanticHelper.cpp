@@ -176,6 +176,9 @@ namespace Meow
 		lnFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(lnFunctionSymbol);
 
+		// Make sure that builtins can be redefed
+		m_table->incLevel();
+
 	}
 
 	Symbol* SemanticHelper::getSymbol(string id, bool assertExists)
