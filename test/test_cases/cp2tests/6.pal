@@ -1,9 +1,9 @@
 {
 	Test Case 6;
 	Errors on lines:
-	16 : Undeclared function use
-	21 : Undeclared variable/constant use
-	22 : Trying to call program as function
+	13 : Undeclared function use
+	15 : Undeclared variable/constant use
+	17 : Trying to call program as function
 }
 
 program test6(input, output);
