@@ -214,9 +214,11 @@ namespace Meow
 		m_table->addSymbol(typeSymbol);
 	}
 
-	Type* SemanticHelper::getTypeForVarId(std::string id)
+	Type* SemanticHelper::getTypeForVarId(std::string id, bool& assignable, bool onLHS, vector<Symbol*>* functionStack)
 	{
 		Symbol* symbol = m_table->getSymbol(id);
+
+		assignable = false;
 
 		if (!symbol)
 		{
@@ -228,6 +230,48 @@ namespace Meow
 		}
 		else
 		{
+			// Name is assignable only if it's a variable
+			assignable = symbol->getSymbolType() == Symbol::VariableSymbol;
+
+			// throw error if name is a procedure
+			if (symbol->getSymbolType() == Symbol::ProcedureSymbol)
+			{
+				m_errorManager->addError(
+						new Error(SemanticError, // TODO
+							"Invalid reference to procedure",
+							m_scanner->lineno()));
+			}
+
+			if (symbol->getSymbolType() == Symbol::FunctionSymbol)
+			{
+
+				bool isEnclosingFunction = false;
+
+				vector<Symbol*>::iterator it;
+				for (it = functionStack->begin(); it != functionStack->end(); ++it)
+				{
+					if ((*it)->getSymbolType() == Symbol::FunctionSymbol
+						&& (*it) == symbol)
+					{
+						isEnclosingFunction = true;
+						break;
+					}
+				}
+
+				if (onLHS && isEnclosingFunction)
+				{
+					// can assign to an enclosing function name as return value
+					assignable = true;
+				}
+				else
+				{
+					m_errorManager->addError(
+							new Error(SemanticError, // TODO
+								"Invalid reference to function",
+								m_scanner->lineno()));
+				}
+			}
+
 			return symbol->getType();
 		}
 
@@ -911,9 +955,11 @@ namespace Meow
 	}
 
 
-	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName)
+	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName, bool& assignable)
 	{
 		Type* fieldType = NULL;
+
+		assignable = false; // only assignable if valid record.field access
 
 		if (recordType == NULL)
 		{
@@ -946,6 +992,9 @@ namespace Meow
 					if ((*it)->first->compare(fieldName) == 0)
 					{
 						fieldType = (*it)->second;
+						
+						// valid field access, is assignable
+						assignable = true;
 					}
 				}
 			}
@@ -962,9 +1011,11 @@ namespace Meow
 		return fieldType;
 	}
 
-	Type* SemanticHelper::getSubscriptedArrayType(Type* arrayType, Type* subscriptType)
+	Type* SemanticHelper::getSubscriptedArrayType(Type* arrayType, Type* subscriptType, bool& assignable)
 	{
 		Type* result = NULL;
+
+		assignable = false; // only assignable if valid array access
 
 		if (arrayType == NULL)
 		{
@@ -989,6 +1040,7 @@ namespace Meow
 			else
 			{
 				result = arrayType->getElementType();
+				assignable = true; // presumably (aside from runtime bounds check) is valid array access
 			}
 		}
 		return result;
