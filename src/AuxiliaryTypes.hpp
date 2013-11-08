@@ -25,6 +25,12 @@ namespace Meow
 		std::vector<std::string*>* fieldNames;
 	};
 
+	struct LValue
+	{
+		Meow::Type* type;
+		bool assignable;
+	};
+
 	// Will need to switch this once we start doing code gen
 	typedef std::vector<Type*> InvocationParameters;
 	

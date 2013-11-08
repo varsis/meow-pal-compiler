@@ -60,7 +60,7 @@ namespace Meow
 			Symbol* getSymbol(string id, bool assertExists = true);
 
 			void defineType(string id, Type* type);
-			Type* getTypeForVarId(string id);
+			Type* getTypeForVarId(std::string id, bool& assignable, bool onLHS, vector<Symbol*>* functionStack);
 			Type* getTypeFromID(string id);
 
 			bool isOrdinalType(Type* t);
@@ -86,8 +86,8 @@ namespace Meow
 			void checkInvocationArgs(Symbol* fpSymbol, 
 						InvocationParameters* params);
 
-			Type* getRecordFieldType(Type* recordType, string fieldName);
-			Type* getSubscriptedArrayType(Type* arrayType, Type* subscriptType);
+			Type* getRecordFieldType(Type* recordType, string fieldName, bool& assignable);
+			Type* getSubscriptedArrayType(Type* arrayType, Type* subscriptType, bool& assignable);
 
 			Type* getBooleanType() { return &m_booleanType; }
 			Type* getIntegerType() { return &m_integerType; }

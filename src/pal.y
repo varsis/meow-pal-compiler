@@ -60,11 +60,13 @@
 
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
+	vector<Meow::Symbol*> g_functionStack;
 }
 
 %initial-action
 {
 	g_whileCounter = 0;
+	g_functionStack.clear();
 }
 
 %union
@@ -86,6 +88,7 @@
 	ArrayIndexRange indexRange;
 
         Type* type;
+        LValue lvalue;
 
 	Meow::IdTypePairList* parameterList;
 	Meow::IdTypePair* parameter;
@@ -93,9 +96,12 @@
 	Meow::ProcedureInvocation procedureInvocation;
 }
 
-%type <type> var expr simple_expr term factor unsigned_const unsigned_num
+%type <type> expr simple_expr term factor unsigned_const unsigned_num
 %type <type> type simple_type enumerated_type structured_type var_decl parm
-%type <type> subscripted_var func_invok
+%type <type> func_invok
+
+%type <lvalue> lhs_var lhs_subscripted_var
+%type <lvalue> var subscripted_var
 
 %type <constExpr> type_expr type_simple_expr type_term type_factor
 
@@ -517,10 +523,16 @@ proc_decl_list          : proc_decl
 
 proc_decl               : proc_heading decls compound_stat SEMICOLON
 			{
+				// pop function/procedure off stack
+				g_functionStack.pop_back();
+
 				table.decLevel();
 			}
                         | proc_heading decls compound_stat PERIOD
                         {
+				// pop function/procedure off stack
+				g_functionStack.pop_back();
+
 				table.decLevel();
                           	errorManager.addError(
                               	new Error(InvalidProcDecl,
@@ -562,6 +574,9 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                                 delete $2;
 
 				table.addSymbol(sym);
+
+				// push function/procedure onto stack
+				g_functionStack.push_back(sym);
 			}
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
@@ -604,6 +619,9 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 
 				sym->setType(returnType);
 				table.addSymbol(sym);
+
+				// push function/procedure onto stack
+				g_functionStack.push_back(sym);
 			}
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
@@ -638,6 +656,11 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                                 delete $2;
 
 				table.addSymbol(sym);
+
+				// push function/procedure onto stack
+				g_functionStack.push_back(sym);
+
+
                           	errorManager.addError(
                               	new Error(InvalidFunctDecl,
                                         "Function needs to return a value.",
@@ -676,6 +699,10 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                                 delete $2;
 
 				table.addSymbol(sym);
+
+				// push function/procedure onto stack
+				g_functionStack.push_back(sym);
+
                           	errorManager.addError(
                               	new Error(InvalidProcDecl,
                                         "Procedure can't return a value.",
@@ -687,6 +714,10 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                               new Error(InvalidProcDecl,
                                         "Invalid procedure header.",
                                         scanner.lineno()));
+
+				// push dummy function/procedure onto stack
+				Symbol sym;
+				g_functionStack.push_back(&sym);
                         }
 
                         | FUNCTION error RIGHT_PAREN COLON IDENTIFIER SEMICOLON
@@ -695,8 +726,17 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
                               new Error(InvalidFunctDecl,
                                         "Invalid function header.",
                                         scanner.lineno()));
+
+				// push dummy function/procedure onto stack
+				Symbol sym;
+				g_functionStack.push_back(&sym);
                         }
-                        | error { ; }
+                        | error 
+			{ 
+				// push dummy function/procedure onto stack
+				Symbol sym;
+				g_functionStack.push_back(&sym);
+			}
                         ;
 
 f_parm_decl             : LEFT_PAREN f_parm_list RIGHT_PAREN
@@ -786,9 +826,18 @@ stat                    : simple_stat
                         |
                         ;
 
-simple_stat             : var ASSIGN expr
+simple_stat             : lhs_var ASSIGN expr
 			{
-				if (!semanticHelper.checkAssignmentCompatible($1, $3))
+				if (!$1.assignable)
+				{
+					// TODO would be nice if we could say more about 
+					// what we are trying to assign to... (constant, etc)
+					errorManager.addError(
+						new Error(InvalidAssignment,
+						"Cannot assign to value on left side of assignment statment.",
+						scanner.lineno()));
+				}
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -798,9 +847,18 @@ simple_stat             : var ASSIGN expr
 			}
                         | proc_invok
                         | compound_stat
-                        | var EQ expr 
+                        | lhs_var EQ expr 
                         {
-				if (!semanticHelper.checkAssignmentCompatible($1, $3))
+				if (!$1.assignable)
+				{
+					// TODO would be nice if we could say more about 
+					// what we are trying to assign to... (constant, etc)
+					errorManager.addError(
+						new Error(InvalidAssignment,
+						"Cannot assign to value on left side of assignment statment.",
+						scanner.lineno()));
+				}
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -815,14 +873,43 @@ simple_stat             : var ASSIGN expr
                         }
                         ;
 
+lhs_var                 : IDENTIFIER
+                        {
+				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, true, &g_functionStack);
+				delete $1;
+                        }
+                        | lhs_var PERIOD IDENTIFIER
+                        {
+				$$.type = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable);
+				delete $3;
+                        }
+                        | lhs_subscripted_var RIGHT_BRACKET
+                        {
+				// TODO -- determine if accessing 2d array with arrVar[1,2] should be
+				// supported
+				$$ = $1;
+                        }
+                        ;
+
+lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
+                        {
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+                        }
+                        | lhs_subscripted_var COMMA expr
+			{
+				// TODO check/test we are doing the subscripts in the correct order!
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
+			}
+                        ;
+
 var                     : IDENTIFIER
                         {
-				$$ = semanticHelper.getTypeForVarId(*$1);
+				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, false, &g_functionStack);
 				delete $1;
                         }
                         | var PERIOD IDENTIFIER
                         {
-				$$ = semanticHelper.getRecordFieldType($1, *$3);
+				$$.type = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable);
 				delete $3;
                         }
                         | subscripted_var RIGHT_BRACKET
@@ -835,12 +922,12 @@ var                     : IDENTIFIER
 
 subscripted_var         : var LEFT_BRACKET expr
                         {
-				$$ = semanticHelper.getSubscriptedArrayType($1, $3);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
                         }
                         | subscripted_var COMMA expr
 			{
 				// TODO check/test we are doing the subscripts in the correct order!
-				$$ = semanticHelper.getSubscriptedArrayType($1, $3);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3, $$.assignable);
 			}
                         ;
 
@@ -1064,7 +1151,7 @@ type_simple_expr        : type_term
                             
                             $$ = semanticHelper.getConstOpResult(OpSUBTRACT, $1, $3);
                         }
-                        | type_simple_expr OR  type_term
+                        | type_simple_expr OR type_term
                         {
                             Type* result = semanticHelper.getOpResultType(OpOR, $1.type, $3.type);
 
@@ -1453,7 +1540,7 @@ term                    : factor
 
 factor                  : var
                         {
-                            $$ = $1;
+                            $$ = $1.type;
                         }
                         | unsigned_const
                         {
@@ -1465,7 +1552,7 @@ factor                  : var
                         }
                         | func_invok
                         {
-                            // $$ = $1
+			     $$ = $1;
                         }
                         | NOT factor
                         {
