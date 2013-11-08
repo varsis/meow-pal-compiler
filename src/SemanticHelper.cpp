@@ -18,6 +18,7 @@ namespace Meow
 
 	void SemanticHelper::addPredefinedSymbols()
 	{
+		IdTypePair * arg;
 		// add predefined types
 
 		Symbol* intSymbol = new Symbol("integer", Symbol::TypeSymbol);
@@ -71,6 +72,7 @@ namespace Meow
 		readlnSymbol->setIOProc(true);
 		m_table->addSymbol(readlnSymbol);
 		
+		
 		Symbol* writelnSymbol = new Symbol("writeln", Symbol::ProcedureSymbol);
 		writelnSymbol->setIOProc(true);
 		m_table->addSymbol(writelnSymbol);
@@ -82,23 +84,33 @@ namespace Meow
 		// PREDEFINED FUNCTIONS
 
 		Symbol* ordFunctionSymbol = new Symbol("ord", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//ordFunctionSymbol->setType();
+		ordFunctionSymbol->setType(getIntegerType());
+		// TODO Set argument type
+		//arg = new IdTypePair();
 		m_table->addSymbol(ordFunctionSymbol);
-		
+	
 		Symbol* chrFunctionSymbol = new Symbol("chr", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//chrFunctionSymbol->setType();
+		chrFunctionSymbol->setType(getCharType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getIntegerType();
+		chrFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(chrFunctionSymbol);
 		
 		Symbol* truncFunctionSymbol = new Symbol("trunc", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//truncFunctionSymbol->setType();
+		truncFunctionSymbol->setType(getIntegerType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		truncFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(truncFunctionSymbol);
 		
 		Symbol* roundFunctionSymbol = new Symbol("round", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//roundFunctionSymbol->setType();
+		roundFunctionSymbol->setType(getIntegerType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		roundFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(roundFunctionSymbol);
 		
 		Symbol* succFunctionSymbol = new Symbol("succ", Symbol::FunctionSymbol);
@@ -112,38 +124,61 @@ namespace Meow
 		m_table->addSymbol(predFunctionSymbol);
 		
 		Symbol* oddFunctionSymbol = new Symbol("odd", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//oddFunctionSymbol->setType();
+		oddFunctionSymbol->setType(getBooleanType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getIntegerType();
+		oddFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(oddFunctionSymbol);
 		
 		Symbol* absFunctionSymbol = new Symbol("abs", Symbol::FunctionSymbol);
 		//TODO a Type?
 		//absFunctionSymbol->setType();
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		absFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(absFunctionSymbol);
 		
 		Symbol* sqrFunctionSymbol = new Symbol("sqr", Symbol::FunctionSymbol);
 		//TODO a Type?
 		//sqrFunctionSymbol->setType();
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		sqrFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(sqrFunctionSymbol);
 		
 		Symbol* sqrtFunctionSymbol = new Symbol("sqrt", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//sqrtFunctionSymbol->setType();
+		sqrtFunctionSymbol->setType(getRealType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		sqrtFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(sqrtFunctionSymbol);
 
 		Symbol* sinFunctionSymbol = new Symbol("sin", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//sinFunctionSymbol->setType();
+		sinFunctionSymbol->setType(getRealType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		sinFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(sinFunctionSymbol);
 		
 		Symbol* expFunctionSymbol = new Symbol("exp", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//expFunctionSymbol->setType();
+		expFunctionSymbol->setType(getRealType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		expFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(expFunctionSymbol);
 		
 		Symbol* lnFunctionSymbol = new Symbol("ln", Symbol::FunctionSymbol);
-		//TODO a Type?
-		//lnFunctionSymbol->setType();
+		lnFunctionSymbol->setType(getRealType());
+		arg = new IdTypePair();
+		arg->first = NULL;
+		arg->second = getRealType();
+		lnFunctionSymbol->addParameter(arg);
 		m_table->addSymbol(lnFunctionSymbol);
 
 	}

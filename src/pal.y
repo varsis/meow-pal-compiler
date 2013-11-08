@@ -1629,6 +1629,13 @@ func_invok              : plist_finvok RIGHT_PAREN
 								"Function/Procedure has not been declared.",
 								scanner.lineno()));
 			    }
+			    
+			    if(functionSymbol && functionSymbol->getSymbolType() != Meow::Symbol::FunctionSymbol)
+				{
+					errorManager.addError(new Error(SemanticError,
+						"Identifer is not a function.",
+						scanner.lineno()));
+				}
 				
 			    if (functionSymbol && functionSymbol->getParameterCount() != 0)
 			    {
