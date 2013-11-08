@@ -1,0 +1,7 @@
+program vtAssignString(input, output);
+var
+        myString : string;
+
+begin
+	myString := 'this is a valid string';
+end.

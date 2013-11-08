@@ -1,0 +1,8 @@
+program test028(input, output);
+var
+        int : integer;
+	r : real;
+
+begin
+	r := int * ((r + 120)/10) + r + int;
+end.

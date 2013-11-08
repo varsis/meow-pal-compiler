@@ -1,0 +1,20 @@
+program testProcDecls(input, output);
+var 
+	a,b,c: real;
+
+
+begin
+	a := 1.0;
+	b := 2.0;
+	c := 3.0;
+	
+	a := b * c;
+	a := b / c;
+	a := b * c;
+	a := exp(b);
+	a := b + c;
+	a := b / c * a;
+	a := b * c * c;
+		
+		
+end.
