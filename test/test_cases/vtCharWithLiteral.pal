@@ -1,0 +1,9 @@
+program test7( input, output );  { program takes input/output from terminal }
+var
+	a : char;
+begin
+	if (a = 'a') then
+	begin
+		writeln('sup');
+	end
+end.
