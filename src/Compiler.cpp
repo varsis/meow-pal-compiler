@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include <stdio.h>
+#include <unistd.h>
 
 #include "Compiler.hpp"
 #include "Parser.hpp"
@@ -75,18 +77,72 @@ void Compiler::getArguments(int argc, char* argv[])
 		displayUsage();
 		std::exit(-1);
 	}
+
+	m_ascExecutable = getExecPath(argv[0]) + "asc";
 	
 	m_inputFileName = argv[optind];
-	
-	if((int) m_inputFileName.find_last_of(".") >  (int) m_inputFileName.find_last_of("/")) 
+
+	if(m_inputFileName.find_last_of(".") > m_inputFileName.find_last_of("/")) 
 	{
-		m_outputFileName = m_inputFileName.substr(0,
+		std::string name = m_inputFileName.substr(0,
 			m_inputFileName.find_last_of("."));
-		m_outputFileName = m_outputFileName + ".lst";
+		m_listingFile = name + ".lst";
+		m_ascOutput = name + ".asc";
 	}
 	else 
 	{
-		m_outputFileName = m_inputFileName + ".lst";
+		m_listingFile = m_inputFileName + ".lst";
+		m_ascOutput = m_inputFileName + ".asc";
+	}
+}
+
+std::string Compiler::getExecPath(std::string invokeString)
+{
+	// if argv[0] single word
+	if (invokeString.find_last_of('/') == std::string::npos)
+	{
+		// search in PATH
+		char* path_list = strdup(getenv("PATH"));
+		char* path = path_list;
+
+		while ((path_list = strchr(path_list, ':')) != NULL)
+		{
+			path_list[0] = 0;
+
+			// look for pal in path directory
+			std::string lscmd("ls ");
+			lscmd += path;
+
+			if (*(strchr(path, 0) - 1) != '/')
+			{
+				lscmd += "/";
+			}
+
+			lscmd += invokeString;
+			lscmd += " >/dev/null";
+			lscmd += " 2>/dev/null";
+			if (system(lscmd.c_str()) == 0)
+			{
+				// pal is in here
+				return std::string(path);
+			}
+
+			path = path_list + 1;
+			path_list = path;
+		}
+	}
+
+	// if absolute path
+	if (invokeString[0] == '/')
+	{
+		return invokeString.substr(0, invokeString.find_last_of("/"));
+	}
+	// if relative path, use current working directory
+	else
+	{
+		char buf[1024];
+		getcwd(buf, 1024);
+		return std::string(buf) + invokeString.substr(0, invokeString.find_last_of("/") + 1);
 	}
 }
 
@@ -129,7 +185,7 @@ void Compiler::printProgramListing()
 		if (!m_printStdout)
 		{
 			// Redirect cout to file: trick borrowed from StackOverflow
-			outputFileStream.open(m_outputFileName.c_str());
+			outputFileStream.open(m_listingFile.c_str());
 			coutbuf = std::cout.rdbuf();
 			std::cout.rdbuf(outputFileStream.rdbuf());
 		}
@@ -195,6 +251,14 @@ int Compiler::run(int argc, char* argv[])
 	if (!m_printStdout)
 	{
 		printErrors();
+	}
+
+	// if no errors, run the generated asc code
+	if (parseResult == 0)
+	{
+		FILE* ascout = popen((m_ascExecutable + " " + m_ascOutput).c_str(), "r");
+
+		pclose(ascout);
 	}
 
 	return parseResult;

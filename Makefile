@@ -27,6 +27,8 @@ ALLOBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRC:.cpp=.o)))
 OBJS = $(filter-out $(OBJDIR)/main.o, $(ALLOBJS))
 DEP=$(OBJS:.o=.d)
 
+all: $(BINDIR)/$(EXE) asc
+
 $(BINDIR)/$(EXE): $(OBJDIR)/main.o $(OBJS)
 	$(CXX) -o $@ $^
 
