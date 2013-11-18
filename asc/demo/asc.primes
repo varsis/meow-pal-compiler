@@ -1,0 +1,54 @@
+#-------------------------------------------------------------------
+#
+#
+# This sample program generates prime numbers in an infinite loop
+#
+#
+#-------------------------------------------------------------------
+	consti		3		#starting n
+
+#       !t=1000
+#	Remove previous '#' to switch the tracing on
+
+next	consti		0		#room for 'tprime' result
+	call		0, tprime	#test
+	ifnz		ok
+advance	consti		2
+	addi
+	goto		next
+#
+ok	push		0[0]
+	writei
+	consti		10
+	writec
+	goto		advance
+#
+tprime	push		-4[0]		#move n
+	consti		3		#first divisor
+#
+loop	push		[0]		#n
+	push		1[0]		#d
+	gti
+	ifz		isprime
+#
+	push		[0]
+	push		1[0]
+	mod
+	ifz		notp
+#
+	consti		2		#d = d+2
+	addi
+#	!d
+#	Remove previus '#' to get a stack dump
+	goto		loop
+#
+isprime	consti		1
+	goto		skip
+#
+notp	consti		0
+#
+skip	pop		-3[0]
+	adjust		-2
+#
+	ret		0
+

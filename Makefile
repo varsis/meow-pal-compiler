@@ -64,11 +64,19 @@ ifeq (,$(filter clean,$(MAKECMDGOALS)))
 endif
 
 ################################################################################
+# ASC
+################################################################################
+
+asc: bin/asc
+bin/asc: asc/asc.c
+	gcc asc/asc.c -o bin/asc
+
+################################################################################
 # Tests
 ################################################################################
 
 # Add new tests here. Test % must be in file $(TESTDIR)/%.cpp
-TESTS = ScannerTest ParserTest ParserTestWithFiles SymbolTableTest
+TESTS = ScannerTest ParserTest ParserTestWithFiles SymbolTableTest MeowlibTest
 
 TESTS_ = $(addprefix $(TESTDIR)/,$(TESTS))
 
@@ -79,7 +87,7 @@ TEST_SUPPORT_OBJS = $(TESTDIR)/test-main.a\
 					$(TESTDIR)/MockScanner.o\
 					$(OBJS)
 
-test: $(TESTDIR)/AllTests $(TEST_)
+test: asc $(TESTDIR)/AllTests $(TEST_)
 	-$(TESTDIR)/AllTests
 
 $(TESTDIR)/AllTests: $(TEST_OBJS) $(TEST_SUPPORT_OBJS) 
