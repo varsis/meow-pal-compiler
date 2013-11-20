@@ -150,4 +150,68 @@ namespace Meow
 
 		pclose(ascout);
 	}
+
+	TEST(MeowlibTest, TestWriteString)
+	{
+		ifstream ascsource("asc/meowlib/write_string.asc");
+		ofstream testfile("test/asc/test.asc");
+
+		testfile << "\tCONSTI 104" << endl; // h
+		testfile << "\tCONSTI 101" << endl; // e
+		testfile << "\tCONSTI 108" << endl; // l
+		testfile << "\tCONSTI 108" << endl; // l
+		testfile << "\tCONSTI 111" << endl; // o
+		testfile << "\tCONSTI 0" << endl; // 0
+		testfile << "\tCALL 0, ml_write_string" << endl;
+		testfile << "\tADJUST -6" << endl; // 0
+
+		testfile << "\tCONSTI 10" << endl;
+		testfile << "\tWRITEC" << endl;
+
+		testfile << "\tCONSTI 110" << endl; // n
+		testfile << "\tCONSTI 111" << endl; // o
+		testfile << "\tCONSTI 111" << endl; // o
+		testfile << "\tCONSTI 111" << endl; // o
+		testfile << "\tCONSTI 0" << endl; // 0
+		testfile << "\tCALL 0, ml_write_string" << endl;
+		testfile << "\tADJUST -5" << endl; // 0
+
+		testfile << "\tCONSTI 10" << endl;
+		testfile << "\tWRITEC" << endl;
+
+		testfile << "\tCONSTI 104" << endl; // h
+		testfile << "\tCONSTI 101" << endl; // e
+		testfile << "\tCONSTI 108" << endl; // l
+		testfile << "\tCONSTI 108" << endl; // l
+		testfile << "\tCONSTI 111" << endl; // o
+		testfile << "\tCONSTI 0" << endl; // 0
+		testfile << "\tCALL 0, ml_write_string" << endl;
+		testfile << "\tADJUST -6" << endl; // 0
+
+		testfile << "\tCONSTI 10" << endl;
+		testfile << "\tWRITEC" << endl;
+		testfile << "\tSTOP" << endl;
+
+		// append builtin function implmentation
+		testfile << ascsource.rdbuf();
+
+		testfile.close();
+		ascsource.close();
+
+		FILE* ascout = popen("cat test/asc/test.asc | bin/asc", "r");
+		ASSERT_NE(ascout, (void*)0);
+
+		char buf[256];
+
+		ASSERT_EQ(fscanf(ascout, "%s", buf), 1);
+		EXPECT_EQ(string(buf), "hello");
+
+		ASSERT_EQ(fscanf(ascout, "%s", buf), 1);
+		EXPECT_EQ(string(buf), "nooo");
+
+		ASSERT_EQ(fscanf(ascout, "%s", buf), 1);
+		EXPECT_EQ(string(buf), "hello");
+
+		pclose(ascout);
+	}
 }

@@ -103,12 +103,10 @@ std::string Compiler::getExecPath(std::string invokeString)
 	{
 		// search in PATH
 		char* path_list = strdup(getenv("PATH"));
-		char* path = path_list;
+		char* path = strtok(path_list, ":");
 
-		while ((path_list = strchr(path_list, ':')) != NULL)
+		while (path != NULL)
 		{
-			path_list[0] = 0;
-
 			// look for pal in path directory
 			std::string lscmd("ls ");
 			lscmd += path;
@@ -127,8 +125,7 @@ std::string Compiler::getExecPath(std::string invokeString)
 				return std::string(path);
 			}
 
-			path = path_list + 1;
-			path_list = path;
+			path = strtok(NULL, ":");
 		}
 	}
 

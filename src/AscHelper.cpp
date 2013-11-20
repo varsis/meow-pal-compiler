@@ -45,6 +45,10 @@ namespace Meow
 				{
 					// TODO -- need actual symbol for invocation param
 					// so we can generate code to access it's value
+
+					// Probably something like 
+					// m_ascOutput << "\tPUSH " << sym.offset << "[" << sym.lexicallevel << "]" << endl;
+
 					m_ascOutput << "\tCONSTI 23" << endl;
 					m_ascOutput << "\tWRITEI" << endl;
 					//m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
@@ -62,11 +66,20 @@ namespace Meow
 					m_ascOutput << "\tCONSTR 6969.69" << endl;
 					m_ascOutput << "\tWRITER" << endl;
 				}
-				else if (m_semanticHelper->isStringType(it->type))
+				else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 				{
 					// TODO -- need actual symbol for invocation param
-					//m_ascOutput << "\tPUSHI <STRING POINTER>";
-					//m_ascOutput << "\tCALL 0, ml_write_string";
+
+					m_ascOutput << "\tCONSTI 104" << endl; // h
+					m_ascOutput << "\tCONSTI 101" << endl; // e
+					m_ascOutput << "\tCONSTI 108" << endl; // l
+					m_ascOutput << "\tCONSTI 108" << endl; // l
+					m_ascOutput << "\tCONSTI 111" << endl; // o
+					m_ascOutput << "\tCONSTI 0" << endl; // 0
+
+					m_ascOutput << "\tCALL 0, ml_write_string";
+
+					m_ascOutput << "\tADJUST -6" << endl;
 				}
 			}
 		}
