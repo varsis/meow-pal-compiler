@@ -33,10 +33,13 @@ lex.yy.cpp
 
 # Generated executables
 bin/pal
+bin/asc
 test/AllTests
 test/ScannerTest
 test/ParserTest
 test/ParserTestWithFiles
+test/MeowlibTest
+test/asc/
 
 # random editor temp files
 *.swp

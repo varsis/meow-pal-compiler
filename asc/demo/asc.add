@@ -1,0 +1,70 @@
+	# Program to add n numbers together
+	# The equivalent C code is given for clarity.
+	# Allocate space for 3 variables
+	# int n, i, ttl;
+	ADJUST	3
+
+	# Read in n and store in address 0[0]
+	# scanf( "%d", &n );
+	READI
+	POP	0[0]
+
+	# Loop initialization.  Set counter (1[0]) and total
+	# (2[0]) to zero.
+	# ttl, i = 0;
+	CONSTI	0
+	DUP
+	POP	1[0]
+	POP	2[0]
+
+	# Loop body
+loop	PUSH	0[0]
+	PUSH	1[0]
+
+	# Test for loop termination
+	# if( n <= i ) goto done
+	GTI
+	NOT
+	IFNZ	done
+
+	# Read in next number and add
+	# scanf( "%d", &x );
+	# ttl = ttl + x;
+	PUSH	2[0]
+	READI
+	ADDI
+	POP	2[0]
+
+	# Increment loop index 
+	# i = i + 1;
+	PUSH	1[0]
+	CONSTI	1
+	ADDI
+	POP	1[0]
+	GOTO	loop
+
+done	# Print out answer
+	# By the way, this character-by-character output method is
+	# not to be recommended.  As part of your run-time support,
+	# provide a routine that takes an address and number of
+	# characters and does the print inside a loop.
+	# printf( "TTL = %d\n", ttl );
+	CONSTI	84	# ASCII 'T'
+	WRITEC
+	CONSTI	84	# ASCII 'T'
+	WRITEC
+	CONSTI	73	# ASCII 'L'
+	WRITEC
+	CONSTI	32	# ASCII ' '
+	WRITEC
+	CONSTI	61	# ASCII '='
+	WRITEC
+	CONSTI	32	# ASCII ' '
+	WRITEC
+	PUSH	2[0]
+	WRITEI
+	CONSTI	10	# ASCII newline
+	WRITEC
+
+	# Tada!
+	STOP

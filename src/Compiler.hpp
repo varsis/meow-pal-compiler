@@ -23,15 +23,23 @@ namespace Meow
 			void printErrors();
 			void removeAscOutput();
 
+			std::string getExecPath(std::string execPath);
+
 			ErrorManager m_errorManager;
 			Parser m_parser;
+
 			std::string m_inputFileName;
-			std::string m_outputFileName;
+			std::string m_listingFile;
+			std::string m_ascOutput;
+			std::string m_ascExecutable;
+
 			bool m_leaveASC;
 			bool m_programListing;
 			bool m_runtimeArrayBoundChecking;
 			bool m_debug;
 			bool m_printStdout;
+
+
 	};
 }
 
