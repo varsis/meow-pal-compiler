@@ -3,6 +3,8 @@
 
 #include "EntryList.hpp"
 #include "Symbol.hpp"
+#include "Type.hpp"
+
 #ifndef NO_TR1
 #include <tr1/unordered_map>
 #else
@@ -20,9 +22,6 @@ namespace Meow
 #endif
 	class SymbolTable
 	{
-		private:
-			SymbolMap m_symbolTable;
-			int m_currentLevel;
 
 		public:
 			SymbolTable();
@@ -35,6 +34,8 @@ namespace Meow
 			void decLevel();
 
 		private:
+			SymbolMap m_symbolTable;
+			int m_currentLevel;
 	};
 }
 

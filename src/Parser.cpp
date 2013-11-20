@@ -5,6 +5,7 @@
 #include "ErrorManager.hpp"
 #include "SymbolTable.hpp"
 #include "SemanticHelper.hpp"
+#include "AscHelper.hpp"
 #include "pal.tab.hpp"
 
 namespace Meow
@@ -20,17 +21,19 @@ namespace Meow
 		m_debugFlag = value;
 	}
 
-	int Parser::parseFile(std::ifstream* fileStream)
+	int Parser::parseFile(std::ifstream* palInput, std::ofstream* ascOutput)
 	{
 		int retval;
 		SymbolTable symbolTable;
 		
-		PalScanner scanner(fileStream, m_errorManager, &symbolTable);
+		PalScanner scanner(palInput, m_errorManager, &symbolTable);
 
-		SemanticHelper helper(&scanner, m_errorManager, &symbolTable);
-		helper.addPredefinedSymbols();
+		SemanticHelper semanticHelper(&scanner, m_errorManager, &symbolTable);
+		semanticHelper.addPredefinedSymbols();
 
-		PalParser parser(scanner, *m_errorManager, symbolTable, helper);
+		AscHelper ascHelper(*ascOutput, &symbolTable, &semanticHelper);
+
+		PalParser parser(scanner, *m_errorManager, symbolTable, semanticHelper, ascHelper);
 
 		if(m_debugFlag)
 		{
@@ -52,17 +55,28 @@ namespace Meow
 		return (int) m_errorManager->getErrorFlag();
 	}
 
-	int Parser::parseFile(std::string fileName)
+	int Parser::parseFile(std::string inputFile, std::string outputFile)
 	{
-		std::ifstream fileStream(fileName.c_str());
+		std::ifstream palInput(inputFile.c_str());
 
-		if (fileStream == NULL || !fileStream.is_open())
+		std::ofstream ascOutput;
+		ascOutput.open(outputFile.c_str(), ofstream::out | ofstream::trunc);
+
+		if (palInput == NULL || !palInput.is_open())
 		{
 			std::cerr << "** Error: Unable to open" 
-			    << fileName << "\n";
+			    << inputFile << "\n";
 			return -1;
 		}
 
-		return parseFile(&fileStream);
+
+		if (ascOutput == NULL || !ascOutput.is_open())
+		{
+			std::cerr << "** Error: Unable to open" 
+			    << ascOutput << "\n";
+			return -1;
+		}
+
+		return parseFile(&palInput, &ascOutput);
 	}
 }

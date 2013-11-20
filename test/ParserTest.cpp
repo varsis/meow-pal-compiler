@@ -6,6 +6,7 @@
 #include "../src/ErrorManager.hpp"
 #include "../src/SymbolTable.hpp"
 #include "../src/SemanticHelper.hpp"
+#include "../src/AscHelper.hpp"
 #include "../src/Error.hpp"
 #include "MockScanner.h"
 
@@ -27,8 +28,10 @@ namespace Meow
 		protected:
 
 			ParserTest() 
-				: helper(&scanner, &errorManager, &symbolTable)
-				, parser(scanner, errorManager, symbolTable, helper)
+				: dummyOutput("dummyout")
+				, ascHelper(dummyOutput, &symbolTable, &semanticHelper)
+				, semanticHelper(&scanner, &errorManager, &symbolTable)
+				, parser(scanner, errorManager, symbolTable, semanticHelper, ascHelper)
 			{
 			}
 
@@ -61,6 +64,8 @@ namespace Meow
 				
 				ASSERT_EQ(expectedParseResult, result)
 					<< ">> Incorrect parse result!";
+
+				system("rm dummyout");
 			}
 
 			int expectedParseResult;
@@ -68,7 +73,9 @@ namespace Meow
 			MockScanner scanner;
 			ErrorManager errorManager;
 			SymbolTable symbolTable;
-			SemanticHelper helper;
+			ofstream dummyOutput;
+			AscHelper ascHelper;
+			SemanticHelper semanticHelper;
 			vector<token_type> tokens;
 
 			PalParser parser;

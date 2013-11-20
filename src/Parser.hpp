@@ -13,8 +13,8 @@ namespace Meow
 		public:
 			Parser(ErrorManager* manager);
 
-			int parseFile(std::string fileName);
-			int parseFile(std::ifstream* fileStream);
+			int parseFile(std::string inputFile, std::string outputFile);
+			int parseFile(std::ifstream* palInput, std::ofstream* ascOutput);
 
 			void setDebugFlag(bool value);
 

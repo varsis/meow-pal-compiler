@@ -31,8 +31,9 @@ do
     {
         ErrorManager errorManager;
         Parser parser(&errorManager);
-        int retval = parser.parseFile(\"test/test_cases/$BASENAME.pal\");
+        int retval = parser.parseFile(\"test/test_cases/$BASENAME.pal\", \"dummyout\");
 	//errorManager.printErrors();
+	system(\"rm dummyout\");
 	" >> $OUTFILE;
 
 

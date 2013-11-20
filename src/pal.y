@@ -7,6 +7,7 @@
 %parse-param { Meow::ErrorManager &errorManager }
 %parse-param { Meow::SymbolTable &table }
 %parse-param { Meow::SemanticHelper &semanticHelper }
+%parse-param { Meow::AscHelper &ascHelper }
 %lex-param   { Meow::PalScanner &scanner }
 %lex-param   { Meow::SymbolTable &table  }
 
@@ -21,6 +22,7 @@
 
  	#include "Symbol.hpp"
 	#include "SemanticHelper.hpp"
+	#include "AscHelper.hpp"
 
 	// Forward-declare the Scanner class; the Parser needs to be assigned a 
 	// Scanner, but the Scanner can't be declared without the Parser
@@ -61,7 +63,6 @@
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
 	vector<Meow::Symbol*> g_functionStack;
-
 }
 
 %initial-action
@@ -929,6 +930,8 @@ proc_invok              : plist_finvok RIGHT_PAREN
 			{
 				semanticHelper.checkProcedureInvocation(*$1.procedureName,
 									$1.params);
+
+				ascHelper.invokeProcedure(*$1.procedureName, $1.params);
 				
 				delete $1.params;
 				delete $1.procedureName;

@@ -135,7 +135,7 @@ std::string Compiler::getExecPath(std::string invokeString)
 	// if absolute path
 	if (invokeString[0] == '/')
 	{
-		return invokeString.substr(0, invokeString.find_last_of("/"));
+		return invokeString.substr(0, invokeString.find_last_of("/") + 1);
 	}
 	// if relative path, use current working directory
 	else
@@ -241,7 +241,7 @@ int Compiler::run(int argc, char* argv[])
 
 	m_parser.setDebugFlag(m_debug);
 
-	parseResult = m_parser.parseFile(m_inputFileName);
+	parseResult = m_parser.parseFile(m_inputFileName, m_ascOutput);
 
 	if (m_programListing || m_printStdout)
 	{
@@ -256,9 +256,7 @@ int Compiler::run(int argc, char* argv[])
 	// if no errors, run the generated asc code
 	if (parseResult == 0)
 	{
-		FILE* ascout = popen((m_ascExecutable + " " + m_ascOutput).c_str(), "r");
-
-		pclose(ascout);
+		system((m_ascExecutable + " " + m_ascOutput).c_str());
 	}
 
 	return parseResult;
