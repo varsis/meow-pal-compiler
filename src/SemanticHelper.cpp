@@ -410,6 +410,7 @@ namespace Meow
 		sym = new Symbol(id, Symbol::VariableSymbol);
 		sym->setType(type);
 		m_table->addSymbol(sym);
+		m_table->allocateSpace(sym, type);
 	}
 
 	// unary operators

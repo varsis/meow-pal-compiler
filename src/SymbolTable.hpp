@@ -32,7 +32,7 @@ namespace Meow
 			int getCurLevel();
 			void incLevel();
 			void decLevel();
-
+			void allocateSpace(Symbol*, Type*);
 		private:
 			SymbolMap m_symbolTable;
 			int m_currentLevel;

@@ -28,6 +28,7 @@ namespace Meow
 			// Simple type
 			Type() : m_typeClass(SimpleType)
 			{
+				m_typeSize = 1;
 			}
 			
 			// Enum
@@ -39,6 +40,11 @@ namespace Meow
 				  , m_elementType(elementType)
 				  , m_indexType(indexType)
 			{
+				
+				if (indexType)
+				{
+					m_typeSize = indexType->getEnumSymbols()->size();
+				}
 			}
 
 			// Array
@@ -48,6 +54,8 @@ namespace Meow
 				, m_indexRange(indexRange)
 				, m_indexType(indexType)
 			{
+				if (elementType)
+					m_typeSize = (indexRange.end - indexRange.start + 1) * elementType->getTypeSize();
 			}
 
 			// Record
@@ -55,6 +63,14 @@ namespace Meow
 				: m_typeClass(RecordType)
 				, m_fields(fields)
 			{
+				if (fields)
+				{
+					m_typeSize = 0;
+					for(int i=0; i<(int)fields->size(); i++)
+					{
+						m_typeSize += fields->at(i)->second->getTypeSize();
+					}
+				}
 			}
 
 			// String Literal
@@ -62,6 +78,7 @@ namespace Meow
 				: m_typeClass(StringLiteralType)
 				, m_stringLiteral(literal)
 			{
+				m_typeSize = m_stringLiteral.size();
 			}
 
 			TypeClass getTypeClass()
@@ -101,12 +118,18 @@ namespace Meow
 				return m_fields;
 			}
 
+			int getTypeSize()
+			{
+				return m_typeSize;
+			}
+
 			// string literal
 			std::string getStringLiteral() { return m_stringLiteral; }
 
 		private:
 
 			TypeClass m_typeClass;
+			int m_typeSize;
 
 			// simple + enum
 			Value m_maxValue;

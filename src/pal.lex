@@ -13,6 +13,7 @@
 
 	static std::string s_stringText;
 	extern int g_whileCounter;
+	extern int g_varOffset;
 %}
 
 %option nodefault yyclass="PalScanner" noyywrap c++
@@ -176,12 +177,12 @@ EXPONENT	E[+-]?{DIGIT}+
 	}
 	return token::EXIT; 
 	}
-"function" { return token::FUNCTION; }
+"function" { g_varOffset = 0; return token::FUNCTION; }
 "if" { return token::IF; }
 "not" { return token::NOT; }
 "of" { return token::OF; }
 "or" { return token::OR; }
-"procedure" { return token::PROCEDURE; }
+"procedure" { g_varOffset = 0; return token::PROCEDURE; }
 "program" { return token::PROGRAM; }
 "record" { return token::RECORD; }
 "then" { return token::THEN; }
