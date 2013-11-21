@@ -29,6 +29,9 @@ DEP=$(OBJS:.o=.d)
 
 all: $(BINDIR)/$(EXE) asc
 
+debug: CFLAGS += -g
+debug: $(BINDIR)/$(EXE)
+
 $(BINDIR)/$(EXE): $(OBJDIR)/main.o $(OBJS)
 	$(CXX) -o $@ $^
 

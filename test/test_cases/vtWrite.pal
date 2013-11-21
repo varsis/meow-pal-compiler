@@ -1,0 +1,18 @@
+program test( input, output );
+var
+		c : char;
+begin
+		c := 'z';
+
+		write(1);
+		write('\n');
+
+		write(c);
+		write('\n');
+
+		write(3.5);
+		write('\n');
+
+		write('hello');
+		write('\n');
+end.

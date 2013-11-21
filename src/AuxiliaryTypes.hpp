@@ -59,6 +59,12 @@ namespace Meow
 		bool var;
 	};
 
+	struct ConstExpr
+	{
+		Type* type;
+		Value value;
+	};
+
 	typedef std::vector<Parameter> ParameterList;
 }
 #endif

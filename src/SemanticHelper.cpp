@@ -78,13 +78,13 @@ namespace Meow
 		m_table->addSymbol(readlnSymbol);
 		
 		
-		Symbol* writelnSymbol = new Symbol("writeln", Symbol::ProcedureSymbol);
-		writelnSymbol->setProcClass(BuiltInOutput);
-		m_table->addSymbol(writelnSymbol);
+		m_writeln = new Symbol("writeln", Symbol::ProcedureSymbol);
+		m_writeln->setProcClass(BuiltInOutput);
+		m_table->addSymbol(m_writeln);
 		
-		Symbol* writeSymbol = new Symbol("write", Symbol::ProcedureSymbol);
-		writeSymbol->setProcClass(BuiltInOutput);
-		m_table->addSymbol(writeSymbol);
+		m_write = new Symbol("write", Symbol::ProcedureSymbol);
+		m_write->setProcClass(BuiltInOutput);
+		m_table->addSymbol(m_write);
 		
 		// PREDEFINED FUNCTIONS
 

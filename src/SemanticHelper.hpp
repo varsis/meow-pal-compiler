@@ -42,12 +42,6 @@ namespace Meow
 		OpOR
 	};
 
-	struct ConstExpr
-	{
-		Type* type;
-		Value value;
-	};
-
 	class SemanticHelper
 	{
 		public:
@@ -58,6 +52,7 @@ namespace Meow
 			void addPredefinedSymbols();
 
 			Symbol* getSymbol(string id, bool assertExists = true);
+			ErrorManager* getErrorManager() { return m_errorManager; }
 
 			void defineType(string id, Type* type);
 			Type* getTypeForVarId(std::string id, bool& assignable, bool onLHS, vector<Symbol*>* functionStack);
@@ -97,6 +92,9 @@ namespace Meow
 			Type* getRealType() { return &m_realType; }
 			Type* getCharType() { return &m_charType; }
 
+			Symbol* getWrite() { return m_write; }
+			Symbol* getWriteln() { return m_writeln; }
+
 		private:
 
 			PalScanner* m_scanner;
@@ -108,11 +106,16 @@ namespace Meow
 			Type m_integerType;
 			Type m_realType;
 			Type m_charType;
+
+			// Predefined procedures + functions
 			Symbol* m_succ;
 			Symbol* m_pred;
 			Symbol* m_ord;
 			Symbol* m_abs;
 			Symbol* m_sqr;
+
+			Symbol* m_write;
+			Symbol* m_writeln;
 
 	};
 }
