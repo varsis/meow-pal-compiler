@@ -27,19 +27,22 @@ Compiler::~Compiler()
 
 void Compiler::displayUsage()
 {
-	std::cout << "\nProgram Usage: pal [-ndp] file.pal\n\n";
+	std::cout << "\nProgram Usage: pal [-ndpS] file.pal\n\n";
 	std::cout << "OPTIONS:\n";
 	std::cout << "\t-n : Do not produce a program listing. Default is" 
 		  << "to produce one.\n";
 	std::cout << "\t-d : Enable bison debug mode.\n";
 	std::cout << "\t-p : Print program listing to stdout instead of file.\n";
+	std::cout << "\t-S : Leave Asc code in .asc file rather than delete it.\n";
+	std::cout << "\t-a : Do not do runtime bounds checking on arrays. Default"
+		<< " is to do the checking.\n"; 
 	std::cout << std::endl;
 }
 
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
-	const char* optString = "ndp";
+	const char* optString = "ndpSa";
 
 	if (argc == 1)
 	{
@@ -62,6 +65,12 @@ void Compiler::getArguments(int argc, char* argv[])
 			case 'p':
 				m_printStdout = true;
 				break;
+			case 'S':
+				m_leaveASC = true;
+				break;
+			case 'a':
+				m_runtimeArrayBoundChecking = false;
+				break;
 			default:
 				std::cerr << "\n* Unrecognized option: -" 
 				    << opt << "\n";
@@ -83,7 +92,7 @@ void Compiler::getArguments(int argc, char* argv[])
 	
 	m_inputFileName = argv[optind];
 
-	if(m_inputFileName.find_last_of(".") > m_inputFileName.find_last_of("/")) 
+	if((int) m_inputFileName.find_last_of(".") > (int) m_inputFileName.find_last_of("/")) 
 	{
 		std::string name = m_inputFileName.substr(0,
 			m_inputFileName.find_last_of("."));
@@ -255,6 +264,11 @@ int Compiler::run(int argc, char* argv[])
 	if (parseResult == 0)
 	{
 		system((m_ascExecutable + " " + m_ascOutput).c_str());
+	}
+
+	if (!m_leaveASC)
+	{
+		remove(m_ascOutput.c_str());
 	}
 
 	return parseResult;
