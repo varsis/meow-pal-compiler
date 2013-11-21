@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <unistd.h>
+#include <cstring>
 
 #include "Compiler.hpp"
 #include "Parser.hpp"
