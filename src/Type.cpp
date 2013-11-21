@@ -16,5 +16,9 @@ namespace Meow
 			// assign integer values for ordering
 			symbolList->at(i)->setConstantValue((int)i);
 		}
+
+		m_minValue.int_val  = 0;
+		m_maxValue.int_val = symbolList->size() - 1;
+		m_typeSize = 1;
 	}
 }

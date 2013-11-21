@@ -1,6 +1,9 @@
 #include "SymbolTable.hpp"
 #include "EntryList.hpp"
 #include <string>
+#include "Type.hpp"
+
+extern int g_varOffset;
 
 namespace Meow
 {
@@ -92,5 +95,15 @@ namespace Meow
 	int SymbolTable::getCurLevel()
 	{
 		return m_currentLevel;
+	}
+
+	void SymbolTable::allocateSpace(Symbol* sym, Type* type)
+	{
+		if (sym && type)
+		{
+			sym->setSizeInMem(type->getTypeSize());
+			sym->setLocation(g_varOffset);
+			g_varOffset += type->getTypeSize();
+		}
 	}
 }

@@ -3,6 +3,7 @@
 
 #include "EntryList.hpp"
 #include "Symbol.hpp"
+#include "Type.hpp"
 #ifndef NO_TR1
 #include <tr1/unordered_map>
 #else
@@ -33,7 +34,7 @@ namespace Meow
 			int getCurLevel();
 			void incLevel();
 			void decLevel();
-
+			void allocateSpace(Symbol*, Type*);
 		private:
 	};
 }

@@ -60,13 +60,14 @@
 
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
+	int g_varOffset;
 	vector<Meow::Symbol*> g_functionStack;
-
 }
 
 %initial-action
 {
 	g_whileCounter = 0;
+	g_varOffset = 0;
 	g_functionStack.clear();
 }
 
@@ -659,7 +660,6 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 
 				// push function/procedure onto stack
 				g_functionStack.push_back(sym);
-
 
                           	errorManager.addError(
                               	new Error(InvalidFunctDecl,
