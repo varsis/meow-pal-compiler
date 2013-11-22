@@ -19,6 +19,7 @@ namespace Meow
 	void AscHelper::invokeProcedure(string procedureName, 
 			InvocationParameters* params)
 	{
+
 		if (m_errorManager->getErrors()->size() > 0)
 		{
 			return;
@@ -30,6 +31,8 @@ namespace Meow
 		{
 			return;
 		}
+
+		// Note: at this point, we can  assume arugments have been correctly pushed onto stack
 
 		// handle builtin procedures
 
@@ -43,43 +46,24 @@ namespace Meow
 			{
 				if (it->type == m_semanticHelper->getIntegerType())
 				{
-					// TODO -- need actual symbol for invocation param
-					// so we can generate code to access it's value
-
-					// Probably something like 
-					// m_ascOutput << "\tPUSH " << sym.offset << "[" << sym.lexicallevel << "]" << endl;
-
-					m_ascOutput << "\tCONSTI 23" << endl;
+					m_ascOutput << "\tDUP" << endl;
 					m_ascOutput << "\tWRITEI" << endl;
 					//m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
 				}
 				else if (it->type == m_semanticHelper->getCharType())
 				{
-					// TODO -- need actual symbol for invocation param
-					m_ascOutput << "\tCONSTI 90" << endl;
+					m_ascOutput << "\tDUP" << endl;
 					m_ascOutput << "\tWRITEC" << endl;
-
 				}
 				else if (it->type == m_semanticHelper->getRealType())
 				{
-					// TODO -- need actual symbol for invocation param
-					m_ascOutput << "\tCONSTR 6969.69" << endl;
+					m_ascOutput << "\tDUP" << endl;
 					m_ascOutput << "\tWRITER" << endl;
+					//m_ascOutput << "\tCALL 0, ml_write_real" << endl;
 				}
 				else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 				{
-					// TODO -- need actual symbol for invocation param
-
-					m_ascOutput << "\tCONSTI 104" << endl; // h
-					m_ascOutput << "\tCONSTI 101" << endl; // e
-					m_ascOutput << "\tCONSTI 108" << endl; // l
-					m_ascOutput << "\tCONSTI 108" << endl; // l
-					m_ascOutput << "\tCONSTI 111" << endl; // o
-					m_ascOutput << "\tCONSTI 0" << endl; // 0
-
 					m_ascOutput << "\tCALL 0, ml_write_string";
-
-					m_ascOutput << "\tADJUST -6" << endl;
 				}
 			}
 		}
@@ -90,6 +74,15 @@ namespace Meow
 			m_ascOutput << "\tCONSTI 10" << endl;
 			m_ascOutput << "\tWRITEC" << endl;
 		}
+
+		// free stack space used for arguments
+		int argumentSpace = 0;
+		InvocationParameters::iterator it;
+		for (it = params->begin(); it != params->end(); ++it)
+		{
+			argumentSpace += it->type->getTypeSize();
+		}
+		m_ascOutput << "\tADJUST -" << argumentSpace << endl;
 	}
 }
 

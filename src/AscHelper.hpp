@@ -22,6 +22,8 @@ namespace Meow
 			void invokeProcedure(string procedureName, 
 					InvocationParameters* params);
 
+			ofstream& out() { return m_ascOutput; }
+
 		private:
 			ofstream& m_ascOutput;
 			SymbolTable* m_symbolTable;

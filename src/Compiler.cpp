@@ -149,7 +149,7 @@ std::string Compiler::getExecPath(std::string invokeString)
 	{
 		char buf[1024];
 		getcwd(buf, 1024);
-		return std::string(buf) + invokeString.substr(0, invokeString.find_last_of("/") + 1);
+		return std::string(buf) + "/" + invokeString.substr(0, invokeString.find_last_of("/") + 1);
 	}
 }
 
