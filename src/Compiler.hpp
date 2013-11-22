@@ -32,6 +32,7 @@ namespace Meow
 			std::string m_listingFile;
 			std::string m_ascOutput;
 			std::string m_ascExecutable;
+			std::string m_ascLib;
 
 			bool m_leaveASC;
 			bool m_programListing;

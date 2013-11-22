@@ -18,6 +18,8 @@ FLEX = flex
 
 .PHONY: test clean
 
+all: pal asc meowlib
+
 ################################################################################
 # PAL
 ################################################################################
@@ -26,8 +28,6 @@ SRC=$(wildcard $(SRCDIR)/*.cpp)
 ALLOBJS = $(addprefix $(OBJDIR)/, $(notdir $(SRC:.cpp=.o)))
 OBJS = $(filter-out $(OBJDIR)/main.o, $(ALLOBJS))
 DEP=$(OBJS:.o=.d)
-
-all: pal asc
 
 pal: $(BINDIR)/$(EXE)
 
@@ -78,6 +78,10 @@ asc: bin/asc
 bin/asc: asc/asc.c
 	gcc asc/asc.c -o bin/asc
 
+meowlib: bin/meowlib.asc
+bin/meowlib.asc: asc/meowlib/*
+	cat asc/meowlib/* > bin/meowlib.asc
+
 ################################################################################
 # Tests
 ################################################################################
@@ -94,7 +98,7 @@ TEST_SUPPORT_OBJS = $(TESTDIR)/test-main.a\
 					$(TESTDIR)/MockScanner.o\
 					$(OBJS)
 
-test: pal asc $(TESTDIR)/AllTests $(TEST_)
+test: pal meowlib asc $(TESTDIR)/AllTests $(TEST_)
 	-$(TESTDIR)/AllTests
 
 $(TESTDIR)/AllTests: $(TEST_OBJS) $(TEST_SUPPORT_OBJS) 

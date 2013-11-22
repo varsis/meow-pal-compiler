@@ -78,7 +78,7 @@ namespace Meow
 				: m_typeClass(StringLiteralType)
 				, m_stringLiteral(literal)
 			{
-				m_typeSize = m_stringLiteral.size();
+				m_typeSize = m_stringLiteral.size() + 1; // size of null terminated string
 			}
 
 			TypeClass getTypeClass()
