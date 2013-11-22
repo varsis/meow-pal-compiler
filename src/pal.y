@@ -1461,18 +1461,8 @@ simple_expr             : term
 
 				$$.type = result;
 				$$.assignable = false;
+				ascHelper.simpleExpressionHelper($1.type,$3.type, "ADD");
 
-				// add top two values of stack
-				if ($1.type == semanticHelper.getIntegerType())
-				{
-					// if integer ...
-					ascHelper.out() << "\tADDI" << endl;
-				}
-				else
-				{
-					// if real ...
-					ascHelper.out() << "\tADDR" << endl;
-				}
 			}
 			| simple_expr MINUS term
 			{
@@ -1489,17 +1479,7 @@ simple_expr             : term
 				$$.type = result;
 				$$.assignable = false;
 
-				// subtract value on top of stack from value right below it
-				if ($1.type == semanticHelper.getIntegerType())
-				{
-					// if integer ...
-					ascHelper.out() << "\tSUBI" << endl;
-				}
-				else
-				{
-					// if real ...
-					ascHelper.out() << "\tSUBR" << endl;
-				}
+				ascHelper.simpleExpressionHelper($1.type,$3.type, "SUB");
 			}
 			| simple_expr OR term
 			{
@@ -1536,6 +1516,8 @@ term                    : factor
 
 				$$.type = result;
 				$$.assignable = false;
+				
+				ascHelper.simpleExpressionHelper($1.type,$3.type, "MUL");
 			}
 			| term REAL_DIVIDE factor
 			{
@@ -1551,6 +1533,7 @@ term                    : factor
 
 				$$.type = result;
 				$$.assignable = false;
+				ascHelper.simpleExpressionHelper($1.type,$3.type, "DIV");
 			}
 			| term INT_DIVIDE factor
 			{
@@ -1566,6 +1549,8 @@ term                    : factor
 
 				$$.type = result;
 				$$.assignable = false;
+				
+				ascHelper.simpleExpressionHelper($1.type,$3.type, "DIV");
 			}
 			| term MOD factor
 			{
