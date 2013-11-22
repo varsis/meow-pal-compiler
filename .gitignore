@@ -32,8 +32,7 @@ lex.yy.cpp
 *.ad
 
 # Generated executables
-bin/pal
-bin/asc
+bin/*
 test/AllTests
 test/ScannerTest
 test/ParserTest
@@ -44,6 +43,7 @@ test/asc/
 # random editor temp files
 *.swp
 *.swo
+*.swn
 
 # latex output
 *.aux

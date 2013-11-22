@@ -88,7 +88,10 @@ void Compiler::getArguments(int argc, char* argv[])
 		std::exit(-1);
 	}
 
-	m_ascExecutable = getExecPath(argv[0]) + "asc";
+	std::string execPath(getExecPath(argv[0]));
+
+	m_ascExecutable = execPath + "asc";
+	m_ascLib = execPath + "meowlib.asc";
 	
 	m_inputFileName = argv[optind];
 
@@ -119,20 +122,23 @@ std::string Compiler::getExecPath(std::string invokeString)
 		{
 			// look for pal in path directory
 			std::string lscmd("ls ");
-			lscmd += path;
 
-			if (*(strchr(path, 0) - 1) != '/')
+			std::string pathString(path);
+			if (pathString.at(pathString.length() - 1) != '/')
 			{
-				lscmd += "/";
+				pathString += "/";
 			}
+
+			lscmd += pathString;
 
 			lscmd += invokeString;
 			lscmd += " >/dev/null";
 			lscmd += " 2>/dev/null";
+
 			if (system(lscmd.c_str()) == 0)
 			{
 				// pal is in here
-				return std::string(path);
+				return std::string(pathString);
 			}
 
 			path = strtok(NULL, ":");
@@ -263,6 +269,15 @@ int Compiler::run(int argc, char* argv[])
 	// if no errors, run the generated asc code
 	if (parseResult == 0)
 	{
+		{
+			// First, append output file with builtin defs
+			std::fstream ascOutput;
+			ascOutput.open(m_ascOutput.c_str(), std::fstream::out | std::fstream::app);
+			std::ifstream ascLib(m_ascLib.c_str());
+
+			ascOutput << ascLib.rdbuf();
+		}
+
 		system((m_ascExecutable + " " + m_ascOutput).c_str());
 	}
 
