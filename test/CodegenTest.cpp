@@ -280,10 +280,58 @@ namespace Meow
 		int i;
 		
 		ASSERT_EQ(fscanf(palout, "%i", &i), 1);
-		EXPECT_FLOAT_EQ(i, 5);
+		EXPECT_EQ(i, 5);
 		
 		pclose(palout);
 	}
+	
+	// This test should fail...
+	TEST(CodegenTest, TestDivideIntZero)
+	{
+		ofstream testfile("test/asc/testDivZero.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		// print 12.2
+		testfile << "   writeln(10 div 0);" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testDivZero.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		int i;
+		
+		ASSERT_EQ(fscanf(palout, "%i", &i), 1);
+		EXPECT_EQ(i, 5);
+		
+		pclose(palout);
+	}
+	// test should fail
+	TEST(CodegenTest, TestDivideZero)
+	{
+		ofstream testfile("test/asc/test.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		// print 12.2
+		testfile << "   writeln(10 / 0);" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		int i;
+		
+		ASSERT_EQ(fscanf(palout, "%i", &i), 1);
+		EXPECT_EQ(i, 5);
+		
+		pclose(palout);
+	}
+
 	
 
 	TEST(CodegenTest, TestWriteReal)
