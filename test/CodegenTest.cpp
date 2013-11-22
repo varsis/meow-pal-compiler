@@ -351,7 +351,7 @@ namespace Meow
 		float i;
 
 		ASSERT_EQ(fscanf(palout, "%f", &i), 1);
-		EXPECT_EQ(i, 3.14);
+		EXPECT_FLOAT_EQ(i, 3.14);
 
 		pclose(palout);
 	}
@@ -363,6 +363,12 @@ namespace Meow
 		testfile << "program test(input, output);" << endl;
 		testfile << "begin" << endl;
 		testfile << "   writeln('z');" << endl;
+		testfile << "   writeln('h', 'e', 'l', 'l', 'o');" << endl;
+		testfile << "   write('h');" << endl;
+		testfile << "   write('e');" << endl;
+		testfile << "   write('l');" << endl;
+		testfile << "   write('l');" << endl;
+		testfile << "   writeln('o');" << endl;
 		testfile << "end." << endl;
 
 		testfile.close();
@@ -374,6 +380,12 @@ namespace Meow
 
 		ASSERT_EQ(fscanf(palout, "%s", buf), 1);
 		EXPECT_EQ(string(buf), "z");
+
+		ASSERT_EQ(fscanf(palout, "%s", buf), 1);
+		EXPECT_EQ(string(buf), "hello");
+
+		ASSERT_EQ(fscanf(palout, "%s", buf), 1);
+		EXPECT_EQ(string(buf), "hello");
 
 		pclose(palout);
 	}
@@ -392,10 +404,13 @@ namespace Meow
 		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
-		char buf[256];
+		char* buf = new char[256];
+		size_t bufsize = 255;
 
-		ASSERT_EQ(fscanf(palout, "%s", buf), 1);
-		EXPECT_EQ(string(buf), "hello world");
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "hello world\n"); 
+
+		delete buf;
 
 		pclose(palout);
 	}

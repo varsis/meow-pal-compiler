@@ -58,13 +58,28 @@ namespace Meow
 			return;
 		}
 
-		// Note: at this point, we can  assume arugments have been correctly pushed onto stack
+		// Note: at this point, we can assume arugments have been correctly pushed onto stack
+		// Note: as the grammar is currently -- args pushed in order of appearance
+
+		// free stack space used for arguments
+		int argumentSpace = 0;
+		InvocationParameters::iterator it;
+		for (it = params->begin(); it != params->end(); ++it)
+		{
+			argumentSpace += it->type->getTypeSize();
+		}
+
+		// TODO this will need to consider what else may be on the stack 
+		// (return value placeholder, display pointer, program counter, etc)
+		int argPointer = -argumentSpace + 1;
 
 		// handle builtin procedures
 
 		if (procedureSymbol == m_semanticHelper->getWrite()
 			|| procedureSymbol == m_semanticHelper->getWriteln())
 		{
+
+			argPointer = 0; // here we haven't touched the display pointer
 			// split into separate write_* calls for each
 			// argument according to arg type
 			InvocationParameters::iterator it;
@@ -72,25 +87,29 @@ namespace Meow
 			{
 				if (it->type == m_semanticHelper->getIntegerType())
 				{
-					m_ascOutput << "\tDUP" << endl;
+					// TODO need current display index?
+					m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
 					m_ascOutput << "\tWRITEI" << endl;
 					//m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
 				}
 				else if (it->type == m_semanticHelper->getCharType())
 				{
-					m_ascOutput << "\tDUP" << endl;
+					m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
 					m_ascOutput << "\tWRITEC" << endl;
 				}
 				else if (it->type == m_semanticHelper->getRealType())
 				{
-					m_ascOutput << "\tDUP" << endl;
+					m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
 					m_ascOutput << "\tWRITER" << endl;
 					//m_ascOutput << "\tCALL 0, ml_write_real" << endl;
 				}
 				else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 				{
-					m_ascOutput << "\tCALL 0, ml_write_string";
+					m_ascOutput << "\tCONSTI " << argPointer << endl;
+					m_ascOutput << "\tCALL 0, ml_write_string" << endl;
 				}
+
+				argPointer += it->type->getTypeSize();
 			}
 		}
 
@@ -101,13 +120,6 @@ namespace Meow
 			m_ascOutput << "\tWRITEC" << endl;
 		}
 
-		// free stack space used for arguments
-		int argumentSpace = 0;
-		InvocationParameters::iterator it;
-		for (it = params->begin(); it != params->end(); ++it)
-		{
-			argumentSpace += it->type->getTypeSize();
-		}
 		m_ascOutput << "\tADJUST -" << argumentSpace << endl;
 	}
 }
