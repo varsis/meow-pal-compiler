@@ -45,6 +45,7 @@
 %code
 {
 
+ 	#include <fstream>
  	#include "Scanner.hpp"
 
 	#include "ErrorManager.hpp"
@@ -141,13 +142,21 @@
 %%
 
 program                 : program_head decls compound_stat PERIOD
-                        | program_head decls compound_stat 
-                        { errorManager.addError(
-                              new Error(MissingProgramPeriod,
-                                        "Expected \".\" after END", 
-                                        scanner.lineno()-1)); 
-                        }
-                        ;
+			{
+				// end of program
+				ascHelper.out() << "\tSTOP" << endl;
+			}
+			| program_head decls compound_stat 
+			{
+				errorManager.addError(
+					new Error(MissingProgramPeriod,
+						"Expected \".\" after END", 
+						scanner.lineno()-1)); 
+
+				// end of program
+				ascHelper.out() << "\tSTOP" << endl;
+			}
+			;
 
 program_head            : PROGRAM IDENTIFIER 
 				LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
@@ -961,6 +970,8 @@ plist_finvok            : IDENTIFIER LEFT_PAREN parm
 parm                    : expr
 			{
 				$$ = $1;
+				// TODO argument value must be pushed onto stack 
+				// (in correct order!)
 			}
 
 struct_stat             : IF expr THEN matched_stat ELSE stat
@@ -1391,232 +1402,276 @@ simple_expr             : term
                             $$ = $1;
                         }
                         | PLUS term
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpPLUS, $2.type);
+			{
+				Type* result = semanticHelper.getOpResultType(OpPLUS, $2.type);
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible type for unary '+'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible type for unary '+'",
+							scanner.lineno()));
+				}
+
+				$$.type = result;
+				$$.assignable = false;
+
+				// noop
+			}
                         | MINUS term
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpMINUS, $2.type);
+			{
+				Type* result = semanticHelper.getOpResultType(OpMINUS, $2.type);
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible type for unary '-'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        | simple_expr PLUS term
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpADD, $1.type, $3.type);
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible type for unary '-'",
+							scanner.lineno()));
+				}
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for '+'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        | simple_expr MINUS term
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1.type, $3.type);
+				$$.type = result;
+				$$.assignable = false;
+				
+				// negate value at top of stack
+				if ($2.type == semanticHelper.getIntegerType())
+				{
+					// if integer ...
+					ascHelper.out() << "\tCONSTI -1" << endl;
+					ascHelper.out() << "\tMULI" << endl;
+				}
+				else
+				{
+					// if real ...
+					ascHelper.out() << "\tCONSTR -1.0" << endl;
+					ascHelper.out() << "\tMULR" << endl;
+				}
+			}
+			| simple_expr PLUS term
+			{
+				Type* result = semanticHelper.getOpResultType(OpADD, $1.type, $3.type);
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for '-'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        | simple_expr OR term
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpOR, $1.type, $3.type);
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for '+'",
+							scanner.lineno()));
+				}
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for 'or'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        ;
+				$$.type = result;
+				$$.assignable = false;
+
+				// add top two values of stack
+				if ($1.type == semanticHelper.getIntegerType())
+				{
+					// if integer ...
+					ascHelper.out() << "\tADDI" << endl;
+				}
+				else
+				{
+					// if real ...
+					ascHelper.out() << "\tADDR" << endl;
+				}
+			}
+			| simple_expr MINUS term
+			{
+				Type* result = semanticHelper.getOpResultType(OpSUBTRACT, $1.type, $3.type);
+
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for '-'",
+							scanner.lineno()));
+				}
+
+				$$.type = result;
+				$$.assignable = false;
+
+				// subtract value on top of stack from value right below it
+				if ($1.type == semanticHelper.getIntegerType())
+				{
+					// if integer ...
+					ascHelper.out() << "\tSUBI" << endl;
+				}
+				else
+				{
+					// if real ...
+					ascHelper.out() << "\tSUBR" << endl;
+				}
+			}
+			| simple_expr OR term
+			{
+				Type* result = semanticHelper.getOpResultType(OpOR, $1.type, $3.type);
+
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for 'or'",
+							scanner.lineno()));
+				}
+
+				$$.type = result;
+				$$.assignable = false;
+			}
+			;
 
 term                    : factor
-                        {
-                            $$ = $1;
-                        }
-                        | term MULTIPLY factor
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1.type, $3.type);
+			{
+				$$ = $1;
+			}
+			| term MULTIPLY factor
+			{
+				Type* result = semanticHelper.getOpResultType(OpMULTIPLY, $1.type, $3.type);
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for '*'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        | term REAL_DIVIDE factor
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1.type, $3.type);
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for '*'",
+							scanner.lineno()));
+				}
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for '/'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        | term INT_DIVIDE factor
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1.type, $3.type);
+				$$.type = result;
+				$$.assignable = false;
+			}
+			| term REAL_DIVIDE factor
+			{
+				Type* result = semanticHelper.getOpResultType(OpREALDIVIDE, $1.type, $3.type);
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for 'div'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        | term MOD factor
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpMOD, $1.type, $3.type);
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for '/'",
+							scanner.lineno()));
+				}
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for 'mod'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        | term AND factor
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpAND, $1.type, $3.type);
+				$$.type = result;
+				$$.assignable = false;
+			}
+			| term INT_DIVIDE factor
+			{
+				Type* result = semanticHelper.getOpResultType(OpINTDIVIDE, $1.type, $3.type);
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible types for 'and'",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        ;
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for 'div'",
+							scanner.lineno()));
+				}
+
+				$$.type = result;
+				$$.assignable = false;
+			}
+			| term MOD factor
+			{
+				Type* result = semanticHelper.getOpResultType(OpMOD, $1.type, $3.type);
+
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for 'mod'",
+							scanner.lineno()));
+				}
+
+				$$.type = result;
+				$$.assignable = false;
+			}
+			| term AND factor
+			{
+				Type* result = semanticHelper.getOpResultType(OpAND, $1.type, $3.type);
+
+				if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+							"Incompatible types for 'and'",
+							scanner.lineno()));
+				}
+
+				$$.type = result;
+				$$.assignable = false;
+			}
+			;
 
 factor                  : var
-                        {
-                            //$$.type = $1.type;
-                            $$ = $1;
-                        }
-                        | unsigned_const
-                        {
-                            $$.type = $1;
-                            $$.assignable = false;
-                        }
-                        | LEFT_PAREN expr RIGHT_PAREN
-                        {
-                             $$ = $2;
-                        }
-                        | func_invok
-                        {
-			     $$.type = $1;
-			     $$.assignable = false;
-                        }
-                        | NOT factor
-                        {
-                            Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
+			{
+				//$$.type = $1.type;
+				$$ = $1;
+			}
+			| unsigned_const
+			{
+				$$.type = $1;
+				$$.assignable = false;
+			}
+			| LEFT_PAREN expr RIGHT_PAREN
+			{
+				$$ = $2;
+			}
+			| func_invok
+			{
+				$$.type = $1;
+				$$.assignable = false;
+			}
+			| NOT factor
+			{
+				Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
 
-                            if (result == NULL)
-                            {
-                                errorManager.addError(
-                                    new Error(OperatorTypeMismatch,
-                                        "Incompatible type for not.",
-                                        scanner.lineno()));
-                            }
-                            
-                            $$.type = result;
-                            $$.assignable = false;
-                        }
-                        ;
+if (result == NULL)
+				{
+					errorManager.addError(
+						new Error(OperatorTypeMismatch,
+						"Incompatible type for not.",
+						scanner.lineno()));
+				}
+
+				$$.type = result;
+				$$.assignable = false;
+			}
+			;
 
 unsigned_const          : unsigned_num
-                        {
-                            $$ = $1;
-                        }
-                        | STRING_LITERAL
-                        {
+			{
+				$$ = $1;
+			}
+			| STRING_LITERAL
+			{
 				$$ = new Type(*$1);
-                        }
-                        ;
+				// Do we put the string somewhere special somehow or 
+				// just push it to stack here in place?
+			}
+			;
 
 unsigned_num            : INT_CONST
-                        {
-                            $$ = semanticHelper.getIntegerType();
-                        }
-                        | REAL_CONST
-                        {
-                            $$ = semanticHelper.getRealType();
-                        }
-                        ;
+			{
+				$$ = semanticHelper.getIntegerType();
+				ascHelper.out() << "\tCONSTI " << $1 << endl;
+			}
+			| REAL_CONST
+			{
+				$$ = semanticHelper.getRealType();
+				ascHelper.out() << "\tCONSTR " << $1 << endl;
+			}
+			;
 
 
 func_invok              : plist_finvok RIGHT_PAREN
-                        {
+			{
 				$$ = semanticHelper.checkFunctionInvocation(*$1.procedureName,
 									    $1.params);
 				delete $1.procedureName;
-                        }
-                        | IDENTIFIER LEFT_PAREN RIGHT_PAREN
-                        {
+			}
+			| IDENTIFIER LEFT_PAREN RIGHT_PAREN
+			{
 				$$ = semanticHelper.checkFunctionInvocation(*$1, new InvocationParameters());
 				delete $1;
-                        }
-                        ;
+			}
+			;
 
 %%
 
