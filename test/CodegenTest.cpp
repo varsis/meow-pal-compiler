@@ -29,6 +29,35 @@ namespace Meow
 		pclose(palout);
 	}
 	
+	
+	TEST(CodegenTest, TestConstantDec)
+	{
+		ofstream testfile("test/asc/testConst.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "const" << endl;
+		testfile << "\tx = 1 - 10;" << endl;
+		testfile << "\ty = 2.5;" << endl;
+		testfile << "\tz = 3.2;" << endl;
+		testfile << "begin" << endl;
+		testfile << "   writeln(x);" << endl;
+		testfile << "   writeln(y);" << endl;
+		testfile << "   writeln(z);" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -S -n test/asc/testConst.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "        -9\n");
+		
+		pclose(palout);
+	}
+	
 	TEST(CodegenTest, TestAdditionInt)
 	{
 		ofstream testfile("test/asc/test.pal");
@@ -331,6 +360,53 @@ namespace Meow
 		
 		pclose(palout);
 	}
+	
+	// test should fail
+	TEST(CodegenTest, TestModZero)
+	{
+		ofstream testfile("test/asc/test.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		// print 12.2
+		testfile << "   writeln(10 mod 0);" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		int i;
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "Error: Division by zero.\n");
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestModInt)
+	{
+		ofstream testfile("test/asc/test.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		// print 12.2
+		testfile << "   writeln(10 mod 3);" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		int i;
+		
+		ASSERT_EQ(fscanf(palout, "%i", &i), 1);
+		EXPECT_EQ(i, 1);
+		
+		pclose(palout);
+	}
 
 	
 
@@ -392,7 +468,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestWriteString)
 	{
-		ofstream testfile("test/asc/test.pal");
+		ofstream testfile("test/asc/testWriteLine.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "begin" << endl;
@@ -401,7 +477,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/testWriteLine.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		char* buf = new char[256];

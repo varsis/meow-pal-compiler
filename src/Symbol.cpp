@@ -19,7 +19,7 @@ namespace Meow
 		, m_symbolType(type)
 		, m_lexicalLevel(-1)
 		, m_type(NULL)
-		, m_sizeInMem(-1)
+		, m_sizeInMem(1)
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)

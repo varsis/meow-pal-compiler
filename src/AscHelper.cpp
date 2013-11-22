@@ -27,11 +27,14 @@ namespace Meow
 		{
 			// if real ...
 			out() << "\t" << functionName << "R" << endl;
-		} else if(typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getIntegerType()) {
+		} else if(typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getIntegerType())
+		{
 			// real than int
 			out() << "\tITOR" << endl;
 			out() << "\t" << functionName << "R" << endl;
-		} else {
+		}
+		else
+		{
 			// Int than real
 			out() << "\tADJUST -1" << endl;
 			out() << "\tITOR" << endl;
@@ -39,6 +42,12 @@ namespace Meow
 			out() << "\t" << functionName << "R" << endl;
 			
 		}
+	}
+	
+	void AscHelper::simpleExpressionMod() {
+		// these are integer
+			out() << "\tMOD" << endl;
+			out() << "\tIFERR division_zero" << endl;
 	}
 	
 
@@ -88,18 +97,18 @@ namespace Meow
 				if (it->type == m_semanticHelper->getIntegerType())
 				{
 					// TODO need current display index?
-					m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+					m_ascOutput << "\tPUSH " << argPointer << "["<< m_symbolTable->getCurLevel() <<"]" << endl;
 					m_ascOutput << "\tWRITEI" << endl;
 					//m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
 				}
 				else if (it->type == m_semanticHelper->getCharType())
 				{
-					m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+					m_ascOutput << "\tPUSH " << argPointer << "["<< m_symbolTable->getCurLevel() <<"]" << endl;
 					m_ascOutput << "\tWRITEC" << endl;
 				}
 				else if (it->type == m_semanticHelper->getRealType())
 				{
-					m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+					m_ascOutput << "\tPUSH " << argPointer << "["<< m_symbolTable->getCurLevel() <<"]" << endl;
 					m_ascOutput << "\tWRITER" << endl;
 					//m_ascOutput << "\tCALL 0, ml_write_real" << endl;
 				}
