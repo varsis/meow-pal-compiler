@@ -15,8 +15,34 @@ namespace Meow
 		, m_errorManager(semanticHelper->getErrorManager())
 	{
 	}
+	
+	void AscHelper::simpleExpressionHelper(Type *typeOne, Type* typeTwo, string functionName) {
+		// add top two values of stack
+		if (typeOne == m_semanticHelper->getIntegerType() && typeTwo == m_semanticHelper->getIntegerType())
+		{
+			// if integer ...
+			out() << "\t" << functionName << "I" << endl;
+		}
+		else if(typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getRealType())
+		{
+			// if real ...
+			out() << "\t" << functionName << "R" << endl;
+		} else if(typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getIntegerType()) {
+			// real than int
+			out() << "\tITOR" << endl;
+			out() << "\t" << functionName << "R" << endl;
+		} else {
+			// Int than real
+			out() << "\tADJUST -1" << endl;
+			out() << "\tITOR" << endl;
+			out() << "\tADJUST 1" << endl;
+			out() << "\t" << functionName << "R" << endl;
+			
+		}
+	}
+	
 
-	void AscHelper::invokeProcedure(string procedureName, 
+	void AscHelper::invokeProcedure(string procedureName,
 			InvocationParameters* params)
 	{
 

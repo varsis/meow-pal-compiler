@@ -23,6 +23,8 @@ namespace Meow
 					InvocationParameters* params);
 
 			ofstream& out() { return m_ascOutput; }
+		void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
+			
 
 		private:
 			ofstream& m_ascOutput;

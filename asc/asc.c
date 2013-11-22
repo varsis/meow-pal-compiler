@@ -636,7 +636,7 @@ AR:				if (!(k = freerl)) {
 	}
 }
 
-debug		()
+void debug		()
 {
 
 	c = getc (pgm);
