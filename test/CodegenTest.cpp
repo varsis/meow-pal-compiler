@@ -298,13 +298,13 @@ namespace Meow
 		
 		testfile.close();
 		
-		FILE* palout = popen("bin/pal -n -S test/asc/testDivZero.pal", "r");
+		FILE* palout = popen("bin/pal -n test/asc/testDivZero.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 		
+		char str [300];
 		int i;
-		
-		ASSERT_EQ(fscanf(palout, "%i", &i), 1);
-		EXPECT_EQ(i, 5);
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "Error: Division by zero.\n");
 		
 		pclose(palout);
 	}
@@ -324,10 +324,10 @@ namespace Meow
 		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 		
+		char str [300];
 		int i;
-		
-		ASSERT_EQ(fscanf(palout, "%i", &i), 1);
-		EXPECT_EQ(i, 5);
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "Error: Division by zero.\n");
 		
 		pclose(palout);
 	}
