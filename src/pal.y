@@ -60,15 +60,19 @@
 			Meow::SymbolTable &table);
 	void print_error(const std::string msg);
 	void print_value(bool value);
+	
+
 
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
 	int g_varOffset;
+
 	vector<Meow::Symbol*> g_functionStack;
 }
 
 %initial-action
 {
+
 	g_whileCounter = 0;
 	g_varOffset = 0;
 	g_functionStack.clear();
@@ -233,6 +237,28 @@ const_decl              : IDENTIFIER EQ type_expr
                                 delete $1;
 
 				table.addSymbol(sym);
+				
+				// These are CONSTANT and should have a Constant value at this level.
+				// We need to handle int's Problem
+				if($3.type == semanticHelper.getRealType())
+				{
+					double thisValue = ($3.value).real_val;
+					ascHelper.out() << "\tADJUST 1" << endl;
+					ascHelper.out() << "\tCONSTR " << thisValue << endl;
+					ascHelper.out() << "\tPOP "<< table.getLocationCount() << "[" << sym->getLexLevel() << "]" << endl;
+				}
+				else if($3.type == semanticHelper.getIntegerType())
+				{
+					int thisValue = ($3.value).int_val;
+					ascHelper.out() << "\tADJUST 1" << endl;
+					ascHelper.out() << "\tCONSTI " << thisValue << endl;
+					ascHelper.out() << "\tPOP "<< table.getLocationCount() << "[" << sym->getLexLevel() << "]" << endl;
+				} else {
+					
+				}
+				table.incLocationCount(sym);
+				
+				// TODO: Add Symbol to stack at the current level
                         }
 			| IDENTIFIER EQ STRING_LITERAL
                         {
@@ -252,6 +278,7 @@ const_decl              : IDENTIFIER EQ type_expr
                                 delete $1;
 
 				table.addSymbol(sym);
+				// TODO: Add Symbol to stack at the current level
                         }
                         | IDENTIFIER ASSIGN type_expr
                         {       
@@ -277,6 +304,7 @@ const_decl              : IDENTIFIER EQ type_expr
                                 delete $1;
 
 				table.addSymbol(sym);
+				// TODO: Add Symbol to stack at the current level
                         }
                         | IDENTIFIER error
                         {
@@ -1533,7 +1561,12 @@ term                    : factor
 
 				$$.type = result;
 				$$.assignable = false;
+
+
 				ascHelper.simpleExpressionHelper($1.type,$3.type, "DIV");
+				ascHelper.out() << "\tIFERR division_zero" << endl;
+
+
 			}
 			| term INT_DIVIDE factor
 			{
@@ -1551,6 +1584,8 @@ term                    : factor
 				$$.assignable = false;
 				
 				ascHelper.simpleExpressionHelper($1.type,$3.type, "DIV");
+				ascHelper.out() << "\tIFERR division_zero" << endl;
+					
 			}
 			| term MOD factor
 			{
@@ -1566,6 +1601,10 @@ term                    : factor
 
 				$$.type = result;
 				$$.assignable = false;
+				
+				ascHelper.simpleExpressionMod();
+				
+				
 			}
 			| term AND factor
 			{

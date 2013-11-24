@@ -1,6 +1,6 @@
 CXX = g++
-CFLAGS = -Wall -pthread #-std=c++0x -g 
-DEPGEN = -MM -MD -MP -MG #-std=c++0x
+CFLAGS = -Wall -pthread -g #-std=c++0x 
+DEPGEN = -MM -MD -MP -MG  #-std=c++0x
 
 OBJDIR = ./obj
 SRCDIR = ./src

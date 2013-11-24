@@ -24,7 +24,7 @@ namespace Meow
 
 			ofstream& out() { return m_ascOutput; }
 		void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
-			
+		void simpleExpressionMod();
 
 		private:
 			ofstream& m_ascOutput;
