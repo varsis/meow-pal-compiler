@@ -669,4 +669,36 @@ namespace Meow
 
 		pclose(palout);
 	}
+
+	/* TODO Can't properly test until we have variables and comparisons working fully
+	TEST(CodegenTest, TestWhileLoop0)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var i : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  i := 0;" << endl;
+		testfile << "  while (i < 10) do" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    i := i + 1;" << endl;
+		testfile << "    writeln(27);" << endl;
+		testfile << "  end" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		for (int i = 0; i < 10; ++i)
+		{
+			ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+			EXPECT_EQ(val, 27);
+		}
+
+		pclose(palout);
+	}
+	*/
 }

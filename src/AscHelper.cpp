@@ -21,7 +21,10 @@ namespace Meow
 	string AscHelper::currentLabel(int offset)
 	{
 		stringstream ss;
-		ss << "label_" << m_labelStack.back() + offset;
+		if (m_labelStack.size() > 0)
+		{
+			ss << "label_" << m_labelStack.back() + offset;
+		}
 		return ss.str();
 	}
 

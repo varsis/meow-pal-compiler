@@ -1002,30 +1002,47 @@ parm                    : expr
 				// (in correct order!)
 			}
 
-struct_stat             : if_part then_part_matched else_part
+struct_stat             : if_part then_part else_part
 			| if_part then_part
                         {
 				ascHelper.out() << ascHelper.currentLabel(1) << endl;
 				ascHelper.popLabels();
 			}
-                        | WHILE expr DO stat
-			{
-				semanticHelper.checkBoolean($2.type);
-				g_whileCounter--;
-			}
-                        | CONTINUE
-                        | EXIT
-                        ;
 
-matched_stat            : simple_stat
-                        | if_part then_part_matched else_part_matched
-			| WHILE expr DO matched_stat
-			{	
-				semanticHelper.checkBoolean($2.type);
+                        | WHILE
+			{
+				ascHelper.reserveLabels(2);
+				// begin loop
+				ascHelper.out() << ascHelper.currentLabel(0) << endl;
+			} 
+				expr
+			{
+				// evaluated conditional expression value on stack ... 
+				semanticHelper.checkBoolean($3.type);
+				ascHelper.out() << "\tIFZ " << ascHelper.currentLabel(1) << endl;
+			}
+				DO stat
+			{
 				g_whileCounter--;
+				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(0) << endl;
+
+				// end loop
+				ascHelper.out() << ascHelper.currentLabel(1) << endl;
+				ascHelper.popLabels();
 			}
                         | CONTINUE
+			{
+				// TODO probably need an additional stack for loop labels, otherwise
+				// wont work inside a conditional within the loop
+				// Also make sure these don't blow up when outside of a loop
+				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(0) << endl;
+			}
                         | EXIT
+			{
+				// TODO probably need an additional stack for loop labels, otherwise
+				// wont work inside a conditional within the loop
+				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(1) << endl;
+			}
                         ;
 
 if_part			: IF expr
@@ -1047,26 +1064,9 @@ then_part		: THEN stat
 			}
 			;
 
-then_part_matched	: THEN matched_stat
-                        {
-				// code for matched_stat will have been aready generated above
-				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(1) << endl;
-
-				ascHelper.out() << ascHelper.currentLabel() << endl;
-			}
-			;
-
 else_part		: ELSE stat
                         {
 				// code for stat will have been aready generated above
-				ascHelper.out() << ascHelper.currentLabel(1) << endl;
-				ascHelper.popLabels();
-			}
-			;
-
-else_part_matched	: ELSE matched_stat
-                        {
-				// code for matched_stat will have been aready generated above
 				ascHelper.out() << ascHelper.currentLabel(1) << endl;
 				ascHelper.popLabels();
 			}
