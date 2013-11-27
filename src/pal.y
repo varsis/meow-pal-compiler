@@ -1002,13 +1002,13 @@ parm                    : expr
 				// (in correct order!)
 			}
 
-struct_stat             : IF expr THEN matched_stat ELSE stat
+struct_stat             : if_part then_part_matched else_part
+			| if_part then_part
                         {
-				semanticHelper.checkBoolean($2.type);
-			}
-			| IF expr THEN stat
-			{
-				semanticHelper.checkBoolean($2.type);
+				ascHelper.out() << "LABEL" 
+						<< ascHelper.currentLabel() + 1
+						<< endl;
+				ascHelper.popLabels();
 			}
                         | WHILE expr DO stat
 			{
@@ -1020,10 +1020,7 @@ struct_stat             : IF expr THEN matched_stat ELSE stat
                         ;
 
 matched_stat            : simple_stat
-                        | IF expr THEN matched_stat ELSE matched_stat
-                        {
-				semanticHelper.checkBoolean($2.type);
-			}
+                        | if_part then_part_matched else_part_matched
 			| WHILE expr DO matched_stat
 			{	
 				semanticHelper.checkBoolean($2.type);
@@ -1032,6 +1029,59 @@ matched_stat            : simple_stat
                         | CONTINUE
                         | EXIT
                         ;
+
+if_part			: IF expr
+                        {
+				semanticHelper.checkBoolean($2.type);
+
+				// Value of expression should be at top of stack
+
+				ascHelper.reserveLabels(2);
+				ascHelper.out() << "\tIFZ LABEL" << ascHelper.currentLabel() << endl;
+			}
+			;
+
+then_part		: THEN stat
+                        {
+				// code for stat will have been aready generated above
+				ascHelper.out() << "\tGOTO LABEL" 
+						<< ascHelper.currentLabel() + 1
+						<< endl;
+
+				ascHelper.out() << "LABEL" << ascHelper.currentLabel() << endl;
+			}
+			;
+
+then_part_matched	: THEN matched_stat
+                        {
+				// code for matched_stat will have been aready generated above
+				ascHelper.out() << "\tGOTO LABEL" 
+						<< ascHelper.currentLabel() + 1
+						<< endl;
+
+				ascHelper.out() << "LABEL" << ascHelper.currentLabel() << endl;
+			}
+			;
+
+else_part		: ELSE stat
+                        {
+				// code for stat will have been aready generated above
+				ascHelper.out() << "LABEL" 
+						<< ascHelper.currentLabel() + 1
+						<< endl;
+				ascHelper.popLabels();
+			}
+			;
+
+else_part_matched	: ELSE matched_stat
+                        {
+				// code for matched_stat will have been aready generated above
+				ascHelper.out() << "LABEL" 
+						<< ascHelper.currentLabel() + 1
+						<< endl;
+				ascHelper.popLabels();
+			}
+			;
 
 /********************************************************************************
  * Rules for expressions
@@ -1347,6 +1397,12 @@ expr			: simple_expr
                             
                             $$.type = result;
                             $$.assignable = false;
+
+				// TEMP: assume integers
+				ascHelper.out() << "\tEQI" << endl;
+				// TODO: helper routine for generating comparison code for integers, 
+				// reals, and other types
+			   
                         }
                         | expr NE simple_expr
                         {
@@ -1362,6 +1418,12 @@ expr			: simple_expr
                             
                             $$.type = result;
                             $$.assignable = false;
+
+				// TEMP: assume integers
+				ascHelper.out() << "\tEQI" << endl;
+				ascHelper.out() << "\tNOT" << endl;
+				// TODO: helper routine for generating comparison code for integers, 
+				// reals, and other types
                         }
                         | expr LE simple_expr
                         {
