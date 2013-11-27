@@ -32,14 +32,10 @@ namespace Meow
 			int getCurLevel();
 			void incLevel();
 			void decLevel();
-			void incLocationCount(Symbol * sym);
-			int getLocationCount();
 			void allocateSpace(Symbol*, Type*);
 		private:
 			SymbolMap m_symbolTable;
 			int m_currentLevel;
-			// Contains the last location in mem.
-			int m_locationLexCounter[16];
 	};
 }
 
