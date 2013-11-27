@@ -13,7 +13,24 @@ namespace Meow
 		, m_symbolTable(table)
 		, m_semanticHelper(semanticHelper)
 		, m_errorManager(semanticHelper->getErrorManager())
+		, m_nextLabel(0)
 	{
+	}
+
+	int AscHelper::currentLabel()
+	{
+		return m_labelStack.back();
+	}
+
+	void AscHelper::reserveLabels(int count)
+	{
+		m_labelStack.push_back(m_nextLabel);
+		m_nextLabel += count;
+	}
+
+	void AscHelper::popLabels()
+	{
+		m_labelStack.pop_back();
 	}
 	
 	void AscHelper::simpleExpressionHelper(Type *typeOne, Type* typeTwo, string functionName) {

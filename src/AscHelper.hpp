@@ -23,14 +23,21 @@ namespace Meow
 					InvocationParameters* params);
 
 			ofstream& out() { return m_ascOutput; }
-		void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
-		void simpleExpressionMod();
+			void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
+			void simpleExpressionMod();
+
+			int currentLabel();
+			void reserveLabels(int count);
+			void popLabels();
 
 		private:
 			ofstream& m_ascOutput;
 			SymbolTable* m_symbolTable;
 			SemanticHelper* m_semanticHelper;
 			ErrorManager* m_errorManager;
+
+			vector<int> m_labelStack;
+			int m_nextLabel;
 	};
 }
 

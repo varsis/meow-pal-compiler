@@ -331,7 +331,6 @@ namespace Meow
 		ASSERT_NE(palout, (void*)0);
 		
 		char str [300];
-		int i;
 		fgets(str, 300 , palout);
 		EXPECT_STRCASEEQ(str, "Error: Division by zero.\n");
 		
@@ -354,7 +353,6 @@ namespace Meow
 		ASSERT_NE(palout, (void*)0);
 		
 		char str [300];
-		int i;
 		fgets(str, 300 , palout);
 		EXPECT_STRCASEEQ(str, "Error: Division by zero.\n");
 		
@@ -378,7 +376,6 @@ namespace Meow
 		ASSERT_NE(palout, (void*)0);
 		
 		char str [300];
-		int i;
 		fgets(str, 300 , palout);
 		EXPECT_STRCASEEQ(str, "Error: Division by zero.\n");
 		
@@ -487,6 +484,188 @@ namespace Meow
 		EXPECT_EQ(string(buf), "hello world\n"); 
 
 		delete buf;
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestConditional0)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  if (1 = 1) then" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    writeln(1);" << endl;
+		testfile << "  end" << endl;
+		testfile << "  else" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    writeln(0);" << endl;
+		testfile << "  end" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 1);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestConditional1)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  if (1 <> 1) then" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    writeln(1);" << endl;
+		testfile << "  end" << endl;
+		testfile << "  else" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    writeln(0);" << endl;
+		testfile << "  end" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 0);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestNestedConditional0)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  if (1 = 1) then" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    if (2 = 2) then" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(0);" << endl;
+		testfile << "    end" << endl;
+		testfile << "    else" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(1);" << endl;
+		testfile << "    end" << endl;
+		testfile << "  end" << endl;
+		testfile << "  else" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    if (3 = 3) then" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(2);" << endl;
+		testfile << "    end" << endl;
+		testfile << "    else" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(3);" << endl;
+		testfile << "    end" << endl;
+		testfile << "  end" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 0);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestNestedConditional1)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  if (1 = 1) then" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    if (2 <> 2) then" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(0);" << endl;
+		testfile << "    end" << endl;
+		testfile << "    else" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(1);" << endl;
+		testfile << "    end" << endl;
+		testfile << "  end" << endl;
+		testfile << "  else" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    if (3 = 3) then" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(2);" << endl;
+		testfile << "    end" << endl;
+		testfile << "    else" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(3);" << endl;
+		testfile << "    end" << endl;
+		testfile << "  end" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 1);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestNestedConditional2)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  if (1 <> 1) then" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    if (2 <> 2) then" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(0);" << endl;
+		testfile << "    end" << endl;
+		testfile << "    else" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(1);" << endl;
+		testfile << "    end" << endl;
+		testfile << "  end" << endl;
+		testfile << "  else" << endl;
+		testfile << "  begin" << endl;
+		testfile << "    if (3 <> 3) then" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(2);" << endl;
+		testfile << "    end" << endl;
+		testfile << "    else" << endl;
+		testfile << "    begin" << endl;
+		testfile << "      writeln(3);" << endl;
+		testfile << "    end" << endl;
+		testfile << "  end" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 3);
 
 		pclose(palout);
 	}
