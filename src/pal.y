@@ -237,7 +237,8 @@ const_decl              : IDENTIFIER EQ type_expr
                                 delete $1;
 
 				table.addSymbol(sym);
-				
+				table.allocateSpace(sym, $3.type);
+
 				// These are CONSTANT and should have a Constant value at this level.
 				// We need to handle int's Problem
 				if($3.type == semanticHelper.getRealType())
@@ -245,19 +246,17 @@ const_decl              : IDENTIFIER EQ type_expr
 					double thisValue = ($3.value).real_val;
 					ascHelper.out() << "\tADJUST 1" << endl;
 					ascHelper.out() << "\tCONSTR " << thisValue << endl;
-					ascHelper.out() << "\tPOP "<< table.getLocationCount() << "[" << sym->getLexLevel() << "]" << endl;
+					ascHelper.out() << "\tPOP "<< sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
 				}
 				else if($3.type == semanticHelper.getIntegerType())
 				{
 					int thisValue = ($3.value).int_val;
 					ascHelper.out() << "\tADJUST 1" << endl;
 					ascHelper.out() << "\tCONSTI " << thisValue << endl;
-					ascHelper.out() << "\tPOP "<< table.getLocationCount() << "[" << sym->getLexLevel() << "]" << endl;
+					ascHelper.out() << "\tPOP "<< sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
 				} else {
 					
 				}
-				table.incLocationCount(sym);
-				
 				// TODO: Add Symbol to stack at the current level
                         }
 			| IDENTIFIER EQ STRING_LITERAL

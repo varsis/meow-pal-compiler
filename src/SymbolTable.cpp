@@ -10,12 +10,6 @@ namespace Meow
 	SymbolTable::SymbolTable()
 	{
 		m_currentLevel = 0;
-		
-		for(int i = 0; i < 16; i ++)
-		{
-			// Start location is always zero.
-			m_locationLexCounter[i] = 0;
-		}
 	}
 
 	SymbolTable::~SymbolTable()
@@ -98,15 +92,6 @@ namespace Meow
 		}
 	}
 
-	void SymbolTable::incLocationCount(Symbol * sym)
-	{
-		m_locationLexCounter[getCurLevel()] += sym->getSizeInMem();
-	}
-	int SymbolTable::getLocationCount()
-	{
-		return m_locationLexCounter[getCurLevel()];
-	}
-	
 	int SymbolTable::getCurLevel()
 	{
 		return m_currentLevel;
@@ -117,8 +102,8 @@ namespace Meow
 		if (sym && type)
 		{
 			sym->setSizeInMem(type->getTypeSize());
-			//sym->setLocation(g_varOffset);
-			//g_varOffset += type->getTypeSize();
+			sym->setLocation(g_varOffset);
+			g_varOffset += type->getTypeSize();
 		}
 	}
 }
