@@ -701,4 +701,90 @@ namespace Meow
 		pclose(palout);
 	}
 	*/
+
+	TEST(CodegenTest, TestProcedure1)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "procedure foo();" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(72)" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  foo();" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 72);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestProcedure2)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "procedure foo();" << endl;
+
+			testfile << "procedure bar();" << endl;
+			testfile << "begin" << endl;
+			testfile << "  writeln(72);" << endl;
+			testfile << "end;" << endl;
+
+		testfile << "begin" << endl;
+		testfile << "  bar();" << endl;
+		testfile << "  writeln(24);" << endl;
+		testfile << "end;" << endl;
+
+		testfile << "begin" << endl;
+		testfile << "  foo();" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 72);
+
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 24);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestFunction1)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "function foo() : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  foo := 53;" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(foo());" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 53);
+
+		pclose(palout);
+	}
 }

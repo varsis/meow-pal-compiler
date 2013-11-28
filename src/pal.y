@@ -145,20 +145,30 @@
 %token TYPE VAR WHILE PAL_BEGIN
 %%
 
-program                 : program_head decls compound_stat PERIOD
-			{
-				// end of program
-				ascHelper.out() << "\tSTOP" << endl;
-			}
-			| program_head decls compound_stat 
+program                 : program_head decls program_stat PERIOD
+			| program_head decls program_stat
 			{
 				errorManager.addError(
 					new Error(MissingProgramPeriod,
 						"Expected \".\" after END", 
 						scanner.lineno()-1)); 
 
+			}
+			;
+
+program_stat		: start_label compound_stat
+			{
 				// end of program
 				ascHelper.out() << "\tSTOP" << endl;
+				// TODO free memory for local vars
+			}
+			;
+
+start_label		: /* empty */
+			{
+				// start of program / procedure
+				ascHelper.out() << ascHelper.currentLabel(0) << endl;
+				ascHelper.popLabels();
 			}
 			;
 
@@ -204,6 +214,14 @@ program_head            : PROGRAM IDENTIFIER
 decls                   : const_decl_part
                           type_decl_part        
                           var_decl_part
+			{
+				ascHelper.reserveLabels(1);
+
+				// constant + variable declarations now evaluated 
+				// jump past any nested procedures to procedure/program body
+				// should be corresponding label in start_label
+				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(0) << endl;
+			}
                           proc_decl_part
                         ;
 
@@ -560,14 +578,14 @@ proc_decl_list          : proc_decl
                         | proc_decl_list proc_decl
                         ;
 
-proc_decl               : proc_heading decls compound_stat SEMICOLON
+proc_decl               : proc_heading decls proc_stat SEMICOLON
 			{
 				// pop function/procedure off stack
 				g_functionStack.pop_back();
 
 				table.decLevel();
 			}
-                        | proc_heading decls compound_stat PERIOD
+                        | proc_heading decls proc_stat PERIOD
                         {
 				// pop function/procedure off stack
 				g_functionStack.pop_back();
@@ -579,6 +597,14 @@ proc_decl               : proc_heading decls compound_stat SEMICOLON
                                         scanner.lineno()));
                         }
                         ;
+
+proc_stat		: start_label compound_stat
+			{
+				// end of procedure
+				// TODO free memory for local vars
+				ascHelper.out() << "\tRET " << table.getCurLevel() << endl;
+			}
+			;
 
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
@@ -594,12 +620,21 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 
 				paramList = $3;
 
+				// generate label for start of routine
+				ascHelper.reserveLabels(1);
+				string label = ascHelper.currentLabel(0);
+				ascHelper.popLabels();
+				ascHelper.out() << label << endl;
+
+				// TODO should be some way we could use the same symbol at both lexical levels..
+
 				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
 					sym->addParameter(paramList->at(i));
 				}
 
+				sym->setLabel(label);
 				table.addSymbol(sym);
 				table.incLevel();
 				
@@ -612,10 +647,13 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 
                                 delete $2;
 
+				sym->setLabel(label);
 				table.addSymbol(sym);
 
 				// push function/procedure onto stack
 				g_functionStack.push_back(sym);
+
+
 			}
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
@@ -632,6 +670,12 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 
 				paramList = $3;
 
+				// generate label for start of routine
+				ascHelper.reserveLabels(1);
+				string label = ascHelper.currentLabel(0);
+				ascHelper.popLabels();
+				ascHelper.out() << label << endl;
+
 				sym = new Symbol(*$2, Symbol::FunctionSymbol);
 				for (size_t i = 0; i < paramList->size(); i++)
 				{
@@ -642,6 +686,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				returnType = semanticHelper.getTypeFromID(*$5);
                                 
 				sym->setType(returnType);
+				sym->setLabel(label);
 
 				table.addSymbol(sym);
 				table.incLevel();
@@ -657,6 +702,7 @@ proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 				delete $5;
 
 				sym->setType(returnType);
+				sym->setLabel(label);
 				table.addSymbol(sym);
 
 				// push function/procedure onto stack
@@ -884,6 +930,13 @@ simple_stat             : lhs_var ASSIGN expr
 						"Non-assignment compatible types.",
 						scanner.lineno()));
 				}
+
+				if ($1.symbol && $1.symbol->getSymbolType() == Symbol::FunctionSymbol)
+				{
+					// assign value on top of stack to location reserved for return value
+					// TODO need to consider space needed for structured return values
+					ascHelper.out() << "\tPOP -3[" << $1.symbol->getLexLevel() << "]" << endl;
+				}
 			}
                         | proc_invok
                         | compound_stat
@@ -914,15 +967,18 @@ simple_stat             : lhs_var ASSIGN expr
 lhs_var                 : IDENTIFIER
                         {
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, true, &g_functionStack);
+				$$.symbol = table.getSymbol(*$1);
 				delete $1;
                         }
                         | lhs_var PERIOD IDENTIFIER
                         {
 				$$.type = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable);
+				$$.symbol = NULL;
 				delete $3;
                         }
                         | lhs_subscripted_var RIGHT_BRACKET
                         {
+				$$.symbol = NULL;
 				$$ = $1;
                         }
                         ;
@@ -975,8 +1031,11 @@ proc_invok              : plist_finvok RIGHT_PAREN
 			}
                         | IDENTIFIER LEFT_PAREN RIGHT_PAREN
 			{
-				semanticHelper.checkProcedureInvocation(*$1, new InvocationParameters());
+				InvocationParameters* params = new InvocationParameters();
+				semanticHelper.checkProcedureInvocation(*$1, params);
+				ascHelper.invokeProcedure(*$1, params);
 
+				delete params;
 				delete $1;
 			}
                         ;
@@ -1752,11 +1811,18 @@ func_invok              : plist_finvok RIGHT_PAREN
 			{
 				$$ = semanticHelper.checkFunctionInvocation(*$1.procedureName,
 									    $1.params);
+
+				ascHelper.invokeProcedure(*$1.procedureName, $1.params);
+
 				delete $1.procedureName;
 			}
 			| IDENTIFIER LEFT_PAREN RIGHT_PAREN
 			{
-				$$ = semanticHelper.checkFunctionInvocation(*$1, new InvocationParameters());
+				InvocationParameters* params = new InvocationParameters();
+				$$ = semanticHelper.checkFunctionInvocation(*$1, params);
+				ascHelper.invokeProcedure(*$1, params);
+
+				delete params;
 				delete $1;
 			}
 			;
