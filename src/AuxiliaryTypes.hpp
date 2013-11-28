@@ -30,7 +30,7 @@ namespace Meow
 	struct LValue
 	{
 		Meow::Type* type;
-		Meow::Symbol* symbol;
+		Meow::Symbol* sym;
 		bool assignable;
 	};
 

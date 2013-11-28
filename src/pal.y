@@ -528,18 +528,21 @@ var_decl_list           : var_decl
 var_decl                : IDENTIFIER COLON type
 			{
                                 semanticHelper.declareVariable(*$1, $3);
-                                delete $1;
+                                ascHelper.allocVariable(table.getSymbol(*$1));
+				delete $1;
 				$$ = $3;
 			}
                         | IDENTIFIER COMMA var_decl
                         {
                                 semanticHelper.declareVariable(*$1, $3);
+                                ascHelper.allocVariable(table.getSymbol(*$1));
                                 delete $1;
 				$$ = $3;
 			}
 			| IDENTIFIER ASSIGN type
                         {
                                 semanticHelper.declareVariable(*$1, $3);
+                                ascHelper.allocVariable(table.getSymbol(*$1));
                                 delete $1;
 				$$ = $3;
 
@@ -551,6 +554,7 @@ var_decl                : IDENTIFIER COLON type
                         | IDENTIFIER error
                         {
                                 semanticHelper.declareVariable(*$1, NULL);
+                                ascHelper.allocVariable(table.getSymbol(*$1));
                                 delete $1;
                                 $$ = NULL;
 
@@ -931,12 +935,16 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
 
-				if ($1.symbol && $1.symbol->getSymbolType() == Symbol::FunctionSymbol)
+				if ($1.sym && $1.sym->getSymbolType() == Symbol::FunctionSymbol)
 				{
 					// assign value on top of stack to location reserved for return value
 					// TODO need to consider space needed for structured return values
-					ascHelper.out() << "\tPOP -3[" << $1.symbol->getLexLevel() << "]" << endl;
+					ascHelper.out() << "\tPOP -3[" << $1.sym->getLexLevel() << "]" << endl;
 				}
+                                else
+                                {
+                                    ascHelper.assignToVariable($1.sym);
+                                }
 			}
                         | proc_invok
                         | compound_stat
@@ -967,18 +975,18 @@ simple_stat             : lhs_var ASSIGN expr
 lhs_var                 : IDENTIFIER
                         {
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, true, &g_functionStack);
-				$$.symbol = table.getSymbol(*$1);
+				$$.sym = table.getSymbol(*$1);
 				delete $1;
                         }
                         | lhs_var PERIOD IDENTIFIER
                         {
 				$$.type = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable);
-				$$.symbol = NULL;
+				$$.sym = NULL;
 				delete $3;
                         }
                         | lhs_subscripted_var RIGHT_BRACKET
                         {
-				$$.symbol = NULL;
+				$$.sym = NULL;
 				$$ = $1;
                         }
                         ;
@@ -996,6 +1004,7 @@ lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
 var                     : IDENTIFIER
                         {
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, false, &g_functionStack);
+				ascHelper.accessVariable(table.getSymbol(*$1));
 				delete $1;
                         }
                         | var PERIOD IDENTIFIER
