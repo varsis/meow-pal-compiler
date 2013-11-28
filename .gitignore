@@ -38,7 +38,8 @@ test/ScannerTest
 test/ParserTest
 test/ParserTestWithFiles
 test/MeowlibTest
-test/asc/
+test/asc/*.pal
+test/asc/*.asc
 
 # random editor temp files
 *.swp
