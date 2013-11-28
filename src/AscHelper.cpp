@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 
 #include "AscHelper.hpp"
 #include "ErrorManager.hpp"
@@ -17,9 +18,14 @@ namespace Meow
 	{
 	}
 
-	int AscHelper::currentLabel()
+	string AscHelper::currentLabel(int offset)
 	{
-		return m_labelStack.back();
+		stringstream ss;
+		if (m_labelStack.size() > 0)
+		{
+			ss << "label_" << m_labelStack.back() + offset;
+		}
+		return ss.str();
 	}
 
 	void AscHelper::reserveLabels(int count)

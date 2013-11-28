@@ -26,7 +26,7 @@ namespace Meow
 			void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
 			void simpleExpressionMod();
 
-			int currentLabel();
+			std::string currentLabel(int offset = 0);
 			void reserveLabels(int count);
 			void popLabels();
 
