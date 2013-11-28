@@ -53,3 +53,5 @@ test/asc/*.asc
 
 # Generated GTest code
 test/ParserTestWithFiles.cpp
+
+dummyout

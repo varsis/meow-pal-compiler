@@ -33,6 +33,7 @@ namespace Meow
 			void allocVariable(Symbol*);
 			void accessVariable(Symbol*);
 			void assignToVariable(Symbol*);
+			void deallocVariables();
 
 		private:
 			ofstream& m_ascOutput;

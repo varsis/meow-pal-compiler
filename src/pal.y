@@ -65,8 +65,7 @@
 
 	// Global counter for determining whether continue/exit are valid
 	int g_whileCounter;
-	int g_varOffset;
-
+	vector<int> g_offsetList;
 	vector<Meow::Symbol*> g_functionStack;
 }
 
@@ -74,8 +73,8 @@
 {
 
 	g_whileCounter = 0;
-	g_varOffset = 0;
 	g_functionStack.clear();
+	g_offsetList.clear();
 }
 
 %union
@@ -159,8 +158,8 @@ program                 : program_head decls program_stat PERIOD
 program_stat		: start_label compound_stat
 			{
 				// end of program
+				ascHelper.deallocVariables();
 				ascHelper.out() << "\tSTOP" << endl;
-				// TODO free memory for local vars
 			}
 			;
 
@@ -586,7 +585,6 @@ proc_decl               : proc_heading decls proc_stat SEMICOLON
 			{
 				// pop function/procedure off stack
 				g_functionStack.pop_back();
-
 				table.decLevel();
 			}
                         | proc_heading decls proc_stat PERIOD
@@ -605,7 +603,7 @@ proc_decl               : proc_heading decls proc_stat SEMICOLON
 proc_stat		: start_label compound_stat
 			{
 				// end of procedure
-				// TODO free memory for local vars
+				ascHelper.deallocVariables();
 				ascHelper.out() << "\tRET " << table.getCurLevel() << endl;
 			}
 			;
