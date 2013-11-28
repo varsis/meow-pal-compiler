@@ -27,8 +27,8 @@ namespace Meow
 
 			// Simple type
 			Type() : m_typeClass(SimpleType)
+				, m_typeSize(1)
 			{
-				m_typeSize = 1;
 			}
 			
 			// Enum
@@ -40,7 +40,8 @@ namespace Meow
 				  , m_elementType(elementType)
 				  , m_indexType(indexType)
 			{
-				
+				m_indexRange.start = 0;
+				m_indexRange.end = 0;
 				if (indexType)
 				{
 					m_typeSize = indexType->getEnumSymbols()->size();
