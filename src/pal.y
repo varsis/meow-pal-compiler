@@ -510,18 +510,21 @@ var_decl_list           : var_decl
 var_decl                : IDENTIFIER COLON type
 			{
                                 semanticHelper.declareVariable(*$1, $3);
-                                delete $1;
+                                ascHelper.allocVariable(table.getSymbol(*$1));
+				delete $1;
 				$$ = $3;
 			}
                         | IDENTIFIER COMMA var_decl
                         {
                                 semanticHelper.declareVariable(*$1, $3);
+                                ascHelper.allocVariable(table.getSymbol(*$1));
                                 delete $1;
 				$$ = $3;
 			}
 			| IDENTIFIER ASSIGN type
                         {
                                 semanticHelper.declareVariable(*$1, $3);
+                                ascHelper.allocVariable(table.getSymbol(*$1));
                                 delete $1;
 				$$ = $3;
 
@@ -533,6 +536,7 @@ var_decl                : IDENTIFIER COLON type
                         | IDENTIFIER error
                         {
                                 semanticHelper.declareVariable(*$1, NULL);
+                                ascHelper.allocVariable(table.getSymbol(*$1));
                                 delete $1;
                                 $$ = NULL;
 
@@ -884,6 +888,8 @@ simple_stat             : lhs_var ASSIGN expr
 						"Non-assignment compatible types.",
 						scanner.lineno()));
 				}
+
+				ascHelper.assignToVariable($1.sym);
 			}
                         | proc_invok
                         | compound_stat
@@ -914,6 +920,7 @@ simple_stat             : lhs_var ASSIGN expr
 lhs_var                 : IDENTIFIER
                         {
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, true, &g_functionStack);
+				$$.sym = table.getSymbol(*$1);
 				delete $1;
                         }
                         | lhs_var PERIOD IDENTIFIER
@@ -940,6 +947,7 @@ lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
 var                     : IDENTIFIER
                         {
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, false, &g_functionStack);
+				ascHelper.accessVariable(table.getSymbol(*$1));
 				delete $1;
                         }
                         | var PERIOD IDENTIFIER

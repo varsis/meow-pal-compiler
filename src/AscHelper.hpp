@@ -7,6 +7,7 @@
 #include "Type.hpp"
 #include "Symbol.hpp"
 #include "SemanticHelper.hpp"
+#include "Symbol.hpp"
 
 using namespace std;
 
@@ -29,6 +30,9 @@ namespace Meow
 			std::string currentLabel(int offset = 0);
 			void reserveLabels(int count);
 			void popLabels();
+			void allocVariable(Symbol*);
+			void accessVariable(Symbol*);
+			void assignToVariable(Symbol*);
 
 		private:
 			ofstream& m_ascOutput;

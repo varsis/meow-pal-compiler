@@ -7,6 +7,7 @@
 namespace Meow
 {
 	class Type;
+	class Symbol;
 
 	struct ArrayIndexRange
 	{
@@ -29,6 +30,7 @@ namespace Meow
 	struct LValue
 	{
 		Meow::Type* type;
+		Meow::Symbol* sym;
 		bool assignable;
 	};
 

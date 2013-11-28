@@ -6,6 +6,7 @@
 #include "Scanner.hpp"
 #include "SymbolTable.hpp"
 #include "Type.hpp"
+#include "Symbol.hpp"
 
 namespace Meow
 {
@@ -153,6 +154,30 @@ namespace Meow
 		}
 
 		m_ascOutput << "\tADJUST -" << argumentSpace << endl;
+	}
+
+	void AscHelper::allocVariable(Symbol* sym)
+	{
+		if (sym)
+		{
+			m_ascOutput << "\tADJUST " << sym->getSizeInMem() << endl;
+		}
+	}
+
+	void AscHelper::accessVariable(Symbol* sym)
+	{
+		if (sym)
+		{
+			m_ascOutput << "\tPUSH " << sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
+		}
+	}	
+
+	void AscHelper::assignToVariable(Symbol* sym)
+	{
+		if (sym)
+		{
+			m_ascOutput << "\tPOP " << sym->getLocation() << "[" << sym->getLexLevel() << "]" <<endl;
+		}
 	}
 }
 
