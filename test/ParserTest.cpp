@@ -29,8 +29,8 @@ namespace Meow
 
 			ParserTest() 
 				: dummyOutput("dummyout")
-				, ascHelper(dummyOutput, &symbolTable, &semanticHelper)
 				, semanticHelper(&scanner, &errorManager, &symbolTable)
+				, ascHelper(dummyOutput, &symbolTable, &semanticHelper)
 				, parser(scanner, errorManager, symbolTable, semanticHelper, ascHelper)
 			{
 			}
@@ -74,8 +74,8 @@ namespace Meow
 			ErrorManager errorManager;
 			SymbolTable symbolTable;
 			ofstream dummyOutput;
-			AscHelper ascHelper;
 			SemanticHelper semanticHelper;
+			AscHelper ascHelper;
 			vector<token_type> tokens;
 
 			PalParser parser;
