@@ -2,8 +2,9 @@
 #include "EntryList.hpp"
 #include <string>
 #include "Type.hpp"
+#include <vector>
 
-extern int g_varOffset;
+extern std::vector<int> g_offsetList;
 
 namespace Meow
 {
@@ -102,8 +103,8 @@ namespace Meow
 		if (sym && type)
 		{
 			sym->setSizeInMem(type->getTypeSize());
-			sym->setLocation(g_varOffset);
-			g_varOffset += type->getTypeSize();
+			sym->setLocation(g_offsetList[m_currentLevel-1]);
+			g_offsetList[m_currentLevel-1] += type->getTypeSize();
 		}
 	}
 }

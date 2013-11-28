@@ -1,5 +1,6 @@
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "AscHelper.hpp"
 #include "ErrorManager.hpp"
@@ -7,6 +8,8 @@
 #include "SymbolTable.hpp"
 #include "Type.hpp"
 #include "Symbol.hpp"
+
+extern std::vector<int> g_offsetList;
 
 namespace Meow
 {
@@ -206,6 +209,15 @@ namespace Meow
 		if (sym)
 		{
 			m_ascOutput << "\tPOP " << sym->getLocation() << "[" << sym->getLexLevel() << "]" <<endl;
+		}
+	}
+
+	void AscHelper::deallocVariables()
+	{
+		if (g_offsetList.size() >= 1)
+		{
+			m_ascOutput << "\tADJUST -" << g_offsetList[g_offsetList.size()-1] << endl;
+			g_offsetList.pop_back();
 		}
 	}
 }
