@@ -27,8 +27,8 @@ namespace Meow
 
 			// Simple type
 			Type() : m_typeClass(SimpleType)
+				, m_typeSize(1)
 			{
-				m_typeSize = 1;
 			}
 			
 			// Enum
@@ -40,10 +40,15 @@ namespace Meow
 				  , m_elementType(elementType)
 				  , m_indexType(indexType)
 			{
-				
+				m_indexRange.start = 0;
+				m_indexRange.end = 0;
 				if (indexType)
 				{
 					m_typeSize = indexType->getEnumSymbols()->size();
+				}
+				else 
+				{
+					m_typeSize = 1;
 				}
 			}
 
@@ -55,7 +60,13 @@ namespace Meow
 				, m_indexType(indexType)
 			{
 				if (elementType)
+				{
 					m_typeSize = (indexRange.end - indexRange.start + 1) * elementType->getTypeSize();
+				}
+				else
+				{
+					m_typeSize = 1;
+				}
 			}
 
 			// Record
@@ -70,6 +81,10 @@ namespace Meow
 					{
 						m_typeSize += fields->at(i)->second->getTypeSize();
 					}
+				}
+				else
+				{
+					m_typeSize = 1;
 				}
 			}
 

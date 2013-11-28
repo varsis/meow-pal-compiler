@@ -7,18 +7,21 @@ using namespace std;
 namespace Meow
 {
 	Symbol::Symbol()
-		: m_lexicalLevel(-1)
+		: m_name("")
+		, m_symbolType()
+		, m_lexicalLevel(-1)
 		, m_type(NULL)
 		, m_sizeInMem(-1)
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)
+		, m_label("")
 		, m_procedureClass(UserDefined)
 		, m_parameterSpace(0)
 		, m_varParam(false)
 	{
 	}
-
+	
 	Symbol::Symbol(std::string name, Symbol::SymbolType type)
 		: m_name(name)
 		, m_symbolType(type)
@@ -28,6 +31,7 @@ namespace Meow
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)
+		, m_label("")
 		, m_procedureClass(UserDefined)
 		, m_parameterSpace(0)
 		, m_varParam(false)

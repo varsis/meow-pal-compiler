@@ -103,8 +103,8 @@ namespace Meow
 		if (sym && type)
 		{
 			sym->setSizeInMem(type->getTypeSize());
-			sym->setLocation(g_offsetList[m_currentLevel-1]);
-			g_offsetList[m_currentLevel-1] += type->getTypeSize();
+			sym->setLocation(g_offsetList[m_currentLevel]);
+			g_offsetList[m_currentLevel] += type->getTypeSize();
 		}
 	}
 }

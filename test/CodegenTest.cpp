@@ -483,7 +483,7 @@ namespace Meow
 		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
 		EXPECT_EQ(string(buf), "hello world\n"); 
 
-		delete buf;
+		delete [] buf;
 
 		pclose(palout);
 	}
