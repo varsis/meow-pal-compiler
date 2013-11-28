@@ -174,20 +174,31 @@ start_label		: /* empty */
 program_head            : PROGRAM IDENTIFIER 
 				LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
 				SEMICOLON
+			{
+				delete $2;
+				delete $4;
+				delete $6;
+			}
                         | PROGRAM IDENTIFIER 
 				LEFT_PAREN IDENTIFIER COMMA IDENTIFIER
 				SEMICOLON      
                         { errorManager.addError(
 				 new Error(MissingProgramParentheses,
 					"Missing \")\" after program argument list.", 
-					scanner.lineno())); 
+					scanner.lineno()));
+				delete $2;
+				delete $4;
+				delete $6;
                         }
                         | PROGRAM IDENTIFIER 
 				LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
                         { errorManager.addError(
 				 new Error(InvalidProgramHeader,
 					"Missing \";\" after program header.", 
-					scanner.lineno())); 
+					scanner.lineno()));
+				delete $2;
+				delete $4;
+				delete $6;
                         }
 			| PROGRAM IDENTIFIER
 				LEFT_PAREN error RIGHT_PAREN SEMICOLON
@@ -195,6 +206,7 @@ program_head            : PROGRAM IDENTIFIER
 				 new Error(InvalidProgramHeader,
 					"Error in program arguments.",
 					 scanner.lineno()));
+				delete $2;
                         }
                         | /* empty */
                         {
@@ -292,6 +304,7 @@ const_decl              : IDENTIFIER EQ type_expr
 				sym->setType(new Type(*$3));
 				
                                 delete $1;
+				delete $3;
 
 				table.addSymbol(sym);
 				// TODO: Add Symbol to stack at the current level
@@ -328,6 +341,7 @@ const_decl              : IDENTIFIER EQ type_expr
                                     new Error(InvalidConstDecl,
                                           "Invalid constant declaration for '" + *$1 + "'.",
                                           scanner.lineno()));
+				delete $1;
                         }
                         | error { ; }
 			;
@@ -455,6 +469,8 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
 				}
 
 				$$ = semanticHelper.makeArrayType(start, end, $8);
+				delete $3;
+				delete $5;
 			}
 			| ARRAY LEFT_BRACKET simple_type RIGHT_BRACKET OF type
 			{
@@ -1666,6 +1682,7 @@ unsigned_const          : unsigned_num
 					}
 					ascHelper.out() << "\tCONSTI 0" << endl;
 				}
+				delete $1;
 			}
 			;
 

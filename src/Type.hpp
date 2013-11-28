@@ -45,6 +45,10 @@ namespace Meow
 				{
 					m_typeSize = indexType->getEnumSymbols()->size();
 				}
+				else 
+				{
+					m_typeSize = 1;
+				}
 			}
 
 			// Array
@@ -55,7 +59,13 @@ namespace Meow
 				, m_indexType(indexType)
 			{
 				if (elementType)
+				{
 					m_typeSize = (indexRange.end - indexRange.start + 1) * elementType->getTypeSize();
+				}
+				else
+				{
+					m_typeSize = 1;
+				}
 			}
 
 			// Record
@@ -70,6 +80,10 @@ namespace Meow
 					{
 						m_typeSize += fields->at(i)->second->getTypeSize();
 					}
+				}
+				else
+				{
+					m_typeSize = 1;
 				}
 			}
 

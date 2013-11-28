@@ -184,7 +184,7 @@ EXPONENT	E[+-]?{DIGIT}+
 "of" { return token::OF; }
 "or" { return token::OR; }
 "procedure" { g_offsetList.push_back(0); return token::PROCEDURE; }
-"program" { g_offsetList.push_back(0); return token::PROGRAM; }
+"program" { g_offsetList.push_back(0); g_offsetList.push_back(0); return token::PROGRAM; }
 "record" { return token::RECORD; }
 "then" { return token::THEN; }
 "type" { return token::TYPE; }
