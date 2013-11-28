@@ -64,6 +64,8 @@ namespace Meow
 			Type* makeArrayType(ConstExpr start, ConstExpr end, Type* elementType);
 
 			void declareVariable(string id, Type* type);
+			void declareParameter(Symbol* param);
+			Symbol* declareRoutine(string label, string* id, ParameterList* parameters, string* returnId);
 
 			ConstExpr getConstOpResult(Operator op, ConstExpr expr);
 			ConstExpr getConstOpResult(Operator op, ConstExpr left, ConstExpr right);

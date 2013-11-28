@@ -17,10 +17,10 @@
 %code requires 
 {
 
- 	#include <vector>
- 	#include <string>
+	#include <vector>
+	#include <string>
 
- 	#include "Symbol.hpp"
+	#include "Symbol.hpp"
 	#include "SemanticHelper.hpp"
 	#include "AscHelper.hpp"
 
@@ -45,13 +45,13 @@
 %code
 {
 
- 	#include <fstream>
- 	#include "Scanner.hpp"
+	#include <fstream>
+	#include "Scanner.hpp"
 
 	#include "ErrorManager.hpp"
 	#include "Error.hpp"
- 	#include "ErrorCodes.hpp"
- 	#include "SymbolTable.hpp"
+	#include "ErrorCodes.hpp"
+	#include "SymbolTable.hpp"
 
 	#define YYDEBUG 1
 
@@ -180,15 +180,15 @@ program_head            : PROGRAM IDENTIFIER
 				SEMICOLON      
                         { errorManager.addError(
 				 new Error(MissingProgramParentheses,
-                                   	"Missing \")\" after program argument list.", 
-                                   	scanner.lineno())); 
+					"Missing \")\" after program argument list.", 
+					scanner.lineno())); 
                         }
                         | PROGRAM IDENTIFIER 
 				LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
                         { errorManager.addError(
 				 new Error(InvalidProgramHeader,
-                                   	"Missing \";\" after program header.", 
-                                   	scanner.lineno())); 
+					"Missing \";\" after program header.", 
+					scanner.lineno())); 
                         }
 			| PROGRAM IDENTIFIER
 				LEFT_PAREN error RIGHT_PAREN SEMICOLON
@@ -563,7 +563,7 @@ var_decl                : IDENTIFIER COLON type
 						  "Use \":\" to declare variables.",
 						  scanner.lineno()));
 
-              			errorManager.addError(
+				errorManager.addError(
 					new Error(InvalidVarDecl,
 						  "Invalid variable declaration.",
 						  scanner.lineno()));
@@ -595,8 +595,8 @@ proc_decl               : proc_heading decls proc_stat SEMICOLON
 				g_functionStack.pop_back();
 
 				table.decLevel();
-                          	errorManager.addError(
-                              	new Error(InvalidProcDecl,
+				errorManager.addError(
+				new Error(InvalidProcDecl,
                                         "Funct/proc should not end with \".\".",
                                         scanner.lineno()));
                         }
@@ -612,187 +612,55 @@ proc_stat		: start_label compound_stat
 
 proc_heading            : PROCEDURE IDENTIFIER f_parm_decl SEMICOLON
 			{
-				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList;
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				paramList = $3;
-
 				// generate label for start of routine
 				ascHelper.reserveLabels(1);
 				string label = ascHelper.currentLabel(0);
 				ascHelper.popLabels();
 				ascHelper.out() << label << endl;
 
-				// TODO should be some way we could use the same symbol at both lexical levels..
-
-				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-				}
-
-				sym->setLabel(label);
-				table.addSymbol(sym);
-				table.incLevel();
-				
-				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
-				}
-
-                                delete $2;
-
-				sym->setLabel(label);
-				table.addSymbol(sym);
+                                Symbol* sym = semanticHelper.declareRoutine(label, $2, $3, NULL);
 
 				// push function/procedure onto stack
 				g_functionStack.push_back(sym);
 
+                                delete $2;
 
 			}
                         | FUNCTION IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
 			{
-				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList = NULL;
-				Type * returnType;
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				paramList = $3;
-
 				// generate label for start of routine
 				ascHelper.reserveLabels(1);
 				string label = ascHelper.currentLabel(0);
 				ascHelper.popLabels();
 				ascHelper.out() << label << endl;
 
-				sym = new Symbol(*$2, Symbol::FunctionSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-				}
-	
-				
-				returnType = semanticHelper.getTypeFromID(*$5);
-                                
-				sym->setType(returnType);
-				sym->setLabel(label);
-
-				table.addSymbol(sym);
-				table.incLevel();
-				
-				sym = new Symbol(*$2, Symbol::FunctionSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
-				}
-
-				delete $2;
-				delete $5;
-
-				sym->setType(returnType);
-				sym->setLabel(label);
-				table.addSymbol(sym);
+                                Symbol* sym = semanticHelper.declareRoutine(label, $2, $3, $5);
 
 				// push function/procedure onto stack
 				g_functionStack.push_back(sym);
+
+                                delete $2;
+                                delete $5;
 			}
                         | FUNCTION IDENTIFIER f_parm_decl SEMICOLON
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList = NULL;
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				paramList = $3;
-
-				sym = new Symbol(*$2, Symbol::FunctionSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-				}
-
-				table.addSymbol(sym);
-				table.incLevel();
-				
-				sym = new Symbol(*$2, Symbol::FunctionSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
-				}
-
-                                delete $2;
-
-				table.addSymbol(sym);
-
-				// push function/procedure onto stack
+                                string returnType("");
+                                Symbol* sym = semanticHelper.declareRoutine(std::string(""), $2, $3, &returnType);
 				g_functionStack.push_back(sym);
 
-                          	errorManager.addError(
-                              	new Error(InvalidFunctDecl,
+				errorManager.addError(
+				new Error(InvalidFunctDecl,
                                         "Function needs to return a value.",
                                         scanner.lineno()));
                         }
                         | PROCEDURE IDENTIFIER f_parm_decl COLON IDENTIFIER SEMICOLON
                         {
-				Symbol* sym = table.getSymbolCurLevel(*$2);
-				ParameterList* paramList = NULL;
-
-				if (sym)
-				{
-					errorManager.addError(new Error(IdentifierInUse,
-									"Identifier, '" + *$2 + "', was already declared at current lexical level.",
-									scanner.lineno()));
-				}
-
-				paramList = $3;
-
-				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-				}
-
-				table.addSymbol(sym);
-				table.incLevel();
-				
-				sym = new Symbol(*$2, Symbol::ProcedureSymbol);
-				for (size_t i = 0; i < paramList->size(); i++)
-				{
-					sym->addParameter(paramList->at(i));
-					semanticHelper.declareVariable(paramList->at(i).id, paramList->at(i).type);
-				}
-
-                                delete $2;
-
-				table.addSymbol(sym);
-
 				// push function/procedure onto stack
+                                Symbol* sym = semanticHelper.declareRoutine(std::string(""), $2, $3, NULL);
 				g_functionStack.push_back(sym);
 
-                          	errorManager.addError(
-                              	new Error(InvalidProcDecl,
+				errorManager.addError(
+				new Error(InvalidProcDecl,
                                         "Procedure can't return a value.",
                                         scanner.lineno()));
                         }
@@ -965,8 +833,8 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
                           
-			  	errorManager.addError(
-                              	new Error(CStyleAssignment,
+				errorManager.addError(
+				new Error(CStyleAssignment,
                                         "C-style assignment, expected \":=\".",
                                         scanner.lineno()));
                         }
@@ -1006,7 +874,7 @@ var                     : IDENTIFIER
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, false, &g_functionStack);
 				ascHelper.accessVariable(table.getSymbol(*$1));
 				delete $1;
-                        }
+			}
                         | var PERIOD IDENTIFIER
                         {
 				$$.type = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable);

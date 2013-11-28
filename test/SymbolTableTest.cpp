@@ -143,40 +143,31 @@ namespace Meow
 
 	TEST(SymbolTableTest, addFunctionWithParametersTest)
 	{
-		//IdTypePair* parameter1 = new IdTypePair(new std::string("a"), NULL);
-		//IdTypePair* parameter2 = new IdTypePair(new std::string("b"), NULL);
 
-		Parameter parameter1 = {std::string("a"), NULL, false};
-		Parameter parameter2 = {std::string("b"), NULL, false};
 
 		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
-		func->addParameter(parameter1);
-		func->addParameter(parameter2);
+
+		func->addParameter("a", NULL);
+		func->addParameter("b", NULL);
 
 		EXPECT_EQ(func->getParameterCount(), 2u);
 	}
 
 	TEST(SymbolTableTest, getFunctionParmeterNotFoundTest)
 	{
-		//IdTypePair* parameter1 = new IdTypePair(new std::string("a"), NULL);
-		Parameter parameter1 = {std::string("a"), NULL, false};
-
 		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
-		func->addParameter(parameter1);
+		func->addParameter("a", NULL);
 
-		Parameter* searchResult = func->getParameter("b");
+		Symbol* searchResult = func->getParameter("b");
 		EXPECT_FALSE(searchResult);
 	}
 
 	TEST(SymbolTableTest, getFunctionParameterFoundTest)
 	{
-		//IdTypePair* parameter1 = new IdTypePair(new std::string("a"), NULL);
-		Parameter parameter1 = {std::string("a"), NULL, false};
-
 		Symbol* func = new Symbol("myFunc", Symbol::ProcedureSymbol);
-		func->addParameter(parameter1);
+		func->addParameter("a", NULL);
 
-		Parameter* searchResult = func->getParameter("a");
+		Symbol* searchResult = func->getParameter("a");
 		EXPECT_TRUE(searchResult);
 	}
 }

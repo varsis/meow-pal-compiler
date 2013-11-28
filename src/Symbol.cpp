@@ -1,5 +1,8 @@
 #include "Symbol.hpp"
+#include "Type.hpp"
 #include <string>
+
+using namespace std;
 
 namespace Meow
 {
@@ -11,6 +14,8 @@ namespace Meow
 		, m_declLineno(-1)
 		, m_initialized(false)
 		, m_procedureClass(UserDefined)
+		, m_parameterSpace(0)
+		, m_varParam(false)
 	{
 	}
 
@@ -24,6 +29,8 @@ namespace Meow
 		, m_declLineno(-1)
 		, m_initialized(false)
 		, m_procedureClass(UserDefined)
+		, m_parameterSpace(0)
+		, m_varParam(false)
 	{
 	}
 		
@@ -67,9 +74,21 @@ namespace Meow
 		m_initialized = true;
 	}
 
-	void Symbol::addParameter(Parameter parameter)
+	Symbol* Symbol::addParameter(std::string id, Type* type, bool var, int offset)
 	{
-		m_parameters.push_back(parameter);
+		Symbol* param = new Symbol(id, Symbol::VariableSymbol);
+
+		if (type)
+		{
+			param->setType(type);
+			param->setSizeInMem(type->getTypeSize());
+			param->setLocation(-3 - m_parameterSpace + offset); // TODO assume a return val?
+			param->setVarParam(var);
+		}
+
+		m_parameters.push_back(param);
+
+		return param;
 	}
 
 	std::string Symbol::getName()
@@ -117,20 +136,20 @@ namespace Meow
 		return m_parameters.size();
 	}
 
-	ParameterList Symbol::getParameters() const
+	const vector<Symbol*>* Symbol::getParameters() const
 	{
-		return m_parameters;
+		return &m_parameters;
 	}
 
-	Parameter* Symbol::getParameter(std::string name) 
+	Symbol* Symbol::getParameter(std::string name) 
 	{
-		ParameterList::iterator it = m_parameters.begin();
+		vector<Symbol*>::iterator it = m_parameters.begin();
 
 		for (; it != m_parameters.end(); it++)
 		{
-			if ((*it).id.compare(name) == 0)
+			if ((*it)->getName().compare(name) == 0)
 			{
-				return &(*it);
+				return (*it);
 			}
 		}
 
