@@ -50,11 +50,18 @@ namespace Meow
 
 			Value getConstantValue() { return m_constValue; };
 
+			// for parameters...
+			void setVarParam(bool value) { m_varParam = value; };
+			bool isVarParam() { return m_varParam; };
+
 			// for procedures + funcitons..
-			void addParameter(Parameter p);
+			Symbol* addParameter(std::string id, Type* type, bool var = false, int offset = 0);
 			unsigned int getParameterCount() const;
-			ParameterList getParameters() const;
-			Parameter* getParameter(std::string name);	
+			const std::vector<Symbol*>* getParameters() const;
+			Symbol* getParameter(std::string name);	
+
+			int getParameterSpace() { return m_parameterSpace; }
+			void allocParameterSpace(int space) { m_parameterSpace += space; }
 
 			void setLabel(std::string label) { m_label = label; }
 			std::string getLabel() { return m_label; }
@@ -78,7 +85,9 @@ namespace Meow
 
 			// for procedures/functions
 			ProcedureClass m_procedureClass;
-			ParameterList m_parameters;
+			std::vector<Symbol*> m_parameters;
+			int m_parameterSpace;
+			bool m_varParam;
 
 	};
 
