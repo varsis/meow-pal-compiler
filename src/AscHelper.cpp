@@ -77,7 +77,6 @@ namespace Meow
 	void AscHelper::invokeProcedure(string procedureName,
 			InvocationParameters* params)
 	{
-
 		if (m_errorManager->getErrors()->size() > 0)
 		{
 			return;
@@ -101,9 +100,7 @@ namespace Meow
 			argumentSpace += it->type->getTypeSize();
 		}
 
-		// TODO this will need to consider what else may be on the stack 
-		// (return value placeholder, display pointer, program counter, etc)
-		int argPointer = -argumentSpace + 1;
+		int argPointer = -argumentSpace;
 
 		// handle builtin procedures
 
@@ -152,7 +149,39 @@ namespace Meow
 			m_ascOutput << "\tWRITEC" << endl;
 		}
 
-		m_ascOutput << "\tADJUST -" << argumentSpace << endl;
+		// Ordinary procedures/functions...
+		std::string label = procedureSymbol->getLabel();
+		if (label.size() > 0)
+		{
+			// allocate space for return val 
+			// TODO only if necessary?
+			int returnValSize = 1; // TODO
+			m_ascOutput << "\tADJUST " << returnValSize << endl;
+
+			m_ascOutput << "\tCALL " << procedureSymbol->getLexLevel() + 1 << ", "
+						<< label << endl;
+
+			// return value now on top of stack, need to pop it to start of args
+			// this seems way too complicated for this, but the only way to
+			// store to a register is with CALL... :S
+
+			reserveLabels(2);
+			m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+			m_ascOutput << currentLabel(0) << endl;
+			m_ascOutput << "\tPUSH -3[0]" << endl;
+			m_ascOutput << "\tPOP -" << argumentSpace + 3 << "[0]" << endl;
+			m_ascOutput << "\tRET 0" << endl;
+			m_ascOutput << currentLabel(1) << endl;
+			popLabels();
+
+			m_ascOutput << "\tADJUST -" << returnValSize << endl;
+		}
+
+		if (argumentSpace > 0)
+		{
+			m_ascOutput << "\tADJUST -" << argumentSpace << endl;
+		}
 	}
 }
 

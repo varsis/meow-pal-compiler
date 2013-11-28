@@ -56,6 +56,9 @@ namespace Meow
 			ParameterList getParameters() const;
 			Parameter* getParameter(std::string name);	
 
+			void setLabel(std::string label) { m_label = label; }
+			std::string getLabel() { return m_label; }
+
 			void setProcClass(ProcedureClass c) { m_procedureClass = c; }
 			ProcedureClass getProcClass() { return m_procedureClass; }
 
@@ -68,6 +71,7 @@ namespace Meow
 			int m_location;
 			int m_declLineno;
 			bool m_initialized;
+			std::string m_label;
 
 			// for constant symbols..
 			Value m_constValue;
