@@ -817,16 +817,7 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
 
-				if ($1.sym && $1.sym->getSymbolType() == Symbol::FunctionSymbol)
-				{
-					// assign value on top of stack to location reserved for return value
-					// TODO need to consider space needed for structured return values
-					ascHelper.out() << "\tPOP -3[" << $1.sym->getLexLevel() << "]" << endl;
-				}
-                                else
-                                {
-					ascHelper.assignToVariable($1.type, $1.level, $1.offset);
-                                }
+				ascHelper.assignToVariable($1.type, $1.level, $1.offset);
 			}
                         | proc_invok
                         | compound_stat
@@ -862,7 +853,15 @@ lhs_var                 : IDENTIFIER
 				if (sym)
 				{
 					$$.level = sym->getLexLevel();
-					$$.offset = sym->getLocation();
+					if (sym->getSymbolType() == Symbol::FunctionSymbol && $$.type)
+					{
+						// assign value on top of stack to location reserved for return value
+						$$.offset = -(2 + $$.type->getTypeSize());
+					}
+					else
+					{
+						$$.offset = sym->getLocation();
+					}
 				}
 				delete $1;
                         }

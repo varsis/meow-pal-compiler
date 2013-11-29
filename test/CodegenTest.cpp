@@ -1027,4 +1027,75 @@ namespace Meow
 
 		pclose(palout);
 	}
+	
+	TEST(CodegenTest, TestRecordCopy)
+	{
+		ofstream testfile("test/asc/testrecord.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	recordType = record a : integer; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r1 : recordType;" << endl;
+		testfile << "	r2 : recordType;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  r2.a := 125;" << endl;
+		testfile << "  writeln(r2.a);" << endl;
+		testfile << "  r1.a := 55;" << endl;
+		testfile << "  r2 := r1;" << endl;
+		testfile << "  writeln(r2.a);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecord.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 125);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 55);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecordCopy2)
+	{
+		ofstream testfile("test/asc/testrecord.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	recordType = record a : integer; b : integer; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r1 : recordType;" << endl;
+		testfile << "	r2 : recordType;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  r2.a := 1;" << endl;
+		testfile << "  r2.b := 2;" << endl;
+		testfile << "  writeln(r2.a);" << endl;
+		testfile << "  writeln(r2.b);" << endl;
+		testfile << "  r1.a := 11;" << endl;
+		testfile << "  r1.b := 22;" << endl;
+		testfile << "  r2 := r1;" << endl;
+		testfile << "  writeln(r2.a);" << endl;
+		testfile << "  writeln(r2.b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecord.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 1);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 2);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		pclose(palout);
+	}
 }

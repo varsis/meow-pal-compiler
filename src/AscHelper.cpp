@@ -222,14 +222,26 @@ namespace Meow
 
 	void AscHelper::accessVariable(Type* valueType, int level, int offset)
 	{
-		// TODO -- copy more stuff for structured types!
-		m_ascOutput << "\tPUSH " << offset << "[" << level << "]" << endl;
+		// only do this if there are no errors -- bad type sizes can make this thing run
+		// a lonnggg time!
+		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		{
+			for (int i = 0; i < valueType->getTypeSize(); ++i)
+			{
+				m_ascOutput << "\tPUSH " << offset + i<< "[" << level << "]" << endl;
+			}
+		}
 	}	
 
 	void AscHelper::assignToVariable(Type* valueType, int level, int offset)
 	{
-		// TODO -- copy more stuff for structured types!
-		m_ascOutput << "\tPOP " << offset<< "[" << level << "]" << endl;
+		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		{
+			for (int i = valueType->getTypeSize(); i > 0; --i)
+			{
+				m_ascOutput << "\tPOP " << offset + i - 1 << "[" << level << "]" << endl;
+			}
+		}
 	}
 
 	void AscHelper::deallocVariables()
