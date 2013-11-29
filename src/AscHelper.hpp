@@ -23,6 +23,9 @@ namespace Meow
 			void invokeProcedure(string procedureName, 
 					InvocationParameters* params);
 
+			void invokeWrite(InvocationParameters* params);
+			void invokeWriteln(InvocationParameters* params);
+
 			ofstream& out() { return m_ascOutput; }
 			void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
 			void simpleExpressionMod();

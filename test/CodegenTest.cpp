@@ -670,7 +670,6 @@ namespace Meow
 		pclose(palout);
 	}
 
-	/* TODO Can't properly test until we have variables and comparisons working fully
 	TEST(CodegenTest, TestWhileLoop0)
 	{
 		ofstream testfile("test/asc/test.pal");
@@ -700,7 +699,6 @@ namespace Meow
 
 		pclose(palout);
 	}
-	*/
 
 	TEST(CodegenTest, TestProcedure1)
 	{
@@ -874,6 +872,63 @@ namespace Meow
 
 		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
 		EXPECT_EQ(val, 48);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestVariables)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  a := 5;" << endl;
+		testfile << "  writeln(a + 3);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 8);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestVariables2)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a, b : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  a := 1;" << endl;
+		testfile << "  b := 2;" << endl;
+		testfile << "  writeln(a);" << endl;
+		testfile << "  writeln(b);" << endl;
+		testfile << "  writeln(a + b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 1);
+
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 2);
+
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 3);
 
 		pclose(palout);
 	}
