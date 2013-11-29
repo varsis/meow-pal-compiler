@@ -84,7 +84,7 @@ namespace Meow
 			void checkInvocationArgs(Symbol* fpSymbol, 
 						InvocationParameters* params);
 
-			Type* getRecordFieldType(Type* recordType, string fieldName, bool& assignable);
+			Type* getRecordFieldType(Type* recordType, string fieldName, bool& assignable, int& offset);
 			Type* getSubscriptedArrayType(Type* arrayType, Type* subscriptType, bool& assignable);
 
 			bool checkDuplicateField(IdTypePairList* fields, IdTypePair* field);

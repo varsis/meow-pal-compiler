@@ -220,20 +220,16 @@ namespace Meow
 		}
 	}
 
-	void AscHelper::accessVariable(Symbol* sym)
+	void AscHelper::accessVariable(Type* valueType, int level, int offset)
 	{
-		if (sym)
-		{
-			m_ascOutput << "\tPUSH " << sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
-		}
+		// TODO -- copy more stuff for structured types!
+		m_ascOutput << "\tPUSH " << offset << "[" << level << "]" << endl;
 	}	
 
-	void AscHelper::assignToVariable(Symbol* sym)
+	void AscHelper::assignToVariable(Type* valueType, int level, int offset)
 	{
-		if (sym)
-		{
-			m_ascOutput << "\tPOP " << sym->getLocation() << "[" << sym->getLexLevel() << "]" <<endl;
-		}
+		// TODO -- copy more stuff for structured types!
+		m_ascOutput << "\tPOP " << offset<< "[" << level << "]" << endl;
 	}
 
 	void AscHelper::deallocVariables()

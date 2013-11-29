@@ -1110,12 +1110,15 @@ namespace Meow
 		}
 	}
 
-
-	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName, bool& assignable)
+	// returns type for field of record
+	// assignable = true if valid field access
+	// offset = offset for field from start of record
+	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName, bool& assignable, int& offset)
 	{
 		Type* fieldType = NULL;
 
 		assignable = false; // only assignable if valid record.field access
+		offset = 0;
 
 		if (recordType == NULL)
 		{
@@ -1149,7 +1152,10 @@ namespace Meow
 						
 						// valid field access, is assignable
 						assignable = true;
+						break;
 					}
+
+					offset += (*it)->second->getTypeSize();
 				}
 			}
 
