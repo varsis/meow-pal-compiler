@@ -763,7 +763,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestFunction1)
 	{
-		ofstream testfile("test/asc/test.pal");
+		ofstream testfile("test/asc/testfn.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "function foo() : integer;" << endl;
@@ -776,7 +776,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/testfn.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;
@@ -844,7 +844,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestFunctionArgs)
 	{
-		ofstream testfile("test/asc/test.pal");
+		ofstream testfile("test/asc/testfnargs.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "function foo(i : integer; j : integer) : integer;" << endl;
@@ -860,7 +860,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/testfnargs.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;

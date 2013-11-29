@@ -409,7 +409,7 @@ namespace Meow
 	Symbol* SemanticHelper::declareRoutine(string label, string* id, ParameterList* parameters, string* returnId)
 	{
 		Symbol* routineSym = m_table->getSymbolCurLevel(*id);
-		Type * returnType;
+		Type * returnType = NULL;
 		int offset;
 
 		if (routineSym)
@@ -478,7 +478,10 @@ namespace Meow
 			offset += parameters->at(i).type->getTypeSize();
 		}
 
-		routineSym->setType(returnType);
+		if (returnId != NULL)
+		{
+			routineSym->setType(returnType);
+		}
 
 		routineSym->setLabel(label);
 
