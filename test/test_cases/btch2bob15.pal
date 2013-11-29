@@ -1,0 +1,73 @@
+// C415 PAL Compiler test file
+// Stella Luk, Andrew Lau, Isaac Yuen
+//
+// 9.pal
+//
+// General errors all around 
+//
+// 1. Line 21 - invalid array subrange of reals
+// 2. Line 23 - invalid array subrange of (expressions that evaluate to) reals
+// 3. Line 39 - invalid attempt to get a return value of a procedure (and then write to it!)
+// 4. Line 49 - invalid attempt to assign to the return value of a function out of scope 
+// 5. Line 66 - invalid assignment of <integer> := <real expression>
+
+program main(input,output);
+
+const	arrstrt = 1;
+	one = 1.1;
+	two = 2.2; 
+	three = 3.3;
+	expr = ((one*two/three))/(one);
+
+type 	badArr = array[1.1..7.7] of integer; //invalid array subrange of reals
+	goodArr = array[arrstrt+arrstrt .. 20] of integer;
+	badArr2 = array[expr..expr] of integer; //invalid array subrange of reals
+	string = array[1..6] of char;
+
+var 	x,y: integer;
+	mystring :string;
+	procedure ODD (x:integer);
+
+		procedure EVEN();
+		var y : real;
+			n, oddcount, evencount : integer;
+		begin
+			
+			if x<>0 then begin
+				evencount := evencount + 1; 
+				x := x div 2;
+				if odd(x) then 
+					ODD := ODD(x) //invalid attempt to get return
+						      //value of a procedure
+			end;
+		end;
+		function FUNC1(): integer;
+		begin
+		end;
+		function FUNC2(): integer; 
+		begin	
+			FUNC1 := FUNC2(); //invalid attempt to assign to the return 
+					  //value of a neighbouring procedure (out of scope)
+		end;
+
+	begin
+	end;
+
+	procedure EVEN (x:integer);
+		type	sixstring = array[1..6] of char; 
+		var	mystring : sixstring;
+		procedure ODD (var y: integer);
+		var z : real;
+		begin
+			mystring := 'andrew';
+			mystring := 'stella';
+		end;
+	begin
+		x := expr; //invalid assignment. x is an integer, expr is a real
+	end;
+
+begin
+	readln();	
+	mystring := 'stella';
+write('I can print ints ',x,'reals',abs(expr),'and strings ',mystring);
+end.

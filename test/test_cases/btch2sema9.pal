@@ -1,0 +1,27 @@
+// checks redefintion of types and built in functs
+// (semantic) (no errors)
+
+program sqrtreturn(input, output);
+
+var	x : char; 	
+	y : real; 
+  	z : integer;
+
+procedure redef();
+	
+	function sqrt( x : char ): integer;
+		begin
+			sqrt := 7;
+		end;	
+	
+	begin
+		
+		z := sqrt(x);
+	end;
+
+begin
+	redef();	
+	
+	y := sqrt(x);
+
+end.

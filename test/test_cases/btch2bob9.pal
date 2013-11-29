@@ -1,0 +1,110 @@
+program pal2(a1,a2);
+
+type
+//simple type synonyms
+tsyn1 = integer;
+tsyn2 = tsyn1;
+
+var
+//simple typed vars
+v1:integer;
+vsyn1:tsyn1;
+vsyn2:tsyn2;
+
+//boolean var for testing expressions
+boo:boolean;
+
+begin
+
+  //check simple compatible assignments.
+  //the following assignments should all parse correctly.
+  v1 := 1;
+  v1 := vsyn1;
+  v1 := vsyn2;
+  vsyn1 := 1;
+  vsyn1 := v1;
+  vsyn1 := vsyn2;
+  vsyn2 := 1;
+  vsyn2 := v1;
+  vsyn2 := vsyn1;
+
+  //simple expressions
+  //the following boolean expressions should all parse correctly
+  boo := 1 =  1;
+  boo := 1 <> 1;
+  boo := 1 <  1;
+  boo := 1 <= 1;
+  boo := 1 >  1;
+  boo := 1 >= 1;
+
+  boo := v1 =  1;
+  boo := v1 <> 1;
+  boo := v1 <  1;
+  boo := v1 <= 1;
+  boo := v1 >  1;
+  boo := v1 >= 1;
+
+  boo := 1 =  v1;
+  boo := 1 <> v1;
+  boo := 1 <  v1;
+  boo := 1 <= v1;
+  boo := 1 >  v1;
+  boo := 1 >= v1;
+
+  boo := v1 =  v1;
+  boo := v1 <> v1;
+  boo := v1 <  v1;
+  boo := v1 <= v1;
+  boo := v1 >  v1;
+  boo := v1 >= v1;
+
+  boo := vsyn1 = 1;
+  boo := vsyn1 <> 1;
+  boo := vsyn1 <  1;
+  boo := vsyn1 <= 1;
+  boo := vsyn1 >  1;
+  boo := vsyn1 >= 1;
+
+  boo := 1 =  vsyn1;
+  boo := 1 <> vsyn1;
+  boo := 1 <  vsyn1;
+  boo := 1 <= vsyn1;
+  boo := 1 >  vsyn1;
+  boo := 1 >= vsyn1;
+
+  boo := v1 =  vsyn1;
+  boo := v1 <> vsyn1;
+  boo := v1 <  vsyn1;
+  boo := v1 <= vsyn1;
+  boo := v1 >  vsyn1;
+  boo := v1 >= vsyn1;
+
+  boo := vsyn1 =  v1;
+  boo := vsyn1 <> v1;
+  boo := vsyn1 <  v1;
+  boo := vsyn1 <= v1;
+  boo := vsyn1 >  v1;
+  boo := vsyn1 >= v1;
+
+  boo := vsyn1 =  vsyn1;
+  boo := vsyn1 <> vsyn1;
+  boo := vsyn1 <  vsyn1;
+  boo := vsyn1 <= vsyn1;
+  boo := vsyn1 >  vsyn1;
+  boo := vsyn1 >= vsyn1;
+
+// Now for the semantic errors
+{ SEMANTIC ERROR }
+  boo := vsyn1 + vsyn1;  // Incompatible assignment
+{ END SEMANTIC ERROR }
+
+{ SEMANTIC ERROR }
+  boo := boo + 1;  // Incompatible operands
+{ END SEMANTIC ERROR }
+
+{ SEMANTIC ERROR }
+  v1 := boo;  // Incompatible assignment
+{ END SEMANTIC ERROR }
+
+
+end.

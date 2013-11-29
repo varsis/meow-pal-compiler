@@ -1,0 +1,12 @@
+// invalid double definitions (semantic) (2 errors)
+
+program doubledef(input, output);
+
+const
+	bob = 1;
+	bob = 2;
+type
+	fred = real;
+	bob = fred;
+begin
+end.

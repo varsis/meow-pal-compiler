@@ -1,0 +1,73 @@
+{
+*Program 1.pal  (Syntax errors)
+*
+* Error in line 55 missing , between the two parameters on function invocation.
+* Error in line 66 else without if
+* Error in line 70 unexpected end. (end. writed twice)
+*}
+
+program pal1(input, output);
+
+const
+     h1 = 1;
+     h2 = 2;
+     h3 = 3;
+     h4 = 4;
+     i1 = 1/2;
+     i2 = 2.2;
+     i3 = 3.3;
+
+type 
+   string2 = array[1..8] of char;
+
+var
+   suma, rest, mult, divi : integer;
+   real1, real2, real3 : real;
+   str : string2;
+   bandera : char;
+   counter : integer;
+
+function abc (x : integer; y : integer) : integer;
+begin
+        abc:= x+y;
+end;
+begin
+     real2 := i1 / i3;
+     if h1 < h2 then
+         rest := h2 - h1
+     else
+         rest := h1 - h2;
+     real1:= 1.2;
+     counter:=0;
+     mult:=5;
+     real2 := -3 + 4;
+     while counter<h3 do
+     begin
+           real1 := real1 * h4 / i2;
+           counter := counter + 1;
+                   while (real2 - 30) <h4 do
+                   begin
+                       write('___',real2,'___');
+                      real2 := real2 * 2;
+                   end;
+           write ('-----', real1, '-----');
+     end;
+     suma:= abc( rest mult);
+
+     writeln('------------------------------');
+     writeln ('The answer is ---', suma, '---');
+     writeln ('Press enter to exit');
+     read (bandera);
+
+     if (h3>h2) then
+     begin
+          real2:= 4.333;
+     end;            // Finish the if becouse of the ;
+     else
+         real2:= 15;
+
+end.
+end.
+
+
+

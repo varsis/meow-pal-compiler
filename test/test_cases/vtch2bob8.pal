@@ -1,0 +1,84 @@
+{ Semantic errors:
+
+}
+program example(input, output);
+type
+	vect	= array [1..4] of real;
+
+var
+	b	: real;
+	M	: vect;
+
+function A ( B : integer ) : real;
+    procedure C ( D: integer);
+        function A ( B : integer ) : real;
+            procedure C ( D: integer);
+                function A ( B : integer ) : real;
+                    procedure C ( D: integer);
+
+function A ( B : integer ) : real;
+    procedure C ( D: integer);
+        function A ( B : integer ) : real;
+            procedure C ( D: integer);
+                function A ( B : integer ) : real;
+                    procedure C ( D: integer);
+
+        function A ( B : integer ) : real;
+            procedure C ( D: integer);
+                var
+                    foo: record
+                    foo: record
+                    foo: record
+                    foo: record
+                    foo: record
+                    foo: record
+                    foo: record
+                    foo: record
+                    foo: record
+                    foo: record
+                        a: integer
+                    end
+                    end
+                    end
+                    end
+                    end
+                    end
+                    end
+                    end
+                    end
+                    end;    
+            begin
+            end;
+        begin
+        end;
+                    begin
+                    end;
+                begin
+                end;
+            begin
+            end;
+        begin
+        end;
+    begin
+    end;
+begin
+end;
+                    begin
+                    end;
+                begin
+                end;
+            begin
+            end;
+        begin
+        end;
+    begin
+    end;
+begin
+end;
+
+begin
+        b := 1.3;
+        M[1] := b;
+        b := M[2];
+        b := A(10);
+end.

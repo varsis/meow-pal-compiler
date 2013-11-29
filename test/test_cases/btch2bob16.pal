@@ -1,0 +1,91 @@
+{ This test case checks semantic errors in procedure/function invocation,
+  including predefined functions. 
+  please search word 'error'. each error has a comment beside it.
+}
+
+program testcase8 (input, output);
+
+  const a = 100;
+        b = 99;
+        c = 'string';
+
+  type	string = array [1..100] of char;
+        weekdays = ( Mon, Tue, Wed, Thu, Fri);
+        int = integer;
+        arraytype = array [1..10] of int;
+        sturec = record
+                  id : integer;
+                  name : string
+                end;
+
+  var i : int;
+      j : integer;
+      k : real;
+      l : string;
+      m : char;
+      today : weekdays;
+      array1 : arraytype;
+      student : sturec;
+
+  procedure proc1 (x : integer; z : char);
+    procedure proc11();
+      begin
+        writeln('dumb function. used for scope test');
+      end;
+    begin
+      y := x + y;
+    end;
+
+  procedure proc2 (x : sturec; var y : arraytype);
+    begin
+      y := x + y;
+    end;
+
+  function func1 (x : integer; var y : real) : integer;
+    begin
+      func1 := x + y * 5.0; { error: return value must be compatible with
+                              the declared return type }
+    end;
+
+  procedure proc3(var s: string);
+    var i : integer;
+    procedure proc31();
+      begin
+        proc1(i, 'z'); { proc1 is visible }
+      end;
+    begin
+    end;
+
+begin
+  proc1(j); { error: number of arguments of invocation must match
+               against number of parameters of declaration }
+
+  proc1(k, c); { error: type of each argument must match against
+                     type of each corresponding parameter. here k and c
+                     are not matched. for i, its type is int. but int
+                     is integer, so i can be passed to x. }
+
+  i := i * func1(i, j); //type mismatch
+
+  i := func1(i, 5);    { error: the var parameter means call by refrence.
+                       so a variable is needed to pass in. the
+                       variable can be simple variable, element
+                       of array, field of record, and even array
+                       or record (see next three statement. however
+                       you can not pass an arbitrary expression
+                       or const value. }
+
+  { The following statement is good. for call-by-value parameter,
+    the corresponding argument can be variable, const, or an expression.
+    must type checking expression and evaluate the value of expression.}
+  proc2 (i+j*71, m);
+
+  { The following two statement are good. element of array,
+    field of record is variable. }
+  proc1 (student.id, 'a');
+  proc1 (array1[1], 'a');
+
+  { The array or record is also variable. so they can also be passed
+    as argument. }
+  proc2 (student, array1);
+end.

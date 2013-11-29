@@ -1,0 +1,97 @@
+// C415 PAL Compiler test file
+// Andrew Lau, Isaac Yuen,Stella Luk
+// C415G05
+// 
+// 4.pal
+//
+// 3 Semantic Errors:
+// line 95: Incompatible types in assignment. Cannot assign real to int
+// line 100: 'continue' cannot be used outside loop.
+
+program pal2(input,output);
+	const
+		c1 = 5;
+		c2 = 5.0;
+		c3 = 'a';
+		c4 = false;
+		c5 = 'superduper';
+		
+		c6 = c1;
+		c7 = 5 + 7;
+		c7a = 5.0 + 7.0;
+		c7b = 5 + 7.0;
+		c7c = c7 + c7a;
+		c8 = c7/8;
+		c9 = not false;
+		c12 = 3*29;
+		c12a = true or false;
+		c13 = -5;
+		c14 = -5.0;
+		c15 = -c1;
+		c16 = +5;
+		c17 = +5.0;
+		c18 = +c1;
+		c19 = ((-c1) + 6.0);
+		c20 = 5.04/4;
+		c21 = 4/5.004;
+		c22 = 4 mod 5;
+		c23 = 5 div 4;
+		c25 = c4 and false;
+		
+		c26e = 5 >= 5;
+		c27e= 5.0 < 5;
+		c28e = 5 = 5.0;
+		c29e = true <> true;
+		c30e = 5.0 <= 5.0;
+		c31e = 'c' >= 'c';
+		c32e = 'hello' > 'hello';
+		
+	type
+		myReal = real;
+		myArray = array[1..30] of integer;
+		myRecord = record 
+		    field1 : integer;
+		    field2 : myReal
+		end;
+		myAlias = myReal;
+		weekdays = (monday,tuesday,wednesday,thursday,friday);
+	var
+		var1a,var1b,var1c : integer;
+		var2 : myReal;
+		var3 : real;
+		var4 : myRecord;
+		var5 : myArray;
+		
+	procedure proc1 (Para : integer);
+		{ test we can declare vars inside a procedure... }  
+		var procVar : integer; 
+		begin  
+			procVar := Para; 
+			if procVar=5 then begin
+				write('testProcedure.pal: ',
+					'Test for procedure call passed');
+			end
+			else begin
+				writeln(
+				);
+			end
+		end;	
+	
+	begin
+		var2 := c21;
+		var3 := var3;
+		var4.field2 := c7*sqr(var3);
+		var4.field1 := (3*(-8) - c1 + maxint)*12345;
+		var5[3] := -3;
+		while(var5[9 div 3] < 7/8) do
+			begin
+				var3 := var2 + 5.005 - (-4)/6;
+				var2 := 5 mod 7 div 9;
+				// error incompatible types: can't assign int to real
+				var1a := var2/9;
+				var5[3 mod 5] := var5[3 mod 5] + ord(monday);
+			end;
+		
+		// error: illegal outside loop
+		continue;
+	end.

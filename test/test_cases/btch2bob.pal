@@ -1,0 +1,31 @@
+{  5.pal - semantic test file                                          }
+{  This program focuses on scope and type-comparison issues.           }
+{semantic errors:                                                      }
+{        line 16, redeclarations,                                      }
+{        line 26, out-of-scope use,                                    }
+{                                             }
+
+program example( input, output );
+                           { program takes input/output from terminal }
+  type string = array[1..30] of char; 
+  var  x      : integer;
+       y      : real;
+       answer : integer;
+       flag   : char;
+       str    : string;
+       x      : char; {redefinition of x!}
+
+  procedure mommy (kitten : real);
+	var jesus	: string;
+	begin
+		jesus := 'this string is in a localscope';
+		flag := 'c'; {an assignment to a variable in a greater scope: is okay}
+	end;
+  begin         { main-program }
+    str := 'This string is the best string EVER!';
+    jesus	:= 'this should be an error'; {assignment out of scope...bad!}
+    read(answer);
+    mommy(y); {should be valid...}
+    str := 'slightly different, but still!';
+
+  end.

@@ -1,0 +1,328 @@
+{
+	error 1 : ~line 319 = too many indexers
+	error 2 : ~line 320 = too many record fields
+	error 3 : ~line 321 = too many subindices
+}
+
+program datatypes(input,output);
+
+type
+    enum = (OH,MY,GOD);
+	
+    a1 = array [enum] of enum;
+    a2 = array [enum] of a1;
+    a3 = array [enum] of a2;
+    a4 = array [enum] of a3;
+    a5 = array [enum] of a4;
+    a6 = array [enum] of a5;
+    a7 = array [enum] of a6;
+    a8 = array [enum] of a7;
+    a9 = array [enum] of a8;
+    a10 = array [enum] of a9;
+    a11 = array [enum] of a10;
+    a12 = array [enum] of a11;
+    a13 = array [enum] of a12;
+    a14 = array [enum] of a13;
+    a15 = array [enum] of a14;
+    a16 = array [enum] of a15;
+    a17 = array [enum] of a16;
+    a18 = array [enum] of a17;
+    a19 = array [enum] of a18;
+    a20 = array [enum] of a19;
+    a21 = array [enum] of a20;
+    a22 = array [enum] of a21;
+    a23 = array [enum] of a22;
+    a24 = array [enum] of a23;
+    a25 = array [enum] of a24;
+    a26 = array [enum] of a25;
+    a27 = array [enum] of a26;
+    a28 = array [enum] of a27;
+    a29 = array [enum] of a28;
+    a30 = array [enum] of a29;
+    a31 = array [enum] of a30;
+    a32 = array [enum] of a31;
+    a33 = array [enum] of a32;
+    a34 = array [enum] of a33;
+    a35 = array [enum] of a34;
+    a36 = array [enum] of a35;
+    a37 = array [enum] of a36;
+    a38 = array [enum] of a37;
+    a39 = array [enum] of a38;
+    a40 = array [enum] of a39;
+    a41 = array [enum] of a40;
+    a42 = array [enum] of a41;
+    a43 = array [enum] of a42;
+    a44 = array [enum] of a43;
+    a45 = array [enum] of a44;
+    a46 = array [enum] of a45;
+    a47 = array [enum] of a46;
+    a48 = array [enum] of a47;
+    a49 = array [enum] of a48;
+    a50 = array [enum] of a49;
+    a51 = array [enum] of a50;
+    a52 = array [enum] of a51;
+    a53 = array [enum] of a52;
+    a54 = array [enum] of a53;
+    a55 = array [enum] of a54;
+    a56 = array [enum] of a55;
+    a57 = array [enum] of a56;
+    a58 = array [enum] of a57;
+    a59 = array [enum] of a58;
+    a60 = array [enum] of a59;
+    a61 = array [enum] of a60;
+    a62 = array [enum] of a61;
+    a63 = array [enum] of a62;
+    a64 = array [enum] of a63;
+    a65 = array [enum] of a64;
+    a66 = array [enum] of a65;
+    a67 = array [enum] of a66;
+    a68 = array [enum] of a67;
+    a69 = array [enum] of a68;
+    a70 = array [enum] of a69;
+    a71 = array [enum] of a70;
+    a72 = array [enum] of a71;
+    a73 = array [enum] of a72;
+    a74 = array [enum] of a73;
+    a75 = array [enum] of a74;
+    a76 = array [enum] of a75;
+    a77 = array [enum] of a76;
+    a78 = array [enum] of a77;
+    a79 = array [enum] of a78;
+    a80 = array [enum] of a79;
+    a81 = array [enum] of a80;
+    a82 = array [enum] of a81;
+    a83 = array [enum] of a82;
+    a84 = array [enum] of a83;
+    a85 = array [enum] of a84;
+    a86 = array [enum] of a85;
+    a87 = array [enum] of a86;
+    a88 = array [enum] of a87;
+    a89 = array [enum] of a88;
+    a90 = array [enum] of a89;
+    a91 = array [enum] of a90;
+    a92 = array [enum] of a91;
+    a93 = array [enum] of a92;
+    a94 = array [enum] of a93;
+    a95 = array [enum] of a94;
+    a96 = array [enum] of a95;
+    a97 = array [enum] of a96;
+    a98 = array [enum] of a97;
+    a99 = array [enum] of a98;
+    a100 = array [enum] of a99;
+    
+    r1 = 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	record a : 
+	integer
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	end
+	;
+	
+	a101 = array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of array [enum] of enum;
+
+var
+	bleat : a100;
+	oorgle : r1;
+	brawr : a101;
+
+begin
+	bleat[OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][OH][MY] := GOD;
+	oorgle.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a := 0;
+	brawr[OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,OH,MY,MY,MY,MY,MY] := GOD;
+end.

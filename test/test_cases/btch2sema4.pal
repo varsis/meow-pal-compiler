@@ -1,0 +1,9 @@
+// tests proper ranges and also type decl (semantic) (3 errors)
+
+program notint(input, output);
+type
+	bob = array[1.4..5] of char;
+	fred = array[5..1.8] of boolean;
+	albert = array[1..3] of bob;
+begin
+end.

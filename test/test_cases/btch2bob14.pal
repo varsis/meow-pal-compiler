@@ -1,0 +1,254 @@
+{
+*************************************************************************
+*
+* Error file: 9.pal
+*
+* Error: In this program, there exists  semantic errors
+*
+* Error 1) Line 135 : There is an error at 135 line because int is already defined
+*		      in line 133 and this will trigger an error message:
+*		  
+*
+* Error 2) Line 184 : There is an error at line 184 because variable a is already
+*		      defined at the parameter and so when it defined another
+*		      variable a, it will trigger an error and the error message
+*		      is:
+*		      *** Line  184  a has already been defined.  **
+*
+* Error 3) Line 197 : There is an error at line 197 because anumber is an constant and
+*		      cannot modify it. Attempt to modify a constant will trigger an
+* 		      error and the error message is:
+*		      *** Line  197   Invalid assignment.  Types are not compatible.   ***
+*
+* Error 4) Line 201 : There is an error at line 201 because astring is an constant
+*		      string and char1 is a character type, so they are not
+*		      compatible. This will trigger an error and the error message
+*		      is:
+*		      *** Line 201   Invalid assignment.  Types are not compatible.   ***
+*
+* Error 5) Line 205 : There is an error at line 205 because int2 does not declare
+*		      in the program and this will trigger an error. The error
+* 		      message is:
+*		      *** Line  205  int2 has not been declared.  **
+*
+* Error 6) Line 209 : There is an error at 209 line because the parameter of pro1 is
+*		      an integer and it is not compatible when pass a real as an
+*		      argument of pro1. This will trigger an error and the error
+*		      message is:
+*		      *** Line  209  Argument 1 of pro1 is not a compatible type.  **
+*
+* Error 7) Line 210 : There is an error at line 210 because the parameter of pro1 is
+*		      an integer and it is not compatible when pass a fraction as an
+*		      argument of pro1. This will trigger an error and the error
+*		      message is:
+*		      *** Line  210  Argument 1 of pro1 is not a compatible type.  **
+*
+* Error 8) Line 211 : There is an error at line 211 because the parameter of pro1 is
+*		      an integer and it is not compatible when pass a real as an
+*		      argument of pro1. anumber is an integer but when anumber added 
+*		      to 1.0, it become a real and This will trigger an error and 
+*		      the error message is:
+*		      *** Line  211  Argument 1 of pro1 is not a compatible type.  **
+*
+* Error 9) Line 219 : There is an error at line 219 because list type does not contain
+* 		      'AB' and so it will trigger when an error when assign 'AB'
+*		      to a list type variable. The error message is:
+*		      *** Line  219  AB has not been declared.  **
+*
+* Error 10) Line 221: There is an error at line 221 because function func2 declares 
+*		      inside the pro1 and so it cannot call func2 from the
+*		      main program. This action will trigger an error and the
+* 		      error message is:
+*		      *** Line  221  func2 is not defined as a function.  **
+* 
+* Error 11) Line 223 : There is an error at line 223 because the object type of ar1 is
+* 		       integer and astring is a sequence of characters. They are
+* 		       not compatible and the assignment action will trigger an
+*		       error and the error message is:
+*		       *** Line  223   Invalid assignment.  Types are not compatible.   ***
+*
+* Error 12) Line 225 : There is an error at line 225 because ar3 is an array and cannot
+* 		       access the field. This action will trigger an error message and
+*		       the error message is:
+*		       *** Line  225   Cannot access field.  Variable is not a record.   ***
+* 
+* Error 13) Line 232 : There is an error at line 232 because ar1[1] is an integer type and
+* 		       rec2.second is a char type and they are incompatible. This
+*		       action will trigger an error message and the error message is:
+*		       *** Line  232   Invalid assignment.  Types are not compatible.   ***
+*
+* Error 14) Line 233 : There is an error at line 233 because rec3.third is an real type and
+* 		       rec1.second is a character type and thet are incompatible. This
+*		       action will trigger an error message and the error message is:
+*		       *** Line  233   Invalid assignment.  Types are not compatible.   ***
+*
+* Error 15) Line 236 : There is an error at 236 line because procedure pro2 does not define
+*	    	       in the program and the error message is:
+*		       *** Line  236  pro2 is neither a function nor procedure.  **
+*
+* Error 16) Line 238 : There is an error at line 238 because procedure pro1 only has one
+*		       parameter and when it pass three parameters into pro1, the
+*		       argument 2 and argument 3 does not expected and this will
+* 		       trigger an error and the error message is:
+*		       *** Line  238  Argument 2 is NOT expected for pro1.  **
+*		       *** Line  238  Argument 3 is NOT expected for pro1.  **
+*
+* Error 17) Line 247 : There is an error at line 247 because because ar is not declared
+*		       in the program and so this will trigger an error message.
+*		       The error message is:
+*		       *** Line  247  ar has not been declared.  **
+*
+* Error 18) Line 249 : There is an error at line 249 because ar4's index starts at 6
+*		       and assignment of string must start with index and will trigger an error. The error message is:
+*		       *** Line  249   Invalid assignment.  Types are not compatible.   ***
+* 
+* Error 19) Line 252 : There is an error at line 252 because boo1 is boolean type and
+*		       it is illegal to assign a 1 to a boolean type variable.
+* 	  	       This will trigger an error and the error message is:
+*		       *** Line  252   Invalid assignment.  Types are not compatible.   ***
+*
+*************************************************************************
+}
+
+program pal9 (input, output);
+
+const   astring = 'abcdef';		
+	anumber = 150;
+	areal = 30.25;			
+	achar = 'k';			
+	afraction = 2/3;		
+
+	
+type	arr1 = array[1..5] of integer;     
+
+	arr2 = array[1..5] of (three,four,five);
+
+	arr3 = array['a'..'z'] of integer;
+
+	arr4 = array[6..10] of real;
+
+	character = char;			
+	ch = character;			
+	list = (AA,BB,CC);
+
+ 	int = integer;	
+	int = real;		// Error 1) integer already defined, * error *
+	
+ 	record1 = record first  : integer;
+		         second : character
+	          end;
+
+        record2 = record first  : integer;
+		         second : character
+	          end;
+
+	record3 = record  first  : integer;
+		          second : array[1..6] of char;       
+		          third  : real	  
+                  end;
+        
+
+var	char1 : char;
+	char2 : ch;
+	int1  : integer;
+	lst1  : list;
+	rec1  : record1;
+	rec2  : record2;
+	rec3  : record3;
+	ar1   : arr1;
+	ar2   : arr2;
+	ar3   : arr3;
+	ar4   : arr4;
+	real1 : real;
+	boo1 : boolean;
+
+
+procedure pro1(a:integer);		
+
+var  b: integer;
+
+ function func2():character;
+  var a: integer;
+  begin
+  end;
+			
+begin
+  b := 0;
+  a := b + 1;
+end;
+
+
+function func1(a:integer;b:integer):integer;
+const anumber = 12;			// this constant is good because of different level
+
+var a:real;				// Error 2) a is already defined at the parameter
+    ar1: arr1;	
+
+begin
+  
+end;
+
+
+begin	{ main program }
+ 	
+  char1 := achar; 			
+  char2 := achar;
+
+  anumber := 50;			// Error 3) Cannot modify constant
+
+  if (char1 = char2) then
+   char1 := astring 			// Error 4) Cannot assign a string to a character
+  else
+   int1 := anumber;
+
+  int1 := 0;
+  while int2 >= int1 do			// Error 5) int2 has not declared
+    int1 := int1 + 1; 
+
+  pro1(anumber);
+  pro1(areal);				// Error 6) Argument 1 of pro1 is not compatible
+  pro1(afraction);			// Error 7) Argument 1 of pro1 is not compatible
+  pro1(anumber + 1.0);			// Error 8) Argument 1 of pro1 is not compatible
+  
+  ar3['b'] := anumber;
+  rec1.second := rec2.second;		// Compatible type(character)
+
+  if (rec1.first = rec3.first) then
+   lst1 := AA
+  else
+   lst1 := AB;				// Error 9) Type incompatible
+
+  char1 := func2();			// Error 10) Cannot not call func2 that within the pro1
+
+  ar1 := astring;			// Error 11) Types are not compatible
+
+  ar3.second := astring;		// Error 12) Variable is not a record
+ 
+  if (int1 = 3) then
+   ar1[1] := rec1.first 
+  else
+  if (int1 = 13) then
+   rec2.first := achar			// Error 13) Type incompatible
+  else
+   rec3.third := rec1.second;		// Error 14) Type incompatible
+
+  if (char1 = char2) then		// should be compatible
+   pro2(3,5)				// Error 15) pro2 is a not define function
+  else
+   pro1(int1,3,11);			// Error 16) Argument 2 is not expected for pro1
+					//           Argument 3 is not expected for pro2
+
+  if (real1 = afraction) then
+   ar2[2] := three
+  else
+  if (real1 = 2/3) then
+   rec3.second := astring
+  else
+   ar[6] := five;			// Error 17) ar has not declared
+
+  ar4 := astring;			// Error 18) Type not compatible
+
+  boo1 := true;				
+  boo1 := 1;				// Error 19) Invalid assignment
+
+end.

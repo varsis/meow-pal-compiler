@@ -1,0 +1,372 @@
+{
+  Testing of maximum scopes and constant array bounds checking and
+  scope resolution
+
+Line:  ( 171) Non-constant type in constant declaration
+Line:  ( 180) Invalid escape sequence '\1' in string constant
+Line:  ( 180) Invalid escape sequence '\2' in string constant
+Line:  ( 180) Invalid escape sequence '\3' in string constant
+Line:  ( 180) Invalid escape sequence '\4' in string constant
+Line:  ( 180) Invalid escape sequence '\5' in string constant
+Line:  ( 180) Invalid escape sequence '\6' in string constant
+Line:  ( 180) Invalid escape sequence '\7' in string constant
+Line:  ( 180) Invalid escape sequence '\8' in string constant
+Line:  ( 180) Invalid escape sequence '\9' in string constant
+Line:  ( 180) Invalid escape sequence '\0' in string constant
+Line:  ( 181) Invalid escape sequence '\a' in string constant
+Line:  ( 181) Invalid escape sequence '\b' in string constant
+Line:  ( 181) Invalid escape sequence '\c' in string constant
+Line:  ( 181) Invalid escape sequence '\d' in string constant
+Line:  ( 181) Invalid escape sequence '\e' in string constant
+Line:  ( 181) Invalid escape sequence '\f' in string constant
+Line:  ( 181) Invalid escape sequence '\g' in string constant
+Line:  ( 181) Invalid escape sequence '\h' in string constant
+Line:  ( 181) Invalid escape sequence '\i' in string constant
+Line:  ( 181) Invalid escape sequence '\j' in string constant
+Line:  ( 181) Invalid escape sequence '\k' in string constant
+Line:  ( 181) Invalid escape sequence '\l' in string constant
+Line:  ( 181) Invalid escape sequence '\m' in string constant
+Line:  ( 181) Invalid escape sequence '\o' in string constant
+Line:  ( 181) Invalid escape sequence '\p' in string constant
+Line:  ( 181) Invalid escape sequence '\q' in string constant
+Line:  ( 181) Invalid escape sequence '\r' in string constant
+Line:  ( 181) Invalid escape sequence '\s' in string constant
+Line:  ( 181) Invalid escape sequence '\u' in string constant
+Line:  ( 181) Invalid escape sequence '\v' in string constant
+Line:  ( 181) Invalid escape sequence '\w' in string constant
+Line:  ( 181) Invalid escape sequence '\x' in string constant
+Line:  ( 181) Invalid escape sequence '\y' in string constant
+Line:  ( 181) Invalid escape sequence '\z' in string constant
+Line:  ( 206) Illegal assignment. Incompatible types.
+Line:  ( 208) Return assignment not seen in function
+Line:  ( 219) Maximum level of nesting exceeded
+Line:  ( 225) Cannot assign a value to a constant
+Line:  ( 226) Cannot assign a value to a constant
+Line:  ( 230) Cannot assign a value to a constant
+Line:  ( 234) Cannot assign a value to a constant
+Line:  ( 235) Cannot assign a value to a constant
+Line:  ( 248) Array index out of bounds
+Line:  ( 249) Array index out of bounds
+Line:  ( 249) Illegal assignment. Incompatible types.
+Line:  ( 254) Illegal assignment. Incompatible types.
+Line:  ( 255) Illegal assignment. Incompatible types.
+Line:  ( 258) Array index out of bounds
+Line:  ( 260) Illegal assignment. Incompatible types.
+Line:  ( 261) Illegal assignment. Incompatible types.
+Line:  ( 264) Array index out of bounds
+Line:  ( 270) Non-boolean operands to OR operator
+Line:  ( 271) Non-boolean operands to AND operator
+Line:  ( 273) Arithmetic operations are undefined on string types
+Line:  ( 274) Arithmetic operations are undefined on string types
+Line:  ( 275) Arithmetic operations are undefined on string types
+Line:  ( 276) Arithmetic operations are undefined on string types
+Line:  ( 278) Illegal assignment. Incompatible types.
+Line:  ( 279) Illegal assignment. Incompatible types.
+Line:  ( 281) Illegal assignment. Incompatible types.
+Line:  ( 282) Illegal assignment. Incompatible types.
+Line:  ( 283) Illegal assignment. Incompatible types.
+Line:  ( 284) Array index out of bounds
+Line:  ( 285) Array index out of bounds
+Line:  ( 289) Array index out of bounds
+Line:  ( 291) Invalid operand type to unary '+'
+Line:  ( 292) Invalid operand to unary operator '-'
+Line:  ( 293) Non-boolean operand to unary negation
+Line:  ( 293) Illegal assignment. Incompatible types.
+Line:  ( 294) Illegal assignment. Incompatible types.
+Line:  ( 295) Illegal assignment. Incompatible types.
+Line:  ( 306) Array index out of bounds
+Line:  ( 310) Array index out of bounds
+Line:  ( 311) Array index out of bounds
+Line:  ( 314) Array index out of bounds
+Line:  ( 317) Array index out of bounds
+Line:  ( 331) Unknown function/procedure lvl3
+Line:  ( 332) Indexing array with incompatible type.
+Line:  ( 337) Array index out of bounds
+Line:  ( 339) Array index out of bounds
+Line:  ( 340) Array index out of bounds
+Line:  ( 343) Array index out of bounds
+Line:  ( 345) Array index out of bounds
+Line:  ( 351) Array index out of bounds
+Line:  ( 352) Array index out of bounds
+Line:  ( 354) Array index out of bounds
+Line:  ( 357) Array index out of bounds
+Line:  ( 358) Array index out of bounds
+Line:  ( 358) Array index out of bounds
+Line:  ( 359) Array index out of bounds
+Line:  ( 359) Array index out of bounds
+Line:  ( 363) Array index out of bounds
+Line:  ( 364) Array index out of bounds
+Line:  ( 365) Array index out of bounds
+Line:  ( 366) Array index out of bounds
+Line:  ( 367) Array index out of bounds
+Line:  ( 367) Array index out of bounds
+Line:  ( 368) Array index out of bounds
+Line:  ( 368) Array index out of bounds
+Line:  ( 369) Array index out of bounds
+Line:  ( 369) Array index out of bounds
+Line:  ( 370) Array index out of bounds
+Line:  ( 370) Array index out of bounds
+
+
+
+
+
+
+
+}
+program main(input, output);
+const
+   greeting = 'HELLO WORLD';
+   pi	    = 3.14159;
+   c1	    = 0;
+   c2	    = 1;
+   c3	    = 22;
+type
+   t0	 = (zero, one, two, three);
+   t1	 = array [boolean] of char;
+   t2	 = array [char] of char;
+   t3	 = array [t0] of char;
+   t4	 = array [1..21] of char;
+   t5	 = array [one .. two] of char;
+   t6	 = array [true .. true] of char;
+   t7	 = array [1..10] of array [t0] of char;
+   t8	 = array [1..10] of array [one .. two] of char;
+   t9	 = array [1..10] of array [1 .. 10] of char;
+   str11 = array [1..11] of char;
+var
+   v1 : str11;
+   v2 : t2;
+   v3 : t3;
+   v4 : t4;
+   v5 : t5;
+   v6 : t6;
+   v7 : t7;
+   v8 : t8;
+   v9 : t9;
+procedure lvl2();
+   procedure lvl3();
+      procedure lvl4();
+      const
+	 one	     = 1;    {GOOD}
+	 onethousand = 1000; {GOOD}
+	 a	     = 'a';  {GOOD}
+	 z	     = 'z';  {GOOD}
+	 procedure lvl5();
+	    procedure lvl6();
+	       procedure lvl7();
+	       type
+		  str1003 = array[one .. onethousand + 3] of integer;                 {GOOD}
+		  str1000 = array[onethousand .. onethousand + 1000 - 1000] of char;  {GOOD}
+               var
+		  c : str1000;
+		  procedure lvl8(); 
+		  var
+		     b : str1003;
+		     c : str1000;
+		     procedure lvl9();
+			procedure lvl10();
+			   procedure lvl11();
+			      procedure lvl12();
+			      const
+				 c0  =  c;                                                    { BAD }
+				 c1  = '~`!@#$%^&*()-_=+[{]}|;:"?/>.<,\n\t\\';                { GOOD }
+				 c2  = 'abcdefghijklmnopqrstuvwxyz';                          { GOOD }
+				 c3  = '1234567890';                                          { GOOD }
+				 c6  = 'Hello World';                                         { GOOD }
+				 c7  = 'Hello pdeson';                                        { GOOD }
+				 c75 = '123456789012';                                        { GOOD }
+				 c8  = 'Hello world';                                         { GOOD }
+				 c9  = 'H';                                                   { GOOD }
+				 c4  = '\1\2\3\4\5\6\7\8\9\0';                                 { BAD }
+				 c5  = '\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z'; { BAD }
+			      type
+			         string11 = array [1..11] of char;  { GOOD }
+			         string1  = array [1..1] of char;   { GOOD }
+			         string2  = string1;                { GOOD }
+			      var
+			         v1  : char;     { GOOD }
+			         v2  : integer;  { GOOD }
+			         v3  : real;     { GOOD }
+			         s11 : string11; { GOOD }
+			         s1  : string1;  { GOOD }
+			         s2  : string2;  { GOOD }
+			         b   : boolean;  { GOOD }
+				 procedure lvl13();
+				    procedure lvl14();
+				    var
+				       string : str11;
+				       function lvl15(): boolean ;
+					  function lvl16a(x: char) : integer;
+					  type
+					     STR11   = str11;
+					     boolean = char;
+					  var
+					     v3	: boolean;
+					  begin	
+					     v3 := true;          {BAD}
+					     v3 := 'a';           {GOOD}
+					  end; { lvl16a }         { BAD No return type }
+					  procedure lvl16b();
+					  const
+					     c0	      = greeting;     { GOOD }
+					     c1	      = greeting[1];  { GOOD }
+					     twopi    = pi;           { GOOD }
+					     greeting = 'hello world';{ GOOD }
+					     v3	      = 'a';          { GOOD }
+					  var 
+					     v1	: char;
+					     v2	: integer;
+					     procedure lvl17(); { BAD to many nested levels }
+					     var
+						pi : real ;
+					     begin
+						v1 := 'c';                 { GOOD }
+						v2 := lvl16a(v1);          { GOOD }
+						greeting := 'hello world'; { BAD  }
+						greeting[1] := 'a';        { BAD  }
+						pi := 3.14159 ;            { GOOD }
+						if( 10 + 2 + 3 <> 11 ) then
+						begin
+						   v3 := 'a';              { BAD }
+						end;
+					     end; { lvl17 }
+					  begin	
+					     pi := 2;                      { BAD }
+					     v3 := true;                   { BAD }
+					  end; { lvl16b }
+				       begin
+					  b := true or false and true;     { GOOD }
+					  b := lvl15();                    { GOOD }
+					  lvl14();                         { GOOD }
+					  lvl2();                          { GOOD }
+					  lvl15 := true;
+				       end; { lvl15 }                     
+				    begin
+				       string    := greeting;     { GOOD }
+				       string[1] := greeting[11]; { GOOD }
+				       string[9] := 'a';          { GOOD }
+				       string[-1]:= 'b';          { BAD  }
+				       string[10000] := 100;      { BAD x 2 }				       
+				    end; { lvl14 }
+				 begin
+				 end; { lvl13 }
+			      begin
+				 s1	  := '';              { BAD  }
+				 s1	  := 'Hello world';   { BAD  }
+				 s1	  := ';';             { GOOD }
+				 s1[1]  := ';';             { GOOD }
+				 s1[11] := ';';             { BAD  } 
+
+				 s2	  := '';              { BAD  }   
+				 s2	  := 'Hello world';   { BAD  } 
+				 s2	  := ';';	      { GOOD }
+				 s2[1]  := ';';	      { GOOD }
+				 s2[11] := ';';   	      { BAD  } 
+
+				 b  := s1 <  s2;            { GOOD }
+				 b  := s1 >  s2;            { GOOD }
+				 b  := s1 =  s2;            { GOOD }
+				 b  := s1 <> s2;            { GOOD }
+				 b  := s1 or s2;            { BAD  }
+				 b  := s1 and s2;           { BAD  }
+
+				 s1 := s1 +   s2;           { BAD  }
+				 s1 := s1 -   s2;           { BAD  }
+				 s1 := s1 /   s2;           { BAD  }
+				 s1 := s1 div s2;           { BAD  }
+
+				 s1	   := '~`!@#$%^&*()-_=+[{]}|;:"?/>.<,\n\t\\'; { BAD  }
+				 s1	   := 'Hello world';                          { BAD  }
+
+				 s11	   := '~`!@#$%^&*()-_=+[{]}|;:"?/>.<,\n\t\\'; { BAD  }
+				 s11	   := '';                                     { BAD  }
+				 s11	   := ';';                                    { BAD  }
+				 s11[-1] := ';';                                    { BAD  }
+				 s11[0]  := ';';                                    { BAD  }
+				 s11[1]  := ';';                                    { GOOD }
+				 s11[6]  := ';';                                    { GOOD }
+				 s11[11] := ';';                                    { GOOD }
+				 s11[12] := ';';                                    { BAD  }
+				 s11	   := 'Hello world';                          { GOOD }
+				 s11	   := + 'Hello world';                        { BAD  }   
+				 s11	   := - 'Hello world';                        { BAD  }
+				 s11	   := not 'Hello world';                      { BAD x 2 }
+				 s11	   := 'Hello worl';                           { BAD  }
+				 s11	   := 'Hello world ';                         { BAD  }
+			      end; { lvl12 }
+			   begin
+			      v1	:= '12345678901'; {GOOD}
+			      v1	:= 'hello world'; {GOOD}
+			   end; { lvl11 }
+			begin
+			end; { lvl10 }
+		     begin
+		     end; { lvl9 }
+		  begin
+		     b[0] := 1;               { BAD  }
+		     b[1] := 1;               { GOOD }
+		     b[onethousand] := 1;     { GOOD }
+		     b[onethousand + 3] := 1; { GOOD }
+		     b[onethousand + 4] := 1; { BAD }
+		     b[1004] := 1;            { BAD }
+		  end; { lvl8 }
+	       begin
+		  c[999]  := 'c';        { BAD  }
+		  c[1000]  := 'c';       { GOOD }
+		  c[onethousand] := 'c'; { GOOD }
+		  c[1001] := 'c';        { BAD }
+	       end; { lvl7 }
+	    begin
+	    end; { lvl6 }
+	 begin
+	 end; { lvl5 }
+      begin
+      end; { lvl4 }
+   begin
+   end; { lvl3 }
+begin
+end; { lvl2 }
+begin 
+   lvl2(); { GOOD }
+   lvl3(); { BAD not in scope }
+   v2[one]   := 'a'; { BAD  }
+   v3[zero]  := 'a'; { GOOD }
+   v3[one]   := 'a'; { GOOD }
+   v3[two]   := 'a'; { GOOD }
+   v3[three] := 'a'; { GOOD }
+   v4[c1]    := 'a'; { BAD  }
+   v4[c2]    := 'a'; { GOOD }
+   v4[c3]    := 'a'; { BAD  }
+   v5[zero]  := 'a'; { BAD  }
+   v5[one]   := 'a'; { GOOD }
+   v5[two]   := 'a'; { GOOD }
+   v5[three] := 'a'; { BAD  }
+   v6[true]  := 'a'; { GOOD }
+   v6[false] := 'a'; { BAD  }
+
+   v7[1,   zero]   := 'a'; { GOOD }
+   v7[1,    one]   := 'a'; { GOOD }
+   v7[2,    two]   := 'a'; { GOOD }
+   v7[10, three]   := 'a'; { GOOD }
+   v7[0,   zero]   := 'a'; { BAD  }
+   v7[11,  zero]   := 'a'; { BAD  }
+
+   v8[1,   zero]   := 'a'; { BAD  }
+   v8[1,    one]   := 'a'; { GOOD }
+   v8[2,    two]   := 'a'; { GOOD }
+   v8[10, three]   := 'a'; { BAD  }
+   v8[0,   zero]   := 'a'; { BAD  }
+   v8[11, three]   := 'a'; { BAD  }
+
+   v9[1,   1]   := 'a'; { GOOD }
+   v9[10, 10]   := 'a'; { GOOD }
+   v9[1,   0]   := 'a'; { BAD  }
+   v9[10, 11]   := 'a'; { BAD  }
+   v9[0,   1]   := 'a'; { BAD  }
+   v9[11, 10]   := 'a'; { BAD  }
+   v9[0,   0]   := 'a'; { BAD  }
+   v9[11, 11]   := 'a'; { BAD  }
+   v9[0,  11]   := 'a'; { BAD  }
+   v9[11,  0]   := 'a'; { BAD  }
+end. { main }
+

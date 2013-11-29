@@ -1,0 +1,48 @@
+{
+Errors depending on how recovering from errors works.
+There isn't really a correct way to handle it but they should 
+not get too many errors and a complete program listing if they
+used a reasonable method
+
+Errors: line 17: multi line string
+	line 23: missing quote on end of string
+	line 37: should not call an error here if case 1 or 2
+
+}
+program invids(input, output);
+const
+
+//case 1: if they go to ;, bob doesn't exist
+//case 2: they go to ', bob doesn't exist
+//case 3: many syntax errors
+	astring = 'illegal string
+		a b c d e f g h i j k
+	bob = 5;
+
+
+	anotherstring = 'jeff = 5;
+	//case 1: jeff will also not exist if they go to the semicolon
+	//case 1: anotherstring could exist
+	//case 2: jeff will exist
+
+type string = array[1..9] of char;
+
+var
+	a : integer;
+	b : integer;
+	str : string;
+	//case 1: jeff does not exist can be defined
+	//case 2: semantic error
+	//jeff : integer;
+	bob : integer;
+
+begin
+	// possible semantic errors
+	bob := 4;
+	//jeff : = 3;
+	a := bob;
+	//b := jeff;
+	//add later
+	//str := anotherstring;
+end.
+

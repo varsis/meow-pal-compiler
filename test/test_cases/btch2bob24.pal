@@ -1,0 +1,112 @@
+{
+*Program 7.pal  (Semantic errors)
+* Error in line 61 you cannot do a sum with two booleans
+* Error in line 84 comparing boolean with a integer on expression true or 2 > 5
+* Error in line 100 cannot be assigned a value to a boolen inside an if
+* Check for the use of operations succ and pred in scalars and the use of 
+*scalars of the same type in a boolean expression in an if
+*}
+
+program pal7(input, output);
+
+const
+     h1 = 1;
+     h2 = 2;
+     h3 = 3;
+     h4 = 4;
+     i1 = 1/2;
+     i2 = 2.2;
+     i3 = 3.3;
+     c1 = 'a';
+     c2 = 'b';
+     c3 = 'jajajja';
+     c4 = '1';
+     b1 = true and false;
+     b2 = false or true;
+     b3 = b1 > b2;
+
+type 
+   string2 = array[1..8] of char;
+   month = (Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec);
+   bol1 = boolean;
+
+var
+   suma, rest, mult, divi : integer;
+   real1, real2, real3 : real;
+   str : string2;
+   bandera : char;
+   bandera2 : char;
+   counter : integer;
+   mes, mes2 : month;
+   boleano : boolean;
+
+function abc (x : integer; y : integer) : integer;
+begin
+     abc:= x+y;
+end;
+
+function if2 (x : integer; c : char) : char;
+begin
+     boleano := true;
+      if boleano >= false then
+            mes := Feb
+     else
+              mes:= May;
+
+     real2 := i1 / i3;
+     if2:= 'a';
+end;
+
+begin
+     if b3 > (b2 + b1) then
+        writeln('hola')
+     else
+        writeln('adios');
+     bandera2:= if2(h1, c4);
+     writeln (bandera2);
+     if h1 < h2 then
+         rest := h2 - h1
+     else
+         rest := h1 - h2;
+     real1:= 1.2;
+     suma:= h1;
+     mult := 4;
+     counter:=0;
+     real2 := -3 + 4;
+     while counter<h3 do
+     begin
+           real1 := real1 * h4 / i2;
+           counter := counter + 1;
+                   while (real2 - 30) <h4 do
+                   begin
+                       write('___',real2,'___');
+                      real2 := real2 * 2;
+                      if true or 2 > 5 then
+                          mes := Jul
+                      else
+                          mes := Jun;
+                      suma:= abc(rest, mult);
+                   end;
+           write ('-----', real1, '-----');
+     end;
+
+     writeln('------------------------------');
+     writeln ('The answer is ---', suma, '---');
+     writeln ('Press enter to exit');
+     if boleano >= false then
+          mes := Jan
+     else
+     begin
+          if mes then
+              mes:= May;
+     end;
+     read (bandera);
+
+     mes := succ(Feb); // checking that succ and pred is accepted
+     mes2 := pred(May);    
+    if mes > mes2 then // Checking that if work with to scalars the same type
+	mes2:=mes;
+
+end.
+
+

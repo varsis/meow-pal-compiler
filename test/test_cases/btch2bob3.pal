@@ -1,0 +1,79 @@
+{Cmput 415 - Group 3:
+      Stephen Curial
+      Justin Evaniew
+      Mark Thiessen
+      Ryan Vogt
+
+Test file  - 5.pal }
+{ This file contains semantic errors only. }
+{ This file tests the recognition of the functions that are part of the 
+  pascal/pal language specification. }
+
+{Standard Procedures}
+{-readln, -write, -read, -writeln}
+
+{Standard Functions}
+{-abs, -odd, round, -ord, -succ, -chr, -pred, -sqr, -trunc}
+
+
+{Errors:}
+{Line 73 - call to writeln(writeln) -- call with invalid parameter}
+{Line 75 - invalid assignment - call to sqr(real) can only be assigned to real}
+{Line 76 - invalid assignment - call to ord returns integer   }
+
+program funcProg(input, output);
+
+type
+   a =  (g,h,i);
+
+var
+   v : a;
+   w : boolean;
+   x : integer;
+   y : real;
+   z : char;
+   
+begin
+   w := odd(x);
+   x := abs(x);
+   y := abs(y);
+   x := trunc(y);
+   x := ord(g);
+   v := succ(h);
+   v := pred(h);
+   z := chr(x);
+
+   {Read/write with no parameters.}
+   read();
+   readln();
+   write();
+   writeln();
+
+   {Read/write with 1 parameter.}
+   read(x);
+   readln(x);
+   write(x);
+   writeln(x);
+   
+   {Read/write with 2 parameters.}
+   read(x,y);
+   readln(x,y);
+   write(x,y);
+   writeln(x,y);
+
+   {Read/write with many parameters.}
+   read(x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x);
+   readln(x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x);
+   write(x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x);
+   writeln(x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x,y,z,x);
+
+
+   writeln(writeln); {should be an error - invalid function call}
+   x := sqr(x); 
+   y := sqr(y);
+
+   x:=sqr(y);  {should be an error-if sqr is called with real, should return a real}
+   v:=ord(y);  {should be an error - result of ord is integer}
+   
+   
+end.
