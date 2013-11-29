@@ -79,7 +79,7 @@ namespace Meow
 	
 
 	void AscHelper::invokeProcedure(string procedureName,
-			InvocationParameters* params)
+			InvocationParameters* args)
 	{
 		if (m_errorManager->getErrors()->size() > 0)
 		{
@@ -98,7 +98,7 @@ namespace Meow
 
 		int argumentSpace = 0;
 		InvocationParameters::iterator it;
-		for (it = params->begin(); it != params->end(); ++it)
+		for (it = args->begin(); it != args->end(); ++it)
 		{
 			argumentSpace += it->type->getTypeSize();
 		}
@@ -107,11 +107,11 @@ namespace Meow
 
 		if (procedureSymbol == m_semanticHelper->getWrite())
 		{
-			invokeWrite(params);
+			invokeWrite(args);
 		}
 		else if (procedureSymbol == m_semanticHelper->getWriteln())
 		{
-			invokeWriteln(params);
+			invokeWriteln(args);
 		}
 
 		// Ordinary procedures/functions...
@@ -129,6 +129,32 @@ namespace Meow
 			// Actually call the routine
 			m_ascOutput << "\tCALL " << procedureSymbol->getLexLevel() + 1 << ", "
 						<< label << endl;
+
+			// Copy any var parameters back to their sources (as per "copy-restore")
+			// TODO mention 'copy-restore' strategy and ratinale in docs!
+			for (unsigned int argIdx = 0; argIdx < procedureSymbol->getParameterCount(); ++argIdx)
+			{
+				Symbol* param = procedureSymbol->getParameters()->at(argIdx);
+				if (param->isVarParam())
+				{
+					LValue arg = args->at(argIdx);
+
+					reserveLabels(2);
+					m_ascOutput << "\tCALL 0, vp" << currentLabel(0) << endl;
+					m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+					m_ascOutput << "vp" << currentLabel(0) << endl;
+
+					for (int i = 0; i < arg.type->getTypeSize(); i++)
+					{
+						m_ascOutput << "\tPUSH " << param->getLocation() + i << "[0]" << endl;
+						m_ascOutput << "\tPOP " << arg.offset + i << "[" << arg.level << "]" << endl;
+					}
+
+					m_ascOutput << "\tRET 0" << endl;
+					m_ascOutput << currentLabel(1) << endl;
+					popLabels();
+				}
+			}
 
 			if (returnValSize > 0 && argumentSpace > 0)
 			{
@@ -159,16 +185,16 @@ namespace Meow
 		}
 	}
 
-	void AscHelper::invokeWriteln(InvocationParameters* params)
+	void AscHelper::invokeWriteln(InvocationParameters* args)
 	{
-		invokeWrite(params);
+		invokeWrite(args);
 
 		// write a newline (ascii character 10)
 		m_ascOutput << "\tCONSTI 10" << endl;
 		m_ascOutput << "\tWRITEC" << endl;
 	}
 
-	void AscHelper::invokeWrite(InvocationParameters* params)
+	void AscHelper::invokeWrite(InvocationParameters* args)
 	{
 		// Need to call a 'function' so we can get arguments offset from a display reg
 		reserveLabels(2);
@@ -178,7 +204,7 @@ namespace Meow
 
 		int argumentSpace = 0;
 		InvocationParameters::iterator it;
-		for (it = params->begin(); it != params->end(); ++it)
+		for (it = args->begin(); it != args->end(); ++it)
 		{
 			argumentSpace += it->type->getTypeSize();
 		}
@@ -186,7 +212,7 @@ namespace Meow
 
 		// split into separate write_* calls for each
 		// argument according to arg type
-		for (it = params->begin(); it != params->end(); ++it)
+		for (it = args->begin(); it != args->end(); ++it)
 		{
 			if (it->type == m_semanticHelper->getIntegerType())
 			{
