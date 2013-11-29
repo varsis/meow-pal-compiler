@@ -118,15 +118,19 @@ namespace Meow
 		std::string label = procedureSymbol->getLabel();
 		if (label.size() > 0)
 		{
-			// allocate space for return val 
-			// TODO only if necessary?
-			int returnValSize = 1; // TODO
-			m_ascOutput << "\tADJUST " << returnValSize << endl;
+			int returnValSize = 0;
+			if (procedureSymbol->getSymbolType() == Symbol::FunctionSymbol)
+			{
+				// allocate space for return val 
+				returnValSize = procedureSymbol->getType()->getTypeSize();
+				m_ascOutput << "\tADJUST " << returnValSize << endl;
+			}
 
+			// Actually call the routine
 			m_ascOutput << "\tCALL " << procedureSymbol->getLexLevel() + 1 << ", "
 						<< label << endl;
 
-			if (argumentSpace > 0)
+			if (returnValSize > 0 && argumentSpace > 0)
 			{
 				// return value now on top of stack, need to pop it to start of args
 				// this seems way too complicated for this, but the only way to
@@ -136,8 +140,13 @@ namespace Meow
 				m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
 				m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
 				m_ascOutput << currentLabel(0) << endl;
-				m_ascOutput << "\tPUSH -3[0]" << endl;
-				m_ascOutput << "\tPOP -" << argumentSpace + 3 << "[0]" << endl;
+
+				for (int i = 0; i < returnValSize; i++)
+				{
+					m_ascOutput << "\tPUSH -" << 3 + i << "[0]" << endl;
+					m_ascOutput << "\tPOP -" << argumentSpace + 3 + i << "[0]" << endl;
+				}
+
 				m_ascOutput << "\tRET 0" << endl;
 				m_ascOutput << currentLabel(1) << endl;
 				popLabels();

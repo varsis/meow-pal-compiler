@@ -84,9 +84,16 @@ namespace Meow
 
 		if (type)
 		{
+			int returnSize = 0;
+			if (m_type)
+			{
+				returnSize = m_type->getTypeSize();
+			}
+
 			param->setType(type);
 			param->setSizeInMem(type->getTypeSize());
-			param->setLocation(-3 - m_parameterSpace + offset); // TODO assume a return val?
+			param->setLocation(-2 - returnSize - m_parameterSpace + offset);
+
 			param->setVarParam(var);
 		}
 

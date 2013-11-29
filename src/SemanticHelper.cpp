@@ -426,6 +426,8 @@ namespace Meow
 		else
 		{
 			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
+			returnType = getTypeFromID(*returnId);
+			routineSym->setType(returnType);
 		}
 
 		offset = 0;
@@ -436,15 +438,8 @@ namespace Meow
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
 			routineSym->addParameter(parameters->at(i).id, parameters->at(i).type,
-																	parameters->at(i).var, offset);
+								parameters->at(i).var, offset);
 			offset += parameters->at(i).type->getTypeSize();
-		}
-
-		
-		if (returnId != NULL)
-		{
-			returnType = getTypeFromID(*returnId);
-			routineSym->setType(returnType);
 		}
 
 		routineSym->setLabel(label);
@@ -462,6 +457,7 @@ namespace Meow
 		else
 		{
 			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
+			routineSym->setType(returnType);
 		}
 
 		offset = 0;
@@ -472,15 +468,10 @@ namespace Meow
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
 			Symbol* param = routineSym->addParameter(parameters->at(i).id, parameters->at(i).type,
-																	parameters->at(i).var, offset);
+									parameters->at(i).var, offset);
 
 			declareParameter(param);
 			offset += parameters->at(i).type->getTypeSize();
-		}
-
-		if (returnId != NULL)
-		{
-			routineSym->setType(returnType);
 		}
 
 		routineSym->setLabel(label);

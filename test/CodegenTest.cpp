@@ -847,6 +847,35 @@ namespace Meow
 		ofstream testfile("test/asc/testfnargs.pal");
 
 		testfile << "program test(input, output);" << endl;
+		testfile << "function foo(i : integer) : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(i);" << endl;
+		testfile << "  foo := i;" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(foo(23));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testfnargs.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 23);
+
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 23);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestFunctionArgs2)
+	{
+		ofstream testfile("test/asc/testfnargs.pal");
+
+		testfile << "program test(input, output);" << endl;
 		testfile << "function foo(i : integer; j : integer) : integer;" << endl;
 		testfile << "begin" << endl;
 		testfile << "  writeln(i);" << endl;
@@ -1096,6 +1125,238 @@ namespace Meow
 		EXPECT_EQ(val, 11);
 		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
 		EXPECT_EQ(val, 22);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecordArg)
+	{
+		ofstream testfile("test/asc/testrecordarg.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	recordType = record a : integer; b : integer; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r1 : recordType;" << endl;
+		testfile << "procedure foo(r : recordType);" << endl;
+		testfile << "begin" << endl;
+		testfile << "	writeln(r.a);" << endl;
+		testfile << "	writeln(r.b);" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  r1.a := 11;" << endl;
+		testfile << "  r1.b := 22;" << endl;
+		testfile << "  foo(r1);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecordarg.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecordArg2)
+	{
+		ofstream testfile("test/asc/testrecordarg.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
+		testfile << "	recordType2 = record x : recordType1; y : recordType1; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r : recordType2;" << endl;
+		testfile << "procedure foo(arg : recordType2);" << endl;
+		testfile << "begin" << endl;
+		testfile << "	writeln(arg.x.a);" << endl;
+		testfile << "	writeln(arg.x.b);" << endl;
+		testfile << "	writeln(arg.y.a);" << endl;
+		testfile << "	writeln(arg.y.b);" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  r.x.a := 11;" << endl;
+		testfile << "  r.x.b := 22;" << endl;
+		testfile << "  r.y.a := 33;" << endl;
+		testfile << "  r.y.b := 44;" << endl;
+		testfile << "  foo(r);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecordarg.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 33);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecordArg3)
+	{
+		ofstream testfile("test/asc/testrecordarg.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
+		testfile << "	recordType2 = record x : recordType1; y : recordType1; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r : recordType2;" << endl;
+		testfile << "procedure foo(arg1 : recordType1; arg2 : recordType1);" << endl;
+		testfile << "begin" << endl;
+		testfile << "	writeln(arg1.a);" << endl;
+		testfile << "	writeln(arg1.b);" << endl;
+		testfile << "	writeln(arg2.a);" << endl;
+		testfile << "	writeln(arg2.b);" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  r.x.a := 11;" << endl;
+		testfile << "  r.x.b := 22;" << endl;
+		testfile << "  r.y.a := 33;" << endl;
+		testfile << "  r.y.b := 44;" << endl;
+		testfile << "  foo(r.x, r.y);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecordarg.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 33);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecordReturn)
+	{
+		ofstream testfile("test/asc/testrecordret.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r : recordType1;" << endl;
+		testfile << "function foo() : recordType1;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	foo.a := 11;" << endl;
+		testfile << "	foo.b := 22;" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  r := foo();" << endl;
+		testfile << "  writeln(r.a);" << endl;
+		testfile << "  writeln(r.b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecordret.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecordReturn2)
+	{
+		ofstream testfile("test/asc/testrecordret.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r, s, t : recordType1;" << endl;
+		testfile << "function foo(x : recordType1; y : recordType1) : recordType1;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	foo.a := x.a + y.a;" << endl;
+		testfile << "	foo.b := x.b + y.b;" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  s.a := 1;" << endl;
+		testfile << "  s.b := 2;" << endl;
+		testfile << "  t.a := 3;" << endl;
+		testfile << "  t.b := 4;" << endl;
+		testfile << "  r := foo(s, t);" << endl;
+		testfile << "  writeln(r.a);" << endl;
+		testfile << "  writeln(r.b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecordret.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 4);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 6);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecordReturn3)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	rt1 = record a : integer; b : integer; end;" << endl;
+		testfile << "	rt2 = record a : rt1; b : rt1; end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	s, t: rt1;" << endl;
+		testfile << "	r : rt2;" << endl;
+		testfile << "function foo(x : rt1; y : rt1) : rt2;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	foo.a := x;" << endl;
+		testfile << "	foo.b := y;" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  s.a := 1;" << endl;
+		testfile << "  s.b := 2;" << endl;
+		testfile << "  t.a := 3;" << endl;
+		testfile << "  t.b := 4;" << endl;
+		testfile << "  r := foo(s, t);" << endl;
+		testfile << "  writeln(r.a.a);" << endl;
+		testfile << "  writeln(r.a.b);" << endl;
+		testfile << "  writeln(r.b.a);" << endl;
+		testfile << "  writeln(r.b.b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 1);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 2);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 3);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 4);
 		pclose(palout);
 	}
 }

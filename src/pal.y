@@ -742,7 +742,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				// Type not defined; Invoke error manager.
 				errorManager.addError(
 					new Error(SemanticError,
-					"Undefined type, '" + *$1 + "'",
+					"Undefined type, '" + *$3 + "'",
 					scanner.lineno()));
 			  }
 			  else
