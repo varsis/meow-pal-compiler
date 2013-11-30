@@ -817,7 +817,7 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
 
-				ascHelper.assignToVariable($1.type, $1.level, $1.offset);
+				ascHelper.assignToVariable($1);
 			}
                         | proc_invok
                         | compound_stat
@@ -853,34 +853,31 @@ lhs_var                 : IDENTIFIER
 				if (sym)
 				{
 					$$.level = sym->getLexLevel();
-					if (sym->getSymbolType() == Symbol::FunctionSymbol && $$.type)
-					{
-						// assign value on top of stack to location reserved for return value
-						$$.offset = -(2 + $$.type->getTypeSize());
-					}
-					else
-					{
-						$$.offset = sym->getLocation();
-					}
+					$$.offset = sym->getLocation();
+
+					ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
 				}
 				delete $1;
                         }
                         | lhs_var PERIOD IDENTIFIER
                         {
-				int offset;
-				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, offset);
+				int fieldOffset;
+				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, fieldOffset);
 				$$.type = fieldType;
 				$$.sym = $$.sym;
 				$$.level = $1.level;
 				if (fieldType)
 				{
-					$$.offset = $1.offset + offset;
+					$$.offset = $1.offset + fieldOffset;
 				}
 				delete $3;
+
+				// add field offset
+				ascHelper.out() << "\tCONSTI " << fieldOffset << endl;
+				ascHelper.out() << "\tADDI" << endl;
                         }
                         | lhs_subscripted_var RIGHT_BRACKET
                         {
-				$$.sym = NULL;
 				$$ = $1;
                         }
                         ;
@@ -888,6 +885,31 @@ lhs_var                 : IDENTIFIER
 lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
                         {
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+				// $1.type is the array type, $$.type is the element type, $3.type is the index type
+				$$.sym = $1.sym; // Symbol for LHS variable
+				$$.level = $1.level; // Level of variable
+				$$.offset = $1.offset; // Offset of variable
+
+				// index from expr will be on stack...
+				if ($1.type && $$.type)
+				{
+					Type* arrayType = $1.type;
+					Type* elementType = $$.type;
+
+					// Index is on stack. Convert it to an integer index relative to start of array
+					// TODO may need to convert char (or enum) indexes a little differently? but maybe not (TEST!)
+					ascHelper.out() << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
+					ascHelper.out() << "\tADDI" << endl;
+
+					// TODO run time bounds check probably needs to happen here! 
+
+					// Multiply index by size of element (if greater than 1?)
+					ascHelper.out() << "\tCONSTI " << elementType->getTypeSize() << endl;
+					ascHelper.out() << "\tMULI" << endl;
+
+					// Add to whatever offset already on the stack
+					ascHelper.out() << "\tADDI" << endl;
+				}
                         }
                         | lhs_subscripted_var COMMA expr
 			{
@@ -923,12 +945,24 @@ var                     : IDENTIFIER
                         | subscripted_var RIGHT_BRACKET
                         {
 				$$ = $1;
+
+				// index should be on stack...
+				// add index to offset of array (subtracted from array start index!)
+				if ($1.sym)
+				{
+					Type* arrayType = $1.sym->getType();
+					ascHelper.out() << "\tCONSTI " << $1.offset - arrayType->getIndexRange().start << endl;
+					ascHelper.out() << "\tADDI" << endl;
+				}
                         }
                         ;
 
 subscripted_var         : var LEFT_BRACKET expr
                         {
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+				$$.sym = $1.sym;
+				$$.level = $1.level;
+				$$.offset = $1.offset;
                         }
                         | subscripted_var COMMA expr
 			{
@@ -1653,7 +1687,7 @@ factor                  : var
 			{
 				$$ = $1;
 				// push value at offset[level] onto stack....
-				ascHelper.accessVariable($1.type, $1.level, $1.offset);
+				ascHelper.accessVariable($1);
 			}
 			| unsigned_const
 			{

@@ -255,27 +255,63 @@ namespace Meow
 		}
 	}
 
-	void AscHelper::accessVariable(Type* valueType, int level, int offset)
+	//void AscHelper::accessVariable(Type* valueType, int level, int offset)
+	void AscHelper::accessVariable(LValue lvalue)
 	{
 		// only do this if there are no errors -- bad type sizes can make this thing run
 		// a lonnggg time!
-		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
 		{
-			for (int i = 0; i < valueType->getTypeSize(); ++i)
+			if (lvalue.sym->getType()->getTypeClass() != Type::ArrayType)
 			{
-				m_ascOutput << "\tPUSH " << offset + i<< "[" << level << "]" << endl;
+				// for variables and records - know offset + level at compile time
+				for (int i = 0; i < lvalue.type->getTypeSize(); ++i)
+				{
+					m_ascOutput << "\tPUSH " << lvalue.offset + i<< "[" << lvalue.level << "]" << endl;
+				}
+			}
+			else
+			{
+				// for arrays ...
+				// address must be on top of stack, must be offset + index!
+				m_ascOutput << "\tPUSHI " << lvalue.level << endl;
 			}
 		}
 	}	
 
-	void AscHelper::assignToVariable(Type* valueType, int level, int offset)
+	//void AscHelper::assignToVariable(Type* valueType, int level, int offset)
+	void AscHelper::assignToVariable(LValue lvalue)
 	{
-		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
 		{
-			for (int i = valueType->getTypeSize(); i > 0; --i)
+			// address should be right below value on stack
+
+			reserveLabels(2);
+			m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+			m_ascOutput << currentLabel(0) << endl;
+
+			int size = lvalue.type->getTypeSize();
+			for (int i = 0; i < size; ++i)
 			{
-				m_ascOutput << "\tPOP " << offset + i - 1 << "[" << level << "]" << endl;
+				// Push address to copy to
+				m_ascOutput << "\tPUSH " << - size - 1 - 2 << "[0]" << endl;
+				m_ascOutput << "\tCONSTI " << i << endl;
+				m_ascOutput << "\tADDI" << endl;
+
+				// Push element
+				m_ascOutput << "\tPUSH " << - size + i - 2 << "[0]" << endl;
+
+				// Copy element to target location
+				m_ascOutput << "\tPOPI " << lvalue.level << endl;
 			}
+
+			m_ascOutput << "\tRET 0" << endl;
+			m_ascOutput << currentLabel(1) << endl;
+			popLabels();
+
+			// free memory for address + value
+			m_ascOutput << "\tADJUST -" << size + 1 << endl;
 		}
 	}
 

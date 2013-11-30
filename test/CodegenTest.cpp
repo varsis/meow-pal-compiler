@@ -1024,7 +1024,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestRecord3)
 	{
-		ofstream testfile("test/asc/testrecord.pal");
+		ofstream testfile("test/asc/testrecord3.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
@@ -1043,7 +1043,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/testrecord.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecord3.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;
@@ -1538,6 +1538,159 @@ namespace Meow
 		EXPECT_EQ(val, 69);
 		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
 		EXPECT_EQ(val, 96);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays1)
+	{
+		ofstream testfile("test/asc/array1.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[1 .. 10] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[5] := 69;" << endl;
+		testfile << "	writeln(a[5]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/array1.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 69);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays2)
+	{
+		ofstream testfile("test/asc/array2.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	i : integer;" << endl;
+		testfile << "	a : array[1 .. 10] of integer;" << endl;
+		testfile << "begin" << endl;
+		//testfile << "	i := 5;" << endl;
+		//testfile << "	a[i] := 10;" << endl;
+		//testfile << "	a[i+1] := 20;" << endl;
+		//testfile << "	a[i+2] := a[i] + a[i+1];" << endl;
+		//testfile << "	writeln(a[i+2]);" << endl;
+		//testfile << "	a[5] := 10;" << endl;
+		//testfile << "	a[6] := 20;" << endl;
+		//testfile << "	a[7] := a[5] + a[6];" << endl;
+		testfile << "	a[7] := 30;" << endl;
+		testfile << "	writeln(a[7]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/array2.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 30);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays3)
+	{
+		ofstream testfile("test/asc/array3.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		//testfile << "	i : integer;" << endl;
+		testfile << "	a : array[1 .. 10] of array[1..10] of integer;" << endl;
+		testfile << "begin" << endl;
+		//testfile << "	i := 5;" << endl;
+		testfile << "	a[5][5] := 69;" << endl;
+		testfile << "	writeln(a[5][5]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/array3.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 69);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays4)
+	{
+		ofstream testfile("test/asc/arrays.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	i : integer;" << endl;
+		testfile << "	a : array[1 .. 10] of array[1..10] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	i := 5;" << endl;
+		testfile << "	a[i,i] := 69;" << endl;
+		testfile << "	writeln(a[i,i]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arrays.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 69);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays5)
+	{
+		ofstream testfile("test/asc/arrays.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	i : integer;" << endl;
+		testfile << "	a : array[100 .. 110] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	i := 100;" << endl;
+		testfile << "	a[i] := 69;" << endl;
+		testfile << "	writeln(a[i]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arrays.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 69);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays6)
+	{
+		ofstream testfile("test/asc/arrays.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[1 .. 3] of array[1..3] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[3][3] := 69;" << endl;
+		testfile << "	writeln(10 + a[3][3]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arrays.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 79);
 		pclose(palout);
 	}
 }

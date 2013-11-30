@@ -428,6 +428,7 @@ namespace Meow
 			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
 			returnType = getTypeFromID(*returnId);
 			routineSym->setType(returnType);
+			routineSym->setLocation(-(2 + returnType->getTypeSize()));
 		}
 
 		offset = 0;
@@ -458,6 +459,7 @@ namespace Meow
 		{
 			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
 			routineSym->setType(returnType);
+			routineSym->setLocation(-(2 + returnType->getTypeSize()));
 		}
 
 		offset = 0;
