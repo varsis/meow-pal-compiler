@@ -262,24 +262,38 @@ namespace Meow
 		// a lonnggg time!
 		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
 		{
-			if (lvalue.sym->getType()->getTypeClass() != Type::ArrayType)
+			int size = lvalue.type->getTypeSize();
+			// Adjust for space of value
+			m_ascOutput << "\tADJUST " << size - 1 << endl;
+
+			reserveLabels(2);
+			m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+			m_ascOutput << currentLabel(0) << endl;
+
+			// Copy address to top of stack
+			m_ascOutput << "\tPUSH " << -2 - size << "[0]" << endl;
+
+			for (int i = 0; i < size; ++i)
 			{
-				// for variables and records - know offset + level at compile time
-				for (int i = 0; i < lvalue.type->getTypeSize(); ++i)
-				{
-					m_ascOutput << "\tPUSH " << lvalue.offset + i<< "[" << lvalue.level << "]" << endl;
-				}
-			}
-			else
-			{
-				// for arrays ...
-				// address must be on top of stack, must be offset + index!
+				m_ascOutput << "\tDUP" << endl;
+				m_ascOutput << "\tCONSTI " << i << endl;
+				m_ascOutput << "\tADDI" << endl;
+
+				// Push element to stack
 				m_ascOutput << "\tPUSHI " << lvalue.level << endl;
+				// Pop element into place
+				m_ascOutput << "\tPOP " << - 2 - size + i << "[0]" << endl;
 			}
+
+			m_ascOutput << "\tADJUST " << -1 << endl;
+
+			m_ascOutput << "\tRET 0" << endl;
+			m_ascOutput << currentLabel(1) << endl;
+			popLabels();
 		}
 	}	
 
-	//void AscHelper::assignToVariable(Type* valueType, int level, int offset)
 	void AscHelper::assignToVariable(LValue lvalue)
 	{
 		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)

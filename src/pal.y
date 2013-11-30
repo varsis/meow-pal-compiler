@@ -926,34 +926,32 @@ var                     : IDENTIFIER
 				{
 					$$.level = sym->getLexLevel();
 					$$.offset = sym->getLocation();
+
+					ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
 				}
 				delete $1;
+
 			}
                         | var PERIOD IDENTIFIER
                         {
-				int offset;
-				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, offset);
-				delete $3;
+				int fieldOffset;
+				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, fieldOffset);
 				$$.type = fieldType;
 				$$.sym = $$.sym;
 				$$.level = $1.level;
 				if (fieldType)
 				{
-					$$.offset = $1.offset + offset;
+					$$.offset = $1.offset + fieldOffset;
 				}
+				delete $3;
+
+				// add field offset
+				ascHelper.out() << "\tCONSTI " << fieldOffset << endl;
+				ascHelper.out() << "\tADDI" << endl;
                         }
                         | subscripted_var RIGHT_BRACKET
                         {
 				$$ = $1;
-
-				// index should be on stack...
-				// add index to offset of array (subtracted from array start index!)
-				if ($1.sym)
-				{
-					Type* arrayType = $1.sym->getType();
-					ascHelper.out() << "\tCONSTI " << $1.offset - arrayType->getIndexRange().start << endl;
-					ascHelper.out() << "\tADDI" << endl;
-				}
                         }
                         ;
 
@@ -963,6 +961,27 @@ subscripted_var         : var LEFT_BRACKET expr
 				$$.sym = $1.sym;
 				$$.level = $1.level;
 				$$.offset = $1.offset;
+
+				// index from expr will be on stack...
+				if ($1.type && $$.type)
+				{
+					Type* arrayType = $1.type;
+					Type* elementType = $$.type;
+
+					// Index is on stack. Convert it to an integer index relative to start of array
+					// TODO may need to convert char (or enum) indexes a little differently? but maybe not (TEST!)
+					ascHelper.out() << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
+					ascHelper.out() << "\tADDI" << endl;
+
+					// TODO run time bounds check probably needs to happen here! 
+
+					// Multiply index by size of element (if greater than 1?)
+					ascHelper.out() << "\tCONSTI " << elementType->getTypeSize() << endl;
+					ascHelper.out() << "\tMULI" << endl;
+
+					// Add to whatever offset already on the stack
+					ascHelper.out() << "\tADDI" << endl;
+				}
                         }
                         | subscripted_var COMMA expr
 			{
@@ -1707,7 +1726,7 @@ factor                  : var
 			{
 				Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
 
-if (result == NULL)
+				if (result == NULL)
 				{
 					errorManager.addError(
 						new Error(OperatorTypeMismatch,

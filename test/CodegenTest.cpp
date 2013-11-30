@@ -1091,7 +1091,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestRecordCopy2)
 	{
-		ofstream testfile("test/asc/testrecord.pal");
+		ofstream testfile("test/asc/testrecordcp2.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
@@ -1113,7 +1113,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/testrecord.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecordcp2.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;
@@ -1573,16 +1573,11 @@ namespace Meow
 		testfile << "	i : integer;" << endl;
 		testfile << "	a : array[1 .. 10] of integer;" << endl;
 		testfile << "begin" << endl;
-		//testfile << "	i := 5;" << endl;
-		//testfile << "	a[i] := 10;" << endl;
-		//testfile << "	a[i+1] := 20;" << endl;
-		//testfile << "	a[i+2] := a[i] + a[i+1];" << endl;
-		//testfile << "	writeln(a[i+2]);" << endl;
-		//testfile << "	a[5] := 10;" << endl;
-		//testfile << "	a[6] := 20;" << endl;
-		//testfile << "	a[7] := a[5] + a[6];" << endl;
-		testfile << "	a[7] := 30;" << endl;
-		testfile << "	writeln(a[7]);" << endl;
+		testfile << "	i := 5;" << endl;
+		testfile << "	a[i] := 10;" << endl;
+		testfile << "	a[i+1] := 20;" << endl;
+		testfile << "	a[i+2] := a[i] + a[i+1];" << endl;
+		testfile << "	writeln(a[i+2]);" << endl;
 		testfile << "end." << endl;
 
 		testfile.close();
@@ -1602,10 +1597,8 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "var" << endl;
-		//testfile << "	i : integer;" << endl;
 		testfile << "	a : array[1 .. 10] of array[1..10] of integer;" << endl;
 		testfile << "begin" << endl;
-		//testfile << "	i := 5;" << endl;
 		testfile << "	a[5][5] := 69;" << endl;
 		testfile << "	writeln(a[5][5]);" << endl;
 		testfile << "end." << endl;
@@ -1648,21 +1641,19 @@ namespace Meow
 
 	TEST(CodegenTest, TestArrays5)
 	{
-		ofstream testfile("test/asc/arrays.pal");
+		ofstream testfile("test/asc/array5.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "var" << endl;
-		testfile << "	i : integer;" << endl;
 		testfile << "	a : array[100 .. 110] of integer;" << endl;
 		testfile << "begin" << endl;
-		testfile << "	i := 100;" << endl;
-		testfile << "	a[i] := 69;" << endl;
-		testfile << "	writeln(a[i]);" << endl;
+		testfile << "	a[100] := 69;" << endl;
+		testfile << "	writeln(a[100]);" << endl;
 		testfile << "end." << endl;
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/arrays.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/array5.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;
