@@ -409,7 +409,7 @@ namespace Meow
 	Symbol* SemanticHelper::declareRoutine(string label, string* id, ParameterList* parameters, string* returnId)
 	{
 		Symbol* routineSym = m_table->getSymbolCurLevel(*id);
-		Type * returnType;
+		Type * returnType = NULL;
 		int offset;
 
 		if (routineSym)
@@ -426,6 +426,8 @@ namespace Meow
 		else
 		{
 			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
+			returnType = getTypeFromID(*returnId);
+			routineSym->setType(returnType);
 		}
 
 		offset = 0;
@@ -436,15 +438,8 @@ namespace Meow
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
 			routineSym->addParameter(parameters->at(i).id, parameters->at(i).type,
-																	parameters->at(i).var, offset);
+								parameters->at(i).var, offset);
 			offset += parameters->at(i).type->getTypeSize();
-		}
-
-		
-		if (returnId != NULL)
-		{
-			returnType = getTypeFromID(*returnId);
-			routineSym->setType(returnType);
 		}
 
 		routineSym->setLabel(label);
@@ -462,6 +457,7 @@ namespace Meow
 		else
 		{
 			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
+			routineSym->setType(returnType);
 		}
 
 		offset = 0;
@@ -472,13 +468,11 @@ namespace Meow
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
 			Symbol* param = routineSym->addParameter(parameters->at(i).id, parameters->at(i).type,
-																	parameters->at(i).var, offset);
+									parameters->at(i).var, offset);
 
 			declareParameter(param);
 			offset += parameters->at(i).type->getTypeSize();
 		}
-
-		routineSym->setType(returnType);
 
 		routineSym->setLabel(label);
 
@@ -1107,12 +1101,15 @@ namespace Meow
 		}
 	}
 
-
-	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName, bool& assignable)
+	// returns type for field of record
+	// assignable = true if valid field access
+	// offset = offset for field from start of record
+	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName, bool& assignable, int& offset)
 	{
 		Type* fieldType = NULL;
 
 		assignable = false; // only assignable if valid record.field access
+		offset = 0;
 
 		if (recordType == NULL)
 		{
@@ -1146,7 +1143,10 @@ namespace Meow
 						
 						// valid field access, is assignable
 						assignable = true;
+						break;
 					}
+
+					offset += (*it)->second->getTypeSize();
 				}
 			}
 

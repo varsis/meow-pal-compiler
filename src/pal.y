@@ -742,7 +742,7 @@ f_parm                  : IDENTIFIER COLON IDENTIFIER
 				// Type not defined; Invoke error manager.
 				errorManager.addError(
 					new Error(SemanticError,
-					"Undefined type, '" + *$1 + "'",
+					"Undefined type, '" + *$3 + "'",
 					scanner.lineno()));
 			  }
 			  else
@@ -817,16 +817,7 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
 
-				if ($1.sym && $1.sym->getSymbolType() == Symbol::FunctionSymbol)
-				{
-					// assign value on top of stack to location reserved for return value
-					// TODO need to consider space needed for structured return values
-					ascHelper.out() << "\tPOP -3[" << $1.sym->getLexLevel() << "]" << endl;
-				}
-                                else
-                                {
-                                    ascHelper.assignToVariable($1.sym);
-                                }
+				ascHelper.assignToVariable($1.type, $1.level, $1.offset);
 			}
                         | proc_invok
                         | compound_stat
@@ -857,13 +848,34 @@ simple_stat             : lhs_var ASSIGN expr
 lhs_var                 : IDENTIFIER
                         {
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, true, &g_functionStack);
-				$$.sym = table.getSymbol(*$1);
+				Symbol* sym = table.getSymbol(*$1);
+				$$.sym = sym;
+				if (sym)
+				{
+					$$.level = sym->getLexLevel();
+					if (sym->getSymbolType() == Symbol::FunctionSymbol && $$.type)
+					{
+						// assign value on top of stack to location reserved for return value
+						$$.offset = -(2 + $$.type->getTypeSize());
+					}
+					else
+					{
+						$$.offset = sym->getLocation();
+					}
+				}
 				delete $1;
                         }
                         | lhs_var PERIOD IDENTIFIER
                         {
-				$$.type = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable);
-				$$.sym = NULL;
+				int offset;
+				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, offset);
+				$$.type = fieldType;
+				$$.sym = $$.sym;
+				$$.level = $1.level;
+				if (fieldType)
+				{
+					$$.offset = $1.offset + offset;
+				}
 				delete $3;
                         }
                         | lhs_subscripted_var RIGHT_BRACKET
@@ -886,13 +898,27 @@ lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
 var                     : IDENTIFIER
                         {
 				$$.type = semanticHelper.getTypeForVarId(*$1, $$.assignable, false, &g_functionStack);
-				ascHelper.accessVariable(table.getSymbol(*$1));
+				Symbol* sym = table.getSymbol(*$1);
+				$$.sym = sym;
+				if (sym)
+				{
+					$$.level = sym->getLexLevel();
+					$$.offset = sym->getLocation();
+				}
 				delete $1;
 			}
                         | var PERIOD IDENTIFIER
                         {
-				$$.type = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable);
+				int offset;
+				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, offset);
 				delete $3;
+				$$.type = fieldType;
+				$$.sym = $$.sym;
+				$$.level = $1.level;
+				if (fieldType)
+				{
+					$$.offset = $1.offset + offset;
+				}
                         }
                         | subscripted_var RIGHT_BRACKET
                         {
@@ -1625,8 +1651,9 @@ term                    : factor
 
 factor                  : var
 			{
-				//$$.type = $1.type;
 				$$ = $1;
+				// push value at offset[level] onto stack....
+				ascHelper.accessVariable($1.type, $1.level, $1.offset);
 			}
 			| unsigned_const
 			{
