@@ -1,0 +1,7 @@
+// tests for semantics in reuse of prog name as id (1 error)
+
+program notint(input, output);
+type
+	albert = array[0..1] of notint;
+begin
+end.

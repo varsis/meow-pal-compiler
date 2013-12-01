@@ -1,0 +1,11 @@
+// valid program that tests proper symbol redefinition (semantic) (no errors)
+
+program redefwriteln(input, output);
+
+const 	writeln = 42;
+
+var 	x:integer;
+
+begin
+	x := writeln;
+end.

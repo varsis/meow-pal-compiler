@@ -1,0 +1,120 @@
+program test4(input,output);
+{
+ Cmput 415
+ Broderick Arneson
+ Neil Birkbeck
+ Chris Jones
+ Wes Schmidt 
+
+
+ Checkpoint 2 Test Program: 4.pal
+
+ This is a test program that will test our compiler for semantic errors
+ In assigments of straight variables.
+ There are three errors in this program.  They are preceded by a comment indicating
+ their locations
+}
+
+
+const	const1=1;
+	const2=2;
+	const3=3;
+	const4=const1+const2+const1;
+	const5='this is a string constant with \t \n and \' ';
+
+type
+	intarray1 = array[1..10] of integer;
+	intarray2 = array[1..10] of integer;
+	dualarray1 = array[0..10] of intarray1;
+	dualarray2 = array[0..10] of intarray2;
+	realarray1 = array[1..10] of real;
+	str   = array[1..10] of char;
+	str2  = array[1..10] of char;
+	rec1  =  record
+		ia : intarray1;
+		string : str;
+		r  : real;
+		b  : boolean;
+		i  : integer;
+		c  : char
+		end;
+	rec2 =  record
+		ia :  dualarray1;
+		index : integer
+		end;
+	
+	
+var	i11,i12 :  intarray1;  //two arrays of intarray1
+	i21,i22 :  intarray2;  //two arrays of intarray2
+	da1     : dualarray1;  //dual arrays for slice assignment
+	da2     : dualarray2;  //dual arrays for array assignment
+	ra1     : realarray1;
+	r11,r12 : rec1;
+	r21,r22 : rec2;
+	r       : real;
+	i       : integer;
+	strOfstr : str;
+	strOfstr2 : str;
+
+
+	{===================================================
+	a recursive function with no errors, that takes two
+	integer arrays as parameters.
+	====================================================}
+	function funcall(x:intarray1; y: intarray2): integer;
+	var   localvar : integer;
+	begin
+		if (x[y[5]]<=0) or (y[x[5]]<=0) then
+			funcall:=1
+		else
+			funcall:=(1 + funcall(x,y));
+	end;
+	{===================================================
+	procedure displayPair,
+	displays the x then the y
+	Fully valid procedure declaration
+	====================================================}
+	procedure displayPair(x:real; y:real);
+	var localvar : integer;
+		procedure displayInteger(x: integer);
+		begin
+			write(x);
+		end;
+	begin
+		displayInteger(round(localvar));
+		displayInteger(trunc(localvar));
+		writeln; //error in PAL
+	end;
+begin
+	i11:=i12; //this assignment is ok
+	i12:=i11; // so is this
+	i21:=i11; // ERROR: structuraly the same type, but are actually different
+
+	r11:=r12; // record assignment
+	i:=1;
+	r12.r :=i; //This should be ok, since it is a integer to a real
+	i:=r12.r; // ERROR: assigning a real to an integer;	
+
+	da1[1]:=i11; //subscripting an array and assigning an entire slice
+	da1[1][3]:=i11[1]; //Also ok.
+
+	r21:=r22; //OK, same type
+	r22:=r21; //Ok, same type
+	r22.ia := r22.ia; //This should be ok
+	i:=1+funcall(i11,i21); //also ok, funcall returns an integer		
+
+	strOfstr:=strOfstr2; //This should be ok, since we define array [1..x] as a string
+		   //all that mattters is that they are the same length
+
+	r11.c:='a';
+	
+
+	strOfstr:='asdfsdfsdf';
+	strOfstr2:='sdfsdfsdsdfsdf'; //ERROR not the same type
+
+	writeln('This program will test your assignment compatiblilty');
+	writeln('hello world');
+	
+
+	
+end.

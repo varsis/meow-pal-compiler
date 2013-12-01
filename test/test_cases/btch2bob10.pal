@@ -1,0 +1,22 @@
+//################################
+//# Project PAL		         #
+//# Course: CMPUT 415 A1         #
+//# Prof: Piotr Rudnicki         #
+//# Group: c415g09               #
+//# Members:Andrew Rymes, Wade Wesolowski, Karl Waszkiewicz, Simon Cheng#
+//################################
+// tests some illegal use of variable and functions
+// 0.pal errors:
+// 1) var decl inside program code line 17, discard line to recover
+// 2) if-else without then line 18+19, should discard statement to recover
+// 3) while without do line 20
+
+program example (input, output);
+var	a, b : integer;
+begin
+var	x , y , z : char;
+	if a = 10
+	else b := b + 2;
+	while(true)
+	end;
+end.

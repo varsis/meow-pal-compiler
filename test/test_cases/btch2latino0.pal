@@ -1,0 +1,13 @@
+{ This program has 3 syntactic errors }
+{ Error 1: line: 6 - Missing program name }
+{ Error 2: line: 10 - Syntax error }
+{ Error 3: line: 13 - Missing '.' after end }
+
+program (input, output); {Oops I miss main}
+	type	n = array[1...8] of char;
+
+begin
+	n = 'hello tha \''world''; {woops error here too}
+	write(n);
+	writeln();
+end , {woops typo}

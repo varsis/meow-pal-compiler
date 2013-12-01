@@ -1,0 +1,36 @@
+{Program 9, all errors}
+{ Error 1: line: 22 - Semantic: incompatible types }
+{ Error 2: line: 25 - Semantic: incompatible types }
+{ Error 3: line: 29 - Syntax error }
+{ Error 4: line: 31 - Semantic: incompatible types }
+{ Error 5: line: 35 - Lexical: unrecognized 'world\' }
+{ Error 6: line: 35 - syntax error }
+
+
+program err(input,output);
+
+var 
+        a : integer;
+
+procedure A;
+var
+        a : char;
+        procedure B;
+        var
+                a : float;
+        begin
+                a = 'c'; {semantic error}
+        end;
+begin
+        a = 2.5; {semantic error}
+end;
+
+begin
+        var {syntax error}
+        
+        a = 2.5; {semantic error}
+
+        {lexical error world\}
+        {syntax error}
+        writeln('hello cruel and mortal \''world\'');
+end.

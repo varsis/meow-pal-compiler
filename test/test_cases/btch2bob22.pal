@@ -1,0 +1,206 @@
+{
+        This file is a free for all test file which is designed to
+        exercise the compiler as much as possible and may include
+        any category of error and as many errors as desired.
+
+	The location of the errors are marked by comments, interspersed
+	throughout the source file.
+        errors occur on the following lines, with an explanation of the error
+        occuring in a comment located right above or beside the erroneous
+        statement
+
+        1.  Line 36
+        2.  Line 39
+        3.  Line 41
+        4.  Line 46
+        5.  Line 53
+        6.  Line 55
+        7.  Line 66
+        8.  Line 78
+        9.  Line 88
+        10. Line 90
+        11. Line 92 - there are two errors reported for this line.
+        12. Line 169
+        13. Line 171
+        14. Line 179
+        15. Line 197
+        16. Line 204
+}
+
+program test8(input, output);
+
+        //test out constant declarations
+        const 
+        commentString = '//';
+        expression1 = 1 + 2;
+        expression3 = expression2 + expression1;//This should fail because we 
+                //have failed to define expression 2.
+        expression2 = expression1 + 2;
+        expression4 = expression2 + expression3;  //This should fail because 
+                //expression3 fail to be defined above and thus does not exist.
+        secondString = '//' + '{}';  //This should fail even though they have 
+                //the same number of characters as PAL states the addition is
+                //defined only for the real and int types.
+        thirdString = '//' = '{}'; //This however should work, because logical
+                                //operators are defined for string types.
+        thirdString = '//' <> '{}';  //This should fail as we are attempting to
+                                     //redefine a constant.
+
+        boolStatement = true and false;
+        boolStatement1 = true and false or false and true;
+        boolStatement2 = boolStatement and not boolStatement1;  //These should
+                        //all be ok, as we are operating on booleans.
+        boolStatement3 = boolStatement + true;  //This should fail because + 
+                                //isn't compatible with bool.
+        boolStatement4 = not(2 and 2);  //This should be an error because
+                        //logical operations should not work on integers.
+
+        s = 3; // square matrices only
+        n = 4; // number of matrices to multiply
+        
+{----------------------------------------------------------------------------}
+
+
+        //Test out type declarations here
+        type xcoord = real;
+             ycoord = REAL;  //This should fail because REAL is not a 
+                             //valid type yet.
+             REAL = real;
+             zcoord = REAL;  //This however should work, because REAL is
+                             //defined.
+             enumTest = (January, February, March, April);   
+             enumArray = array[January..March] of integer;
+             enumTest2 = (May, June, July, August, September);  //Re-using a 
+                        //symbol in two different enumerations and this should
+                        //not be allowed as it would be difficult to determine
+                        //which enum you were referring to.
+             
+             enumTest3 = ('May', 'June', 'July', 'August', 'April'); //This
+                //should also raise an error as strings are not allowed in 
+                //enumerations.
+             daysofWeek = (Sunday, Monday, Tuesday, Wednesday, Thursday,
+                           Friday, Saturday);  //Breaking this up over two
+                        //lines should not cause any sort of error.
+             daysOfMonth = array[1..31] of daysofWeek;  //This should work too.
+             monthsOfYear = array[1..12] of daysOfMonth;  //These should all
+             year = array[1..12] of monthsOfYear;   //be valid
+
+              array3 = array[3E-3..3E-4] integer; //This should generate an
+                //error as these types of bounds are not allowed for arrays.
+              array6 = array['z'..3E1] of integer; //This should fail as it
+                //we have mismatched array bounds types.
+               array7 = array[year[1]..year[4]] of daysofWeek; //This fails as
+                //we cannot use array indices as a means to set array bounds, 
+                //because they have not been defined yet.
+
+                string = array[1..7] of char;
+
+{----------------------------------------------------------------------------}
+
+  
+
+{----------------------------------------------------------------------------}
+
+//Test out variable declarations.
+var 
+        testBVar1 : boolean;
+        testBVar2 : boolean;
+        testIVar1 : integer;
+        testIVar2 : integer;
+        testRVar1 : real;
+        testRVar2 : real;
+        testArray1 : daysOfMonth;
+        testArray2 : monthsOfYear;
+        testString1 : string;
+        testString2 : string;
+        
+
+        function ordinal(x : char) : real;
+        begin
+                ordinal := 1.00
+        end;
+
+        function retTrue() : boolean;
+        begin
+                retTrue := true
+        end;
+
+        function retFalse() : boolean;
+        begin
+                retFalse := false
+        end;
+
+        procedure boolTest( param : boolean);
+        begin
+
+        end;
+
+        //The following definitions and types are acceptable.
+        procedure typeTest();
+                type procedureType  = string;
+                        procedureInt = integer;
+                var
+                        procVar1 : procedureInt;
+        begin
+                procVar1 := 5
+        end;
+
+        function stringFunc() : string;
+        begin
+               stringFunc := 'tra-la'
+        end;
+             
+begin
+        testBVar1 := thirdString; //Although we failed to redefine thirdstring,
+                        //it should still be in the symbol table from its first
+                        //definition.
+        testRVar1 := 1.00;
+        testString1 := 'baam';
+        testString2 := 'whaam';
+        testIVar1 := 1;
+        
+        testRVar2 := ordinal('c');
+
+        //Here we are indexing the array using the ord function which should
+        //be valid as it will return an integer.
+        writeln(testString1[ord('c')], ' ', testString2[ord(succ('a'))]);
+        
+        //This should not succeed.
+        writeln(testString2[ordinal(succ('a'))]);
+        
+        writeln(testArray2[testRVar1]);
+        //This should fail as we would be using a real value to index an array
+        //which would be incorrect.
+
+        boolTest(retTrue() and retFalse() or false); //This however should work
+                //as the expression inside the brackets should evaluate to a 
+                //boolean.
+
+        writeln(testArray2[(testIVar1 / testRVar1)]); //This should fail as the
+        //result of the expression should be real which should not be allowed
+        //for indexing an array.
+
+        //This should work as it should return a boolean and then the not
+        //operate on the boolean expression.
+        if not(stringFunc() = 'tra-la') then
+        begin
+                                    
+        end;
+
+        while testIVar1 <= 10 do
+        begin
+                writeln('shazaam\n');
+        end;
+        
+        //We have exited the while loop above and thus we should not be able to
+        //use the continue keyword, which are doing here.
+        continue;
+
+        while testIVar1 <= 10 do
+                exit
+
+        //We have exited the while loop above, and thus we should not be able
+        //to use the exit keyword outside of a loop, which we are doing here.
+        exit;
+
+end.

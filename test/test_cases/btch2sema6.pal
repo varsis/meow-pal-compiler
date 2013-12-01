@@ -1,0 +1,30 @@
+//invalid subranges (3 errors) semantic
+
+program example( input, output);
+
+const
+	bob = 5;
+	jeff = 5.6;
+	jim = 3.3;
+	mark = 7;
+
+type
+	this = integer;
+	//jeff is not an int
+	garry  = array[5..5.6] of char;
+
+	//jim not an int
+	garry2 = array[5.6..5] of char;
+	
+	//bob is less than george
+	garry4 = array[7..5] of char;
+
+var x : integer;
+    y : integer;
+    answer : integer;
+    flag : char;
+
+begin 		{ main-program }
+	//Z has not been declared
+	x := 1;
+end.

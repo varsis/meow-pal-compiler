@@ -1,0 +1,42 @@
+{ 1.pal is a little evil }
+{ Error 1: line: 39 - Syntax error}
+{ Error 2: line: 43 - Syntax error }
+
+program alkjfljagjlhdsafjkashjkhsd( output, input); { that
+				    	    	     is
+						     valid }
+var						     uno : integer;
+						     dois : real;
+						     treis : integer
+; { Valid still }
+
+procedure un (x : integer); 
+	  procedure dos;
+	  	    procedure tres;
+		    	      procedure un_pasito_palante_maria;
+			      begin
+			      if  x <> 4 then begin 
+			      	  write('UN DOS TRES UN PASITO PA TRAS\n');
+				  writeln();
+				  un(x);
+			      end;
+	            begin
+		    if x = 4 then un_pasito_palante_maria(x)
+		    end;
+          begin
+          while x <> 4 do
+	  begin
+		x := x + 1;
+	  end;
+	  tres;
+	  end;
+begin
+if x <> 4 then
+begin
+	x := x + 1;
+	dos;
+end;
+begin. { woops }
+	un(1);	 { da hell }}} 	
+
+3nD. { woops }

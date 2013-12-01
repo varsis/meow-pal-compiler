@@ -1,0 +1,60 @@
+{
+ Test program 6.pal
+
+ Semantic error test 6: Now we fool around with strings, or arrays of
+ chars. This program tests correct formulations and should not throw errors.
+ We test assignments, literals, and comparisons.
+
+ Expected errors: no syntax, but many semantic (type) errors at the end.
+}
+
+// program_head
+program test6(input,output);
+
+// const_decl_part
+const
+	const1 = false;
+	const2 = 1;
+	const3 = +2;		// make sure unary operators preserve types
+	const4 = -3;
+	const5 = +4.5;
+	const6 = -6.7E8;
+
+// type_decl_part
+type
+	fourStringUkelele = array[1..4] of char;
+	sixStringSamurai = array[1..6] of char;
+
+// var_decl_part
+var
+	varBool1	: boolean;
+	varBool2	: boolean;
+	varBool3	: boolean;
+	varInt		: integer;
+	fourStr1	: fourStringUkelele;
+	fourStr2	: fourStringUkelele;
+	sixStr1		: sixStringSamurai;
+	sixStr2		: sixStringSamurai;
+
+// proc_decl_part
+
+// compound_stat
+begin
+	fourStr1 := 'Test';
+	varBool1 := fourStr1 = fourStr2;
+	varBool2 := fourStr1 = sixStr1;
+	varBool3 := 'Testes' < 'Test';
+	varBool3 := 'Misrepresentation' <> 'Representationism';
+
+	varBool3 := 'Test';
+
+	varInt := fourStr1 + sixStr2;
+
+	varBool3 := 'test' = 'tset';
+	varBool3 := 'setset' <> 'testes';
+	varBool3 := 'tset' < 'test';
+	varBool3 := 'testes' <= 'setset';
+	varBool3 := 'test' > 'tset';
+	varBool3 := 'setset' >= 'testes';
+end
+.

@@ -1,0 +1,17 @@
+{ 6.pal contains semantic errors only }
+{ Error 1: line: 16 - Semantic: imcompatible types}
+{ Error 2: line: 16 - Semantic: imcompatible types}
+{ Error 3: line: 16 - Semantic: imcompatible types}
+
+program test(input,output);
+
+type
+        g = real;
+var
+        a : g;
+        b : integer;
+        c : char;
+
+begin
+        a := b + c / 2;
+end.

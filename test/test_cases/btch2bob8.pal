@@ -1,0 +1,94 @@
+
+{
+ contextually dependent syntax tests; these are conceptually
+ semantic issues that we've resolved at the syntax level:
+
+ compile-time type checking of constant expressions,
+ exit and continue statements in/out of loop scope,
+ constant type checking for array indexes.
+ (see 5.pal for the other half of arrays)
+
+ see documentation for details
+}
+
+program fubar (input, output);
+
+	const	i1 = -(4 + (-1-2) div 2) * (-(123*2) mod 11);	{ valid }
+		i2 = -i1 + i1*i1 + (i1 div 1+1) - (i1 mod 2);	{ valid }
+
+		r1 = -i1 + i2*i1 - (i1 div 1+1) + 1.0;		{ valid }
+		r2 = -i1 + i2*i1 + (i1 / 1+1) - (i1 mod i2);	{ valid }
+
+		s1 = ('trickery');				{ valid }
+		s2 =  'it works';				{ valid }
+
+		b1 = true or false and not (i1 = i2);		{ valid }
+
+		b2 = (s1 < s2) and (i1 >= r2);			{ valid }
+
+		b3 = i2 = r2;					{ valid }
+
+		b4 = i2 = r3;					{ error }
+
+		b5 = s1 >= i1;					{ error }
+
+		b6 = true + false;				{ error }
+
+		i3 = s1 + s2;					{ error }
+
+	type	days = (Fri, Sat, Sun);
+
+	var	a: integer;
+
+		a1: array[i1..i2] of char;			{ valid }
+
+		a2: array[i1..s2] of char;			{ error }
+
+		a3: array[b2..b1] of char;			{ valid }
+
+		a4: array[b2..44] of char;			{ error }
+
+	function func ( b: integer ) : integer;
+		const	e1 = Fri;
+			e2 = (Sat);
+			c1 = 'a';
+			c2 = 'z';
+
+		var	a5: array[e1..e2] of char;		{ valid }
+
+			a6: array[e1..99] of char;		{ error }
+
+			a7: array[0..e2] of char;		{ error }
+
+			a8: array['a'..'z'] of char;		{ valid }
+			a9: array[c1..c2] of char;		{ valid }
+
+			aA: array[c1..122] of char;		{ error }
+
+			aB: array[97..c2] of char;		{ error }
+
+			aC: array[c1>c2..c1<c2] of char;	{ valid }
+
+		procedure proc ( c: integer );
+		begin
+			func := c;
+			continue		{ error }
+		end;
+	begin
+		func := b;
+		proc(3);
+		exit				{ error }
+	end;
+
+begin
+	a := 1;
+	continue;				{ error }
+	while true do
+	begin
+		continue;			{ valid }
+		a := func(2);
+		exit				{ valid }
+	end;
+	exit					{ error }
+end.
+

@@ -1,0 +1,90 @@
+{
+*Program 3.pal  (Semantic errors)
+*
+* Error in line 51 Cannot assign a function that returns a char a function that
+*returns a boolean
+* Error in line 75 h1 is a real and DIV only accepts integers
+* Error in line 81 (2+1)/2 is a real and MOD only accepts integers
+*}
+
+program pal3(input, output);
+
+const
+     h1 = 1;
+     h2 = 2;
+     h3 = 3;
+     h4 = 4;
+     i1 = 1/2;
+     i2 = 2.2;
+     i3 = 3.3;
+
+type 
+   string2 = array[1..8] of char;
+
+var
+   suma, rest, mult, divi, modu : integer;
+   real1, real2, real3 : real;
+   str : string2;
+   bandera : char;
+   counter : integer;
+   boleano : boolean;
+
+
+
+function abc (x : integer; y : integer) : integer;
+begin
+        abc:= 5-2;
+end;
+
+function rr (r1 : real; r2 : real) : boolean;
+begin
+        rr:= true;
+end;
+
+function rr2 (r1 : real; r2 : real) : boolean;
+begin
+        rr2:= rr(r1-1, r2-1);
+end;
+
+function cha1 (r1 : real; r2 : real) : char;
+begin
+        cha1:= rr(r1+1, r2+1);
+end;
+
+begin
+     real2 := i1 / i3;
+     if h1 < h2 then
+         rest := h2 - h1
+     else
+         rest := h1 - h2;
+     real1:= 1.2;
+     suma:= h1;
+     mult := 4;
+     counter:=0;
+     real2 := -3 + 4;
+     mult := h1 mod (-5 * 1) + 8;
+     while counter<h3 do
+     begin
+           real1 := real1 * h4 / i2;
+           counter := counter + 1;
+           real1 := 1;
+	   real2 := 5;
+           boleano := rr(real1, real2);   
+                   while (real2 - 30) <h4 do
+                   begin
+                      divi := h1 div i1;
+                      write('___',real2,'___');
+                      real2 := real2 * 2;
+                      suma:= abc(rest, mult);
+                   end;
+           write ('-----', real1, '-----');
+           rest := (5*3) mod ((2+1)/2);
+     end;
+
+     writeln('------------------------------');
+     writeln ('The answer is ---', suma, '---');
+     writeln ('Press enter to exit');
+     read (bandera);
+end.
+
+

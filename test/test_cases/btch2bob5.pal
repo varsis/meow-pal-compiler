@@ -1,0 +1,54 @@
+// C415 PAL Compiler test file
+// Stella Luk, Andrew Lau, Isaac Yuen
+//
+// 3.pal
+//
+// Testing Arrays
+// with subranges of scalars
+// and multidimensional
+//
+// 3 errors
+// 1. Line 47 - asked to store incorrect type in array 
+// 2. Line 50 - assigning non-equal arrays to each othe 
+// 3. Line 52 - out of bounds error on a multidimensional array
+
+
+program main(input, output);
+
+	const 	myconst1 = 1;
+		myconst2 = 10;
+	type 	myEnum = (isaac,stella,andrew);
+		int = integer; 
+		A = array[char] of boolean;
+		B = array[boolean] of char; 
+		C = array['a'..'d'] of int; 
+		
+		D = C;
+		E = array[isaac..andrew] of D; 
+		F = array['a'..'d'] of int;
+
+		G = array[1..2] of array[false..true] of array['a'..'d']of array[stella..andrew] of integer;
+		H = array[myconst1 .. myconst2*myconst2] of boolean;
+		bool = boolean;
+	var
+		u : A;
+		v : B;
+		w : C;
+		x : D;
+		y : E;
+		y2 : F;
+		z : G;
+		z2 : H;
+		z3 : bool;
+begin
+	z3 := true;
+	z2[myconst2] := false;
+	z2[myconst2] := z3;
+	z2[myconst2] := 'stella'; //wrong value to store in array
+	y[isaac,'d'] := 5; 
+	w := x;
+	w := y2;		//invalid array assignment
+	z[2,false,'c'][stella] := 75;
+	z[2,false,'c'][isaac] := 75;	//out of bounds in multiDim array
+end
+.

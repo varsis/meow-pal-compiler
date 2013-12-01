@@ -1,0 +1,61 @@
+program example(input,output);
+{ *** This program should compile with no errors }
+
+type
+  Weekday = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
+  MyRecord = record
+    x : integer;
+    y : Weekday;
+    z : array[3..9] of boolean
+  end;
+  RetardedType = array[1..10] of MyRecord;
+
+var
+  i              : integer;
+  j              : Weekday;
+  anInt          : integer;
+  aReal          : real;
+  day            : Weekday;
+  aChar          : char;
+  aBool          : boolean;
+  aType, bType   : RetardedType;
+  arr1, arr2     : array[Mon..Fri] of real;
+
+begin
+
+  { *** Test out sqr() trunc() round() ord() succ() pred() chr() and
+    *** abs() in some nice big and complicated equations }
+  anInt := sqr( sqr( trunc(3.9) - round(1.5000) ) +
+                sqr( round(ord('w') * ord(true) * 1.0E-6) ) -
+                (ord(succ(false)) - ord(pred(true))) +
+                abs(ord(succ('M'))) -
+                (trunc(sqr(0.12)) * ord(chr(7)) - 9) +
+                (ord(Mon) - ord(Thu))
+           );
+
+  aReal := abs( sqr( anInt * 15.098564E-3 + ord('$') ) /
+                (ord(Wed) / ord(Sat) * ord(pred(Thu)) - ord(succ(Thu))) +
+                (-0.01 + ord(succ('P')) * ord(pred('P')))
+           );
+
+  aChar := chr(anInt);
+
+  { *** Test out the ord(int) function }
+
+  anInt := ord(anInt);
+  anInt := ord(0);
+  anInt := ord(-1);
+  anInt := ord(1);
+
+
+  { *** Simple Array }
+  j := Fri;
+  while j >= Mon do
+  begin
+    arr1[j] := ord(j) / anInt;
+    j := pred(j);
+  end;
+
+  arr2 := arr1;
+
+end.

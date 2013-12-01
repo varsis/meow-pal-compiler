@@ -1,0 +1,28 @@
+{ Error 1: line: 12 - Syntax: ':=' not allowed }
+{ Error 2: line: 15 - Semantic:  'l' being redefined }
+{ Error 3: line: 17 - Syntax: ':=' not allowed }
+{ Error 4: line: 20 - Semantic: 'l' is being redefined }
+{ Error 5: line: 22 - Syntax: ':=' not allowed }
+{ Error 6: line: 25 - Syntax error }
+
+program LexicalError0(input,output);
+const
+	l = integer;
+	// Syntax error (:= not allowed)
+	l := integer;
+type
+	// Semantic error (l is being redefined)
+	l = integer;
+	// Syntax error (:= not allowed)
+	l := integer;
+var
+	// Semantic error (l is being redefined)
+	l : integer;
+	// Syntax error (:= not allowed)
+	l := integer;
+
+	// Syntax error (this should be inside a begin statement)
+	23
+
+begin
+end.

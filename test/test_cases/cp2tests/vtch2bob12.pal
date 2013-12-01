@@ -1,0 +1,163 @@
+{**************************************************************************
+6.pal
+**************************************************************************}
+
+program CompilerFun(input, output);
+	const 
+ 		ZERO     = (((0 + 0) - 0) * 0) + (0 - 0);
+
+                BAD1     = 12 mod 0;       
+
+  		ONE      = ((10 mod 1) + (10 div 1) - 9);       
+//		TRUE     = (((0 < 0) and (1 > 1)) or (true));   
+//		FALSE    = ((0 <= 0) and (1 >= 1)) and (false);  
+  		MAX      = 10;
+
+                BAD2     = 12 / 0.0;       
+
+		MAXNUM	 = maxint;
+		TEACH	 = true;
+		IN       = ZERO;
+  		OUT      = ONE;
+	type
+  		Days     = (Mon, Tues, Wed, Thurs, Fri, Sat, Sun);
+  		INT      = integer;
+		int      = INT;
+
+                BAD3	 = array [1 div 0..10+9] of Days;
+
+		Hours    = array [Mon..Fri] of real;
+  		STRING   = array [1..2] of char;
+		TwoD     = array [1..MAX] of array [Tues..Thurs] of int;
+  		Student  = record
+             			initials	: STRING;
+             			age		: INT
+            		   end;
+	var
+  		andrzej     : Student;
+		greg, diana : Hours;
+		gregHours   : real;
+
+{**************************************************************************}
+
+	procedure PrintMessage( status : INT );
+	
+		procedure PrintWelcome();
+		begin
+			writeln('Welcome to compiler fun.');
+		end;
+
+		procedure PrintExit();
+		begin
+  	 		writeln('Thank-you for visiting.');
+		end;
+
+	begin
+		if status = IN then
+	 	 PrintWelcome()
+		else if status = OUT then
+	 	 PrintExit();
+	end;  
+
+{**************************************************************************}
+
+	procedure getHours(var employee : Hours);
+		var
+			myHours : real;
+			day	: Days;				
+	begin
+		day := Mon;
+		while day < Sat do
+		 begin		  
+		  write('Please enter your hours: ');
+		  readln(myHours);
+                  if myHours < 0 then
+		   begin
+		    writeln('Invalid entry...not entered.');
+		    continue
+		   end
+		  else
+		   begin
+		    employee[day] := myHours;
+                    day := succ(day);
+                   end;
+		 end;	 	
+	end;	
+
+{**************************************************************************}
+
+	function TotalHours (employee : Hours) : real;
+		var
+			day     : Days;
+			hours   : real;
+
+		function SUCC (aDay : Days): Days;
+		begin
+			SUCC := succ(aDay);
+		end; 
+
+	begin
+		hours := 0.0;
+		day := Mon;
+		while day < Sat do	
+		 begin
+			hours := hours + employee[day];
+			day := SUCC(day);			
+		 end;
+		TotalHours := hours;
+	end;
+
+{**************************************************************************}
+
+        function A () : int;
+                function B () : integer;
+                        function C () : INT;
+                                function D () : int;
+                                begin  
+                                        A := 1;
+                                        B := 1;   
+                                        C := 1;
+                                        D := 1;
+                                end;
+                        begin
+                                A := 2;
+                                B := 2;
+                                C := 2; 
+                        end;
+                begin
+                        A := 3;
+                        B := 3;
+                end;
+        begin
+                A := 4;
+        end;
+
+{**************************************************************************}
+
+begin
+	writeln('\\\n\t\'\\\\');
+	writeln('\\////\\');
+
+	// Valid comments.
+        { valid comment.}
+        { This too is a
+        valid comment.}
+        {\\ valid comment.}
+        { valid comment.}
+        {}
+        { valid comment. \t}
+        { valid comment.  {\n }
+
+	getHours(greg);
+	gregHours := TotalHours(greg); 
+	diana := greg;	
+
+        andrzej.initials := '\n\t';
+	andrzej.initials := 'AZ';
+	andrzej.age := 23;
+
+	if 'aa' < 'bb' then
+         writeln('aa < bb');
+
+end.
+{**************************************************************************}

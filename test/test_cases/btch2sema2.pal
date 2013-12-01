@@ -1,0 +1,15 @@
+//(invalid) tests types mostly (semantic) (3 errors) 
+
+program dupvar(input, output);
+const
+	bob = 1;
+type
+	fred = char;
+
+var
+	bob1 : bob;
+	bob2 : integer;
+	fred : real;
+	a, b, c, d, a : real;
+begin
+end.
