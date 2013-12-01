@@ -7,6 +7,7 @@
 #include "Type.hpp"
 #include "Symbol.hpp"
 #include "SemanticHelper.hpp"
+#include "Symbol.hpp"
 
 using namespace std;
 
@@ -22,13 +23,20 @@ namespace Meow
 			void invokeProcedure(string procedureName, 
 					InvocationParameters* params);
 
+			void invokeWrite(InvocationParameters* params);
+			void invokeWriteln(InvocationParameters* params);
+
 			ofstream& out() { return m_ascOutput; }
 			void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
 			void simpleExpressionMod();
 
-			int currentLabel();
+			std::string currentLabel(int offset = 0);
 			void reserveLabels(int count);
 			void popLabels();
+			void allocVariable(Symbol*);
+			void accessVariable(Type* valueType, int level, int offset);
+			void assignToVariable(Type* valueType, int level, int offset);
+			void deallocVariables();
 
 		private:
 			ofstream& m_ascOutput;

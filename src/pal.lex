@@ -1,6 +1,7 @@
 %{
 	#include <iostream>
 	#include <string>
+	#include <vector>
 	#include "Scanner.hpp"
 	#include "SymbolTable.hpp"
 	typedef Meow::PalParser::token token;
@@ -13,7 +14,7 @@
 
 	static std::string s_stringText;
 	extern int g_whileCounter;
-	extern int g_varOffset;
+	extern std::vector<int> g_offsetList;
 %}
 
 %option nodefault yyclass="PalScanner" noyywrap c++
@@ -177,13 +178,13 @@ EXPONENT	E[+-]?{DIGIT}+
 	}
 	return token::EXIT; 
 	}
-"function" { g_varOffset = 0; return token::FUNCTION; }
+"function" { g_offsetList.push_back(0); return token::FUNCTION; }
 "if" { return token::IF; }
 "not" { return token::NOT; }
 "of" { return token::OF; }
 "or" { return token::OR; }
-"procedure" { g_varOffset = 0; return token::PROCEDURE; }
-"program" { return token::PROGRAM; }
+"procedure" { g_offsetList.push_back(0); return token::PROCEDURE; }
+"program" { g_offsetList.push_back(0); g_offsetList.push_back(0); return token::PROGRAM; }
 "record" { return token::RECORD; }
 "then" { return token::THEN; }
 "type" { return token::TYPE; }

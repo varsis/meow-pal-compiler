@@ -1,10 +1,15 @@
 #include <fstream>
+#include <sstream>
+#include <vector>
 
 #include "AscHelper.hpp"
 #include "ErrorManager.hpp"
 #include "Scanner.hpp"
 #include "SymbolTable.hpp"
 #include "Type.hpp"
+#include "Symbol.hpp"
+
+extern std::vector<int> g_offsetList;
 
 namespace Meow
 {
@@ -17,9 +22,14 @@ namespace Meow
 	{
 	}
 
-	int AscHelper::currentLabel()
+	string AscHelper::currentLabel(int offset)
 	{
-		return m_labelStack.back();
+		stringstream ss;
+		if (m_labelStack.size() > 0)
+		{
+			ss << "label_" << m_labelStack.back() + offset;
+		}
+		return ss.str();
 	}
 
 	void AscHelper::reserveLabels(int count)
@@ -69,9 +79,8 @@ namespace Meow
 	
 
 	void AscHelper::invokeProcedure(string procedureName,
-			InvocationParameters* params)
+			InvocationParameters* args)
 	{
-
 		if (m_errorManager->getErrors()->size() > 0)
 		{
 			return;
@@ -87,66 +96,196 @@ namespace Meow
 		// Note: at this point, we can assume arugments have been correctly pushed onto stack
 		// Note: as the grammar is currently -- args pushed in order of appearance
 
-		// free stack space used for arguments
 		int argumentSpace = 0;
 		InvocationParameters::iterator it;
-		for (it = params->begin(); it != params->end(); ++it)
+		for (it = args->begin(); it != args->end(); ++it)
 		{
 			argumentSpace += it->type->getTypeSize();
 		}
 
-		// TODO this will need to consider what else may be on the stack 
-		// (return value placeholder, display pointer, program counter, etc)
-		int argPointer = -argumentSpace + 1;
-
 		// handle builtin procedures
 
-		if (procedureSymbol == m_semanticHelper->getWrite()
-			|| procedureSymbol == m_semanticHelper->getWriteln())
+		if (procedureSymbol == m_semanticHelper->getWrite())
 		{
+			invokeWrite(args);
+		}
+		else if (procedureSymbol == m_semanticHelper->getWriteln())
+		{
+			invokeWriteln(args);
+		}
 
-			argPointer = 0; // here we haven't touched the display pointer
-			// split into separate write_* calls for each
-			// argument according to arg type
-			InvocationParameters::iterator it;
-			for (it = params->begin(); it != params->end(); ++it)
+		// Ordinary procedures/functions...
+		std::string label = procedureSymbol->getLabel();
+		if (label.size() > 0)
+		{
+			int returnValSize = 0;
+			if (procedureSymbol->getSymbolType() == Symbol::FunctionSymbol)
 			{
-				if (it->type == m_semanticHelper->getIntegerType())
+				// allocate space for return val 
+				returnValSize = procedureSymbol->getType()->getTypeSize();
+				m_ascOutput << "\tADJUST " << returnValSize << endl;
+			}
+
+			// Actually call the routine
+			m_ascOutput << "\tCALL " << procedureSymbol->getLexLevel() + 1 << ", "
+						<< label << endl;
+
+			// Copy any var parameters back to their sources (as per "copy-restore")
+			// TODO mention 'copy-restore' strategy and ratinale in docs!
+			for (unsigned int argIdx = 0; argIdx < procedureSymbol->getParameterCount(); ++argIdx)
+			{
+				Symbol* param = procedureSymbol->getParameters()->at(argIdx);
+				if (param->isVarParam())
 				{
-					// TODO need current display index?
-					m_ascOutput << "\tPUSH " << argPointer << "["<< m_symbolTable->getCurLevel() <<"]" << endl;
-					m_ascOutput << "\tWRITEI" << endl;
-					//m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
+					LValue arg = args->at(argIdx);
+
+					reserveLabels(2);
+					m_ascOutput << "\tCALL 0, vp" << currentLabel(0) << endl;
+					m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+					m_ascOutput << "vp" << currentLabel(0) << endl;
+
+					for (int i = 0; i < arg.type->getTypeSize(); i++)
+					{
+						m_ascOutput << "\tPUSH " << param->getLocation() + i << "[0]" << endl;
+						m_ascOutput << "\tPOP " << arg.offset + i << "[" << arg.level << "]" << endl;
+					}
+
+					m_ascOutput << "\tRET 0" << endl;
+					m_ascOutput << currentLabel(1) << endl;
+					popLabels();
 				}
-				else if (it->type == m_semanticHelper->getCharType())
+			}
+
+			if (returnValSize > 0 && argumentSpace > 0)
+			{
+				// return value now on top of stack, need to pop it to start of args
+				// this seems way too complicated for this, but the only way to
+				// store to a register is with CALL... :S
+
+				reserveLabels(2);
+				m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+				m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+				m_ascOutput << currentLabel(0) << endl;
+
+				for (int i = 0; i < returnValSize; i++)
 				{
-					m_ascOutput << "\tPUSH " << argPointer << "["<< m_symbolTable->getCurLevel() <<"]" << endl;
-					m_ascOutput << "\tWRITEC" << endl;
-				}
-				else if (it->type == m_semanticHelper->getRealType())
-				{
-					m_ascOutput << "\tPUSH " << argPointer << "["<< m_symbolTable->getCurLevel() <<"]" << endl;
-					m_ascOutput << "\tWRITER" << endl;
-					//m_ascOutput << "\tCALL 0, ml_write_real" << endl;
-				}
-				else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
-				{
-					m_ascOutput << "\tCONSTI " << argPointer << endl;
-					m_ascOutput << "\tCALL 0, ml_write_string" << endl;
+					m_ascOutput << "\tPUSH -" << 3 + i << "[0]" << endl;
+					m_ascOutput << "\tPOP -" << argumentSpace + 3 + i << "[0]" << endl;
 				}
 
-				argPointer += it->type->getTypeSize();
+				m_ascOutput << "\tRET 0" << endl;
+				m_ascOutput << currentLabel(1) << endl;
+				popLabels();
 			}
 		}
 
-		if (procedureSymbol == m_semanticHelper->getWriteln())
+		if (argumentSpace > 0)
 		{
-			// write a newline (ascii character 10)
-			m_ascOutput << "\tCONSTI 10" << endl;
-			m_ascOutput << "\tWRITEC" << endl;
+			m_ascOutput << "\tADJUST -" << argumentSpace << endl;
+		}
+	}
+
+	void AscHelper::invokeWriteln(InvocationParameters* args)
+	{
+		invokeWrite(args);
+
+		// write a newline (ascii character 10)
+		m_ascOutput << "\tCONSTI 10" << endl;
+		m_ascOutput << "\tWRITEC" << endl;
+	}
+
+	void AscHelper::invokeWrite(InvocationParameters* args)
+	{
+		// Need to call a 'function' so we can get arguments offset from a display reg
+		reserveLabels(2);
+		m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+		m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+		m_ascOutput << currentLabel(0) << endl;
+
+		int argumentSpace = 0;
+		InvocationParameters::iterator it;
+		for (it = args->begin(); it != args->end(); ++it)
+		{
+			argumentSpace += it->type->getTypeSize();
+		}
+		int argPointer = - 2 - argumentSpace; // pointer to first arg relative to display reg 0
+
+		// split into separate write_* calls for each
+		// argument according to arg type
+		for (it = args->begin(); it != args->end(); ++it)
+		{
+			if (it->type == m_semanticHelper->getIntegerType())
+			{
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tWRITEI" << endl;
+				//m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
+			}
+			else if (it->type == m_semanticHelper->getCharType())
+			{
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tWRITEC" << endl;
+			}
+			else if (it->type == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tWRITER" << endl;
+				//m_ascOutput << "\tCALL 0, ml_write_real" << endl;
+			}
+			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
+			{
+				// push pointer to start of string
+				m_ascOutput << "\tPUSHA " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tCALL 0, ml_write_string" << endl;
+				m_ascOutput << "\tADJUST -1" << endl;
+			}
+
+			argPointer += it->type->getTypeSize();
 		}
 
-		m_ascOutput << "\tADJUST -" << argumentSpace << endl;
+		m_ascOutput << "\tRET 0" << endl;
+		m_ascOutput << currentLabel(1) << endl;
+		popLabels();
+	}
+
+	void AscHelper::allocVariable(Symbol* sym)
+	{
+		if (sym)
+		{
+			m_ascOutput << "\tADJUST " << sym->getSizeInMem() << endl;
+		}
+	}
+
+	void AscHelper::accessVariable(Type* valueType, int level, int offset)
+	{
+		// only do this if there are no errors -- bad type sizes can make this thing run
+		// a lonnggg time!
+		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		{
+			for (int i = 0; i < valueType->getTypeSize(); ++i)
+			{
+				m_ascOutput << "\tPUSH " << offset + i<< "[" << level << "]" << endl;
+			}
+		}
+	}	
+
+	void AscHelper::assignToVariable(Type* valueType, int level, int offset)
+	{
+		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		{
+			for (int i = valueType->getTypeSize(); i > 0; --i)
+			{
+				m_ascOutput << "\tPOP " << offset + i - 1 << "[" << level << "]" << endl;
+			}
+		}
+	}
+
+	void AscHelper::deallocVariables()
+	{
+		if (g_offsetList.size() >= 1)
+		{
+			m_ascOutput << "\tADJUST -" << g_offsetList[g_offsetList.size()-1] << endl;
+			g_offsetList.pop_back();
+		}
 	}
 }
 

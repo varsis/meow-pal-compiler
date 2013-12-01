@@ -1,19 +1,27 @@
 #include "Symbol.hpp"
+#include "Type.hpp"
 #include <string>
+
+using namespace std;
 
 namespace Meow
 {
 	Symbol::Symbol()
-		: m_lexicalLevel(-1)
+		: m_name("")
+		, m_symbolType()
+		, m_lexicalLevel(-1)
 		, m_type(NULL)
 		, m_sizeInMem(-1)
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)
+		, m_label("")
 		, m_procedureClass(UserDefined)
+		, m_parameterSpace(0)
+		, m_varParam(false)
 	{
 	}
-
+	
 	Symbol::Symbol(std::string name, Symbol::SymbolType type)
 		: m_name(name)
 		, m_symbolType(type)
@@ -23,7 +31,10 @@ namespace Meow
 		, m_location(-1)
 		, m_declLineno(-1)
 		, m_initialized(false)
+		, m_label("")
 		, m_procedureClass(UserDefined)
+		, m_parameterSpace(0)
+		, m_varParam(false)
 	{
 	}
 		
@@ -67,9 +78,28 @@ namespace Meow
 		m_initialized = true;
 	}
 
-	void Symbol::addParameter(Parameter parameter)
+	Symbol* Symbol::addParameter(std::string id, Type* type, bool var, int offset)
 	{
-		m_parameters.push_back(parameter);
+		Symbol* param = new Symbol(id, Symbol::VariableSymbol);
+
+		if (type)
+		{
+			int returnSize = 0;
+			if (m_type)
+			{
+				returnSize = m_type->getTypeSize();
+			}
+
+			param->setType(type);
+			param->setSizeInMem(type->getTypeSize());
+			param->setLocation(-2 - returnSize - m_parameterSpace + offset);
+
+			param->setVarParam(var);
+		}
+
+		m_parameters.push_back(param);
+
+		return param;
 	}
 
 	std::string Symbol::getName()
@@ -117,20 +147,20 @@ namespace Meow
 		return m_parameters.size();
 	}
 
-	ParameterList Symbol::getParameters() const
+	const vector<Symbol*>* Symbol::getParameters() const
 	{
-		return m_parameters;
+		return &m_parameters;
 	}
 
-	Parameter* Symbol::getParameter(std::string name) 
+	Symbol* Symbol::getParameter(std::string name) 
 	{
-		ParameterList::iterator it = m_parameters.begin();
+		vector<Symbol*>::iterator it = m_parameters.begin();
 
 		for (; it != m_parameters.end(); it++)
 		{
-			if ((*it).id.compare(name) == 0)
+			if ((*it)->getName().compare(name) == 0)
 			{
-				return &(*it);
+				return (*it);
 			}
 		}
 

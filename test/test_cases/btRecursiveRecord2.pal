@@ -1,0 +1,6 @@
+program test( input, output );
+type
+	r1 = record a : r2; end;
+	r2 = record a : r1; end;
+begin
+end.

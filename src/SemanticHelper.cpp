@@ -18,7 +18,6 @@ namespace Meow
 
 	void SemanticHelper::addPredefinedSymbols()
 	{
-		Parameter * arg;
 		// add predefined types
 
 		Symbol* intSymbol = new Symbol("integer", Symbol::TypeSymbol);
@@ -95,23 +94,17 @@ namespace Meow
 	
 		Symbol* chrFunctionSymbol = new Symbol("chr", Symbol::FunctionSymbol);
 		chrFunctionSymbol->setType(getCharType());
-		arg = new Parameter();
-		arg->type = getIntegerType();
-		chrFunctionSymbol->addParameter(*arg);
+		chrFunctionSymbol->addParameter("", getIntegerType());
 		m_table->addSymbol(chrFunctionSymbol);
 		
 		Symbol* truncFunctionSymbol = new Symbol("trunc", Symbol::FunctionSymbol);
 		truncFunctionSymbol->setType(getIntegerType());
-		arg = new Parameter();
-		arg->type = getRealType();
-		truncFunctionSymbol->addParameter(*arg);
+		truncFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(truncFunctionSymbol);
 		
 		Symbol* roundFunctionSymbol = new Symbol("round", Symbol::FunctionSymbol);
 		roundFunctionSymbol->setType(getIntegerType());
-		arg = new Parameter();
-		arg->type = getRealType();
-		roundFunctionSymbol->addParameter(*arg);
+		roundFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(roundFunctionSymbol);
 		
 		Symbol* succFunctionSymbol = new Symbol("succ", Symbol::FunctionSymbol);
@@ -124,51 +117,37 @@ namespace Meow
 		
 		Symbol* oddFunctionSymbol = new Symbol("odd", Symbol::FunctionSymbol);
 		oddFunctionSymbol->setType(getBooleanType());
-		arg = new Parameter();
-		arg->type = getIntegerType();
-		oddFunctionSymbol->addParameter(*arg);
+		oddFunctionSymbol->addParameter("", getIntegerType());
 		m_table->addSymbol(oddFunctionSymbol);
 		
 		Symbol* absFunctionSymbol = new Symbol("abs", Symbol::FunctionSymbol);
 		m_abs = absFunctionSymbol; // Save the symbol addr in case of redef
-		arg = new Parameter();
-		arg->type = getRealType();
-		absFunctionSymbol->addParameter(*arg);
+		absFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(absFunctionSymbol);
 		
 		Symbol* sqrFunctionSymbol = new Symbol("sqr", Symbol::FunctionSymbol);
 		m_sqr = sqrFunctionSymbol; // Save the symbol addr in case of redef
-		arg = new Parameter();
-		arg->type = getRealType();
-		sqrFunctionSymbol->addParameter(*arg);
+		sqrFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(sqrFunctionSymbol);
 		
 		Symbol* sqrtFunctionSymbol = new Symbol("sqrt", Symbol::FunctionSymbol);
 		sqrtFunctionSymbol->setType(getRealType());
-		arg = new Parameter();
-		arg->type = getRealType();
-		sqrtFunctionSymbol->addParameter(*arg);
+		sqrtFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(sqrtFunctionSymbol);
 
 		Symbol* sinFunctionSymbol = new Symbol("sin", Symbol::FunctionSymbol);
 		sinFunctionSymbol->setType(getRealType());
-		arg = new Parameter();
-		arg->type = getRealType();
-		sinFunctionSymbol->addParameter(*arg);
+		sinFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(sinFunctionSymbol);
 		
 		Symbol* expFunctionSymbol = new Symbol("exp", Symbol::FunctionSymbol);
 		expFunctionSymbol->setType(getRealType());
-		arg = new Parameter();
-		arg->type = getRealType();
-		expFunctionSymbol->addParameter(*arg);
+		expFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(expFunctionSymbol);
 		
 		Symbol* lnFunctionSymbol = new Symbol("ln", Symbol::FunctionSymbol);
 		lnFunctionSymbol->setType(getRealType());
-		arg = new Parameter();
-		arg->type = getRealType();
-		lnFunctionSymbol->addParameter(*arg);
+		lnFunctionSymbol->addParameter("", getRealType());
 		m_table->addSymbol(lnFunctionSymbol);
 
 		// Make sure that builtins can be redefed
@@ -412,6 +391,96 @@ namespace Meow
 		m_table->addSymbol(sym);
 		m_table->allocateSpace(sym, type);
 	}
+	
+	void SemanticHelper::declareParameter(Symbol* param)
+	{
+		Symbol* sym = m_table->getSymbolCurLevel(param->getName());
+
+		if (sym)
+		{
+			m_errorManager->addError(new Error(IdentifierInUse,
+				"Identifier, '" + param->getName() + "', was already declared at current lexical level.",
+				m_scanner->lineno()));
+		}
+
+		m_table->addSymbol(param);
+	}
+
+	Symbol* SemanticHelper::declareRoutine(string label, string* id, ParameterList* parameters, string* returnId)
+	{
+		Symbol* routineSym = m_table->getSymbolCurLevel(*id);
+		Type * returnType = NULL;
+		int offset;
+
+		if (routineSym)
+		{
+			m_errorManager->addError(new Error(IdentifierInUse,
+							"Identifier, '" + *id + "', was already declared at current lexical level.",
+							m_scanner->lineno()));
+		}
+
+		if (returnId == NULL)
+		{
+			routineSym = new Symbol(*id, Symbol::ProcedureSymbol);
+		}
+		else
+		{
+			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
+			returnType = getTypeFromID(*returnId);
+			routineSym->setType(returnType);
+		}
+
+		offset = 0;
+		for (size_t i = 0; i < parameters->size(); i++)
+		{
+			routineSym->allocParameterSpace(parameters->at(i).type->getTypeSize());
+		}
+		for (size_t i = 0; i < parameters->size(); i++)
+		{
+			routineSym->addParameter(parameters->at(i).id, parameters->at(i).type,
+								parameters->at(i).var, offset);
+			offset += parameters->at(i).type->getTypeSize();
+		}
+
+		routineSym->setLabel(label);
+
+		m_table->addSymbol(routineSym);
+		m_table->incLevel();
+
+		// Now, make symbol that exists in method body's lexical level (for setting return value)
+		// and declare parameters at that level
+		
+		if (returnId == NULL)
+		{
+			routineSym = new Symbol(*id, Symbol::ProcedureSymbol);
+		}
+		else
+		{
+			routineSym = new Symbol(*id, Symbol::FunctionSymbol);
+			routineSym->setType(returnType);
+		}
+
+		offset = 0;
+		for (size_t i = 0; i < parameters->size(); i++)
+		{
+			routineSym->allocParameterSpace(parameters->at(i).type->getTypeSize());
+		}
+		for (size_t i = 0; i < parameters->size(); i++)
+		{
+			Symbol* param = routineSym->addParameter(parameters->at(i).id, parameters->at(i).type,
+									parameters->at(i).var, offset);
+
+			declareParameter(param);
+			offset += parameters->at(i).type->getTypeSize();
+		}
+
+		routineSym->setLabel(label);
+
+		m_table->addSymbol(routineSym);
+
+		return routineSym;
+	}
+
 
 	// unary operators
 	ConstExpr SemanticHelper::getConstOpResult(Operator op, ConstExpr expr)
@@ -937,14 +1006,14 @@ namespace Meow
 	}
 
 	void SemanticHelper::checkInvocationArgs(Symbol* fpSymbol, 
-							InvocationParameters* params)
+							InvocationParameters* args)
 	{
 		if (fpSymbol->getProcClass() == BuiltInInput
 			|| fpSymbol->getProcClass() == BuiltInOutput)
 		{
-			// check params are all valid for a IO procedure
+			// check args are all valid for a IO procedure
 			InvocationParameters::iterator it;
-			for (it = params->begin(); it != params->end(); ++it)
+			for (it = args->begin(); it != args->end(); ++it)
 			{
 				Type* paramType = (*it).type;
 				if (paramType != NULL)
@@ -977,9 +1046,9 @@ namespace Meow
 								m_scanner->lineno()));
 			}
 		}
-		else if (fpSymbol->getParameterCount() != params->size())
+		else if (fpSymbol->getParameterCount() != args->size())
 		{
-			if (params->size() < fpSymbol->getParameterCount())
+			if (args->size() < fpSymbol->getParameterCount())
 			{
 				m_errorManager->addError(new Error(IdentifierInUse,
 								"Function/procedure, '" + fpSymbol->getName() + "', is missing parameters.",
@@ -994,29 +1063,29 @@ namespace Meow
 		}
 		else
 		{
-			ParameterList formalList;
+			const std::vector<Symbol*>* params;
 			Type * t1;
 			Type * t2;
 
-			formalList = fpSymbol->getParameters();
-			for(unsigned int i = 0; i < params->size(); i++)
+			params = fpSymbol->getParameters();
+			for(unsigned int i = 0; i < args->size(); i++)
 			{
-				t1 = formalList.at(i).type;
-				t2 = params->at(i).type;
+				t1 = params->at(i)->getType();
+				t2 = args->at(i).type;
 
 				// if param is a var param...
-				if (formalList.at(i).var == true)
+				if (params->at(i)->isVarParam() == true)
 				{
 					if (!checkAssignmentCompatible(t2, t1))
 					{
 						m_errorManager->addError(new Error(SemanticError,
-									"Var parameter, '" + formalList.at(i).id + "', not assignable to argument type.",
+									"Var parameter, '" + params->at(i)->getName() + "', not assignable to argument type.",
 									m_scanner->lineno()));
 					}
-					else if (params->at(i).assignable == false)
+					else if (args->at(i).assignable == false)
 					{
 						m_errorManager->addError(new Error(SemanticError,
-									"Variable argument required for var parameter, '" + formalList.at(i).id + "'.",
+									"Variable argument required for var parameter, '" + params->at(i)->getName() + "'.",
 									m_scanner->lineno()));
 					}
 
@@ -1032,12 +1101,15 @@ namespace Meow
 		}
 	}
 
-
-	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName, bool& assignable)
+	// returns type for field of record
+	// assignable = true if valid field access
+	// offset = offset for field from start of record
+	Type* SemanticHelper::getRecordFieldType(Type* recordType, string fieldName, bool& assignable, int& offset)
 	{
 		Type* fieldType = NULL;
 
 		assignable = false; // only assignable if valid record.field access
+		offset = 0;
 
 		if (recordType == NULL)
 		{
@@ -1071,7 +1143,10 @@ namespace Meow
 						
 						// valid field access, is assignable
 						assignable = true;
+						break;
 					}
+
+					offset += (*it)->second->getTypeSize();
 				}
 			}
 
