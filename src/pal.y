@@ -266,27 +266,6 @@ const_decl              : IDENTIFIER EQ type_expr
                                 delete $1;
 
 				table.addSymbol(sym);
-				table.allocateSpace(sym, $3.type);
-
-				// These are CONSTANT and should have a Constant value at this level.
-				// We need to handle int's Problem
-				if($3.type == semanticHelper.getRealType())
-				{
-					double thisValue = ($3.value).real_val;
-					ascHelper.out() << "\tADJUST 1" << endl;
-					ascHelper.out() << "\tCONSTR " << thisValue << endl;
-					ascHelper.out() << "\tPOP "<< sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
-				}
-				else if($3.type == semanticHelper.getIntegerType())
-				{
-					int thisValue = ($3.value).int_val;
-					ascHelper.out() << "\tADJUST 1" << endl;
-					ascHelper.out() << "\tCONSTI " << thisValue << endl;
-					ascHelper.out() << "\tPOP "<< sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
-				} else {
-					
-				}
-				// TODO: Add Symbol to stack at the current level
                         }
 			| IDENTIFIER EQ STRING_LITERAL
                         {
@@ -890,30 +869,16 @@ lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
 				$$.level = $1.level; // Level of variable
 				$$.offset = $1.offset; // Offset of variable
 
-				// index from expr will be on stack...
-				if ($1.type && $$.type)
-				{
-					Type* arrayType = $1.type;
-					Type* elementType = $$.type;
+                                // TODO not sure what values we actually need anymore in $$ (type, level, symbol, offset?)
+                                // Pretty sure offset no longer actually used (or at least shouldn't be)
 
-					// Index is on stack. Convert it to an integer index relative to start of array
-					// TODO may need to convert char (or enum) indexes a little differently? but maybe not (TEST!)
-					ascHelper.out() << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
-					ascHelper.out() << "\tADDI" << endl;
-
-					// TODO run time bounds check probably needs to happen here! 
-
-					// Multiply index by size of element (if greater than 1?)
-					ascHelper.out() << "\tCONSTI " << elementType->getTypeSize() << endl;
-					ascHelper.out() << "\tMULI" << endl;
-
-					// Add to whatever offset already on the stack
-					ascHelper.out() << "\tADDI" << endl;
-				}
+                                ascHelper.addArraySubscriptOffset($1.type);
                         }
                         | lhs_subscripted_var COMMA expr
 			{
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+                                
+                                ascHelper.addArraySubscriptOffset($1.type);
 			}
                         ;
 
@@ -924,10 +889,20 @@ var                     : IDENTIFIER
 				$$.sym = sym;
 				if (sym)
 				{
-					$$.level = sym->getLexLevel();
-					$$.offset = sym->getLocation();
+                                        if (sym->getSymbolType() == Symbol::ConstantSymbol)
+                                        {
+                                            // If its a constant, just push the value itself since we already know it
+                                            ascHelper.pushConstantValue(sym);
+                                        }
+                                        else
+                                        {
+                                            // If its an actual variable  with an associated address, push the address
+                                            // on to the stack
+                                            $$.level = sym->getLexLevel();
+                                            $$.offset = sym->getLocation();
 
-					ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
+                                            ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
+                                        }
 				}
 				delete $1;
 
@@ -962,30 +937,12 @@ subscripted_var         : var LEFT_BRACKET expr
 				$$.level = $1.level;
 				$$.offset = $1.offset;
 
-				// index from expr will be on stack...
-				if ($1.type && $$.type)
-				{
-					Type* arrayType = $1.type;
-					Type* elementType = $$.type;
-
-					// Index is on stack. Convert it to an integer index relative to start of array
-					// TODO may need to convert char (or enum) indexes a little differently? but maybe not (TEST!)
-					ascHelper.out() << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
-					ascHelper.out() << "\tADDI" << endl;
-
-					// TODO run time bounds check probably needs to happen here! 
-
-					// Multiply index by size of element (if greater than 1?)
-					ascHelper.out() << "\tCONSTI " << elementType->getTypeSize() << endl;
-					ascHelper.out() << "\tMULI" << endl;
-
-					// Add to whatever offset already on the stack
-					ascHelper.out() << "\tADDI" << endl;
-				}
+                                ascHelper.addArraySubscriptOffset($1.type);
                         }
                         | subscripted_var COMMA expr
 			{
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+                                ascHelper.addArraySubscriptOffset($1.type);
 			}
                         ;
 

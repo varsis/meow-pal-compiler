@@ -255,13 +255,20 @@ namespace Meow
 		}
 	}
 
-	//void AscHelper::accessVariable(Type* valueType, int level, int offset)
 	void AscHelper::accessVariable(LValue lvalue)
 	{
 		// only do this if there are no errors -- bad type sizes can make this thing run
 		// a lonnggg time!
 		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
 		{
+			if (lvalue.sym->getSymbolType() == Symbol::ConstantSymbol)
+			{
+				// Actual constant value already pushed onto stack!
+				return;
+			}
+
+			// otherwise, address of variable should be on stack
+
 			int size = lvalue.type->getTypeSize();
 			// Adjust for space of value
 			m_ascOutput << "\tADJUST " << size - 1 << endl;
@@ -293,6 +300,39 @@ namespace Meow
 			popLabels();
 		}
 	}	
+
+	void AscHelper::pushConstantValue(Symbol* symbol)
+	{
+		Type* type = symbol->getType();
+		if (type)
+		{
+			switch (type->getTypeClass())
+			{
+			case Type::SimpleType:
+				if (type == m_semanticHelper->getRealType())
+				{
+					// push real
+					m_ascOutput << "\tCONSTR " << symbol->getConstantValue().real_val << endl;
+				}
+				else
+				{
+					// push boolean, char, integer as integer value
+					m_ascOutput << "\tCONSTI " << symbol->getConstantValue().int_val << endl;
+				}
+				break;
+			case Type::EnumeratedType:
+				// push enum type entry thing as its integer value
+				m_ascOutput << "\tCONSTI " << symbol->getConstantValue().int_val << endl;
+				break;
+			case Type::StringLiteralType:
+				// TODO push a bunch of chars as integers with a terminating null
+				break;
+			default:
+				// Other types aren't valid constants!
+				break;
+			}
+		}
+	}
 
 	void AscHelper::assignToVariable(LValue lvalue)
 	{
@@ -327,6 +367,36 @@ namespace Meow
 			// free memory for address + value
 			m_ascOutput << "\tADJUST -" << size + 1 << endl;
 		}
+	}
+
+	void AscHelper::addArraySubscriptOffset(Type* arrayType)
+	{
+		if (arrayType == NULL)
+		{
+			return;
+		}
+
+		Type* elementType = arrayType->getElementType();
+
+		if (elementType == NULL)
+		{
+			return;
+		}
+
+		// Index is on stack. Convert it to an integer index relative to start of array
+		// TODO may need to convert char (or enum) indexes a little differently? but maybe not (TEST!)
+
+		m_ascOutput << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
+		m_ascOutput << "\tADDI" << endl;
+
+		// TODO run time bounds check probably needs to happen here! 
+
+		// Multiply index by size of element (if greater than 1?)
+		m_ascOutput << "\tCONSTI " << elementType->getTypeSize() << endl;
+		m_ascOutput << "\tMULI" << endl;
+
+		// Add to whatever offset already on the stack
+		m_ascOutput << "\tADDI" << endl;
 	}
 
 	void AscHelper::deallocVariables()

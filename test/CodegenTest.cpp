@@ -104,6 +104,39 @@ namespace Meow
 		
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestEnum)
+	{
+		ofstream testfile("test/asc/testEnum.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "type t = (hey, man, sup);" << endl;
+		testfile << "var a : t;" << endl;
+		testfile << "begin" << endl;
+		testfile << "   a := hey;" << endl;
+		testfile << "   if (a = hey) then" << endl;
+		testfile << "	begin" << endl;
+		testfile << "		writeln(1);" << endl;
+		testfile << "	end" << endl;
+		testfile << "	else" << endl;
+		testfile << "	begin" << endl;
+		testfile << "		writeln(2);" << endl;
+		testfile << "	end" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -S -n test/asc/testEnum.pal", "r");
+		
+		ASSERT_NE(palout, (void*)0);
+		
+		int i;
+		
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 1);
+		
+		pclose(palout);
+	}
 	
 	TEST(CodegenTest, TestAdditionRealInt)
 	{
@@ -1682,6 +1715,175 @@ namespace Meow
 		int val;
 		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
 		EXPECT_EQ(val, 79);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays7)
+	{
+		ofstream testfile("test/asc/arrays.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[1 .. 3] of array[1..3] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[2,2] := 11;" << endl;
+		testfile << "	a[2,3] := 22;" << endl;
+		testfile << "	a[3,2] := 33;" << endl;
+		testfile << "	a[3,3] := 44;" << endl;
+		testfile << "	writeln(a[2,2]);" << endl;
+		testfile << "	writeln(a[2,3]);" << endl;
+		testfile << "	writeln(a[3,2]);" << endl;
+		testfile << "	writeln(a[3,3]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arrays.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 33);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrays8)
+	{
+		ofstream testfile("test/asc/arrays.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[1 .. 3] of array[1..4] of array[1..5] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[2,2,2] := 11;" << endl;
+		testfile << "	a[2,2,3] := 22;" << endl;
+		testfile << "	a[2,3,2] := 33;" << endl;
+		testfile << "	a[2,3,3] := 44;" << endl;
+		testfile << "	writeln(a[2,2,2]);" << endl;
+		testfile << "	writeln(a[2,2,3]);" << endl;
+		testfile << "	writeln(a[2,3,2]);" << endl;
+		testfile << "	writeln(a[2,3,3]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arrays.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 33);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayCharIndex)
+	{
+		ofstream testfile("test/asc/arraycharindex.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array['a'..'z'] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a['w'] := 'q';" << endl;
+		testfile << "	a['x'] := 'r';" << endl;
+		testfile << "	write(a['w']);" << endl;
+		testfile << "	write(a['x']);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arraycharindex.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char val;
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 'q');
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 'r');
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayCharIndex2)
+	{
+		ofstream testfile("test/asc/arraycharindex.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array['a'..'z'] of array['a'..'z'] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a['w']['x'] := 'q';" << endl;
+		testfile << "	a['w']['w'] := 'r';" << endl;
+		testfile << "	a['x','x'] := 's';" << endl;
+		testfile << "	a['x','w'] := 't';" << endl;
+		testfile << "	write(a['w']['x']);" << endl;
+		testfile << "	write(a['w']['w']);" << endl;
+		testfile << "	write(a['x','x']);" << endl;
+		testfile << "	write(a['x','w']);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arraycharindex.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char val;
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 'q');
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 'r');
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 's');
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 't');
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayEnumIndex)
+	{
+		ofstream testfile("test/asc/enumindex.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	t = (hey, dude, whats, up);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[hey .. up] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[hey] := 11;" << endl;
+		testfile << "	a[dude] := 22;" << endl;
+		testfile << "	a[whats] := 33;" << endl;
+		testfile << "	a[up] := 44;" << endl;
+		testfile << "	writeln(a[hey]);" << endl;
+		testfile << "	writeln(a[dude]);" << endl;
+		testfile << "	writeln(a[whats]);" << endl;
+		testfile << "	writeln(a[up]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/enumindex.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 33);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
 		pclose(palout);
 	}
 }
