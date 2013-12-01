@@ -34,8 +34,10 @@ namespace Meow
 			void reserveLabels(int count);
 			void popLabels();
 			void allocVariable(Symbol*);
-			void accessVariable(Type* valueType, int level, int offset);
-			void assignToVariable(Type* valueType, int level, int offset);
+			void accessVariable(LValue lvalue);
+			void pushConstantValue(Symbol* symbol);
+			void assignToVariable(LValue lvalue);
+			void addArraySubscriptOffset(Type* arrayType);
 			void deallocVariables();
 
 		private:

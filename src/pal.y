@@ -266,27 +266,6 @@ const_decl              : IDENTIFIER EQ type_expr
                                 delete $1;
 
 				table.addSymbol(sym);
-				table.allocateSpace(sym, $3.type);
-
-				// These are CONSTANT and should have a Constant value at this level.
-				// We need to handle int's Problem
-				if($3.type == semanticHelper.getRealType())
-				{
-					double thisValue = ($3.value).real_val;
-					ascHelper.out() << "\tADJUST 1" << endl;
-					ascHelper.out() << "\tCONSTR " << thisValue << endl;
-					ascHelper.out() << "\tPOP "<< sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
-				}
-				else if($3.type == semanticHelper.getIntegerType())
-				{
-					int thisValue = ($3.value).int_val;
-					ascHelper.out() << "\tADJUST 1" << endl;
-					ascHelper.out() << "\tCONSTI " << thisValue << endl;
-					ascHelper.out() << "\tPOP "<< sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
-				} else {
-					
-				}
-				// TODO: Add Symbol to stack at the current level
                         }
 			| IDENTIFIER EQ STRING_LITERAL
                         {
@@ -817,7 +796,7 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
 
-				ascHelper.assignToVariable($1.type, $1.level, $1.offset);
+				ascHelper.assignToVariable($1);
 			}
                         | proc_invok
                         | compound_stat
@@ -853,34 +832,31 @@ lhs_var                 : IDENTIFIER
 				if (sym)
 				{
 					$$.level = sym->getLexLevel();
-					if (sym->getSymbolType() == Symbol::FunctionSymbol && $$.type)
-					{
-						// assign value on top of stack to location reserved for return value
-						$$.offset = -(2 + $$.type->getTypeSize());
-					}
-					else
-					{
-						$$.offset = sym->getLocation();
-					}
+					$$.offset = sym->getLocation();
+
+					ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
 				}
 				delete $1;
                         }
                         | lhs_var PERIOD IDENTIFIER
                         {
-				int offset;
-				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, offset);
+				int fieldOffset;
+				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, fieldOffset);
 				$$.type = fieldType;
 				$$.sym = $$.sym;
 				$$.level = $1.level;
 				if (fieldType)
 				{
-					$$.offset = $1.offset + offset;
+					$$.offset = $1.offset + fieldOffset;
 				}
 				delete $3;
+
+				// add field offset
+				ascHelper.out() << "\tCONSTI " << fieldOffset << endl;
+				ascHelper.out() << "\tADDI" << endl;
                         }
                         | lhs_subscripted_var RIGHT_BRACKET
                         {
-				$$.sym = NULL;
 				$$ = $1;
                         }
                         ;
@@ -888,10 +864,21 @@ lhs_var                 : IDENTIFIER
 lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
                         {
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+				// $1.type is the array type, $$.type is the element type, $3.type is the index type
+				$$.sym = $1.sym; // Symbol for LHS variable
+				$$.level = $1.level; // Level of variable
+				$$.offset = $1.offset; // Offset of variable
+
+                                // TODO not sure what values we actually need anymore in $$ (type, level, symbol, offset?)
+                                // Pretty sure offset no longer actually used (or at least shouldn't be)
+
+                                ascHelper.addArraySubscriptOffset($1.type);
                         }
                         | lhs_subscripted_var COMMA expr
 			{
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+                                
+                                ascHelper.addArraySubscriptOffset($1.type);
 			}
                         ;
 
@@ -902,23 +889,40 @@ var                     : IDENTIFIER
 				$$.sym = sym;
 				if (sym)
 				{
-					$$.level = sym->getLexLevel();
-					$$.offset = sym->getLocation();
+                                        if (sym->getSymbolType() == Symbol::ConstantSymbol)
+                                        {
+                                            // If its a constant, just push the value itself since we already know it
+                                            ascHelper.pushConstantValue(sym);
+                                        }
+                                        else
+                                        {
+                                            // If its an actual variable  with an associated address, push the address
+                                            // on to the stack
+                                            $$.level = sym->getLexLevel();
+                                            $$.offset = sym->getLocation();
+
+                                            ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
+                                        }
 				}
 				delete $1;
+
 			}
                         | var PERIOD IDENTIFIER
                         {
-				int offset;
-				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, offset);
-				delete $3;
+				int fieldOffset;
+				Type* fieldType = semanticHelper.getRecordFieldType($1.type, *$3, $$.assignable, fieldOffset);
 				$$.type = fieldType;
 				$$.sym = $$.sym;
 				$$.level = $1.level;
 				if (fieldType)
 				{
-					$$.offset = $1.offset + offset;
+					$$.offset = $1.offset + fieldOffset;
 				}
+				delete $3;
+
+				// add field offset
+				ascHelper.out() << "\tCONSTI " << fieldOffset << endl;
+				ascHelper.out() << "\tADDI" << endl;
                         }
                         | subscripted_var RIGHT_BRACKET
                         {
@@ -929,10 +933,16 @@ var                     : IDENTIFIER
 subscripted_var         : var LEFT_BRACKET expr
                         {
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+				$$.sym = $1.sym;
+				$$.level = $1.level;
+				$$.offset = $1.offset;
+
+                                ascHelper.addArraySubscriptOffset($1.type);
                         }
                         | subscripted_var COMMA expr
 			{
 				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+                                ascHelper.addArraySubscriptOffset($1.type);
 			}
                         ;
 
@@ -1653,7 +1663,7 @@ factor                  : var
 			{
 				$$ = $1;
 				// push value at offset[level] onto stack....
-				ascHelper.accessVariable($1.type, $1.level, $1.offset);
+				ascHelper.accessVariable($1);
 			}
 			| unsigned_const
 			{
@@ -1673,7 +1683,7 @@ factor                  : var
 			{
 				Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
 
-if (result == NULL)
+				if (result == NULL)
 				{
 					errorManager.addError(
 						new Error(OperatorTypeMismatch,

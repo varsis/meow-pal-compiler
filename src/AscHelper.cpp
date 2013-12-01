@@ -255,28 +255,148 @@ namespace Meow
 		}
 	}
 
-	void AscHelper::accessVariable(Type* valueType, int level, int offset)
+	void AscHelper::accessVariable(LValue lvalue)
 	{
 		// only do this if there are no errors -- bad type sizes can make this thing run
 		// a lonnggg time!
-		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
 		{
-			for (int i = 0; i < valueType->getTypeSize(); ++i)
+			if (lvalue.sym->getSymbolType() == Symbol::ConstantSymbol)
 			{
-				m_ascOutput << "\tPUSH " << offset + i<< "[" << level << "]" << endl;
+				// Actual constant value already pushed onto stack!
+				return;
 			}
+
+			// otherwise, address of variable should be on stack
+
+			int size = lvalue.type->getTypeSize();
+			// Adjust for space of value
+			m_ascOutput << "\tADJUST " << size - 1 << endl;
+
+			reserveLabels(2);
+			m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+			m_ascOutput << currentLabel(0) << endl;
+
+			// Copy address to top of stack
+			m_ascOutput << "\tPUSH " << -2 - size << "[0]" << endl;
+
+			for (int i = 0; i < size; ++i)
+			{
+				m_ascOutput << "\tDUP" << endl;
+				m_ascOutput << "\tCONSTI " << i << endl;
+				m_ascOutput << "\tADDI" << endl;
+
+				// Push element to stack
+				m_ascOutput << "\tPUSHI " << lvalue.level << endl;
+				// Pop element into place
+				m_ascOutput << "\tPOP " << - 2 - size + i << "[0]" << endl;
+			}
+
+			m_ascOutput << "\tADJUST " << -1 << endl;
+
+			m_ascOutput << "\tRET 0" << endl;
+			m_ascOutput << currentLabel(1) << endl;
+			popLabels();
 		}
 	}	
 
-	void AscHelper::assignToVariable(Type* valueType, int level, int offset)
+	void AscHelper::pushConstantValue(Symbol* symbol)
 	{
-		if (m_errorManager->getErrors()->size() == 0 && valueType)
+		Type* type = symbol->getType();
+		if (type)
 		{
-			for (int i = valueType->getTypeSize(); i > 0; --i)
+			switch (type->getTypeClass())
 			{
-				m_ascOutput << "\tPOP " << offset + i - 1 << "[" << level << "]" << endl;
+			case Type::SimpleType:
+				if (type == m_semanticHelper->getRealType())
+				{
+					// push real
+					m_ascOutput << "\tCONSTR " << symbol->getConstantValue().real_val << endl;
+				}
+				else
+				{
+					// push boolean, char, integer as integer value
+					m_ascOutput << "\tCONSTI " << symbol->getConstantValue().int_val << endl;
+				}
+				break;
+			case Type::EnumeratedType:
+				// push enum type entry thing as its integer value
+				m_ascOutput << "\tCONSTI " << symbol->getConstantValue().int_val << endl;
+				break;
+			case Type::StringLiteralType:
+				// TODO push a bunch of chars as integers with a terminating null
+				break;
+			default:
+				// Other types aren't valid constants!
+				break;
 			}
 		}
+	}
+
+	void AscHelper::assignToVariable(LValue lvalue)
+	{
+		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
+		{
+			// address should be right below value on stack
+
+			reserveLabels(2);
+			m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+			m_ascOutput << currentLabel(0) << endl;
+
+			int size = lvalue.type->getTypeSize();
+			for (int i = 0; i < size; ++i)
+			{
+				// Push address to copy to
+				m_ascOutput << "\tPUSH " << - size - 1 - 2 << "[0]" << endl;
+				m_ascOutput << "\tCONSTI " << i << endl;
+				m_ascOutput << "\tADDI" << endl;
+
+				// Push element
+				m_ascOutput << "\tPUSH " << - size + i - 2 << "[0]" << endl;
+
+				// Copy element to target location
+				m_ascOutput << "\tPOPI " << lvalue.level << endl;
+			}
+
+			m_ascOutput << "\tRET 0" << endl;
+			m_ascOutput << currentLabel(1) << endl;
+			popLabels();
+
+			// free memory for address + value
+			m_ascOutput << "\tADJUST -" << size + 1 << endl;
+		}
+	}
+
+	void AscHelper::addArraySubscriptOffset(Type* arrayType)
+	{
+		if (arrayType == NULL)
+		{
+			return;
+		}
+
+		Type* elementType = arrayType->getElementType();
+
+		if (elementType == NULL)
+		{
+			return;
+		}
+
+		// Index is on stack. Convert it to an integer index relative to start of array
+		// TODO may need to convert char (or enum) indexes a little differently? but maybe not (TEST!)
+
+		m_ascOutput << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
+		m_ascOutput << "\tADDI" << endl;
+
+		// TODO run time bounds check probably needs to happen here! 
+
+		// Multiply index by size of element (if greater than 1?)
+		m_ascOutput << "\tCONSTI " << elementType->getTypeSize() << endl;
+		m_ascOutput << "\tMULI" << endl;
+
+		// Add to whatever offset already on the stack
+		m_ascOutput << "\tADDI" << endl;
 	}
 
 	void AscHelper::deallocVariables()
