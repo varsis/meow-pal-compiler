@@ -1,0 +1,10 @@
+program test(input, output);
+type
+var
+	a : array[boolean] of integer;
+begin
+	a[false] := 11;
+	a[true] := 22;
+	writeln(a[false]);
+	writeln(a[true]);
+end.
