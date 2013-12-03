@@ -84,16 +84,23 @@ namespace Meow
 
 		if (type)
 		{
+			// Offset for parameter needs to incorporate size of function's 
+			// return value, if any
 			int returnSize = 0;
+			int paramSize = 1;
 			if (m_type)
 			{
 				returnSize = m_type->getTypeSize();
 			}
 
 			param->setType(type);
-			param->setSizeInMem(type->getTypeSize());
-			param->setLocation(-2 - returnSize - m_parameterSpace + offset);
+			if (!var)
+			{
+				paramSize = type->getTypeSize();
+			}
+			param->setSizeInMem(paramSize);
 
+			param->setLocation(-2 - returnSize - m_parameterSpace + offset);
 			param->setVarParam(var);
 		}
 

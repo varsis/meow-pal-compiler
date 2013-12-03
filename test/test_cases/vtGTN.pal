@@ -1,0 +1,36 @@
+program guessTheNumber(input, output);
+const
+	theNumber = 10; { Actual random number from rolling a d10! }
+	numGuesses = 10;
+var
+	guess, remainingGuesses : integer;
+begin
+	writeln('I am thinking of a random number between 1 and 10.');
+	writeln('You only get ', numGuesses, ' guesses!');
+
+	remainingGuesses := numGuesses;
+
+	while true do
+	begin
+		write('\tYour guess (', remainingGuesses, ' remaining) : ');
+		readln(guess);
+		if (guess = theNumber) then
+		begin
+			writeln('Yay you win! It was ', theNumber, '!');
+			exit;
+		end
+		else
+		begin
+			{ TODO - say lt or gt when we have comparisons working! }
+			writeln('That\'s not it!');
+		end;
+
+		remainingGuesses := remainingGuesses - 1;
+
+		if remainingGuesses = 0 then
+		begin
+			writeln('You lose! It was ', theNumber, '!');
+			exit
+		end;
+	end;
+end.

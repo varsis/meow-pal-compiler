@@ -112,10 +112,26 @@ namespace Meow
 		// Note: as the grammar is currently -- args pushed in order of appearance
 
 		int argumentSpace = 0;
+		/*
 		InvocationParameters::iterator it;
 		for (it = args->begin(); it != args->end(); ++it)
 		{
 			argumentSpace += it->type->getTypeSize();
+		}
+		*/
+
+		for (unsigned int argIdx = 0; argIdx < args->size(); ++argIdx)
+		{
+			if (procedureSymbol->getParameters()
+					&& argIdx < procedureSymbol->getParameters()->size()
+					&& procedureSymbol->getParameters()->at(argIdx)->isVarParam())
+			{
+				argumentSpace += 1; // just an address
+			}
+			else
+			{
+				argumentSpace += args->at(argIdx).type->getTypeSize();
+			}
 		}
 
 		// handle builtin procedures
@@ -127,6 +143,14 @@ namespace Meow
 		else if (procedureSymbol == m_semanticHelper->getWriteln())
 		{
 			invokeWriteln(args);
+		}
+		else if (procedureSymbol == m_semanticHelper->getRead())
+		{
+			invokeRead(args);
+		}
+		else if (procedureSymbol == m_semanticHelper->getReadln())
+		{
+			invokeReadln(args);
 		}
 
 		// Ordinary procedures/functions...
@@ -145,32 +169,6 @@ namespace Meow
 			m_ascOutput << "\tCALL " << procedureSymbol->getLexLevel() + 1 << ", "
 						<< label << endl;
 
-			// Copy any var parameters back to their sources (as per "copy-restore")
-			// TODO mention 'copy-restore' strategy and ratinale in docs!
-			for (unsigned int argIdx = 0; argIdx < procedureSymbol->getParameterCount(); ++argIdx)
-			{
-				Symbol* param = procedureSymbol->getParameters()->at(argIdx);
-				if (param->isVarParam())
-				{
-					LValue arg = args->at(argIdx);
-
-					reserveLabels(2);
-					m_ascOutput << "\tCALL 0, vp" << currentLabel(0) << endl;
-					m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
-					m_ascOutput << "vp" << currentLabel(0) << endl;
-
-					for (int i = 0; i < arg.type->getTypeSize(); i++)
-					{
-						m_ascOutput << "\tPUSH " << param->getLocation() + i << "[0]" << endl;
-						m_ascOutput << "\tPOP " << arg.offset + i << "[" << arg.level << "]" << endl;
-					}
-
-					m_ascOutput << "\tRET 0" << endl;
-					m_ascOutput << currentLabel(1) << endl;
-					popLabels();
-				}
-			}
-
 			if (returnValSize > 0 && argumentSpace > 0)
 			{
 				// return value now on top of stack, need to pop it to start of args
@@ -184,8 +182,8 @@ namespace Meow
 
 				for (int i = 0; i < returnValSize; i++)
 				{
-					m_ascOutput << "\tPUSH -" << 3 + i << "[0]" << endl;
-					m_ascOutput << "\tPOP -" << argumentSpace + 3 + i << "[0]" << endl;
+					m_ascOutput << "\tPUSH -" << 2 + (returnValSize - i) << "[0]" << endl;
+					m_ascOutput << "\tPOP -" << 2 + (argumentSpace + returnValSize - i) << "[0]" << endl;
 				}
 
 				m_ascOutput << "\tRET 0" << endl;
@@ -273,6 +271,71 @@ namespace Meow
 		m_ascOutput << currentLabel(1) << endl;
 		popLabels();
 	}
+	
+	void AscHelper::invokeReadln(InvocationParameters* args)
+	{
+		invokeRead(args);
+		// TODO read and discard characters until newline
+		m_ascOutput << "\tREADC" << endl;
+		m_ascOutput << "\tADJUST -1" << endl;
+	}
+
+	void AscHelper::invokeRead(InvocationParameters* args)
+	{
+		// Need to call a 'function' so we can get arguments offset from a display reg
+		reserveLabels(2);
+		m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+		m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+		m_ascOutput << currentLabel(0) << endl;
+
+		//int argumentSpace = 0;
+		int argumentSpace = args->size(); // all read args passed by reference
+		int argPointer = - 2 - argumentSpace; // pointer to first arg relative to display reg 0
+
+		// split into separate read_* calls for each
+		// argument according to arg type
+		InvocationParameters::iterator it;
+		for (it = args->begin(); it != args->end(); ++it)
+		{
+			if (it->type == m_semanticHelper->getIntegerType())
+			{
+				// push the address
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				// read the value
+				m_ascOutput << "\tREADI" << endl;
+				// pop value to address
+				m_ascOutput << "\tPOPI" << endl;
+			}
+			else if (it->type == m_semanticHelper->getCharType())
+			{
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tREADC" << endl;
+				m_ascOutput << "\tPOPI" << endl;
+			}
+			else if (it->type == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tREADR" << endl;
+				m_ascOutput << "\tPOPI" << endl;
+			}
+			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
+			{
+				// push pointer to start of string
+				m_ascOutput << "\tPUSHA " << argPointer << "[0]" << endl;
+				// TODO read_string routine
+				// TODO probably need some kind of runtime bounds check here as well!
+				//m_ascOutput << "\tCALL 0, ml_read_string" << endl;
+				m_ascOutput << "\tADJUST -1" << endl;
+			}
+
+			argPointer += it->type->getTypeSize();
+		}
+
+		m_ascOutput << "\tRET 0" << endl;
+		m_ascOutput << currentLabel(1) << endl;
+		popLabels();
+
+	}
 
 	void AscHelper::allocVariable(Symbol* sym)
 	{
@@ -326,7 +389,7 @@ namespace Meow
 				m_ascOutput << "\tADDI" << endl;
 
 				// Push element to stack
-				m_ascOutput << "\tPUSHI " << lvalue.level << endl;
+				m_ascOutput << "\tPUSHI " << endl;
 				// Pop element into place
 				m_ascOutput << "\tPOP " << - 2 - size + i << "[0]" << endl;
 			}
@@ -407,7 +470,7 @@ namespace Meow
 				m_ascOutput << "\tPUSH " << - size + i - 2 << "[0]" << endl;
 
 				// Copy element to target location
-				m_ascOutput << "\tPOPI " << lvalue.level << endl;
+				m_ascOutput << "\tPOPI" << endl;
 			}
 
 			m_ascOutput << "\tRET 0" << endl;
@@ -468,6 +531,26 @@ namespace Meow
 			m_ascOutput << "\tADJUST -" << g_offsetList[g_offsetList.size()-1] << endl;
 			g_offsetList.pop_back();
 		}
+	}
+
+	bool AscHelper::shouldPassByRef(string routineName, unsigned int paramIndex)
+	{
+		Symbol* sym = m_symbolTable->getSymbol(routineName);
+		if (sym)
+		{
+			const vector<Symbol*>* params = sym->getParameters();
+			if (sym == m_semanticHelper->getRead()
+				|| sym == m_semanticHelper->getReadln())
+			{
+				return  true;
+			}
+			else if (params && paramIndex < params->size())
+			{
+				return  params->at(paramIndex)->isVarParam();
+			}
+		}
+
+		return false;
 	}
 }
 
