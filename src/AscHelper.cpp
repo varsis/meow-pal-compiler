@@ -97,10 +97,26 @@ namespace Meow
 		// Note: as the grammar is currently -- args pushed in order of appearance
 
 		int argumentSpace = 0;
+		/*
 		InvocationParameters::iterator it;
 		for (it = args->begin(); it != args->end(); ++it)
 		{
 			argumentSpace += it->type->getTypeSize();
+		}
+		*/
+
+		for (unsigned int argIdx = 0; argIdx < args->size(); ++argIdx)
+		{
+			if (procedureSymbol->getParameters()
+					&& argIdx < procedureSymbol->getParameters()->size()
+					&& procedureSymbol->getParameters()->at(argIdx)->isVarParam())
+			{
+				argumentSpace += 1; // just an address
+			}
+			else
+			{
+				argumentSpace += args->at(argIdx).type->getTypeSize();
+			}
 		}
 
 		// handle builtin procedures
@@ -138,33 +154,6 @@ namespace Meow
 			m_ascOutput << "\tCALL " << procedureSymbol->getLexLevel() + 1 << ", "
 						<< label << endl;
 
-			// Copy any var parameters back to their sources (as per "copy-restore")
-			// TODO mention 'copy-restore' strategy and ratinale in docs!
-			// TODO won't work for arrays.... :/
-			for (unsigned int argIdx = 0; argIdx < procedureSymbol->getParameterCount(); ++argIdx)
-			{
-				Symbol* param = procedureSymbol->getParameters()->at(argIdx);
-				if (param->isVarParam())
-				{
-					LValue arg = args->at(argIdx);
-
-					reserveLabels(2);
-					m_ascOutput << "\tCALL 0, vp" << currentLabel(0) << endl;
-					m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
-					m_ascOutput << "vp" << currentLabel(0) << endl;
-
-					for (int i = 0; i < arg.type->getTypeSize(); i++)
-					{
-						m_ascOutput << "\tPUSH " << param->getLocation() + i << "[0]" << endl;
-						m_ascOutput << "\tPOP " << arg.offset + i << "[" << arg.level << "]" << endl;
-					}
-
-					m_ascOutput << "\tRET 0" << endl;
-					m_ascOutput << currentLabel(1) << endl;
-					popLabels();
-				}
-			}
-
 			if (returnValSize > 0 && argumentSpace > 0)
 			{
 				// return value now on top of stack, need to pop it to start of args
@@ -178,8 +167,8 @@ namespace Meow
 
 				for (int i = 0; i < returnValSize; i++)
 				{
-					m_ascOutput << "\tPUSH -" << 3 + i << "[0]" << endl;
-					m_ascOutput << "\tPOP -" << argumentSpace + 3 + i << "[0]" << endl;
+					m_ascOutput << "\tPUSH -" << 2 + (returnValSize - i) << "[0]" << endl;
+					m_ascOutput << "\tPOP -" << 2 + (argumentSpace + returnValSize - i) << "[0]" << endl;
 				}
 
 				m_ascOutput << "\tRET 0" << endl;
@@ -315,30 +304,6 @@ namespace Meow
 		m_ascOutput << currentLabel(1) << endl;
 		popLabels();
 
-		// FIXME -- TEMP (need to fix how var params work!!)
-		int paramOffset = - argumentSpace - 2;
-		for (unsigned int argIdx = 0; argIdx < args->size(); ++argIdx)
-		{
-			LValue arg = args->at(argIdx);
-
-			reserveLabels(2);
-			m_ascOutput << "\tCALL 0, vp" << currentLabel(0) << endl;
-			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
-			m_ascOutput << "vp" << currentLabel(0) << endl;
-
-			for (int i = 0; i < arg.type->getTypeSize(); i++)
-			{
-				//m_ascOutput << "\tPUSH " << param->getLocation() + i << "[0]" << endl;
-				m_ascOutput << "\tPUSH " << paramOffset + i << "[0]" << endl;
-				m_ascOutput << "\tPOP " << arg.offset + i << "[" << arg.level << "]" << endl;
-			}
-
-			m_ascOutput << "\tRET 0" << endl;
-			m_ascOutput << currentLabel(1) << endl;
-			popLabels();
-
-			paramOffset += arg.type->getTypeSize();
-		}
 	}
 
 	void AscHelper::allocVariable(Symbol* sym)
@@ -382,7 +347,7 @@ namespace Meow
 				m_ascOutput << "\tADDI" << endl;
 
 				// Push element to stack
-				m_ascOutput << "\tPUSHI " << lvalue.level << endl;
+				m_ascOutput << "\tPUSHI " << endl;
 				// Pop element into place
 				m_ascOutput << "\tPOP " << - 2 - size + i << "[0]" << endl;
 			}
@@ -451,7 +416,7 @@ namespace Meow
 				m_ascOutput << "\tPUSH " << - size + i - 2 << "[0]" << endl;
 
 				// Copy element to target location
-				m_ascOutput << "\tPOPI " << lvalue.level << endl;
+				m_ascOutput << "\tPOPI" << endl;
 			}
 
 			m_ascOutput << "\tRET 0" << endl;

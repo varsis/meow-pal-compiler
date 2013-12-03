@@ -440,13 +440,28 @@ namespace Meow
 		offset = 0;
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
-			routineSym->allocParameterSpace(parameters->at(i).type->getTypeSize());
+			if (parameters->at(i).var)
+			{
+				routineSym->allocParameterSpace(1);// just an address
+			}
+			else
+			{
+				routineSym->allocParameterSpace(parameters->at(i).type->getTypeSize());
+			}
 		}
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
 			routineSym->addParameter(parameters->at(i).id, parameters->at(i).type,
 								parameters->at(i).var, offset);
 			offset += parameters->at(i).type->getTypeSize();
+			if (parameters->at(i).var)
+			{
+				offset += 1; // just an address
+			}
+			else
+			{
+				offset += parameters->at(i).type->getTypeSize();
+			}
 		}
 
 		routineSym->setLabel(label);
@@ -471,7 +486,14 @@ namespace Meow
 		offset = 0;
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
-			routineSym->allocParameterSpace(parameters->at(i).type->getTypeSize());
+			if (parameters->at(i).var)
+			{
+				routineSym->allocParameterSpace(1);// just an address
+			}
+			else
+			{
+				routineSym->allocParameterSpace(parameters->at(i).type->getTypeSize());
+			}
 		}
 		for (size_t i = 0; i < parameters->size(); i++)
 		{
@@ -479,7 +501,14 @@ namespace Meow
 									parameters->at(i).var, offset);
 
 			declareParameter(param);
-			offset += parameters->at(i).type->getTypeSize();
+			if (parameters->at(i).var)
+			{
+				offset += 1; // just an address
+			}
+			else
+			{
+				offset += parameters->at(i).type->getTypeSize();
+			}
 		}
 
 		routineSym->setLabel(label);

@@ -67,6 +67,10 @@
 	int g_whileCounter;
 	vector<int> g_offsetList;
 	vector<Meow::Symbol*> g_functionStack;
+
+	// For correctly generating code to pass var parameters by reference
+	bool g_varparm;
+	unsigned int g_parmcount;
 }
 
 %initial-action
@@ -75,6 +79,8 @@
 	g_whileCounter = 0;
 	g_functionStack.clear();
 	g_offsetList.clear();
+	g_varparm = false;
+	g_parmcount = 0;
 }
 
 %union
@@ -123,7 +129,7 @@
 %type <parameterList> f_parm_decl f_parm_list
 %type <parameter> f_parm
 
-%type <procedureInvocation> plist_finvok
+%type <procedureInvocation> plist_finvok plist_finvok_start
 
 %token <identifier> IDENTIFIER
 %token <stringLiteral> STRING_LITERAL
@@ -834,7 +840,13 @@ lhs_var                 : IDENTIFIER
 					$$.level = sym->getLexLevel();
 					$$.offset = sym->getLocation();
 
-					ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
+					ascHelper.out() << "\tPUSHA " << sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
+					if (sym->isVarParam())
+					{
+						// sym->getLocation is pointer to pointer to actual variable!
+						//ascHelper.out() << "\tPUSHI " << sym->getLexLevel() << endl;
+						ascHelper.out() << "\tPUSHI " << endl;
+					}
 				}
 				delete $1;
                         }
@@ -901,7 +913,13 @@ var                     : IDENTIFIER
                                             $$.level = sym->getLexLevel();
                                             $$.offset = sym->getLocation();
 
-                                            ascHelper.out() << "\tCONSTI " << sym->getLocation() << endl;
+					    ascHelper.out() << "\tPUSHA " << sym->getLocation() << "[" << sym->getLexLevel() << "]" << endl;
+				 	    if (sym->isVarParam())
+					    {
+							// sym->getLocation is pointer to pointer to actual variable!
+							//ascHelper.out() << "\tPUSHI" << sym->getLexLevel() << endl;
+							ascHelper.out() << "\tPUSHI " << endl;
+					    }
                                         }
 				}
 				delete $1;
@@ -948,6 +966,9 @@ subscripted_var         : var LEFT_BRACKET expr
 
 proc_invok              : plist_finvok RIGHT_PAREN
 			{
+				// definitely stop pushing var's as addresses
+				g_varparm = false;
+
 				semanticHelper.checkProcedureInvocation(*$1.procedureName,
 									$1.params);
 
@@ -967,18 +988,60 @@ proc_invok              : plist_finvok RIGHT_PAREN
 			}
                         ;
 
-plist_finvok            : IDENTIFIER LEFT_PAREN parm
+plist_finvok            : plist_finvok_start parm
 			{
-				$$.procedureName = $1;
-				$$.params = new InvocationParameters();
-				$$.params->push_back($3);
+				$$ = $1;
+				$$.params->push_back($2);
+
+				// check if next param is a var param
+				g_parmcount += 1;
+				Symbol* sym = table.getSymbol(*$$.procedureName);
+				if (sym)
+				{
+					const vector<Symbol*>* params = sym->getParameters();
+					if (params && g_parmcount < params->size())
+					{
+						g_varparm = params->at(g_parmcount)->isVarParam();
+					}
+				}
 			}
-                        | plist_finvok COMMA parm
+			| plist_finvok COMMA parm
 			{
 				$$ = $1;
 				$$.params->push_back($3);
+
+				// check if next param is a var param
+				g_parmcount += 1;
+				Symbol* sym = table.getSymbol(*$$.procedureName);
+				if (sym)
+				{
+					const vector<Symbol*>* params = sym->getParameters();
+					if (params && g_parmcount < params->size())
+					{
+						g_varparm = params->at(g_parmcount)->isVarParam();
+					}
+				}
 			}
-                        ;
+			;
+
+plist_finvok_start      : IDENTIFIER LEFT_PAREN
+			{
+				$$.procedureName = $1;
+				$$.params = new InvocationParameters();
+
+				// check if first param is a var param
+				g_parmcount = 0;
+				Symbol* sym = table.getSymbol(*$1);
+				if (sym)
+				{
+					const vector<Symbol*>* params = sym->getParameters();
+					if (params && g_parmcount < params->size())
+					{
+						g_varparm = params->at(g_parmcount)->isVarParam();
+					}
+				}
+			}
+			;
 
 parm                    : expr
 			{
@@ -1662,8 +1725,13 @@ term                    : factor
 factor                  : var
 			{
 				$$ = $1;
-				// push value at offset[level] onto stack....
-				ascHelper.accessVariable($1);
+				if (!g_varparm)
+				{
+					// push value according to address on stack, onto stack.... 
+					ascHelper.accessVariable($1);
+				}
+				// if it's a var param, leave the address for pass by reference!
+
 			}
 			| unsigned_const
 			{
@@ -1738,6 +1806,9 @@ unsigned_num            : INT_CONST
 
 func_invok              : plist_finvok RIGHT_PAREN
 			{
+				// definitely stop pushing var's as addresses
+				g_varparm = false;
+
 				$$ = semanticHelper.checkFunctionInvocation(*$1.procedureName,
 									    $1.params);
 

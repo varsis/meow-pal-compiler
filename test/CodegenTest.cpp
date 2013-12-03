@@ -1395,7 +1395,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestVarParam1)
 	{
-		ofstream testfile("test/asc/varparm.pal");
+		ofstream testfile("test/asc/varparm1.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "var i : integer;" << endl;
@@ -1410,7 +1410,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/varparm.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/varparm1.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;
@@ -1459,7 +1459,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestVarParam3)
 	{
-		ofstream testfile("test/asc/varparm.pal");
+		ofstream testfile("test/asc/varparm3.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
@@ -1479,7 +1479,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/varparm.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/varparm3.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;
@@ -1492,7 +1492,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestVarParam4)
 	{
-		ofstream testfile("test/asc/varparm.pal");
+		ofstream testfile("test/asc/varparm4.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
@@ -1515,7 +1515,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/varparm.pal", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/varparm4.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int val;
@@ -1571,6 +1571,37 @@ namespace Meow
 		EXPECT_EQ(val, 69);
 		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
 		EXPECT_EQ(val, 96);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestVarParamArray)
+	{
+		ofstream testfile("test/asc/varparmarray.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type arr = array[1 .. 10] of integer;" << endl;
+		testfile << "var a : arr;" << endl;
+		testfile << "procedure foo(var x : integer);" << endl;
+		testfile << "begin" << endl;
+		//testfile << "	writeln(x);" << endl;
+		testfile << "	x := 111;" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		//testfile << "	a[5] := 69;" << endl;
+		testfile << "	foo(a[5]);" << endl;
+		testfile << "	writeln(a[5]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/varparmarray.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		//ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		//EXPECT_EQ(val, 69);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 111);
 		pclose(palout);
 	}
 
