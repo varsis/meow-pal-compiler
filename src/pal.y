@@ -474,13 +474,15 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
                                 new Error(InvalidRecordDecl,
                                           "Invalid record declaration.",
                                           scanner.lineno()));
-                        }
+                        	$$ = semanticHelper.getIntegerType();
+			}
                         | ARRAY error OF type
                         {
                             errorManager.addError(
                                 new Error(InvalidArrayDecl,
                                           "Invalid array declaration.",
                                           scanner.lineno()));
+                        	$$ = semanticHelper.getIntegerType();
                         }
                         ;
 
