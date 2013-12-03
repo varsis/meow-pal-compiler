@@ -42,6 +42,7 @@ namespace Meow
 			void assignToVariable(LValue lvalue);
 			void addArraySubscriptOffset(Type* arrayType);
 			void deallocVariables();
+			bool shouldPassByRef(string functionName, unsigned int paramIndex);
 
 		private:
 			ofstream& m_ascOutput;

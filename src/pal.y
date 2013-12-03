@@ -917,7 +917,6 @@ var                     : IDENTIFIER
 				 	    if (sym->isVarParam())
 					    {
 							// sym->getLocation is pointer to pointer to actual variable!
-							//ascHelper.out() << "\tPUSHI" << sym->getLexLevel() << endl;
 							ascHelper.out() << "\tPUSHI " << endl;
 					    }
                                         }
@@ -995,15 +994,7 @@ plist_finvok            : plist_finvok_start parm
 
 				// check if next param is a var param
 				g_parmcount += 1;
-				Symbol* sym = table.getSymbol(*$$.procedureName);
-				if (sym)
-				{
-					const vector<Symbol*>* params = sym->getParameters();
-					if (params && g_parmcount < params->size())
-					{
-						g_varparm = params->at(g_parmcount)->isVarParam();
-					}
-				}
+				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
 			}
 			| plist_finvok COMMA parm
 			{
@@ -1012,15 +1003,7 @@ plist_finvok            : plist_finvok_start parm
 
 				// check if next param is a var param
 				g_parmcount += 1;
-				Symbol* sym = table.getSymbol(*$$.procedureName);
-				if (sym)
-				{
-					const vector<Symbol*>* params = sym->getParameters();
-					if (params && g_parmcount < params->size())
-					{
-						g_varparm = params->at(g_parmcount)->isVarParam();
-					}
-				}
+				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
 			}
 			;
 
@@ -1031,15 +1014,7 @@ plist_finvok_start      : IDENTIFIER LEFT_PAREN
 
 				// check if first param is a var param
 				g_parmcount = 0;
-				Symbol* sym = table.getSymbol(*$1);
-				if (sym)
-				{
-					const vector<Symbol*>* params = sym->getParameters();
-					if (params && g_parmcount < params->size())
-					{
-						g_varparm = params->at(g_parmcount)->isVarParam();
-					}
-				}
+				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
 			}
 			;
 

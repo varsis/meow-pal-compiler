@@ -261,38 +261,42 @@ namespace Meow
 		m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
 		m_ascOutput << currentLabel(0) << endl;
 
-		int argumentSpace = 0;
-		InvocationParameters::iterator it;
-		for (it = args->begin(); it != args->end(); ++it)
-		{
-			argumentSpace += it->type->getTypeSize();
-		}
+		//int argumentSpace = 0;
+		int argumentSpace = args->size(); // all read args passed by reference
 		int argPointer = - 2 - argumentSpace; // pointer to first arg relative to display reg 0
 
 		// split into separate read_* calls for each
 		// argument according to arg type
+		InvocationParameters::iterator it;
 		for (it = args->begin(); it != args->end(); ++it)
 		{
 			if (it->type == m_semanticHelper->getIntegerType())
 			{
+				// push the address
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				// read the value
 				m_ascOutput << "\tREADI" << endl;
-				m_ascOutput << "\tPOP " << argPointer << "[0]" << endl;
+				// pop value to address
+				m_ascOutput << "\tPOPI" << endl;
 			}
 			else if (it->type == m_semanticHelper->getCharType())
 			{
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
 				m_ascOutput << "\tREADC" << endl;
-				m_ascOutput << "\tPOP " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tPOPI" << endl;
 			}
 			else if (it->type == m_semanticHelper->getRealType())
 			{
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
 				m_ascOutput << "\tREADR" << endl;
-				m_ascOutput << "\tPOP " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tPOPI" << endl;
 			}
 			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 			{
 				// push pointer to start of string
 				m_ascOutput << "\tPUSHA " << argPointer << "[0]" << endl;
-				// TODO
+				// TODO read_string routine
+				// TODO probably need some kind of runtime bounds check here as well!
 				//m_ascOutput << "\tCALL 0, ml_read_string" << endl;
 				m_ascOutput << "\tADJUST -1" << endl;
 			}
@@ -465,6 +469,26 @@ namespace Meow
 			m_ascOutput << "\tADJUST -" << g_offsetList[g_offsetList.size()-1] << endl;
 			g_offsetList.pop_back();
 		}
+	}
+
+	bool AscHelper::shouldPassByRef(string routineName, unsigned int paramIndex)
+	{
+		Symbol* sym = m_symbolTable->getSymbol(routineName);
+		if (sym)
+		{
+			const vector<Symbol*>* params = sym->getParameters();
+			if (sym == m_semanticHelper->getRead()
+				|| sym == m_semanticHelper->getReadln())
+			{
+				return  true;
+			}
+			else if (params && paramIndex < params->size())
+			{
+				return  params->at(paramIndex)->isVarParam();
+			}
+		}
+
+		return false;
 	}
 }
 
