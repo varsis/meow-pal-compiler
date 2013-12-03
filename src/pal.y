@@ -67,6 +67,7 @@
 	int g_whileCounter;
 	vector<int> g_offsetList;
 	vector<Meow::Symbol*> g_functionStack;
+	vector<std::string> g_whileLabelStack;
 }
 
 %initial-action
@@ -75,6 +76,7 @@
 	g_whileCounter = 0;
 	g_functionStack.clear();
 	g_offsetList.clear();
+	g_whileLabelStack.clear();
 }
 
 %union
@@ -999,6 +1001,7 @@ struct_stat             : if_part then_part else_part
 				ascHelper.reserveLabels(2);
 				// begin loop
 				ascHelper.out() << ascHelper.currentLabel(0) << endl;
+				g_whileLabelStack.push_back(ascHelper.currentLabel(0));
 			} 
 				expr
 			{
@@ -1014,13 +1017,11 @@ struct_stat             : if_part then_part else_part
 				// end loop
 				ascHelper.out() << ascHelper.currentLabel(1) << endl;
 				ascHelper.popLabels();
+				g_whileLabelStack.pop_back();
 			}
                         | CONTINUE
 			{
-				// TODO probably need an additional stack for loop labels, otherwise
-				// wont work inside a conditional within the loop
-				// Also make sure these don't blow up when outside of a loop
-				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(0) << endl;
+				ascHelper.out() << "\tGOTO " << g_whileLabelStack.back() << endl;
 			}
                         | EXIT
 			{
