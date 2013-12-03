@@ -101,7 +101,7 @@ EXPONENT	E[+-]?{DIGIT}+
 
 [ \t] 	{ ; /* Ignore whitespace */ }
 \n 	{ ; /* Count line endings */ }
-"//".*[^\n] { ; /* Ignore single line comments */ }
+"//"[^\n]* { ; /* Ignore single line comments */ }
 
 "{" 	{ 
 		s_commentStartLine = yylineno;
@@ -141,7 +141,7 @@ EXPONENT	E[+-]?{DIGIT}+
 "." {return token::PERIOD; }
 ".." {return token::UPTO; }
 ".."[\.]* {
-	getManager()->addError(new Error(InvalidUpTo, "Too many dots; should be \"..\".", yylineno));
+	getManager()->addError(new Error(InvalidUpTo, "Too many dots; should be \"..\"", yylineno));
 	return token::UPTO;
 	}
 
