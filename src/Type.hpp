@@ -102,6 +102,8 @@ namespace Meow
 			}
 			
 			// simple + enum...
+			void setMaxIntValue(int value) { m_maxValue.int_val = value; }
+			void setMinIntValue(int value) { m_minValue.int_val = value; }
 			Value getMaxValue() { return m_maxValue; }
 			Value getMinValue() { return m_minValue; }
 

@@ -1886,4 +1886,158 @@ namespace Meow
 		EXPECT_EQ(val, 44);
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestArrayEnumIndex2)
+	{
+		ofstream testfile("test/asc/enumindex.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	t = (hey, dude, whats, up);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[t] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[hey] := 11;" << endl;
+		testfile << "	a[dude] := 22;" << endl;
+		testfile << "	a[whats] := 33;" << endl;
+		testfile << "	a[up] := 44;" << endl;
+		testfile << "	writeln(a[hey]);" << endl;
+		testfile << "	writeln(a[dude]);" << endl;
+		testfile << "	writeln(a[whats]);" << endl;
+		testfile << "	writeln(a[up]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/enumindex.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 33);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayBoolIndex)
+	{
+		ofstream testfile("test/asc/boolindex.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[boolean] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[false] := 11;" << endl;
+		testfile << "	a[true] := 22;" << endl;
+		testfile << "	writeln(a[false]);" << endl;
+		testfile << "	writeln(a[true]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/boolindex.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayTypeIndex)
+	{
+		ofstream testfile("test/asc/typeIndexInt.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[integer] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[100] := 11;" << endl;
+		testfile << "	a[101] := 22;" << endl;
+		testfile << "	writeln(a[100]);" << endl;
+		testfile << "	writeln(a[101]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/typeIndexInt.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayTypeIndex2)
+	{
+		ofstream testfile("test/asc/typeIndex.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[char] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a['b'] := 11;" << endl;
+		testfile << "	a['c'] := 22;" << endl;
+		testfile << "	writeln(a['b']);" << endl;
+		testfile << "	writeln(a['c']);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/typeIndex.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayCopy)
+	{
+		ofstream testfile("test/asc/arraycopy.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a, b : array[1 .. 4] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[1] := 11;" << endl;
+		testfile << "	a[2] := 22;" << endl;
+		testfile << "	a[3] := 33;" << endl;
+		testfile << "	a[4] := 44;" << endl;
+		testfile << "	b := a;" << endl;
+		testfile << "	writeln(b[1]);" << endl;
+		testfile << "	writeln(b[2]);" << endl;
+		testfile << "	writeln(b[3]);" << endl;
+		testfile << "	writeln(b[4]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/arraycopy.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 11);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 22);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 33);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
+		pclose(palout);
+	}
 }

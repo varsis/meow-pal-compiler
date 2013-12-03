@@ -21,6 +21,8 @@ namespace Meow
 		// add predefined types
 
 		Symbol* intSymbol = new Symbol("integer", Symbol::TypeSymbol);
+		getIntegerType()->setMaxIntValue(2147483647);
+		getIntegerType()->setMinIntValue(-2147483647);
 		intSymbol->setType(getIntegerType());
 		m_table->addSymbol(intSymbol);
 
@@ -30,10 +32,14 @@ namespace Meow
 
 		Symbol* charSymbol = new Symbol("char", Symbol::TypeSymbol);
 		charSymbol->setType(getCharType());
+		getCharType()->setMaxIntValue(255);
+		getCharType()->setMinIntValue(0);
 		m_table->addSymbol(charSymbol);
 
 		Symbol* boolSymbol = new Symbol("boolean", Symbol::TypeSymbol);
 		boolSymbol->setType(getBooleanType());
+		getBooleanType()->setMaxIntValue(1);
+		getBooleanType()->setMinIntValue(0);
 		m_table->addSymbol(boolSymbol);
 
 		// AT LEAST FOR NOW -- define a string type
