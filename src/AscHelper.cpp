@@ -113,6 +113,14 @@ namespace Meow
 		{
 			invokeWriteln(args);
 		}
+		else if (procedureSymbol == m_semanticHelper->getRead())
+		{
+			invokeRead(args);
+		}
+		else if (procedureSymbol == m_semanticHelper->getReadln())
+		{
+			invokeReadln(args);
+		}
 
 		// Ordinary procedures/functions...
 		std::string label = procedureSymbol->getLabel();
@@ -132,6 +140,7 @@ namespace Meow
 
 			// Copy any var parameters back to their sources (as per "copy-restore")
 			// TODO mention 'copy-restore' strategy and ratinale in docs!
+			// TODO won't work for arrays.... :/
 			for (unsigned int argIdx = 0; argIdx < procedureSymbol->getParameterCount(); ++argIdx)
 			{
 				Symbol* param = procedureSymbol->getParameters()->at(argIdx);
@@ -245,6 +254,91 @@ namespace Meow
 		m_ascOutput << "\tRET 0" << endl;
 		m_ascOutput << currentLabel(1) << endl;
 		popLabels();
+	}
+	
+	void AscHelper::invokeReadln(InvocationParameters* args)
+	{
+		invokeRead(args);
+		// TODO read and discard characters until newline
+		m_ascOutput << "\tREADC" << endl;
+		m_ascOutput << "\tADJUST -1" << endl;
+	}
+
+	void AscHelper::invokeRead(InvocationParameters* args)
+	{
+		// Need to call a 'function' so we can get arguments offset from a display reg
+		reserveLabels(2);
+		m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+		m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+		m_ascOutput << currentLabel(0) << endl;
+
+		int argumentSpace = 0;
+		InvocationParameters::iterator it;
+		for (it = args->begin(); it != args->end(); ++it)
+		{
+			argumentSpace += it->type->getTypeSize();
+		}
+		int argPointer = - 2 - argumentSpace; // pointer to first arg relative to display reg 0
+
+		// split into separate read_* calls for each
+		// argument according to arg type
+		for (it = args->begin(); it != args->end(); ++it)
+		{
+			if (it->type == m_semanticHelper->getIntegerType())
+			{
+				m_ascOutput << "\tREADI" << endl;
+				m_ascOutput << "\tPOP " << argPointer << "[0]" << endl;
+			}
+			else if (it->type == m_semanticHelper->getCharType())
+			{
+				m_ascOutput << "\tREADC" << endl;
+				m_ascOutput << "\tPOP " << argPointer << "[0]" << endl;
+			}
+			else if (it->type == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tREADR" << endl;
+				m_ascOutput << "\tPOP " << argPointer << "[0]" << endl;
+			}
+			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
+			{
+				// push pointer to start of string
+				m_ascOutput << "\tPUSHA " << argPointer << "[0]" << endl;
+				// TODO
+				//m_ascOutput << "\tCALL 0, ml_read_string" << endl;
+				m_ascOutput << "\tADJUST -1" << endl;
+			}
+
+			argPointer += it->type->getTypeSize();
+		}
+
+		m_ascOutput << "\tRET 0" << endl;
+		m_ascOutput << currentLabel(1) << endl;
+		popLabels();
+
+		// FIXME -- TEMP (need to fix how var params work!!)
+		int paramOffset = - argumentSpace - 2;
+		for (unsigned int argIdx = 0; argIdx < args->size(); ++argIdx)
+		{
+			LValue arg = args->at(argIdx);
+
+			reserveLabels(2);
+			m_ascOutput << "\tCALL 0, vp" << currentLabel(0) << endl;
+			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+			m_ascOutput << "vp" << currentLabel(0) << endl;
+
+			for (int i = 0; i < arg.type->getTypeSize(); i++)
+			{
+				//m_ascOutput << "\tPUSH " << param->getLocation() + i << "[0]" << endl;
+				m_ascOutput << "\tPUSH " << paramOffset + i << "[0]" << endl;
+				m_ascOutput << "\tPOP " << arg.offset + i << "[" << arg.level << "]" << endl;
+			}
+
+			m_ascOutput << "\tRET 0" << endl;
+			m_ascOutput << currentLabel(1) << endl;
+			popLabels();
+
+			paramOffset += arg.type->getTypeSize();
+		}
 	}
 
 	void AscHelper::allocVariable(Symbol* sym)

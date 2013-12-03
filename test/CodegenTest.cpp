@@ -1951,6 +1951,7 @@ namespace Meow
 		pclose(palout);
 	}
 
+	/* This is semantically correct, but.... 16 GB array.. ehhh... 
 	TEST(CodegenTest, TestArrayTypeIndex)
 	{
 		ofstream testfile("test/asc/typeIndexInt.pal");
@@ -1977,6 +1978,7 @@ namespace Meow
 		EXPECT_EQ(val, 22);
 		pclose(palout);
 	}
+	*/
 
 	TEST(CodegenTest, TestArrayTypeIndex2)
 	{
@@ -2038,6 +2040,137 @@ namespace Meow
 		EXPECT_EQ(val, 33);
 		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
 		EXPECT_EQ(val, 44);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRead)
+	{
+		ofstream testfile("test/asc/read.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a, b : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	read(a);" << endl;
+		testfile << "	read(b);" << endl;
+		testfile << "	writeln(a);" << endl;
+		testfile << "	writeln(b);" << endl;
+		testfile << "	writeln(a + b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		ofstream input("test/asc/read.in");
+		input << "2 3" << endl;
+		input.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/read.pal < test/asc/read.in", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 2);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 3);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 5);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestReadln)
+	{
+		ofstream testfile("test/asc/read.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a, b : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	readln(a);" << endl;
+		testfile << "	readln(b);" << endl;
+		testfile << "	writeln(a);" << endl;
+		testfile << "	writeln(b);" << endl;
+		testfile << "	writeln(a + b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		ofstream input("test/asc/read.in");
+		input << "2" << endl;
+		input << "3" << endl;
+		input.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/read.pal < test/asc/read.in", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 2);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 3);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 5);
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestReadChar)
+	{
+		ofstream testfile("test/asc/read.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a, b : char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	read(a);" << endl;
+		testfile << "	read(b);" << endl;
+		testfile << "	write(a);" << endl;
+		testfile << "	write(b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		ofstream input("test/asc/read.in");
+		input << "xy" << endl;
+		input.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/read.pal < test/asc/read.in", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char val;
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 'x');
+		ASSERT_EQ(fscanf(palout, "%c", &val), 1);
+		EXPECT_EQ(val, 'y');
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestReadReal)
+	{
+		ofstream testfile("test/asc/read.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a, b : real;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	read(a);" << endl;
+		testfile << "	read(b);" << endl;
+		testfile << "	writeln(a);" << endl;
+		testfile << "	writeln(b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		ofstream input("test/asc/read.in");
+		input << "3.14 2.73" << endl;
+		input.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/read.pal < test/asc/read.in", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float val;
+		ASSERT_EQ(fscanf(palout, "%f", &val), 1);
+		EXPECT_FLOAT_EQ(val, 3.14);
+		ASSERT_EQ(fscanf(palout, "%f", &val), 1);
+		EXPECT_FLOAT_EQ(val, 2.73);
 		pclose(palout);
 	}
 }

@@ -96,6 +96,8 @@ namespace Meow
 
 			Symbol* getWrite() { return m_write; }
 			Symbol* getWriteln() { return m_writeln; }
+			Symbol* getRead() { return m_read; }
+			Symbol* getReadln() { return m_readln; }
 
 		private:
 
@@ -118,7 +120,8 @@ namespace Meow
 
 			Symbol* m_write;
 			Symbol* m_writeln;
-
+			Symbol* m_read;
+			Symbol* m_readln;
 	};
 }
 

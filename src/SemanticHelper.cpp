@@ -74,13 +74,13 @@ namespace Meow
 
 		// PREDEFINED PROCEDURES
 		
-		Symbol* readSymbol = new Symbol("read", Symbol::ProcedureSymbol);
-		readSymbol->setProcClass(BuiltInInput);
-		m_table->addSymbol(readSymbol);
+		m_read = new Symbol("read", Symbol::ProcedureSymbol);
+		m_read->setProcClass(BuiltInInput);
+		m_table->addSymbol(m_read);
 		
-		Symbol* readlnSymbol = new Symbol("readln", Symbol::ProcedureSymbol);
-		readlnSymbol->setProcClass(BuiltInInput);
-		m_table->addSymbol(readlnSymbol);
+		m_readln = new Symbol("readln", Symbol::ProcedureSymbol);
+		m_readln->setProcClass(BuiltInInput);
+		m_table->addSymbol(m_readln);
 		
 		
 		m_writeln = new Symbol("writeln", Symbol::ProcedureSymbol);
