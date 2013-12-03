@@ -67,10 +67,13 @@
 	int g_whileCounter;
 	vector<int> g_offsetList;
 	vector<Meow::Symbol*> g_functionStack;
+	vector<std::string> g_loopStartStack;
+	vector<std::string> g_loopEndStack;
 
 	// For correctly generating code to pass var parameters by reference
 	bool g_varparm;
 	unsigned int g_parmcount;
+
 }
 
 %initial-action
@@ -79,8 +82,11 @@
 	g_whileCounter = 0;
 	g_functionStack.clear();
 	g_offsetList.clear();
+	g_loopStartStack.clear();
+	g_loopEndStack.clear();
 	g_varparm = false;
 	g_parmcount = 0;
+
 }
 
 %union
@@ -476,13 +482,15 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
                                 new Error(InvalidRecordDecl,
                                           "Invalid record declaration.",
                                           scanner.lineno()));
-                        }
+                        	$$ = semanticHelper.getIntegerType();
+			}
                         | ARRAY error OF type
                         {
                             errorManager.addError(
                                 new Error(InvalidArrayDecl,
                                           "Invalid array declaration.",
                                           scanner.lineno()));
+                        	$$ = semanticHelper.getIntegerType();
                         }
                         ;
 
@@ -1037,6 +1045,8 @@ struct_stat             : if_part then_part else_part
 				ascHelper.reserveLabels(2);
 				// begin loop
 				ascHelper.out() << ascHelper.currentLabel(0) << endl;
+				g_loopStartStack.push_back(ascHelper.currentLabel(0));
+				g_loopEndStack.push_back(ascHelper.currentLabel(1));
 			} 
 				expr
 			{
@@ -1052,19 +1062,29 @@ struct_stat             : if_part then_part else_part
 				// end loop
 				ascHelper.out() << ascHelper.currentLabel(1) << endl;
 				ascHelper.popLabels();
+				if (g_loopStartStack.size() > 0)
+				{
+					g_loopStartStack.pop_back();
+				}
+
+				if (g_loopEndStack.size() > 0)
+				{
+					g_loopEndStack.pop_back();
+				}
 			}
                         | CONTINUE
 			{
-				// TODO probably need an additional stack for loop labels, otherwise
-				// wont work inside a conditional within the loop
-				// Also make sure these don't blow up when outside of a loop
-				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(0) << endl;
+				if (g_loopStartStack.size() > 0)
+				{
+					ascHelper.out() << "\tGOTO " << g_loopStartStack.back() << endl;
+				}
 			}
                         | EXIT
 			{
-				// TODO probably need an additional stack for loop labels, otherwise
-				// wont work inside a conditional within the loop
-				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(1) << endl;
+				if (g_loopEndStack.size() > 0)
+				{
+					ascHelper.out() << "\tGOTO " << g_loopEndStack.back() << endl;
+				}
 			}
                         ;
 
