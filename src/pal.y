@@ -67,7 +67,8 @@
 	int g_whileCounter;
 	vector<int> g_offsetList;
 	vector<Meow::Symbol*> g_functionStack;
-	vector<std::string> g_whileLabelStack;
+	vector<std::string> g_loopStartStack;
+	vector<std::string> g_loopEndStack;
 }
 
 %initial-action
@@ -76,7 +77,8 @@
 	g_whileCounter = 0;
 	g_functionStack.clear();
 	g_offsetList.clear();
-	g_whileLabelStack.clear();
+	g_loopStartStack.clear();
+	g_loopEndStack.clear();
 }
 
 %union
@@ -1001,7 +1003,8 @@ struct_stat             : if_part then_part else_part
 				ascHelper.reserveLabels(2);
 				// begin loop
 				ascHelper.out() << ascHelper.currentLabel(0) << endl;
-				g_whileLabelStack.push_back(ascHelper.currentLabel(0));
+				g_loopStartStack.push_back(ascHelper.currentLabel(0));
+				g_loopEndStack.push_back(ascHelper.currentLabel(1));
 			} 
 				expr
 			{
@@ -1017,17 +1020,29 @@ struct_stat             : if_part then_part else_part
 				// end loop
 				ascHelper.out() << ascHelper.currentLabel(1) << endl;
 				ascHelper.popLabels();
-				g_whileLabelStack.pop_back();
+				if (g_loopStartStack.size() > 0)
+				{
+					g_loopStartStack.pop_back();
+				}
+
+				if (g_loopEndStack.size() > 0)
+				{
+					g_loopEndStack.pop_back();
+				}
 			}
                         | CONTINUE
 			{
-				ascHelper.out() << "\tGOTO " << g_whileLabelStack.back() << endl;
+				if (g_loopStartStack.size() > 0)
+				{
+					ascHelper.out() << "\tGOTO " << g_loopStartStack.back() << endl;
+				}
 			}
                         | EXIT
 			{
-				// TODO probably need an additional stack for loop labels, otherwise
-				// wont work inside a conditional within the loop
-				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(1) << endl;
+				if (g_loopEndStack.size() > 0)
+				{
+					ascHelper.out() << "\tGOTO " << g_loopEndStack.back() << endl;
+				}
 			}
                         ;
 
