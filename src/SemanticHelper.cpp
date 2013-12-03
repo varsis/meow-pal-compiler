@@ -628,17 +628,47 @@ namespace Meow
 
 			case OpREALDIVIDE:
 				result.type = getRealType();
-				result.value.real_val = leftValuef / rightValuef;
+				if (rightValuef == 0)
+				{
+					m_errorManager->addError(new Error(InvalidExpression,
+						"Division by zero.",
+						m_scanner->lineno()));
+					result.value.real_val = 0;
+				}
+				else
+				{
+					result.value.real_val = leftValuef / rightValuef;
+				}
 				break;
 
 			case OpINTDIVIDE:
 				result.type = getIntegerType();
-				result.value.real_val = leftValuei / rightValuei;
+				if (rightValuei == 0)
+				{
+					m_errorManager->addError(new Error(InvalidExpression,
+						"Division by zero.",
+						m_scanner->lineno()));
+					result.value.real_val = 0;
+				}
+				else
+				{
+					result.value.real_val = leftValuei / rightValuei;
+				}
 				break;
 
 			case OpMOD:
 				result.type = getIntegerType();
-				result.value.real_val = leftValuei % rightValuei;
+				if (rightValuei == 0)
+				{
+					m_errorManager->addError(new Error(InvalidExpression,
+						"Division by zero.",
+						m_scanner->lineno()));
+					result.value.real_val = 0;
+				}
+				else
+				{
+					result.value.real_val = leftValuei % rightValuei;
+				}
 				break;
 
 			// logical ops
