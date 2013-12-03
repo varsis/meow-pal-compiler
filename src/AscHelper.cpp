@@ -44,6 +44,13 @@ namespace Meow
 	}
 	
 	void AscHelper::simpleExpressionHelper(Type *typeOne, Type* typeTwo, string functionName) {
+		
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
 		// add top two values of stack
 		if (typeOne == m_semanticHelper->getIntegerType() && typeTwo == m_semanticHelper->getIntegerType())
 		{
@@ -72,15 +79,23 @@ namespace Meow
 	}
 	
 	void AscHelper::simpleExpressionMod() {
+		
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
 		// these are integer
-			out() << "\tMOD" << endl;
-			out() << "\tIFERR division_zero" << endl;
+		out() << "\tMOD" << endl;
+		out() << "\tIFERR division_zero" << endl;
 	}
 	
 
 	void AscHelper::invokeProcedure(string procedureName,
 			InvocationParameters* args)
 	{
+		// Make sure that we have no errors
 		if (m_errorManager->getErrors()->size() > 0)
 		{
 			return;
@@ -187,6 +202,12 @@ namespace Meow
 
 	void AscHelper::invokeWriteln(InvocationParameters* args)
 	{
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
 		invokeWrite(args);
 
 		// write a newline (ascii character 10)
@@ -196,6 +217,12 @@ namespace Meow
 
 	void AscHelper::invokeWrite(InvocationParameters* args)
 	{
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
 		// Need to call a 'function' so we can get arguments offset from a display reg
 		reserveLabels(2);
 		m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
@@ -249,6 +276,13 @@ namespace Meow
 
 	void AscHelper::allocVariable(Symbol* sym)
 	{
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
+
 		if (sym)
 		{
 			m_ascOutput << "\tADJUST " << sym->getSizeInMem() << endl;
@@ -257,9 +291,13 @@ namespace Meow
 
 	void AscHelper::accessVariable(LValue lvalue)
 	{
-		// only do this if there are no errors -- bad type sizes can make this thing run
-		// a lonnggg time!
-		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
+		if (lvalue.type)
 		{
 			if (lvalue.sym->getSymbolType() == Symbol::ConstantSymbol)
 			{
@@ -303,6 +341,12 @@ namespace Meow
 
 	void AscHelper::pushConstantValue(Symbol* symbol)
 	{
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
 		Type* type = symbol->getType();
 		if (type)
 		{
@@ -336,7 +380,13 @@ namespace Meow
 
 	void AscHelper::assignToVariable(LValue lvalue)
 	{
-		if (m_errorManager->getErrors()->size() == 0 && lvalue.type)
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
+		if (lvalue.type)
 		{
 			// address should be right below value on stack
 
@@ -371,6 +421,12 @@ namespace Meow
 
 	void AscHelper::addArraySubscriptOffset(Type* arrayType)
 	{
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
 		if (arrayType == NULL)
 		{
 			return;
@@ -401,6 +457,12 @@ namespace Meow
 
 	void AscHelper::deallocVariables()
 	{
+		// Make sure that we have no errors
+		if (m_errorManager->getErrors()->size() > 0)
+		{
+			return;
+		}
+
 		if (g_offsetList.size() >= 1)
 		{
 			m_ascOutput << "\tADJUST -" << g_offsetList[g_offsetList.size()-1] << endl;
