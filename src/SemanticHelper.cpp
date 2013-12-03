@@ -913,7 +913,8 @@ namespace Meow
 				}
 
 				// if we are assigning a char array, must have same indices
-				if ( rtype->getElementType() == getCharType()
+				if ( rtype->getTypeClass() == Type::ArrayType
+					&& rtype->getElementType() == getCharType()
 					&& rtype->getIndexType() == getIntegerType()
 					&& rtype->getIndexRange().start == 1
 					&& ltype->getIndexRange().end == rtype->getIndexRange().end)
