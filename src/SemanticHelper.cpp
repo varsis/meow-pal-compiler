@@ -9,10 +9,12 @@ namespace Meow
 
 	SemanticHelper::SemanticHelper(PalScanner* scanner,
 					ErrorManager* manager,
-					SymbolTable* table)
+					SymbolTable* table,
+					bool languageExtensions)
 		: m_scanner(scanner)
 		, m_table(table)
 		, m_errorManager(manager)
+		, m_languageExtensions(languageExtensions)
 	{
 		addPredefinedSymbols();
 	}

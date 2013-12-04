@@ -14,12 +14,13 @@ extern std::vector<int> g_offsetList;
 namespace Meow
 {
 	AscHelper::AscHelper(ofstream& ascOutput, SymbolTable* table, SemanticHelper* semanticHelper,
-				bool arrayBoundsFlag)
+				bool arrayBoundsFlag, bool languageExtensions)
 		: m_ascOutput(ascOutput)
 		, m_symbolTable(table)
 		, m_semanticHelper(semanticHelper)
 		, m_errorManager(semanticHelper->getErrorManager())
 		, m_arrayBoundsFlag(arrayBoundsFlag)
+		, m_languageExtensions(languageExtensions)
 		, m_nextLabel(0)
 	{
 	}

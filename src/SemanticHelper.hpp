@@ -47,7 +47,8 @@ namespace Meow
 		public:
 			SemanticHelper(PalScanner* scanner,
 					ErrorManager* manager,
-					SymbolTable* table);
+					SymbolTable* table,
+					bool languageExtensions);
 
 			void addPredefinedSymbols();
 
@@ -104,7 +105,8 @@ namespace Meow
 			PalScanner* m_scanner;
 			SymbolTable* m_table;
 			ErrorManager* m_errorManager;
-
+			bool m_languageExtensions;
+	
 			// Predefined simple types
 			Type m_booleanType;
 			Type m_integerType;

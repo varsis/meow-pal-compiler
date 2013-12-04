@@ -17,7 +17,9 @@ Compiler::Compiler()
 	  m_programListing(true), 
 	  m_runtimeArrayBoundChecking(true),
 	  m_debug(false),
-	  m_printStdout(false)
+	  m_printStdout(false),
+	  m_interpret(true),
+	  m_languageExtensions(false)
 {
 }
 
@@ -27,7 +29,7 @@ Compiler::~Compiler()
 
 void Compiler::displayUsage()
 {
-	std::cout << "\nProgram Usage: pal [-ndpS] file.pal\n\n";
+	std::cout << "\nProgram Usage: pal [-ndpSaez] file.pal\n\n";
 	std::cout << "OPTIONS:\n";
 	std::cout << "\t-n : Do not produce a program listing. Default is" 
 		  << "to produce one.\n";
@@ -36,13 +38,15 @@ void Compiler::displayUsage()
 	std::cout << "\t-S : Leave Asc code in .asc file rather than delete it.\n";
 	std::cout << "\t-a : Do not do runtime bounds checking on arrays. Default"
 		<< " is to do the checking.\n"; 
+	std::cout << "\t-e : Enable language extensions that are not standard PAL.\n";
+	std::cout << "\t-z : Do not invoke the Asc interpreter, even if the code is correct.\n";
 	std::cout << std::endl;
 }
 
 void Compiler::getArguments(int argc, char* argv[])
 {
 	int opt = 0;
-	const char* optString = "ndpSa";
+	const char* optString = "ndpSaez";
 
 	if (argc == 1)
 	{
@@ -70,6 +74,12 @@ void Compiler::getArguments(int argc, char* argv[])
 				break;
 			case 'a':
 				m_runtimeArrayBoundChecking = false;
+				break;
+			case 'e':
+				m_languageExtensions = true;
+				break;
+			case 'z':
+				m_interpret = false;
 				break;
 			default:
 				std::cerr << "\n* Unrecognized option: -" 
@@ -254,6 +264,7 @@ int Compiler::run(int argc, char* argv[])
 
 	m_parser.setDebugFlag(m_debug);
 	m_parser.setArrayBoundsFlag(m_runtimeArrayBoundChecking);
+	m_parser.setLanguageExtensions(m_languageExtensions);
 
 	parseResult = m_parser.parseFile(m_inputFileName, m_ascOutput);
 
@@ -279,7 +290,10 @@ int Compiler::run(int argc, char* argv[])
 			ascOutput << ascLib.rdbuf();
 		}
 
-		system((m_ascExecutable + " " + m_ascOutput).c_str());
+		if (m_interpret)
+		{
+			system((m_ascExecutable + " " + m_ascOutput).c_str());
+		}
 	}
 
 	if (!m_leaveASC)

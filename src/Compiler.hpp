@@ -39,6 +39,8 @@ namespace Meow
 			bool m_runtimeArrayBoundChecking;
 			bool m_debug;
 			bool m_printStdout;
+			bool m_interpret;
+			bool m_languageExtensions;
 
 
 	};
