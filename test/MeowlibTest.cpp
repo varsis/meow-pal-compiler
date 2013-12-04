@@ -1,5 +1,6 @@
 #include <fstream>
 #include <stdio.h>
+#include <math.h>
 
 #include "gtest/gtest.h"
 
@@ -75,6 +76,58 @@ namespace Meow
 
 		ASSERT_EQ(fscanf(ascout, "%d", &retval), 1);
 		EXPECT_EQ(retval, 1);
+
+		pclose(ascout);
+	}
+
+	TEST(MeowlibTest, TestLn)
+	{
+		ifstream exp_source("asc/meowlib/exp.asc");
+		ifstream ln_source("asc/meowlib/ln.asc");
+		ofstream testfile("test/asc/ln_test.asc");
+
+		testfile << "\tCONSTR 1.0" << endl;
+		testfile << "\tCALL 0, ml_ln" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 0.000000
+		
+		testfile << "\tCONSTR 2.0" << endl;
+		testfile << "\tCALL 0, ml_ln" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 0.693147
+
+		testfile << "\tCONSTR 40.0" << endl;
+		testfile << "\tCALL 0, ml_ln" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		testfile << "\tSTOP" << endl;
+		// 3.688880
+
+		testfile << exp_source.rdbuf();
+		testfile << ln_source.rdbuf();
+
+		testfile.close();
+		exp_source.close();
+		ln_source.close();
+
+		FILE* ascout = popen("cat test/asc/ln_test.asc | bin/asc", "r");
+		ASSERT_NE(ascout, (void*)0);
+
+		float result;
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - log(1)) < 0.000001);
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - log(2)) < 0.000001);
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - log(40)) < 0.000001);
 
 		pclose(ascout);
 	}
