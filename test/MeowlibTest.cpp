@@ -131,6 +131,124 @@ namespace Meow
 
 		pclose(ascout);
 	}
+	
+	TEST(MeowlibTest, TestSucc)
+	{
+		ifstream ascsource("asc/meowlib/succ.asc");
+		ofstream testfile("test/asc/test.asc");
+
+		testfile << "\tCONSTR 0.0" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 1.000000
+		
+		testfile << "\tCONSTR -1" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 0.000000
+
+		testfile << "\tCONSTR 1" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 2.000000
+		
+		testfile << "\tCONSTR 99" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		testfile << "\tSTOP" << endl;
+		// 100.000000
+
+		testfile << ascsource.rdbuf();
+
+		testfile.close();
+		ascsource.close();
+
+		FILE* ascout = popen("cat test/asc/test.asc | bin/asc", "r");
+		ASSERT_NE(ascout, (void*)0);
+
+		float result;
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 1.0) < 0.000001);
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 0.0) < 0.000001);
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 2.0) < 0.000001);
+		
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 100.0) < 0.000001);
+
+		pclose(ascout);
+	}
+
+	TEST(MeowlibTest, TestAbs)
+	{
+		ifstream ascsource("asc/meowlib/abs.asc");
+		ofstream testfile("test/asc/test.asc");
+
+		testfile << "\tCONSTR 0.0" << endl;
+		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 0.00000
+		
+		testfile << "\tCONSTR -1" << endl;
+		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 1.00000
+
+		testfile << "\tCONSTR 1" << endl;
+		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		// 1.000000
+		
+		testfile << "\tCONSTR -1000" << endl;
+		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tWRITER" << endl;
+		testfile << "\tCONSTI 32" << endl;
+		testfile << "\tWRITEC" << endl;
+		testfile << "\tSTOP" << endl;
+		// 1000.000000
+
+		testfile << ascsource.rdbuf();
+
+		testfile.close();
+		ascsource.close();
+
+		FILE* ascout = popen("cat test/asc/test.asc | bin/asc", "r");
+		ASSERT_NE(ascout, (void*)0);
+
+		float result;
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 0.0) < 0.000001);
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 1.0) < 0.000001);
+
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 1.0) < 0.000001);
+		
+		ASSERT_EQ(fscanf(ascout, "%f", &result), 1);
+		ASSERT_TRUE(fabs(result - 1000.0) < 0.000001);
+
+		pclose(ascout);
+	}
 
 	TEST(MeowlibTest, TestWriteInteger)
 	{
