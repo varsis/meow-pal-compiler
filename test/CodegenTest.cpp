@@ -2467,4 +2467,42 @@ namespace Meow
 
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestReadString)
+	{
+		ofstream testfile("test/asc/read.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	s : string;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	readln(s);" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "	readln(s);" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		ofstream input("test/asc/read.in");
+		input << "hello world!" << endl;
+		input << "how is your day?" << endl;
+		input.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/read.pal < test/asc/read.in", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char* buf = new char[256];
+		size_t bufsize = 255;
+
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "hello world!\n"); 
+
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "how is your day?\n"); 
+
+		delete [] buf;
+
+		pclose(palout);
+	}
 }

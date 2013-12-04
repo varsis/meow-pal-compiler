@@ -114,19 +114,13 @@ namespace Meow
 		// Note: as the grammar is currently -- args pushed in order of appearance
 
 		int argumentSpace = 0;
-		/*
-		InvocationParameters::iterator it;
-		for (it = args->begin(); it != args->end(); ++it)
-		{
-			argumentSpace += it->type->getTypeSize();
-		}
-		*/
-
 		for (unsigned int argIdx = 0; argIdx < args->size(); ++argIdx)
 		{
-			if (procedureSymbol->getParameters()
+			if (procedureSymbol == m_semanticHelper->getRead() 
+					|| procedureSymbol == m_semanticHelper->getReadln()
+					|| ( procedureSymbol->getParameters()
 					&& argIdx < procedureSymbol->getParameters()->size()
-					&& procedureSymbol->getParameters()->at(argIdx)->isVarParam())
+					&& procedureSymbol->getParameters()->at(argIdx)->isVarParam()))
 			{
 				argumentSpace += 1; // just an address
 			}
@@ -277,9 +271,13 @@ namespace Meow
 	void AscHelper::invokeReadln(InvocationParameters* args)
 	{
 		invokeRead(args);
-		// TODO read and discard characters until newline
-		m_ascOutput << "\tREADC" << endl;
-		m_ascOutput << "\tADJUST -1" << endl;
+		// If last argument is not a string ... (read_string will read until newline!)
+		if (args->size() > 0 && !m_semanticHelper->isStringType(args->back().type))
+		{
+			// TODO read and discard characters until newline 
+			m_ascOutput << "\tREADC" << endl;
+			m_ascOutput << "\tADJUST -1" << endl;
+		}
 	}
 
 	void AscHelper::invokeRead(InvocationParameters* args)
