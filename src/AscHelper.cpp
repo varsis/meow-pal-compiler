@@ -503,12 +503,15 @@ namespace Meow
 		}
 
 		// Index is on stack. Convert it to an integer index relative to start of array
-		// TODO may need to convert char (or enum) indexes a little differently? but maybe not (TEST!)
 
 		m_ascOutput << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
 		m_ascOutput << "\tADDI" << endl;
 
 		// TODO run time bounds check probably needs to happen here! 
+		m_ascOutput << "\tDUP" << endl;
+		m_ascOutput << "\tCONSTI " << arrayType->getIndexRange().end - arrayType->getIndexRange().start << endl;
+		m_ascOutput << "\tCALL 0, ml_bcheck" << endl;
+		m_ascOutput << "\tADJUST -2" << endl;
 
 		// Multiply index by size of element (if greater than 1?)
 		m_ascOutput << "\tCONSTI " << elementType->getTypeSize() << endl;
