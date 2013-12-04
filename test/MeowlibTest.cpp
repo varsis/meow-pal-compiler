@@ -9,7 +9,8 @@ namespace Meow
 {
 	TEST(MeowlibTest, TestOdd)
 	{
-		ifstream ascsource("asc/meowlib/odd.asc");
+		ifstream odd_source("asc/meowlib/odd.asc");
+		ifstream abs_source("asc/meowlib/abs.asc");
 		ofstream testfile("test/asc/test.asc");
 
 		testfile << "\tCONSTI 0" << endl;
@@ -45,10 +46,12 @@ namespace Meow
 		testfile << "\tSTOP" << endl;
 
 		// append builtin function implmentation
-		testfile << ascsource.rdbuf();
+		testfile << abs_source.rdbuf();	
+		testfile << odd_source.rdbuf();
 
 		testfile.close();
-		ascsource.close();
+		abs_source.close();
+		odd_source.close();
 
 		FILE* ascout = popen("cat test/asc/test.asc | bin/asc", "r");
 		ASSERT_NE(ascout, (void*)0);
