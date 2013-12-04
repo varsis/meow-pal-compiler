@@ -18,7 +18,7 @@ namespace Meow
 	class AscHelper
 	{
 		public:
-			AscHelper(ofstream& ascOutput, SymbolTable* table, SemanticHelper* semanticHelper);
+			AscHelper(ofstream& ascOutput, SymbolTable* table, SemanticHelper* semanticHelper, bool arrayBoundsFlag);
 
 			void invokeProcedure(string procedureName, 
 					InvocationParameters* params);
@@ -49,6 +49,7 @@ namespace Meow
 			SymbolTable* m_symbolTable;
 			SemanticHelper* m_semanticHelper;
 			ErrorManager* m_errorManager;
+			bool m_arrayBoundsFlag;
 
 			vector<int> m_labelStack;
 			int m_nextLabel;

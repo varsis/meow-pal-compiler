@@ -21,6 +21,11 @@ namespace Meow
 		m_debugFlag = value;
 	}
 
+	void Parser::setArrayBoundsFlag(bool value)
+	{
+		m_arrayBoundsFlag = value;
+	}
+
 	int Parser::parseFile(std::ifstream* palInput, std::ofstream* ascOutput)
 	{
 		int retval;
@@ -31,7 +36,8 @@ namespace Meow
 		SemanticHelper semanticHelper(&scanner, m_errorManager, &symbolTable);
 		semanticHelper.addPredefinedSymbols();
 
-		AscHelper ascHelper(*ascOutput, &symbolTable, &semanticHelper);
+		AscHelper ascHelper(*ascOutput, &symbolTable, &semanticHelper,
+				m_arrayBoundsFlag);
 
 		PalParser parser(scanner, *m_errorManager, symbolTable, semanticHelper, ascHelper);
 

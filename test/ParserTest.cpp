@@ -30,7 +30,7 @@ namespace Meow
 			ParserTest() 
 				: dummyOutput("dummyout")
 				, semanticHelper(&scanner, &errorManager, &symbolTable)
-				, ascHelper(dummyOutput, &symbolTable, &semanticHelper)
+				, ascHelper(dummyOutput, &symbolTable, &semanticHelper, true)
 				, parser(scanner, errorManager, symbolTable, semanticHelper, ascHelper)
 			{
 			}

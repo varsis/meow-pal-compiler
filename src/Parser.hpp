@@ -17,10 +17,12 @@ namespace Meow
 			int parseFile(std::ifstream* palInput, std::ofstream* ascOutput);
 
 			void setDebugFlag(bool value);
+			void setArrayBoundsFlag(bool value);
 
 		private:
 			ErrorManager* m_errorManager;
 			bool m_debugFlag;
+			bool m_arrayBoundsFlag;
 	};
 }
 
