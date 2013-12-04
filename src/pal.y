@@ -125,7 +125,7 @@
 %type <lvalue> lhs_var lhs_subscripted_var
 %type <lvalue> var subscripted_var
 
-%type <constExpr> type_expr type_simple_expr type_term type_factor
+%type <constExpr> type_expr type_simple_expr type_term type_factor integer_constant real_constant
 
 %type <symbolList> enum_list
 
@@ -1033,7 +1033,7 @@ parm                    : expr
 				// (in correct order!)
 			}
 
-struct_stat             : if_part then_part else_part
+struct_stat             : if_part matched_then_part else_part
 			| if_part then_part
                         {
 				ascHelper.out() << ascHelper.currentLabel(1) << endl;
@@ -1107,6 +1107,14 @@ then_part		: THEN stat
 			}
 			;
 
+matched_then_part	: THEN matched_stat
+                        {
+				// code for stat will have been aready generated above
+				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(1) << endl;
+				ascHelper.out() << ascHelper.currentLabel() << endl;
+			}
+			;
+
 else_part		: ELSE stat
                         {
 				// code for stat will have been aready generated above
@@ -1114,6 +1122,64 @@ else_part		: ELSE stat
 				ascHelper.popLabels();
 			}
 			;
+
+matched_else_part	: ELSE matched_stat
+                        {
+				// code for stat will have been aready generated above
+				ascHelper.out() << ascHelper.currentLabel(1) << endl;
+				ascHelper.popLabels();
+			}
+			;
+
+matched_stat            : simple_stat
+                        | if_part matched_then_part matched_else_part
+                        | CONTINUE
+			{
+				if (g_loopStartStack.size() > 0)
+				{
+					ascHelper.out() << "\tGOTO " << g_loopStartStack.back() << endl;
+				}
+			}
+                        | EXIT
+			{
+				if (g_loopEndStack.size() > 0)
+				{
+					ascHelper.out() << "\tGOTO " << g_loopEndStack.back() << endl;
+				}
+			}
+                        | WHILE
+			{
+				ascHelper.reserveLabels(2);
+				// begin loop
+				ascHelper.out() << ascHelper.currentLabel(0) << endl;
+				g_loopStartStack.push_back(ascHelper.currentLabel(0));
+				g_loopEndStack.push_back(ascHelper.currentLabel(1));
+			} 
+				expr
+			{
+				// evaluated conditional expression value on stack ... 
+				semanticHelper.checkBoolean($3.type);
+				ascHelper.out() << "\tIFZ " << ascHelper.currentLabel(1) << endl;
+			}
+				DO matched_stat
+			{
+				g_whileCounter--;
+				ascHelper.out() << "\tGOTO " << ascHelper.currentLabel(0) << endl;
+
+				// end loop
+				ascHelper.out() << ascHelper.currentLabel(1) << endl;
+				ascHelper.popLabels();
+				if (g_loopStartStack.size() > 0)
+				{
+					g_loopStartStack.pop_back();
+				}
+
+				if (g_loopEndStack.size() > 0)
+				{
+					g_loopEndStack.pop_back();
+				}
+			}
+                        ;
 
 /********************************************************************************
  * Rules for expressions
@@ -1384,16 +1450,8 @@ type_factor             : IDENTIFIER
                         {
                             $$ = $2;
                         }
-                        | INT_CONST 
-                        {
-                            $$.type = semanticHelper.getIntegerType();
-                            $$.value.int_val = $1;
-                        }
-			| REAL_CONST
-			{
-				$$.type = semanticHelper.getRealType();
-				$$.value.real_val = $1;
-			}
+                        | integer_constant
+			| real_constant
                         | NOT type_factor
                         {
                             Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
@@ -1410,6 +1468,29 @@ type_factor             : IDENTIFIER
                         }
                         ;
 
+integer_constant        : MINUS INT_CONST
+                        {
+                            $$.type = semanticHelper.getIntegerType();
+                            $$.value.int_val = -$2;
+                        }
+                        | INT_CONST
+                        {
+                            $$.type = semanticHelper.getIntegerType();
+                            $$.value.int_val = $1;
+                        }
+                        ;
+
+real_constant           : MINUS REAL_CONST
+                        {
+                            $$.type = semanticHelper.getRealType();
+                            $$.value.real_val = -$2;
+                        }
+                        | REAL_CONST
+                        {
+                            $$.type = semanticHelper.getRealType();
+                            $$.value.real_val = $1;
+                        }
+                        ;
 
 expr			: simple_expr
                         {
@@ -1790,11 +1871,21 @@ unsigned_num            : INT_CONST
 			{
 				$$ = semanticHelper.getIntegerType();
 				ascHelper.out() << "\tCONSTI " << $1 << endl;
+                        }
+                        | MINUS INT_CONST
+			{
+				$$ = semanticHelper.getIntegerType();
+				ascHelper.out() << "\tCONSTI " << -$2 << endl;
 			}
 			| REAL_CONST
 			{
 				$$ = semanticHelper.getRealType();
 				ascHelper.out() << "\tCONSTR " << $1 << endl;
+			}
+			| MINUS REAL_CONST
+			{
+				$$ = semanticHelper.getRealType();
+				ascHelper.out() << "\tCONSTR " << -$2 << endl;
 			}
 			;
 

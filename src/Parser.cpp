@@ -34,7 +34,6 @@ namespace Meow
 		PalScanner scanner(palInput, m_errorManager, &symbolTable);
 
 		SemanticHelper semanticHelper(&scanner, m_errorManager, &symbolTable);
-		semanticHelper.addPredefinedSymbols();
 
 		AscHelper ascHelper(*ascOutput, &symbolTable, &semanticHelper,
 				m_arrayBoundsFlag);

@@ -1,0 +1,6 @@
+program test(input, output);
+const
+	a = true or false;
+	c = not a;
+begin
+end.
