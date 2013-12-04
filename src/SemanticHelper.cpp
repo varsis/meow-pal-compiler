@@ -483,6 +483,8 @@ namespace Meow
 			routineSym->setType(returnType);
 			routineSym->setLocation(-(2 + returnType->getTypeSize()));
 		}
+		
+		routineSym->setRecursive(true);
 
 		offset = 0;
 		for (size_t i = 0; i < parameters->size(); i++)
