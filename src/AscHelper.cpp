@@ -323,10 +323,9 @@ namespace Meow
 			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 			{
 				// push pointer to start of string
-				m_ascOutput << "\tPUSHA " << argPointer << "[0]" << endl;
-				// TODO read_string routine
+				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
 				// TODO probably need some kind of runtime bounds check here as well!
-				//m_ascOutput << "\tCALL 0, ml_read_string" << endl;
+				m_ascOutput << "\tCALL 0, ml_read_string" << endl;
 				m_ascOutput << "\tADJUST -1" << endl;
 			}
 
@@ -509,7 +508,6 @@ namespace Meow
 		m_ascOutput << "\tCONSTI " << - arrayType->getIndexRange().start << endl;
 		m_ascOutput << "\tADDI" << endl;
 
-		// TODO run time bounds check probably needs to happen here! 
 		m_ascOutput << "\tDUP" << endl;
 		m_ascOutput << "\tCONSTI " << arrayType->getIndexRange().end - arrayType->getIndexRange().start << endl;
 		
