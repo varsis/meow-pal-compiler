@@ -253,6 +253,7 @@ int Compiler::run(int argc, char* argv[])
 	getArguments(argc, argv);
 
 	m_parser.setDebugFlag(m_debug);
+	m_parser.setArrayBoundsFlag(m_runtimeArrayBoundChecking);
 
 	parseResult = m_parser.parseFile(m_inputFileName, m_ascOutput);
 

@@ -2204,4 +2204,195 @@ namespace Meow
 		EXPECT_FLOAT_EQ(val, 2.73);
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestArrayBoundCheck0)
+	{
+		ofstream testfile("test/asc/arraybound.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[1..23] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[100] := 90;" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/arraybound.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char array[256];
+
+		ASSERT_EQ(fscanf(palout, "%s", array), 1);
+		EXPECT_STREQ(array, "ERROR");
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestArrayBoundCheck1)
+	{
+		ofstream testfile("test/asc/arraybound.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[1..23] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[0] := 90;" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/arraybound.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char array[256];
+
+		ASSERT_EQ(fscanf(palout, "%s", array), 1);
+		EXPECT_STREQ(array, "ERROR");
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestArrayBoundCheck2)
+	{
+		ofstream testfile("test/asc/arraybound.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array['a'..'v'] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a['x'] := 90;" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/arraybound.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char array[256];
+
+		ASSERT_EQ(fscanf(palout, "%s", array), 1);
+		EXPECT_STREQ(array, "ERROR");
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestArrayBoundCheck3)
+	{
+		ofstream testfile("test/asc/arraybound.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	b = (f,g,h,j);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : array[b] of integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a[g] := 90;" << endl;
+		testfile << "	writeln(a[g]);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/arraybound.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		int value;
+
+		ASSERT_EQ(fscanf(palout, "%d", &value), 1);
+		EXPECT_EQ(value, 90);
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestExitContinue0)
+	{
+		ofstream testfile("test/asc/exitcontinue.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a := 0;" << endl;
+		testfile << "	while(a <> 10) do" << endl;
+		testfile << "	begin" << endl;
+		testfile << "		a := a + 1;" << endl;
+		testfile << "		continue;" << endl;
+		testfile << "		writeln('a'); " << endl;
+		testfile << "	end;" << endl;
+		testfile << "writeln('b');" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/exitcontinue.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char b;
+
+		ASSERT_EQ(fscanf(palout, "%c", &b), 1);
+		EXPECT_EQ(b, 'b');
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestExitContinue1)
+	{
+		ofstream testfile("test/asc/exitcontinue.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a := 0;" << endl;
+		testfile << "	while(a <> 10) do" << endl;
+		testfile << "	begin" << endl;
+		testfile << "		a := a + 1;" << endl;
+		testfile << "		write('b');" << endl;
+		testfile << "		exit;" << endl;
+		testfile << "		writeln('a'); " << endl;
+		testfile << "	end;" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/exitcontinue.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char b;
+
+		ASSERT_EQ(fscanf(palout, "%c", &b), 1);
+		EXPECT_EQ(b, 'b');
+		ASSERT_NE(fscanf(palout, "%c", &b), 1);
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestRecursiveFunction0)
+	{
+		ofstream testfile("test/asc/recursive.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "procedure b(a : integer);" << endl;
+		testfile << "	begin" << endl;
+		testfile << "		if (a <> 0) then" << endl;
+		testfile << "		begin" << endl;
+		testfile << "			write('a');" << endl;
+		testfile << "			b(a-1);" << endl;
+		testfile << "		end;" << endl;
+		testfile << "	end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	b(5);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/recursive.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char b;
+
+		ASSERT_EQ(fscanf(palout, "%c", &b), 1);
+		EXPECT_EQ(b, 'a');
+		ASSERT_EQ(fscanf(palout, "%c", &b), 1);
+		EXPECT_EQ(b, 'a');
+		ASSERT_EQ(fscanf(palout, "%c", &b), 1);
+		EXPECT_EQ(b, 'a');
+		ASSERT_EQ(fscanf(palout, "%c", &b), 1);
+		EXPECT_EQ(b, 'a');
+		pclose(palout);
+	}
 }

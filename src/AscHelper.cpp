@@ -13,11 +13,13 @@ extern std::vector<int> g_offsetList;
 
 namespace Meow
 {
-	AscHelper::AscHelper(ofstream& ascOutput, SymbolTable* table, SemanticHelper* semanticHelper)
+	AscHelper::AscHelper(ofstream& ascOutput, SymbolTable* table, SemanticHelper* semanticHelper,
+				bool arrayBoundsFlag)
 		: m_ascOutput(ascOutput)
 		, m_symbolTable(table)
 		, m_semanticHelper(semanticHelper)
 		, m_errorManager(semanticHelper->getErrorManager())
+		, m_arrayBoundsFlag(arrayBoundsFlag)
 		, m_nextLabel(0)
 	{
 	}
@@ -510,7 +512,15 @@ namespace Meow
 		// TODO run time bounds check probably needs to happen here! 
 		m_ascOutput << "\tDUP" << endl;
 		m_ascOutput << "\tCONSTI " << arrayType->getIndexRange().end - arrayType->getIndexRange().start << endl;
-		m_ascOutput << "\tCALL 0, ml_bcheck" << endl;
+		
+		if (m_arrayBoundsFlag)
+		{
+			m_ascOutput << "\tCALL 0, ml_bcheck" << endl;
+		}
+		else
+		{
+			m_ascOutput << "\tCALL 0, ml_nobcheck" << endl;
+		}
 		m_ascOutput << "\tADJUST -2" << endl;
 
 		// Multiply index by size of element (if greater than 1?)
