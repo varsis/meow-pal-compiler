@@ -1053,7 +1053,17 @@ namespace Meow
 
 	void SemanticHelper::checkProcedureInvocation(string procedureName, 
 							InvocationParameters* params)
-	{	
+	{
+		// For the language extensions
+		if (m_languageExtensions)
+		{
+			if (procedureName.compare("ascDump") == 0
+				|| procedureName.compare("ascTrace") == 0)
+			{
+				return;
+			}
+		}
+
 		Symbol* procedureSymbol = m_table->getSymbol(procedureName);
 		if (!procedureSymbol)
 		{

@@ -104,6 +104,23 @@ namespace Meow
 			return;
 		}
 
+
+		// For the language extensions 
+		if (m_languageExtensions)
+		{
+			if (procedureName.compare("ascDump") == 0)
+			{
+				m_ascOutput << "\tCALL 0, ml_asc_dump" << endl;
+				return;
+			}
+			else if (procedureName.compare("ascTrace") == 0)
+			{
+				m_ascOutput << "\tCALL 0, ml_asc_trace" << endl;
+				return;
+			}
+		}
+
+
 		Symbol* procedureSymbol = m_symbolTable->getSymbol(procedureName);
 
 		if (procedureSymbol == NULL)
