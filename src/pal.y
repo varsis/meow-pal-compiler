@@ -125,7 +125,7 @@
 %type <lvalue> lhs_var lhs_subscripted_var
 %type <lvalue> var subscripted_var
 
-%type <constExpr> type_expr type_simple_expr type_term type_factor
+%type <constExpr> type_expr type_simple_expr type_term type_factor integer_constant real_constant
 
 %type <symbolList> enum_list
 
@@ -1384,16 +1384,8 @@ type_factor             : IDENTIFIER
                         {
                             $$ = $2;
                         }
-                        | INT_CONST 
-                        {
-                            $$.type = semanticHelper.getIntegerType();
-                            $$.value.int_val = $1;
-                        }
-			| REAL_CONST
-			{
-				$$.type = semanticHelper.getRealType();
-				$$.value.real_val = $1;
-			}
+                        | integer_constant
+			| real_constant
                         | NOT type_factor
                         {
                             Type* result = semanticHelper.getOpResultType(OpNOT, $2.type);
@@ -1410,6 +1402,29 @@ type_factor             : IDENTIFIER
                         }
                         ;
 
+integer_constant        : MINUS INT_CONST
+                        {
+                            $$.type = semanticHelper.getIntegerType();
+                            $$.value.int_val = -$2;
+                        }
+                        | INT_CONST
+                        {
+                            $$.type = semanticHelper.getIntegerType();
+                            $$.value.int_val = $1;
+                        }
+                        ;
+
+real_constant           : MINUS REAL_CONST
+                        {
+                            $$.type = semanticHelper.getRealType();
+                            $$.value.real_val = -$2;
+                        }
+                        | REAL_CONST
+                        {
+                            $$.type = semanticHelper.getRealType();
+                            $$.value.real_val = $1;
+                        }
+                        ;
 
 expr			: simple_expr
                         {
@@ -1790,11 +1805,21 @@ unsigned_num            : INT_CONST
 			{
 				$$ = semanticHelper.getIntegerType();
 				ascHelper.out() << "\tCONSTI " << $1 << endl;
+                        }
+                        | MINUS INT_CONST
+			{
+				$$ = semanticHelper.getIntegerType();
+				ascHelper.out() << "\tCONSTI " << -$2 << endl;
 			}
 			| REAL_CONST
 			{
 				$$ = semanticHelper.getRealType();
 				ascHelper.out() << "\tCONSTR " << $1 << endl;
+			}
+			| MINUS REAL_CONST
+			{
+				$$ = semanticHelper.getRealType();
+				ascHelper.out() << "\tCONSTR " << -$2 << endl;
 			}
 			;
 
