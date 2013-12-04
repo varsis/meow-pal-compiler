@@ -1016,14 +1016,11 @@ namespace Meow
 						"Expecting 1 argument for '" + functionName + "'.",
 						m_scanner->lineno()));
 				}
-
-				else if (params && params->at(0).type != getIntegerType() 
-					&& params->at(0).type->getTypeClass() != Type::EnumeratedType
-					&& params->at(0).type != getBooleanType())
+				else if (params && !isOrdinalType(params->at(0).type))
 				{
 					m_errorManager->addError(new Error(
 						SemanticError,
-						"Non-compatible parameter type for '" + functionName + "'; must be integer, boolean, or enum.",
+						"Non-compatible parameter type for '" + functionName + "'; must be ordinal type (integer, boolean, char, or enum).",
 						m_scanner->lineno()));
 				}
 			
