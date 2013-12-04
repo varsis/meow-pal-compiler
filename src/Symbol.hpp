@@ -69,6 +69,9 @@ namespace Meow
 			void setProcClass(ProcedureClass c) { m_procedureClass = c; }
 			ProcedureClass getProcClass() { return m_procedureClass; }
 
+			void setRecursive(bool value) { m_recursive = value; }
+			bool isRecursive() { return m_recursive; }
+
 		protected:
 			std::string m_name;
 			SymbolType m_symbolType;
@@ -88,6 +91,7 @@ namespace Meow
 			std::vector<Symbol*> m_parameters;
 			int m_parameterSpace;
 			bool m_varParam;
+			bool m_recursive;
 
 	};
 

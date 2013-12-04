@@ -794,6 +794,39 @@ namespace Meow
 		pclose(palout);
 	}
 
+	TEST(CodegenTest, TestProcedure3)
+	{
+		ofstream testfile("test/asc/ptest3.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var a : integer;" << endl;
+		testfile << "procedure foo(i : integer);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(i);" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  a := 45;" << endl;
+		testfile << "  foo(a-1);" << endl;
+		testfile << "  foo(a+1);" << endl;
+		testfile << "  foo(a*2);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/ptest3.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 44);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 46);
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		EXPECT_EQ(val, 90);
+
+		pclose(palout);
+	}
+
 	TEST(CodegenTest, TestFunction1)
 	{
 		ofstream testfile("test/asc/testfn.pal");
@@ -2145,7 +2178,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestReadChar)
 	{
-		ofstream testfile("test/asc/read.pal");
+		ofstream testfile("test/asc/readchar.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "var" << endl;
@@ -2163,7 +2196,7 @@ namespace Meow
 		input << "xy" << endl;
 		input.close();
 
-		FILE* palout = popen("bin/pal -n -S  test/asc/read.pal < test/asc/read.in", "r");
+		FILE* palout = popen("bin/pal -n -S  test/asc/readchar.pal < test/asc/read.in", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		char val;
@@ -2371,11 +2404,11 @@ namespace Meow
 		testfile << "		if (a <> 0) then" << endl;
 		testfile << "		begin" << endl;
 		testfile << "			write('a');" << endl;
-		testfile << "			b(a-1);" << endl;
+		testfile << "			b(a - 1);" << endl;
 		testfile << "		end;" << endl;
 		testfile << "	end;" << endl;
 		testfile << "begin" << endl;
-		testfile << "	b(5);" << endl;
+		testfile << "	b(4);" << endl;
 		testfile << "end." << endl;
 
 		testfile.close();
@@ -2393,6 +2426,45 @@ namespace Meow
 		EXPECT_EQ(b, 'a');
 		ASSERT_EQ(fscanf(palout, "%c", &b), 1);
 		EXPECT_EQ(b, 'a');
+
+		ASSERT_EQ(fscanf(palout, "%c", &b), -1);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRecursiveFunction1)
+	{
+		ofstream testfile("test/asc/factorial.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "function factorial(a : integer) : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  if (a <> 1) then" << endl;
+		testfile << "    factorial := factorial(a - 1) * a;" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	writeln(factorial(4));" << endl;
+		testfile << "	writeln(factorial(5));" << endl;
+		testfile << "	writeln(factorial(6));" << endl;
+		testfile << "	writeln(factorial(7));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/factorial.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		int a;
+
+		ASSERT_EQ(fscanf(palout, "%d", &a), 1);
+		EXPECT_EQ(a, 24);
+		ASSERT_EQ(fscanf(palout, "%d", &a), 1);
+		EXPECT_EQ(a, 120);
+		ASSERT_EQ(fscanf(palout, "%d", &a), 1);
+		EXPECT_EQ(a, 720);
+		ASSERT_EQ(fscanf(palout, "%d", &a), 1);
+		EXPECT_EQ(a, 5040);
+
 		pclose(palout);
 	}
 }

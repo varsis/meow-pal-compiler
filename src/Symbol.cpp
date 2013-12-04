@@ -19,6 +19,7 @@ namespace Meow
 		, m_procedureClass(UserDefined)
 		, m_parameterSpace(0)
 		, m_varParam(false)
+		, m_recursive(false)
 	{
 	}
 	
@@ -35,6 +36,7 @@ namespace Meow
 		, m_procedureClass(UserDefined)
 		, m_parameterSpace(0)
 		, m_varParam(false)
+		, m_recursive(false)
 	{
 	}
 		

@@ -168,8 +168,8 @@ namespace Meow
 			}
 
 			// Actually call the routine
-			m_ascOutput << "\tCALL " << procedureSymbol->getLexLevel() + 1 << ", "
-						<< label << endl;
+			int level = procedureSymbol->getLexLevel() + (procedureSymbol->isRecursive() ? 0 : 1);
+			m_ascOutput << "\tCALL " << level << ", " << label << endl;
 
 			if (returnValSize > 0 && argumentSpace > 0)
 			{
