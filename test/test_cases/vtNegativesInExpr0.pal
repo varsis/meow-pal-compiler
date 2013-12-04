@@ -2,10 +2,10 @@ program test(input, output);
 const
 	a = -0.9 * 7;
 	b = -9*8;
-	c = 90*-9;
+	c = 90*(-9);
 var
 	d : integer;
 begin
-	d := -9.899 + -89;
-	d := -8889 * -88 +-9;
+	d := -999 + (-89);
+	d := -8889 * (-88) +(-9);
 end.
