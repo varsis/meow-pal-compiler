@@ -703,12 +703,12 @@ namespace Meow
 
 			// logical ops
 			case OpOR:
-				result.type = getIntegerType();
+				result.type = getBooleanType();
 				result.value.int_val = leftValuef || rightValuef;
 				break;
 
 			case OpAND:
-				result.type = getIntegerType();
+				result.type = getBooleanType();
 				result.value.int_val = leftValuef && rightValuef;
 				break;
 
