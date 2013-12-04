@@ -35,7 +35,7 @@ namespace Meow
 			void allocateSpace(Symbol*, Type*);
 		private:
 			SymbolMap m_symbolTable;
-			int m_currentLevel;
+			unsigned int m_currentLevel;
 	};
 }
 

@@ -14,6 +14,7 @@ namespace Meow
 		, m_table(table)
 		, m_errorManager(manager)
 	{
+		addPredefinedSymbols();
 	}
 
 	void SemanticHelper::addPredefinedSymbols()

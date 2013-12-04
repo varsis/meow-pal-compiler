@@ -100,7 +100,7 @@ namespace Meow
 
 	void SymbolTable::allocateSpace(Symbol* sym, Type* type)
 	{
-		if (sym && type)
+		if (sym && type && m_currentLevel < g_offsetList.size())
 		{
 			sym->setSizeInMem(type->getTypeSize());
 			sym->setLocation(g_offsetList[m_currentLevel]);
