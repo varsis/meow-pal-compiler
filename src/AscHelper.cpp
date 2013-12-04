@@ -14,12 +14,13 @@ extern std::vector<int> g_offsetList;
 namespace Meow
 {
 	AscHelper::AscHelper(ofstream& ascOutput, SymbolTable* table, SemanticHelper* semanticHelper,
-				bool arrayBoundsFlag)
+				bool arrayBoundsFlag, bool languageExtensions)
 		: m_ascOutput(ascOutput)
 		, m_symbolTable(table)
 		, m_semanticHelper(semanticHelper)
 		, m_errorManager(semanticHelper->getErrorManager())
 		, m_arrayBoundsFlag(arrayBoundsFlag)
+		, m_languageExtensions(languageExtensions)
 		, m_nextLabel(0)
 	{
 	}
@@ -102,6 +103,23 @@ namespace Meow
 		{
 			return;
 		}
+
+
+		// For the language extensions 
+		if (m_languageExtensions)
+		{
+			if (procedureName.compare("ascDump") == 0)
+			{
+				m_ascOutput << "\tCALL 0, ml_asc_dump" << endl;
+				return;
+			}
+			else if (procedureName.compare("ascTrace") == 0)
+			{
+				m_ascOutput << "\tCALL 0, ml_asc_trace" << endl;
+				return;
+			}
+		}
+
 
 		Symbol* procedureSymbol = m_symbolTable->getSymbol(procedureName);
 

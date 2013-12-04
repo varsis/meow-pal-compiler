@@ -26,6 +26,11 @@ namespace Meow
 		m_arrayBoundsFlag = value;
 	}
 
+	void Parser::setLanguageExtensions(bool value)
+	{
+		m_languageExtensions = value;
+	}
+
 	int Parser::parseFile(std::ifstream* palInput, std::ofstream* ascOutput)
 	{
 		int retval;
@@ -33,10 +38,10 @@ namespace Meow
 		
 		PalScanner scanner(palInput, m_errorManager, &symbolTable);
 
-		SemanticHelper semanticHelper(&scanner, m_errorManager, &symbolTable);
+		SemanticHelper semanticHelper(&scanner, m_errorManager, &symbolTable, m_languageExtensions);
 
 		AscHelper ascHelper(*ascOutput, &symbolTable, &semanticHelper,
-				m_arrayBoundsFlag);
+				m_arrayBoundsFlag, m_languageExtensions);
 
 		PalParser parser(scanner, *m_errorManager, symbolTable, semanticHelper, ascHelper);
 

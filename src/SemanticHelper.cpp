@@ -9,10 +9,12 @@ namespace Meow
 
 	SemanticHelper::SemanticHelper(PalScanner* scanner,
 					ErrorManager* manager,
-					SymbolTable* table)
+					SymbolTable* table,
+					bool languageExtensions)
 		: m_scanner(scanner)
 		, m_table(table)
 		, m_errorManager(manager)
+		, m_languageExtensions(languageExtensions)
 	{
 		addPredefinedSymbols();
 	}
@@ -1051,7 +1053,17 @@ namespace Meow
 
 	void SemanticHelper::checkProcedureInvocation(string procedureName, 
 							InvocationParameters* params)
-	{	
+	{
+		// For the language extensions
+		if (m_languageExtensions)
+		{
+			if (procedureName.compare("ascDump") == 0
+				|| procedureName.compare("ascTrace") == 0)
+			{
+				return;
+			}
+		}
+
 		Symbol* procedureSymbol = m_table->getSymbol(procedureName);
 		if (!procedureSymbol)
 		{

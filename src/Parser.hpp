@@ -18,11 +18,12 @@ namespace Meow
 
 			void setDebugFlag(bool value);
 			void setArrayBoundsFlag(bool value);
-
+			void setLanguageExtensions(bool value);
 		private:
 			ErrorManager* m_errorManager;
 			bool m_debugFlag;
 			bool m_arrayBoundsFlag;
+			bool m_languageExtensions;
 	};
 }
 
