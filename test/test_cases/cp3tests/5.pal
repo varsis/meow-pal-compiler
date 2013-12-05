@@ -1,0 +1,35 @@
+{
+	Test 5;
+	Tests array/record accesses.
+
+	Should output:
+	aa
+	42
+	3.14159
+	42
+}
+
+program test(input, output);
+
+type
+	z = record
+		a : integer;
+		b : real;
+		c : array[45..50] of integer
+		end;
+var
+	a : array[1..50] of char;
+	b : z;
+
+begin
+	a[1] := 'a';
+	a[50] := 'a';
+	b.a := 42;
+	b.b := 3.14159;
+	b.c[46] := 32;
+
+	writeln(a[1], a[50]);
+	writeln(b.a);
+	writeln(b.b);
+	writeln((b.c[46]+10)*(2-1));
+end.

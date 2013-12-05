@@ -1,0 +1,24 @@
+{
+	Test 8;
+	Tests some library stuff and other cool things.
+
+	Should output:
+}
+
+program test(input, output);
+
+var	
+	a : integer;
+	b : real;
+	c : char;
+
+begin
+	a := 10;
+	b := 10;
+	c := 'a';
+
+	writeln((a*pred(a))-sqr(a));
+	writeln(sqrt(b));
+	writeln(ln(a)*2);
+	writeln(exp(a)*23);
+end.

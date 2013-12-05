@@ -1,0 +1,33 @@
+{
+	Test 6;
+	Tests some math, loops, and control flow (and DIVISION BY ZERO :D).
+
+	Should output:
+	10
+	11
+	ERROR DIVISION BY ZERO(or something like that);
+}
+
+program test(input, output);
+
+var
+	a : integer;
+	b : integer;
+	c : real;
+
+begin
+	a := 10;
+	b := 2;
+	if (a = 10) then
+	begin
+		while (a <> 12) do
+		begin
+			writeln(a);
+			a := a + 1;
+			b := b - 1;
+		end;
+	end;
+
+	c := a/b;
+end.
+

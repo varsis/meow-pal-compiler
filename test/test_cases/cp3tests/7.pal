@@ -1,0 +1,47 @@
+{
+	Test 7;
+	Tests advanced control flow, loops, and array bounds checking.
+
+	Should output:
+	3
+	2
+	ERROR BOUND ISSUE (or nothing, if bounds checking is disabled)
+}
+
+program test(input, output);
+
+var
+	a : integer;
+	b : integer;
+	c : array[45..234] of integer;
+
+begin
+	a := 1;
+	b := 2;
+
+	if (a = 1) then
+	begin
+		while(a <> 100) do
+		begin
+			if (a = 1) then
+			begin
+				a := a +1;
+				exit;
+			end;
+		end;
+	end;
+
+	a := a-b;
+
+	while (a <> 3) do
+	begin
+		a := a + 1;
+		continue;
+		b := b +1;
+	end;
+	
+	writeln(a);
+	writeln(b);
+
+	c[(b*a)*6*6*6] := 23;
+end.
