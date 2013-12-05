@@ -5,10 +5,10 @@ begin
 	writeln('stuff');
 end;
 
-function dostuff2(a : integer; b : integer) : string;
+function dostuff2(a : integer; b : integer) : real;
 begin
 	writeln('stuff');
-	dostuff2 := 'word';
+	dostuff2 := 3.0;
 end;
 
 begin

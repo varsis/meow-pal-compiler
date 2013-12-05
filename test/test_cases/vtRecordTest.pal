@@ -4,7 +4,7 @@ type
         TGender = (Male, Female);
         TPerson = record
                 { name : string[16]; ??? this doesn't look legal }
-                name : string;
+                name : array[1..4] of char;
                 age : integer;
                 gender : TGender
                 end;

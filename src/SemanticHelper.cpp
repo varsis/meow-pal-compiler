@@ -914,7 +914,15 @@ namespace Meow
 				{
 					return true;
 				}
+
 			}
+		}
+
+		if ((isStringType(ltype) || ltype->getTypeClass() == Type::StringLiteralType)
+		&& (isStringType(rtype) || rtype->getTypeClass() == Type::StringLiteralType))
+		{
+			// strings and string literals of the same size are compatible
+			return (ltype->getTypeSize() == rtype->getTypeSize());
 		}
 
 		// compatable if types are the predefined integer / real types
@@ -958,10 +966,12 @@ namespace Meow
 					&& ltype->getIndexType() == getIntegerType()
 					&& ltype->getIndexRange().start == 1)
 			{
-				// if we are assigning a string literal, assume its ok
+				// if we are assigning a string literal
 				if (rtype->getTypeClass() == Type::StringLiteralType)
 				{
-					return true;
+					// must still be the same size... 
+					// BOOO WE MADE THIS WORK JUST LIKE PASCAL, YOU GUYS SUCK!
+					return (rtype->getTypeSize() == ltype->getTypeSize());
 				}
 
 				// if we are assigning a char array, must have same indices

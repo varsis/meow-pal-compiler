@@ -1,16 +1,11 @@
 program test(input, output);
 const	lit = 'a';
 var
-        a : string;
         c : char;
 begin
-	a := 'b';
-	writeln(a);
 	c := 'b';
 	writeln(c);
 
-	a := lit;
-	writeln(a);
 	c := lit;
 	writeln(c);
 end.

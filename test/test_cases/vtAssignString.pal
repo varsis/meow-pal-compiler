@@ -1,7 +1,7 @@
 program vtAssignString(input, output);
 var
-        myString : string;
+        myString : array[1..5] of char;
 
 begin
-	myString := 'this is a valid string';
+	myString := 'meow!';
 end.

@@ -1,12 +1,12 @@
 program btest023(input, output);
 
 var
-        stringa : string;
+        a : real;
 
 begin
         { umm.. this definitely isn't valid...
         {
         stringa := 'some stringfasdfasd f;
         }
-        stringa := 'some stringfasdfasd f';
+	a := 10.0;
 end.

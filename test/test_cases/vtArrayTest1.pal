@@ -1,23 +1,18 @@
 program test029(input, output);
 
 var
-        myChars  : array[1..50] of char;
+        myChars  : array[1..10] of char;
         myInts   : array[0..50] of integer;
-        myString : string;
         myInts2, myInts3 : array[0..50] of integer;
 
 begin
-        myString := 'abcdefg';
-        myChars := 'hijklmnopqrstuvwxyz';
+        myChars := 'zzzzzzzzzz';
         myInts[0] := 42;
         myInts[1] := 90;
         myInts[2] := 17837;
 
         // myInts2 := myInts; { actually not valid! 'different' types! }
         myInts2 := myInts3; { this is ok though! }
-
-        //writeln(myString, myChars);
-        //writeln(myInts2[0], myInts2[1], myInts2[2]);
 
 	myInts2[0] := myInts2[1] + myInts2[2];
 	

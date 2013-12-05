@@ -1,5 +1,6 @@
 program Adventure(input, output);
 type
+	str = array[1..21] of char;
 
 	Position = record
 			x : integer;
@@ -7,7 +8,7 @@ type
 			end;
 
 	Item = record
-			name : string;
+			name : str;
 			weight: integer
 			end;
 
@@ -39,7 +40,7 @@ begin
 	end;
 end;
 
-procedure pickup(item : string; weight : integer);
+procedure pickup(item : str; weight : integer);
 begin
 	writeln('You pick up a ', item, '!');
 	player.inv[player.itemCount].name := item;
