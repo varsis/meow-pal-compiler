@@ -4121,14 +4121,22 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "const	lit = 'a';" << endl;
+		testfile << "		lit2 = 'b';" << endl;
 		testfile << "var" << endl;
 			testfile << "c : char;" << endl;
+			testfile << "s : array[1..1] of char;" << endl;
 		testfile << "begin" << endl;
 			testfile << "c := 'b';" << endl;
 			testfile << "write(c);" << endl;
 		testfile << "" << endl;
 			testfile << "c := lit;" << endl;
-			testfile << "writeln(c);" << endl;
+			testfile << "write(c);" << endl;
+		
+			testfile << "s := lit;" << endl;
+			testfile << "write(s);" << endl;
+
+			testfile << "s := lit2;" << endl;
+			testfile << "writeln(s);" << endl;
 		testfile << "end." << endl;
 
 		testfile.close();
@@ -4138,7 +4146,7 @@ namespace Meow
 
 		char str [300];
 		fgets(str, 300 , palout);
-		EXPECT_STRCASEEQ(str, "ba\n");
+		EXPECT_STRCASEEQ(str, "baab\n");
 
 		pclose(palout);
 	}

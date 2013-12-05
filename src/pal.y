@@ -963,6 +963,14 @@ var                     : IDENTIFIER
                                         {
                                             // If its a constant, just push the value itself since we already know it
                                             ascHelper.pushConstantValue(sym);
+
+					    if (g_charLiteral 
+						&& sym->getType()
+						&& sym->getType()->getTypeClass() == Type::StringLiteralType
+						&& sym->getType()->getStringLiteral().size() == 1)
+					    {
+						$$.type = semanticHelper.getCharType();
+					    }
                                         }
                                         else
                                         {

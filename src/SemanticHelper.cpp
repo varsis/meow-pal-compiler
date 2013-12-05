@@ -332,7 +332,7 @@ namespace Meow
 			&& t->getElementType() == getCharType()
 			&& t->getIndexType() == getIntegerType()
 			&& t->getIndexRange().start == 1
-			&& t->getIndexRange().end > 1;
+			&& t->getIndexRange().end >= 1;
 	}
 
 	bool SemanticHelper::isStringType(Type* elementType, Type* indexType, ArrayIndexRange range)
@@ -340,7 +340,7 @@ namespace Meow
 		return elementType == getCharType()
 			&& indexType == getIntegerType()
 			&& range.start == 1
-			&& range.end > 1;
+			&& range.end >= 1;
 	}
 
 	Type* SemanticHelper::makeArrayType(Type* indexType, Type* elementType)

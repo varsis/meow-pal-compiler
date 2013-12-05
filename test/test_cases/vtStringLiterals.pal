@@ -1,0 +1,19 @@
+program test(input,output);
+
+type
+	str = array[1..5] of char;
+
+var
+	s : str;
+
+procedure foo(s : str);
+begin
+	writeln(s);
+end;
+	
+begin
+	s := 'hello'; 
+	if s = 'hello' then
+		writeln('yo');
+	foo('hello');
+end.
