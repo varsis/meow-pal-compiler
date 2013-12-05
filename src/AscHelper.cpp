@@ -541,6 +541,54 @@ namespace Meow
         }
 
 
+	void AscHelper::comparisonExpression(Type* typeOne, Type* typeTwo, string functionName)
+	{
+		// Only valid for integers, booleans, characters, reals, and strings
+
+                if (m_errorManager->getErrors()->size() > 0)
+                {
+                        return;
+                }
+
+                // add top two values of stack
+                if (typeOne == m_semanticHelper->getIntegerType() && typeTwo == m_semanticHelper->getIntegerType())
+                {
+                        // if integer ...
+                        out() << "\t" << functionName << "I" << endl;
+                }
+                else if (typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getRealType())
+                {
+                        // if real ...
+                        out() << "\t" << functionName << "R" << endl;
+                } 
+		else if (typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getIntegerType())
+                {
+                        // real than int
+                        out() << "\tITOR" << endl;
+                        out() << "\t" << functionName << "R" << endl;
+                }
+                else if (typeOne == m_semanticHelper->getIntegerType() && typeTwo == m_semanticHelper->getRealType())
+                {
+                        // Int than real
+                        out() << "\tADJUST -1" << endl;
+                        out() << "\tITOR" << endl;
+                        out() << "\tADJUST 1" << endl;
+                        out() << "\t" << functionName << "R" << endl;   
+                }
+		else if (typeOne == m_semanticHelper->getBooleanType() && typeTwo == m_semanticHelper->getBooleanType())
+		{
+			out() << "\t" << functionName << "I" << endl;
+		}
+		else if (typeOne == m_semanticHelper->getCharType() && typeTwo == m_semanticHelper->getCharType())
+		{
+			out() << "\t" << functionName << "I" << endl;
+		}
+		else
+		{
+			// TODO: Handle string type
+		}
+	}
+
 	void AscHelper::addArraySubscriptOffset(Type* arrayType)
 	{
 		// Make sure that we have no errors

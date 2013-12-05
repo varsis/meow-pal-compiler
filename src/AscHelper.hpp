@@ -46,6 +46,7 @@ namespace Meow
 			bool shouldPassByRef(string functionName, unsigned int paramIndex);
 		        void functionSquareRoot(Type *typeOne);
                         void logicalExpression(string functionName);
+			void comparisonExpression(Type* typeOne, Type* typetwo, string functionName);
 
 		private:
 			ofstream& m_ascOutput;

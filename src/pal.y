@@ -1514,11 +1514,7 @@ expr			: simple_expr
                             $$.type = result;
                             $$.assignable = false;
 
-				// TEMP: assume integers
-				ascHelper.out() << "\tEQI" << endl;
-				// TODO: helper routine for generating comparison code for integers, 
-				// reals, and other types
-			   
+			    ascHelper.comparisonExpression($1.type, $3.type, "EQ");
                         }
                         | expr NE simple_expr
                         {
@@ -1535,11 +1531,8 @@ expr			: simple_expr
                             $$.type = result;
                             $$.assignable = false;
 
-				// TEMP: assume integers
-				ascHelper.out() << "\tEQI" << endl;
-				ascHelper.out() << "\tNOT" << endl;
-				// TODO: helper routine for generating comparison code for integers, 
-				// reals, and other types
+			    ascHelper.comparisonExpression($1.type, $3.type, "EQ");
+			    ascHelper.out() << "\tNOT" << endl;
                         }
                         | expr LE simple_expr
                         {
@@ -1555,6 +1548,9 @@ expr			: simple_expr
                             
                             $$.type = result;
                             $$.assignable = false;
+
+			    ascHelper.comparisonExpression($1.type, $3.type, "GT");
+			    ascHelper.out() << "\tNOT" << endl;
                         }
                         | expr LT simple_expr
                         {
@@ -1570,6 +1566,8 @@ expr			: simple_expr
                             
                             $$.type = result;
                             $$.assignable = false;
+
+			    ascHelper.comparisonExpression($1.type, $3.type, "LT");
                         }
                         | expr GE simple_expr
                         {
@@ -1585,6 +1583,9 @@ expr			: simple_expr
                             
                             $$.type = result;
                             $$.assignable = false;
+
+			    ascHelper.comparisonExpression($1.type, $3.type, "LT");
+			    ascHelper.out() << "\tNOT" << endl;
                         }
                         | expr GT simple_expr
                         {
@@ -1600,6 +1601,8 @@ expr			: simple_expr
                             
                             $$.type = result;
                             $$.assignable = false;
+
+			    ascHelper.comparisonExpression($1.type, $3.type, "GT");
                         }
                         ;
 
