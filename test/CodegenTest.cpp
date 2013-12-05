@@ -2587,6 +2587,8 @@ namespace Meow
 		char* buf = new char[256];
 		size_t bufsize = 255;
 
+		// string literal should get truncated to fit!
+
 		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
 		EXPECT_EQ(string(buf), "word\n"); 
 
