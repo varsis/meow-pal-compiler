@@ -1,0 +1,8 @@
+program test9( input, output )
+var
+	s : string;
+
+begin
+	s := not('this is a string');
+
+end

@@ -44,6 +44,7 @@ namespace Meow
 			void addArraySubscriptOffset(Type* arrayType);
 			void deallocVariables();
 			bool shouldPassByRef(string functionName, unsigned int paramIndex);
+		        void functionSquareRoot(Type *typeOne);
 
 		private:
 			ofstream& m_ascOutput;

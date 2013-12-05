@@ -1,0 +1,7 @@
+program test(input, output);
+var
+        a,b,c,d,e,f : integer;
+begin
+	a := ((((((((b) * c)))))));
+	b := (1)*(2);
+end.

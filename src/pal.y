@@ -310,6 +310,9 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				table.addSymbol(sym);
 				// TODO: Add Symbol to stack at the current level
+				
+				
+				
                         }
                         | IDENTIFIER ASSIGN type_expr
                         {       
