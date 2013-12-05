@@ -102,6 +102,7 @@ namespace Meow
 		m_table->addSymbol(ordFunctionSymbol);
 	
 		Symbol* chrFunctionSymbol = new Symbol("chr", Symbol::FunctionSymbol);
+		m_chr = chrFunctionSymbol;
 		chrFunctionSymbol->setType(getCharType());
 		chrFunctionSymbol->addParameter("", getIntegerType());
 		m_table->addSymbol(chrFunctionSymbol);
@@ -109,24 +110,29 @@ namespace Meow
 		Symbol* truncFunctionSymbol = new Symbol("trunc", Symbol::FunctionSymbol);
 		truncFunctionSymbol->setType(getIntegerType());
 		truncFunctionSymbol->addParameter("", getRealType());
+		m_trunc = truncFunctionSymbol;
 		m_table->addSymbol(truncFunctionSymbol);
 		
 		Symbol* roundFunctionSymbol = new Symbol("round", Symbol::FunctionSymbol);
 		roundFunctionSymbol->setType(getIntegerType());
 		roundFunctionSymbol->addParameter("", getRealType());
+		m_round = roundFunctionSymbol;
 		m_table->addSymbol(roundFunctionSymbol);
 		
 		Symbol* succFunctionSymbol = new Symbol("succ", Symbol::FunctionSymbol);
 		m_succ = succFunctionSymbol;
+		succFunctionSymbol->setType(getIntegerType()); // actually any ordinal type, but size is the same
 		m_table->addSymbol(succFunctionSymbol);
 		
 		Symbol* predFunctionSymbol = new Symbol("pred", Symbol::FunctionSymbol);
 		m_pred = predFunctionSymbol;
+		predFunctionSymbol->setType(getIntegerType()); // actually any ordinal type, but size is the same
 		m_table->addSymbol(predFunctionSymbol);
 		
 		Symbol* oddFunctionSymbol = new Symbol("odd", Symbol::FunctionSymbol);
 		oddFunctionSymbol->setType(getBooleanType());
 		oddFunctionSymbol->addParameter("", getIntegerType());
+		m_odd = oddFunctionSymbol;
 		m_table->addSymbol(oddFunctionSymbol);
 		
 		Symbol* absFunctionSymbol = new Symbol("abs", Symbol::FunctionSymbol);
@@ -136,27 +142,31 @@ namespace Meow
 		
 		Symbol* sqrFunctionSymbol = new Symbol("sqr", Symbol::FunctionSymbol);
 		m_sqr = sqrFunctionSymbol; // Save the symbol addr in case of redef
-		sqrFunctionSymbol->addParameter("", getRealType());
+		sqrFunctionSymbol->addParameter("", getRealType()); // TODO also takes ints... make sure!
 		m_table->addSymbol(sqrFunctionSymbol);
 		
 		Symbol* sqrtFunctionSymbol = new Symbol("sqrt", Symbol::FunctionSymbol);
 		sqrtFunctionSymbol->setType(getRealType());
 		sqrtFunctionSymbol->addParameter("", getRealType());
+		m_sqrt = sqrtFunctionSymbol;
 		m_table->addSymbol(sqrtFunctionSymbol);
 
 		Symbol* sinFunctionSymbol = new Symbol("sin", Symbol::FunctionSymbol);
 		sinFunctionSymbol->setType(getRealType());
 		sinFunctionSymbol->addParameter("", getRealType());
+		m_sin = sinFunctionSymbol;
 		m_table->addSymbol(sinFunctionSymbol);
 		
 		Symbol* expFunctionSymbol = new Symbol("exp", Symbol::FunctionSymbol);
 		expFunctionSymbol->setType(getRealType());
 		expFunctionSymbol->addParameter("", getRealType());
+		m_exp = expFunctionSymbol;
 		m_table->addSymbol(expFunctionSymbol);
 		
 		Symbol* lnFunctionSymbol = new Symbol("ln", Symbol::FunctionSymbol);
 		lnFunctionSymbol->setType(getRealType());
 		lnFunctionSymbol->addParameter("", getRealType());
+		m_ln = lnFunctionSymbol;
 		m_table->addSymbol(lnFunctionSymbol);
 
 		// Make sure that builtins can be redefed

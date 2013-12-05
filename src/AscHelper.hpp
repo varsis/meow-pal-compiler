@@ -30,6 +30,9 @@ namespace Meow
 			void invokeRead(InvocationParameters* params);
 			void invokeReadln(InvocationParameters* params);
 			
+			void invokeAbs(InvocationParameters* params);
+			void invokeSqr(InvocationParameters* params);
+
 			ofstream& out() { return m_ascOutput; }
 			void simpleExpressionHelper(Type * typeOne, Type * typeTwo, string functionName);
 			void simpleExpressionMod();

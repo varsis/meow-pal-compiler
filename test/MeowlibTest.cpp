@@ -134,6 +134,10 @@ namespace Meow
 	
 	TEST(MeowlibTest, TestSucc)
 	{
+		/* Unfortunately succ isn't actually supposed to
+		 * work for reals, only for ordinals! 
+		 * (ints, chars, bools, enums)
+
 		ifstream ascsource("asc/meowlib/succ.asc");
 		ofstream testfile("test/asc/test.asc");
 
@@ -189,6 +193,7 @@ namespace Meow
 		ASSERT_TRUE(fabs(result - 100.0) < 0.000001);
 
 		pclose(ascout);
+		*/
 	}
 
 	TEST(MeowlibTest, TestAbs)
@@ -197,28 +202,28 @@ namespace Meow
 		ofstream testfile("test/asc/test.asc");
 
 		testfile << "\tCONSTR 0.0" << endl;
-		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tCALL 0, ml_abs_real" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
 		// 0.00000
 		
 		testfile << "\tCONSTR -1" << endl;
-		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tCALL 0, ml_abs_real" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
 		// 1.00000
 
 		testfile << "\tCONSTR 1" << endl;
-		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tCALL 0, ml_abs_real" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
 		// 1.000000
 		
 		testfile << "\tCONSTR -1000" << endl;
-		testfile << "\tCALL 0, ml_abs" << endl;
+		testfile << "\tCALL 0, ml_abs_real" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
@@ -498,6 +503,10 @@ namespace Meow
 	
 	TEST(MeowlibTest, TestPred)
 	{
+		/* Unfortunately pred isn't actually supposed to
+		 * work for reals, only for ordinals! 
+		 * (ints, chars, bools, enums)
+
 		ifstream ascsource("asc/meowlib/pred.asc");
 		ofstream testfile("test/asc/pred_test.asc");
 
@@ -553,6 +562,7 @@ namespace Meow
 		ASSERT_TRUE(fabs(result - (-0.5)) < 0.000001);
 
 		pclose(ascout);
+		*/
 	}
 
 	TEST(MeowlibTest, TestWriteInteger)

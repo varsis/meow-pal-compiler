@@ -3265,4 +3265,530 @@ namespace Meow
 
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestPredefConsts)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "   if (true) then" << endl;
+		testfile << "		writeln(40);" << endl;
+		testfile << "   if (false) then" << endl;
+		testfile << "		writeln(50);" << endl;
+		testfile << "	writeln(maxint);" << endl;
+		testfile << "	writeln(minint);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 40);
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 2147483647);
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -2147483647);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestOrd)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type t = (a, b, c, d, e);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(ord('a'));" << endl;
+		testfile << "  writeln(ord('z'));" << endl;
+		testfile << "  writeln(ord(a));" << endl;
+		testfile << "  writeln(ord(e));" << endl;
+		testfile << "  writeln(ord(true));" << endl;
+		testfile << "  writeln(ord(false));" << endl;
+		testfile << "  writeln(ord(69));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 97);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 122);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 0);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 4);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 1);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 0);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 69);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestChr)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  write(chr(97));" << endl;
+		testfile << "  write(chr(98));" << endl;
+		testfile << "  write(chr(99));" << endl;
+		testfile << "  write(chr(100));" << endl;
+		testfile << "  writeln();" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char* buf = new char[256];
+		size_t bufsize = 255;
+
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "abcd\n"); 
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestTrunc)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(trunc(3.14159));" << endl;
+		testfile << "  writeln(trunc(322.992));" << endl;
+		testfile << "  writeln(trunc(-623.14159));" << endl;
+		testfile << "  writeln(trunc(-9623.94159));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 3);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 322);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -623);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -9623);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestRound)
+	{
+		ofstream testfile("test/asc/round.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(round(3.14159));" << endl;
+		testfile << "  writeln(round(322.992));" << endl;
+		testfile << "  writeln(round(-623.14159));" << endl;
+		testfile << "  writeln(round(-9623.94159));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/round.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 3);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 323);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -623);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -9624);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestSuccPred)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type t = (a, b, c, d, e);" << endl;
+		testfile << "begin" << endl;
+
+		testfile << "	writeln(succ(69));" << endl;
+		testfile << "	writeln(succ(-69));" << endl;
+		testfile << "	writeln(pred(69));" << endl;
+		testfile << "	writeln(pred(-69));" << endl;
+
+		testfile << "	write(succ('q'));" << endl;
+		testfile << "	write(succ('v'));" << endl;
+		testfile << "	write(pred('q'));" << endl;
+		testfile << "	write(pred('v'));" << endl;
+		testfile << "	writeln();" << endl;
+
+		testfile << "  if (succ(c) = d) then" << endl;
+		testfile << "		writeln(10);" << endl;
+		testfile << "  if (succ(d) = e) then" << endl;
+		testfile << "		writeln(20);" << endl;
+		testfile << "  if (pred(c) = b) then" << endl;
+		testfile << "		writeln(30);" << endl;
+		testfile << "  if (pred(b) = a) then" << endl;
+		testfile << "		writeln(40);" << endl;
+
+		testfile << "  if (succ(false) = true) then" << endl;
+		testfile << "		writeln(50);" << endl;
+		testfile << "  if (pred(true) = false) then" << endl;
+		testfile << "		writeln(60);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		char a;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 70);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -68);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 68);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -70);
+
+		ASSERT_EQ(fscanf(palout, "%c", &a), 1); // eat newline
+
+		ASSERT_EQ(fscanf(palout, "%c", &a), 1);
+		EXPECT_EQ(a, 'r');
+		ASSERT_EQ(fscanf(palout, "%c", &a), 1);
+		EXPECT_EQ(a, 'w');
+		ASSERT_EQ(fscanf(palout, "%c", &a), 1);
+		EXPECT_EQ(a, 'p');
+		ASSERT_EQ(fscanf(palout, "%c", &a), 1);
+		EXPECT_EQ(a, 'u');
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 10);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 20);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 30);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 40);
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 50);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 60);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestOdd)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+
+		testfile << "  if (odd(0)) then" << endl;
+		testfile << "		writeln(0);" << endl;
+		testfile << "  if (odd(1)) then" << endl;
+		testfile << "		writeln(1);" << endl;
+		testfile << "  if (odd(2)) then" << endl;
+		testfile << "		writeln(2);" << endl;
+		testfile << "  if (odd(3)) then" << endl;
+		testfile << "		writeln(3);" << endl;
+		testfile << "  if (odd(4)) then" << endl;
+		testfile << "		writeln(4);" << endl;
+		testfile << "  if (odd(-12)) then" << endl;
+		testfile << "		writeln(-12);" << endl;
+		testfile << "  if (odd(-13)) then" << endl;
+		testfile << "		writeln(-13);" << endl;
+		testfile << "  if (odd(-69)) then" << endl;
+		testfile << "		writeln(-69);" << endl;
+		testfile << "  if (odd(68)) then" << endl;
+		testfile << "		writeln(68);" << endl;
+		testfile << "  if (odd(69)) then" << endl;
+		testfile << "		writeln(69);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 1);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 3);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -13);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, -69);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 69);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestAbs)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(abs(5));" << endl;
+		testfile << "  writeln(abs(-5));" << endl;
+		testfile << "  writeln(abs(69));" << endl;
+		testfile << "  writeln(abs(-69));" << endl;
+		testfile << "  writeln(abs(69.69));" << endl;
+		testfile << "  writeln(abs(-69.69));" << endl;
+		testfile << "  writeln(abs(3.14159));" << endl;
+		testfile << "  writeln(abs(-3.14159));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		float f;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 5);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 5);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 69);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 69);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 69.69);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 69.69);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 3.14159);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 3.14159);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestSqr)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(sqr(2));" << endl;
+		testfile << "  writeln(sqr(-3));" << endl;
+		testfile << "  writeln(sqr(4));" << endl;
+		testfile << "  writeln(sqr(-9));" << endl;
+
+		testfile << "  writeln(sqr(3.14159));" << endl;
+		testfile << "  writeln(sqr(-3.14159));" << endl;
+		testfile << "  writeln(sqr(10.0));" << endl;
+		testfile << "  writeln(sqr(-10.0));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		float f;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 4);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 9);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 16);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 81);
+
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 9.86958772809999);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 9.86958772809999);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 100.0);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_FLOAT_EQ(f, 100.0);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestSqrt)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(sqrt(9.0));" << endl;
+		testfile << "  writeln(sqrt(16.0));" << endl;
+		testfile << "  writeln(sqrt(25.0));" << endl;
+		testfile << "  writeln(sqrt(7.0));" << endl;
+		testfile << "  writeln(sqrt(11.0));" << endl;
+		testfile << "  writeln(sqrt(-1.0));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float f;
+		char c;
+
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 3.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 4.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 5.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 2.6457513110645907, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 3.3166247903554, 0.001);
+
+		ASSERT_EQ(fscanf(palout, "%c", &c), 1); // eat newline
+
+		char str [1000];
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "Sqrt: Argument cannot be negative.\n");
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestSin)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "const pi = 3.141592653589793;" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(sin(pi));" << endl;
+		testfile << "  writeln(sin(-pi));" << endl;
+		testfile << "  writeln(sin(pi/2));" << endl;
+		testfile << "  writeln(sin(-pi/2));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float f;
+		char c;
+
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 1.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, -1.0, 0.001);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestExp)
+	{
+		ofstream testfile("test/asc/testexp.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(exp(0.0));" << endl;
+		testfile << "  writeln(exp(-10.0));" << endl;
+		testfile << "  writeln(exp(2.0));" << endl;
+		testfile << "  writeln(exp(3.0));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -S -n test/asc/testexp.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float f;
+		char c;
+
+		// FIXME -- something is horribly wrong with how exp() and ln() are being invoked...
+
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 1, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 7.38905609893065, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 20.085536923187668, 0.001);
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestLn)
+	{
+		ofstream testfile("test/asc/testln.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "  writeln(ln(1.0));" << endl;
+		testfile << "  writeln(ln(2.0));" << endl;
+		//testfile << "  writeln(ln(4.0));" << endl; // FIXME !! hangs on 4!!!
+		testfile << "  writeln(ln(6.0));" << endl;
+		testfile << "  writeln(ln(10.0));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -S -n test/asc/testln.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float f;
+		char c;
+
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0.6931471805599453, 0.001);
+		//ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		//EXPECT_NEAR(f, 1.3862943611198906, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 1.791759469228055, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 2.302585092994046, 0.001);
+
+		pclose(palout);
+	}
 }

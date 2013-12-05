@@ -114,15 +114,13 @@ namespace Meow
 	}
 	
 
-	void AscHelper::invokeProcedure(string procedureName,
-			InvocationParameters* args)
+	void AscHelper::invokeProcedure(string procedureName, InvocationParameters* args)
 	{
 		// Make sure that we have no errors
 		if (m_errorManager->getErrors()->size() > 0)
 		{
 			return;
 		}
-
 
 		// For the language extensions 
 		if (m_languageExtensions)
@@ -147,6 +145,7 @@ namespace Meow
 			return;
 		}
 
+
 		// Note: at this point, we can assume arugments have been correctly pushed onto stack
 		// Note: as the grammar is currently -- args pushed in order of appearance
 
@@ -169,7 +168,13 @@ namespace Meow
 
 		// handle builtin procedures
 
-		if (procedureSymbol == m_semanticHelper->getWrite())
+		if (procedureSymbol == m_semanticHelper->getOrd()
+			|| procedureSymbol == m_semanticHelper->getChr())
+		{
+			// noop
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getWrite())
 		{
 			invokeWrite(args);
 		}
@@ -184,6 +189,61 @@ namespace Meow
 		else if (procedureSymbol == m_semanticHelper->getReadln())
 		{
 			invokeReadln(args);
+		}
+		else if (procedureSymbol == m_semanticHelper->getTrunc())
+		{
+			m_ascOutput << "\tCALL 0, trunc" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getRound())
+		{
+			m_ascOutput << "\tCALL 0, round" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getSucc())
+		{
+			m_ascOutput << "\tCALL 0, ml_succ" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getPred())
+		{
+			m_ascOutput << "\tCALL 0, ml_pred" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getOdd())
+		{
+			m_ascOutput << "\tCALL 0, ml_odd" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getAbs())
+		{
+			invokeAbs(args);
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getSqr())
+		{
+			invokeSqr(args);
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getSqrt())
+		{
+			m_ascOutput << "\tCALL 0, ml_sqrt" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getSin())
+		{
+			m_ascOutput << "\tCALL 0, ml_sin" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getExp())
+		{
+			m_ascOutput << "\tCALL 0, ml_exp" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getLn())
+		{
+			m_ascOutput << "\tCALL 0, ml_ln" << endl;
+			return;
 		}
 
 		// Ordinary procedures/functions...
@@ -369,6 +429,38 @@ namespace Meow
 		m_ascOutput << currentLabel(1) << endl;
 		popLabels();
 
+	}
+
+	void AscHelper::invokeAbs(InvocationParameters* args)
+	{
+		// value is on top of stack
+		if (args->size() == 1)
+		{
+			if (args->at(0).type == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tCALL 0, ml_abs_real" << endl;
+			}
+			else
+			{
+				m_ascOutput << "\tCALL 0, ml_abs_int" << endl;
+			}
+		}
+	}
+
+	void AscHelper::invokeSqr(InvocationParameters* args)
+	{
+		// value is on top of stack
+		if (args->size() == 1)
+		{
+			if (args->at(0).type == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tCALL 0, ml_sqr" << endl;
+			}
+			else
+			{
+				m_ascOutput << "\tCALL 0, ml_sqr_int" << endl;
+			}
+		}
 	}
 
 	void AscHelper::allocVariable(Symbol* sym)
