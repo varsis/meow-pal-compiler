@@ -682,6 +682,10 @@ namespace Meow
 		{
 			out() << "\t" << functionName << "I" << endl;
 		}
+		else if (typeOne->getTypeClass() == Type::EnumeratedType && typeTwo->getTypeClass() == Type::EnumeratedType)
+		{
+			out() << "\t" << functionName << "I" << endl;
+		}
 		else
 		{
 			// TODO: Handle string type
