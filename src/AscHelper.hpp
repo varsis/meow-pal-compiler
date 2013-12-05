@@ -45,6 +45,7 @@ namespace Meow
 			void deallocVariables();
 			bool shouldPassByRef(string functionName, unsigned int paramIndex);
 		        void functionSquareRoot(Type *typeOne);
+                        void logicalExpression(string functionName);
 
 		private:
 			ofstream& m_ascOutput;

@@ -535,6 +535,11 @@ namespace Meow
 			m_ascOutput << "\tADJUST -" << size + 1 << endl;
 		}
 	}
+	void AscHelper::logicalExpression(std::string functionName) 
+	{
+                ascHelper.out() << functionName;
+        }
+
 
 	void AscHelper::addArraySubscriptOffset(Type* arrayType)
 	{
