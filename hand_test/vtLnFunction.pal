@@ -1,0 +1,10 @@
+program test(input, output);
+
+var
+	i : real;
+
+begin
+	i := 0.01;
+	writeln(ln(i));
+        writeln(ln(4.0))
+end.
