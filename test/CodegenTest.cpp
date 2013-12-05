@@ -1122,6 +1122,32 @@ namespace Meow
 
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestRecord4)
+	{
+		ofstream testfile("test/asc/testrecord4.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "type" << endl;
+		testfile << "	a = record a : integer; b : integer; c : array[23..789] of integer end;" << endl;
+		testfile << "var" << endl;
+		testfile << "	r : a;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	r.c[233] := 45;" << endl;
+		testfile << " 	writeln(r.c[233]); " << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/testrecord4.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int val;
+		ASSERT_EQ(fscanf(palout, "%d", &val), 1);
+		ASSERT_EQ(val, 45);
+
+		pclose(palout);
+	}
 	
 	TEST(CodegenTest, TestRecordCopy)
 	{
@@ -2629,6 +2655,94 @@ namespace Meow
 
 		delete [] buf;
 
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestMath0)
+	{
+		ofstream testfile("test/asc/math.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a,b : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a := 42;" << endl;
+		testfile << "	a := (a*2+9) -3;" << endl;
+		testfile << "	b := a *(-1);" << endl;
+		testfile << "	b := (b div 90) * (a div 90) * (-1);" << endl; 
+		testfile << "	writeln(a);" << endl;
+		testfile << "	writeln(b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/math.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+	
+		int b;
+		ASSERT_EQ(fscanf(palout, "%d", &b), 1);
+		EXPECT_EQ(b, 90);
+		ASSERT_EQ(fscanf(palout, "%d", &b), 1);
+		EXPECT_EQ(b, 1);
+
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestMath1)
+	{
+		ofstream testfile("test/asc/math.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a,b:real;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a := 1.1;" << endl;
+		testfile << "	b := 4.2;" << endl;
+		testfile << "	b := (b*a)/2;" << endl;
+		testfile << "	writeln(a);" << endl;
+		testfile << "	writeln(b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/math.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float b;
+
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_LT(b, 1.2);
+		EXPECT_GT(b, 1);
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_LT(b, 2.32);
+		EXPECT_GT(b, 2.30);
+
+
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestMath2)
+	{
+		ofstream testfile("test/asc/math.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a,b:real;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a := 34.1;" << endl;
+		testfile << "	b := a*4*4/3.2/8+(23.3-23.122);" << endl;
+		testfile << "	writeln(b);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/math.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float b;
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_FLOAT_EQ(b, 34.1*4*4/3.2/8+(23.3-23.122));
 		pclose(palout);
 	}
 }
