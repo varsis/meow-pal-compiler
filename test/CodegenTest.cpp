@@ -3791,4 +3791,51 @@ namespace Meow
 
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestCharLiteral)
+	{
+		ofstream testfile("test/asc/charlit.pal");
+
+		testfile << "program test(input, output);" << endl;
+
+		testfile << "const" << endl;
+		testfile << "	c = 'c';" << endl;
+		testfile << "	d = 'd';" << endl;
+
+		testfile << "var" << endl;
+		testfile << "	a : array['a'..'v'] of integer;" << endl;
+
+		testfile << "procedure foo(i : char; j : char);" << endl;
+		testfile << "begin" << endl;
+		testfile << "	writeln(a[i]);" << endl;
+		testfile << "	writeln(a[j]);" << endl;
+		testfile << "end;" << endl;
+
+		testfile << "begin" << endl;
+		testfile << "	a['c'] := 10;" << endl;
+		testfile << "	a['d'] := 20;" << endl;
+		testfile << "	foo('c', 'd');" << endl;
+		testfile << "	foo(c, d);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -S -n test/asc/charlit.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		int i;
+		char c;
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 10);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 20);
+
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 10);
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
+		EXPECT_EQ(i, 20);
+
+		pclose(palout);
+	}
 }

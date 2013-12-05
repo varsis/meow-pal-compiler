@@ -77,6 +77,8 @@
 	bool g_varparm;
 	unsigned int g_parmcount;
 
+	// For knowing when to treat a literal as a single char or a 1 character string
+	bool g_charLiteral;
 }
 
 %initial-action
@@ -91,6 +93,7 @@
 	outputVar = "";
 	g_varparm = false;
 	g_parmcount = 0;
+	g_charLiteral = false;
 
 }
 
@@ -807,8 +810,19 @@ stat                    : simple_stat
                         |
 			;
 
-simple_stat             : lhs_var ASSIGN expr
+simple_stat             : lhs_var 
 			{
+				if ($1.type == semanticHelper.getCharType())
+				{
+					// if rhs is a string literal, treat it as a char
+					// (if it's a single character)
+					g_charLiteral = true;
+				}
+			}
+				ASSIGN expr
+			{
+				g_charLiteral = false;
+
 				if (!$1.assignable)
 				{
 					errorManager.addError(
@@ -816,7 +830,7 @@ simple_stat             : lhs_var ASSIGN expr
 						"Cannot assign to value on left side of assignment statment.",
 						scanner.lineno()));
 				}
-				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3.type))
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $4.type))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -824,12 +838,23 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
 
-				ascHelper.assignToVariable($1, $3.type);
+				ascHelper.assignToVariable($1, $4.type);
 			}
                         | proc_invok
                         | compound_stat
-                        | lhs_var EQ expr 
+                        | lhs_var
+			{
+				if ($1.type == semanticHelper.getCharType())
+				{
+					// if rhs is a string literal, treat it as a char
+					// (if it's a single character)
+					g_charLiteral = true;
+				}
+			}
+				EQ expr 
                         {
+				g_charLiteral = false;
+
 				if (!$1.assignable)
 				{
 					errorManager.addError(
@@ -837,7 +862,7 @@ simple_stat             : lhs_var ASSIGN expr
 						"Cannot assign to value on left side of assignment statment.",
 						scanner.lineno()));
 				}
-				else if (!semanticHelper.checkAssignmentCompatible($1.type, $3.type))
+				else if (!semanticHelper.checkAssignmentCompatible($1.type, $4.type))
 				{
 					errorManager.addError(
 						new Error(InvalidAssignment,
@@ -892,13 +917,20 @@ lhs_var                 : IDENTIFIER
                         | lhs_subscripted_var RIGHT_BRACKET
                         {
 				$$ = $1;
+				g_charLiteral = false;
                         }
                         ;
 
-lhs_subscripted_var     : lhs_var LEFT_BRACKET expr
+lhs_subscripted_var     : lhs_var 
+			{
+				// we're indexing an array. Treat any single character string literals as 
+				// char literals
+				g_charLiteral = true;
+			}
+				LEFT_BRACKET expr
                         {
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
-				// $1.type is the array type, $$.type is the element type, $3.type is the index type
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $4.type, $$.assignable);
+				// $1.type is the array type, $$.type is the element type, $4.type is the index type
 				$$.sym = $1.sym; // Symbol for LHS variable
 				$$.level = $1.level; // Level of variable
 				$$.offset = $1.offset; // Offset of variable
@@ -966,12 +998,19 @@ var                     : IDENTIFIER
                         | subscripted_var RIGHT_BRACKET
                         {
 				$$ = $1;
+				g_charLiteral = false;
                         }
                         ;
 
-subscripted_var         : var LEFT_BRACKET expr
+subscripted_var         : var
+			{
+				// we're indexing an array. Treat any single character string literals as 
+				// char literals
+				g_charLiteral = true;
+			}
+				LEFT_BRACKET expr
                         {
-				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $3.type, $$.assignable);
+				$$.type = semanticHelper.getSubscriptedArrayType($1.type, $4.type, $$.assignable);
 				$$.sym = $1.sym;
 				$$.level = $1.level;
 				$$.offset = $1.offset;
@@ -989,6 +1028,7 @@ proc_invok              : plist_finvok RIGHT_PAREN
 			{
 				// definitely stop pushing var's as addresses
 				g_varparm = false;
+				g_charLiteral = false;
 
 				semanticHelper.checkProcedureInvocation(*$1.procedureName,
 									$1.params);
@@ -1017,6 +1057,9 @@ plist_finvok            : plist_finvok_start parm
 				// check if next param is a var param
 				g_parmcount += 1;
 				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
+
+				// check if next param should be a char
+				g_charLiteral = semanticHelper.isCharParam(*$$.procedureName, g_parmcount);
 			}
 			| plist_finvok COMMA parm
 			{
@@ -1026,6 +1069,9 @@ plist_finvok            : plist_finvok_start parm
 				// check if next param is a var param
 				g_parmcount += 1;
 				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
+
+				// check if next param should be a char
+				g_charLiteral = semanticHelper.isCharParam(*$$.procedureName, g_parmcount);
 			}
 			;
 
@@ -1037,6 +1083,9 @@ plist_finvok_start      : IDENTIFIER LEFT_PAREN
 				// check if first param is a var param
 				g_parmcount = 0;
 				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
+				
+				// check if first param should be a char
+				g_charLiteral = semanticHelper.isCharParam(*$$.procedureName, g_parmcount);
 			}
 			;
 
@@ -1856,9 +1905,16 @@ unsigned_const          : unsigned_num
 			}
 			| STRING_LITERAL
 			{
-				// If its a single character, it's a char..
-				if ($1->length() == 1)
+				// if single chararacter string literal...
+				if ($1->length() == 1 && g_charLiteral)
 				{
+					// ONLY IF
+					// -- we are evaluating an array subscript
+					// -- assigning to a char variable
+					// -- passing to a char parameter 
+
+					// treat it as a char literal
+
 					$$ = semanticHelper.getCharType();
 					ascHelper.out() << "\tCONSTI " << (unsigned short)($1->at(0)) << endl;
 				}
@@ -1894,6 +1950,7 @@ func_invok              : plist_finvok RIGHT_PAREN
 			{
 				// definitely stop pushing var's as addresses
 				g_varparm = false;
+				g_charLiteral = false;
 
 				$$ = semanticHelper.checkFunctionInvocation(*$1.procedureName,
 									    $1.params);

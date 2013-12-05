@@ -1310,4 +1310,19 @@ namespace Meow
 
 		return false;
 	}
+
+	bool SemanticHelper::isCharParam(string routineName, unsigned int paramIndex)
+	{
+		Symbol* sym = m_table->getSymbol(routineName);
+		if (sym)
+		{
+			const vector<Symbol*>* params = sym->getParameters();
+			if (params && paramIndex < params->size())
+			{
+				return  params->at(paramIndex)->getType() == getCharType();
+			}
+		}
+
+		return false;
+	}
 }
