@@ -1,5 +1,5 @@
 .\" Manpage for pal.
-.TH man 8 "18 October 2013" "0.1.0" "pal"
+.TH man 8 "18 October 2013" "0.9.0" "pal"
 .SH NAME
 pal \-\- compiles programs for the PAL programming language.
 .SH SYNOPSIS
@@ -20,16 +20,24 @@ pal \-\- compiles programs for the PAL programming language.
 .B -p
 ]
 [
+.B -e
+]
+[
+.B -z
+]
+[
 .I FILE ...
 ]
 .SH DESCRIPTION
 Parses a
 .B PAL
-program and is able to detect some errors based on syntax. Does
-semantic checking of program code as well, but does not
-generate code. PAL will eventually compile programs to the
-ASC pseudo-assembly language. Written primarily in C++, and 
-uses the Bison and Flex compiler tools.
+program and does lexical, syntax, and semantic checks according to the
+PAL language specification. It attempts to give useful error messages 
+when the input code is incorrect. When the code is correct, the compiler 
+will generate assembly code. It generates code for the Asc interpreter, which 
+is a simple stack-based machine. The compiler written primarily in C++, and 
+uses the Bison and Flex compiler tools. To run the generated Asc code, you
+will need a working Asc interpreter.
 .SH OPTIONS
 .IP -n
 Do not produce a program listing. Default is to produce one.
@@ -43,6 +51,14 @@ array bounds checking.
 .IP -p
 Prints the output to standard output instead of to the listing file.
 Overrides the -n option.
+.IP -e
+Enables the debugging language extensions of the compiler. The two procedures
+that are usable with this option are ascDump() and ascTrace(), both of which
+are NOT part of the PAL language standard, are NOT redefinable when the 
+option is enabled, and DO NOT check for args.
+.IP -z
+Do not invoke the Asc interpreter if code is correct. The default is to
+invoke the Asc interpreter on the generated code.
 .SH EXAMPLES
 .B pal FILE  :
 Will compile the PAL program in FILE. Will print program listing,
@@ -52,6 +68,6 @@ will suppress the program listing but not the error messages. Option
 -p will send the output to stdout rather than the listing file.
 
 .SH BUGS
-Does not compile code.
+None that are known.
 .SH AUTHORS
 Chris Pavlicek, Connor Moreside, Mike Armstrong, and Steve Jahns
