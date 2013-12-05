@@ -95,15 +95,13 @@ namespace Meow
 	}
 	
 
-	void AscHelper::invokeProcedure(string procedureName,
-			InvocationParameters* args)
+	void AscHelper::invokeProcedure(string procedureName, InvocationParameters* args)
 	{
 		// Make sure that we have no errors
 		if (m_errorManager->getErrors()->size() > 0)
 		{
 			return;
 		}
-
 
 		// For the language extensions 
 		if (m_languageExtensions)
@@ -125,6 +123,14 @@ namespace Meow
 
 		if (procedureSymbol == NULL)
 		{
+			return;
+		}
+
+
+		if (procedureSymbol == m_semanticHelper->getOrd()
+			|| procedureSymbol == m_semanticHelper->getChr())
+		{
+			// noop! just leave the argument on the stack as is!
 			return;
 		}
 
@@ -165,6 +171,38 @@ namespace Meow
 		else if (procedureSymbol == m_semanticHelper->getReadln())
 		{
 			invokeReadln(args);
+		}
+		else if (procedureSymbol == m_semanticHelper->getAbs())
+		{
+			invokeAbs(args);
+			return; // just leave return value on top
+		}
+		else if (procedureSymbol == m_semanticHelper->getSqr())
+		{
+			invokeSqr(args);
+			return; // just leave return value on top
+		}
+		else if (procedureSymbol == m_semanticHelper->getSqrt())
+		{
+			m_ascOutput << "\tCALL 0, ml_sqrt" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getSin())
+		{
+			m_ascOutput << "\tCALL 0, ml_sin" << endl;
+			return;
+		}
+		// FIXME -- something is horribly wrong with how exp() and ln() are being invoked...
+		else if (procedureSymbol == m_semanticHelper->getExp())
+		{
+			m_ascOutput << "\tCALL 0, ml_exp" << endl;
+			return;
+		}
+		// FIXME -- something is horribly wrong with how exp() and ln() are being invoked...
+		else if (procedureSymbol == m_semanticHelper->getLn())
+		{
+			m_ascOutput << "\tCALL 0, ml_ln" << endl;
+			return;
 		}
 
 		// Ordinary procedures/functions...
@@ -350,6 +388,38 @@ namespace Meow
 		m_ascOutput << currentLabel(1) << endl;
 		popLabels();
 
+	}
+
+	void AscHelper::invokeAbs(InvocationParameters* args)
+	{
+		// value is on top of stack
+		if (args->size() == 1)
+		{
+			if (args->at(0).type == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tCALL 0, ml_abs_real" << endl;
+			}
+			else
+			{
+				m_ascOutput << "\tCALL 0, ml_abs_int" << endl;
+			}
+		}
+	}
+
+	void AscHelper::invokeSqr(InvocationParameters* args)
+	{
+		// value is on top of stack
+		if (args->size() == 1)
+		{
+			if (args->at(0).type == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tCALL 0, ml_sqr" << endl;
+			}
+			else
+			{
+				m_ascOutput << "\tCALL 0, ml_sqr_int" << endl;
+			}
+		}
 	}
 
 	void AscHelper::allocVariable(Symbol* sym)

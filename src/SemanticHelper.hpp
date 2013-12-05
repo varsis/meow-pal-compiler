@@ -100,6 +100,15 @@ namespace Meow
 			Symbol* getWriteln() { return m_writeln; }
 			Symbol* getRead() { return m_read; }
 			Symbol* getReadln() { return m_readln; }
+			Symbol* getOrd() { return m_ord; }
+			Symbol* getChr() { return m_chr; }
+
+			Symbol* getAbs() { return m_abs; }
+			Symbol* getSqr() { return m_sqr; }
+			Symbol* getSqrt() { return m_sqrt; }
+			Symbol* getSin() { return m_sin; }
+			Symbol* getExp() { return m_exp; }
+			Symbol* getLn() { return m_ln; }
 
 		private:
 
@@ -118,8 +127,14 @@ namespace Meow
 			Symbol* m_succ;
 			Symbol* m_pred;
 			Symbol* m_ord;
+			Symbol* m_chr;
 			Symbol* m_abs;
 			Symbol* m_sqr;
+			Symbol* m_sqrt;
+
+			Symbol* m_sin;
+			Symbol* m_exp;
+			Symbol* m_ln;
 
 			Symbol* m_write;
 			Symbol* m_writeln;
