@@ -15,6 +15,8 @@
 	static std::string s_stringText;
 	extern int g_whileCounter;
 	extern std::vector<int> g_offsetList;
+	extern std::string inputVar;
+	extern std::string outputVar;
 %}
 
 %option nodefault yyclass="PalScanner" noyywrap c++
@@ -202,11 +204,21 @@ EXPONENT	E[+-]?{DIGIT}+
 
 ([a-zA-Z]+[0-9a-zA-Z]*) { 
 				yylval->identifier = new std::string(yytext);
+				if (yylval->identifier->compare(inputVar) == 0
+					|| yylval->identifier->compare(outputVar) == 0)
+				{
+					getManager()->addError(new Error(InvalidIdentifier, "Invalid re-use of input/output args.", yylineno));
+				}
 				return token::IDENTIFIER;
 			}
 ([0-9]+[a-zA-Z0-9]*) 	{ 
 				getManager()->addError(new Error(InvalidIdentifier, "Identifiers may not begin with numbers.", yylineno));
 				yylval->identifier = new std::string(yytext);
+				if (yylval->identifier->compare(inputVar) == 0
+					|| yylval->identifier->compare(outputVar) == 0)
+				{
+					getManager()->addError(new Error(InvalidIdentifier, "Invalid re-use of input/output args.", yylineno));
+				}
 				return token::IDENTIFIER; 
 			}
 

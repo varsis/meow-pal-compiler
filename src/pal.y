@@ -70,6 +70,9 @@
 	vector<std::string> g_loopStartStack;
 	vector<std::string> g_loopEndStack;
 
+	// For input/output parameters stuff
+	std::string inputVar;
+	std::string outputVar;
 	// For correctly generating code to pass var parameters by reference
 	bool g_varparm;
 	unsigned int g_parmcount;
@@ -84,6 +87,8 @@
 	g_offsetList.clear();
 	g_loopStartStack.clear();
 	g_loopEndStack.clear();
+	inputVar = "";
+	outputVar = "";
 	g_varparm = false;
 	g_parmcount = 0;
 
@@ -187,6 +192,8 @@ program_head            : PROGRAM IDENTIFIER
 				LEFT_PAREN IDENTIFIER COMMA IDENTIFIER RIGHT_PAREN
 				SEMICOLON
 			{
+				inputVar = *$4;
+				outputVar = *$6;
 				delete $2;
 				delete $4;
 				delete $6;
@@ -198,6 +205,8 @@ program_head            : PROGRAM IDENTIFIER
 				 new Error(MissingProgramParentheses,
 					"Missing \")\" after program argument list.", 
 					scanner.lineno()));
+				inputVar = *$4;
+				outputVar = *$6;
 				delete $2;
 				delete $4;
 				delete $6;
@@ -208,6 +217,8 @@ program_head            : PROGRAM IDENTIFIER
 				 new Error(InvalidProgramHeader,
 					"Missing \";\" after program header.", 
 					scanner.lineno()));
+				inputVar = *$4;
+				outputVar = *$6;
 				delete $2;
 				delete $4;
 				delete $6;
