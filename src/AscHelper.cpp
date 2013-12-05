@@ -292,9 +292,7 @@ namespace Meow
 		// If last argument is not a string ... (read_string will read until newline!)
 		if (args->size() > 0 && !m_semanticHelper->isStringType(args->back().type))
 		{
-			// TODO read and discard characters until newline 
-			m_ascOutput << "\tREADC" << endl;
-			m_ascOutput << "\tADJUST -1" << endl;
+			m_ascOutput << "\tCALL 0, ml_eat_nl" << endl;
 		}
 	}
 
