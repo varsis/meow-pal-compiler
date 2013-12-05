@@ -1311,16 +1311,23 @@ namespace Meow
 		return false;
 	}
 
-	bool SemanticHelper::isCharParam(string routineName, unsigned int paramIndex)
+	// Checks if routine expects a char (rather than a string) for a given parameter index
+	bool SemanticHelper::shouldPassChar(string routineName, unsigned int paramIndex)
 	{
 		Symbol* sym = m_table->getSymbol(routineName);
 		if (sym)
 		{
+			if (sym == getOrd() || sym == getSucc() || sym == getPred())
+			{
+				return true;
+			}
+
 			const vector<Symbol*>* params = sym->getParameters();
 			if (params && paramIndex < params->size())
 			{
 				return  params->at(paramIndex)->getType() == getCharType();
 			}
+
 		}
 
 		return false;
