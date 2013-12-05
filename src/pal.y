@@ -1059,7 +1059,7 @@ plist_finvok            : plist_finvok_start parm
 				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
 
 				// check if next param should be a char
-				g_charLiteral = semanticHelper.isCharParam(*$$.procedureName, g_parmcount);
+				g_charLiteral = semanticHelper.shouldPassChar(*$$.procedureName, g_parmcount);
 			}
 			| plist_finvok COMMA parm
 			{
@@ -1071,7 +1071,7 @@ plist_finvok            : plist_finvok_start parm
 				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
 
 				// check if next param should be a char
-				g_charLiteral = semanticHelper.isCharParam(*$$.procedureName, g_parmcount);
+				g_charLiteral = semanticHelper.shouldPassChar(*$$.procedureName, g_parmcount);
 			}
 			;
 
@@ -1085,7 +1085,7 @@ plist_finvok_start      : IDENTIFIER LEFT_PAREN
 				g_varparm = ascHelper.shouldPassByRef(*$$.procedureName, g_parmcount);
 				
 				// check if first param should be a char
-				g_charLiteral = semanticHelper.isCharParam(*$$.procedureName, g_parmcount);
+				g_charLiteral = semanticHelper.shouldPassChar(*$$.procedureName, g_parmcount);
 			}
 			;
 
