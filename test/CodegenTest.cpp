@@ -106,6 +106,592 @@ namespace Meow
 		pclose(palout);
 	}
 	
+	TEST(CodegenTest, TestAndLogical)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "const" << endl;
+		testfile << "\tcorrectString = 'a and B';" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := true;" << endl;
+		testfile << "	if (a and b) then" << endl;
+		testfile << "		writeln('a and b')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a and B\n");
+
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestAndLogical2)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "const" << endl;
+		testfile << "\tcorrectString = 'a and B';" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "	if (not(a and b)) then" << endl;
+		testfile << "		writeln('a and b')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a and B\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestAndLogical3)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "const" << endl;
+		testfile << "\tcorrectString = 'a and B';" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "	if (a and b) then" << endl;
+		testfile << "		writeln('a and b')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a and b false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a and B false\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestAndLogical4)
+	{
+		ofstream testfile("test/asc/testLogicalAnd4.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := true;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "	if ((a and b) and c) then" << endl;
+		testfile << "		writeln('a and b and c')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a and b and c false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd4.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a and b and c\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestOrLogical)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "	if (a or b) then" << endl;
+		testfile << "		writeln('a or b')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a or b\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestOrLogical2)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := true;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "	if (a or b) then" << endl;
+		testfile << "		writeln('a or b')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a or b\n");
+		
+		
+		pclose(palout);
+	}
+	
+	
+	TEST(CodegenTest, TestOrLogical3)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "	if (a or b) then" << endl;
+		testfile << "		writeln('a or b')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a or b false\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestOrLogical4)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "	if (a or b or c) then" << endl;
+		testfile << "		writeln('a or b or c')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a or b or c\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestOrAndLogical)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := true;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "	if (a or b and c) then" << endl;
+		testfile << "		writeln('a or b and c')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a or b and c\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestOrAndLogical2)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := false;" << endl;
+		testfile << "	if (a or b and c) then" << endl;
+		testfile << "		writeln('a or b and c')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b and c false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a or b and c false\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestOrAndNotLogical)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := false;" << endl;
+		testfile << "	if (not(a or b and c)) then" << endl;
+		testfile << "		writeln('not(a or b and c)')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b and c false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "not(a or b and c)\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestNotLogical)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := false;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := false;" << endl;
+		testfile << "	if (not a) then" << endl;
+		testfile << "		writeln('not a')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a or b and c false')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "not a\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestNotLogical2)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta : boolean;" << endl;
+		testfile << "\tb : boolean;" << endl;
+		testfile << "\tc : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := false;" << endl;
+		testfile << "	if (not a) then" << endl;
+		testfile << "		writeln('not a')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "a\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestAndLogical5)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := true;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "d := true;" << endl;
+		testfile << "e := true;" << endl;
+		testfile << "f := true;" << endl;
+		testfile << "g := true;" << endl;
+		testfile << "h := true;" << endl;
+		testfile << "i := true;" << endl;
+		testfile << "j := true;" << endl;
+		testfile << "k := true;" << endl;
+		testfile << "l := true;" << endl;
+		testfile << "m := true;" << endl;
+		testfile << "n := true;" << endl;
+		testfile << "o := true;" << endl;
+		testfile << "p := true;" << endl;
+		testfile << "	if (a and b and c and d and e and f and g) then" << endl;
+		testfile << "		writeln('all true')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "all true\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestLogical)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "d := true;" << endl;
+		testfile << "e := true;" << endl;
+		testfile << "f := true;" << endl;
+		testfile << "g := true;" << endl;
+		testfile << "h := true;" << endl;
+		testfile << "i := true;" << endl;
+		testfile << "j := true;" << endl;
+		testfile << "k := true;" << endl;
+		testfile << "l := true;" << endl;
+		testfile << "m := true;" << endl;
+		testfile << "n := true;" << endl;
+		testfile << "o := true;" << endl;
+		testfile << "p := true;" << endl;
+		testfile << "	if (a and b or c and d and e and f and g) then" << endl;
+		testfile << "		writeln('all true')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('a')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "all true\n");
+		
+		
+		pclose(palout);
+	}
+	
+	
+	TEST(CodegenTest, TestLogical2)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "d := true;" << endl;
+		testfile << "e := true;" << endl;
+		testfile << "f := false;" << endl;
+		testfile << "g := true;" << endl;
+		testfile << "h := true;" << endl;
+		testfile << "i := true;" << endl;
+		testfile << "j := true;" << endl;
+		testfile << "k := true;" << endl;
+		testfile << "l := true;" << endl;
+		testfile << "m := true;" << endl;
+		testfile << "n := true;" << endl;
+		testfile << "o := true;" << endl;
+		testfile << "p := true;" << endl;
+		testfile << "	if (a and b or c and d and e and f and g) then" << endl;
+		testfile << "		writeln('all true')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('not')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "not\n");
+		
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestLogical3)
+	{
+		ofstream testfile("test/asc/testLogicalAnd.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ta,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p : boolean;" << endl;
+		testfile << "begin" << endl;
+		testfile << "a := true;" << endl;
+		testfile << "b := false;" << endl;
+		testfile << "c := true;" << endl;
+		testfile << "d := true;" << endl;
+		testfile << "e := true;" << endl;
+		testfile << "f := false;" << endl;
+		testfile << "g := true;" << endl;
+		testfile << "h := true;" << endl;
+		testfile << "i := true;" << endl;
+		testfile << "j := true;" << endl;
+		testfile << "k := true;" << endl;
+		testfile << "l := true;" << endl;
+		testfile << "m := true;" << endl;
+		testfile << "n := true;" << endl;
+		testfile << "o := true;" << endl;
+		testfile << "p := true;" << endl;
+		testfile << "	if (not a and b or not c and d and not e and not f and g) then" << endl;
+		testfile << "		writeln('all true')" << endl;
+		testfile << " else" << endl;
+		testfile << "		writeln('not')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/testLogicalAnd.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "not\n");
+		
+		
+		pclose(palout);
+	}
+	
 	TEST(CodegenTest, TestAdditionInt)
 	{
 		ofstream testfile("test/asc/test.pal");

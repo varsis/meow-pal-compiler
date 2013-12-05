@@ -537,7 +537,7 @@ namespace Meow
 	}
 	void AscHelper::logicalExpression(std::string functionName) 
 	{
-                out() << functionName;
+                out() << "\t" << functionName << endl;
         }
 
 
