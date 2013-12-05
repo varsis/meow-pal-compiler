@@ -1,0 +1,37 @@
+{
+	Test 1;
+	Errors on lines:
+	24 : Redefinition of parameter 'a'
+	26 : Incompatible types for comparison
+	32 : Invalid use of type definition
+}
+
+program test(input, output);
+
+type
+	a = integer;
+	q = a;
+	w = q;
+	r = w;
+	b = real;
+	c = char;
+
+var
+	e : a;
+
+function d(j : integer) : integer;
+	var
+		j : integer;
+	begin
+		if (j = true) then
+		begin
+		end;
+	end;
+begin
+	e := 1;
+	integer := 32;
+end.
+
+
+
+//

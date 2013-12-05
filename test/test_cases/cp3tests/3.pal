@@ -1,0 +1,26 @@
+{
+	Test 3;
+	Errors on lines:
+	16 : Wrong return type for function
+	20 : Use before declaration
+	24 : Incompatible return types 
+}
+
+program test(input, output);
+
+var
+	b : integer;
+
+function g() : integer;
+	begin
+		g := 3.3;
+	end;
+
+begin
+	a := 32;
+	while (b = 90) do
+	begin
+		b := ord(b);
+		b := sqrt(23.3);
+	end;
+end.

@@ -1,0 +1,20 @@
+{
+	Test 0;
+	Errors on lines:
+	11 : Division by zero (since it's a constant, it MUST be determined at compile time, and is a semantic issue.)
+	15 : Redefinition of 'b' 
+	19 : Non-compatible type assignment
+}
+
+program test(input, output);
+const
+	a = 9/0;
+
+var
+	b : integer;
+	b : real;
+	c : integer;
+
+begin
+	c := 3.14159;
+end.

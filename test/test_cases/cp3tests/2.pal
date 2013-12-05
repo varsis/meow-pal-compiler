@@ -1,0 +1,28 @@
+{
+	Test 2;
+	Errors on lines:
+	22 : Incompatible types assignment
+	23 : Incompatible types assignment
+	25 : Non-boolean if clause
+}
+
+program test(input, output);
+
+const
+	a = 90;
+	b = 8.554;
+	c = false;
+	d = 'a';
+
+var
+	e : integer;
+
+begin
+	e := a;
+	e := c;
+	e := d;
+
+	if (e) then
+	begin
+	end;
+end.

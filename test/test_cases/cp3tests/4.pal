@@ -1,0 +1,30 @@
+{
+	Test 4;
+	Tests recursive functions.
+	
+	Should output:
+	24
+	720
+	3628800
+	479001600	
+}
+
+program test(input, output);
+
+function factorial(a : integer) : integer;
+	begin
+		if (a = 1) then
+		begin
+			factorial := 1;
+		end
+		else
+			factorial := a * factorial(a-1);
+	end;
+
+begin
+	writeln(factorial(4));
+	writeln(factorial(6));
+	writeln(factorial(10));
+	writeln(factorial(((1*8 -34 +26) * (2)) + 12)); 
+end.
+
