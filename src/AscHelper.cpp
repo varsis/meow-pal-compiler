@@ -81,6 +81,25 @@ namespace Meow
 		}
 	}
 	
+	
+	void AscHelper::functionSquareRoot(Type *typeOne) {
+		// add top two values of stack
+		if (typeOne == m_semanticHelper->getRealType())
+		{
+			// if real
+			out() << "\tCALL 0, ml_sqrt" << endl;
+		}
+		else
+		{
+			// int
+			out() << "\tITOR" << endl;
+			out() << "\tCALL 0, ml_sqrt" << endl;
+
+		}
+	}
+	
+	
+	
 	void AscHelper::simpleExpressionMod() {
 		
 		// Make sure that we have no errors
@@ -516,6 +535,11 @@ namespace Meow
 			m_ascOutput << "\tADJUST -" << size + 1 << endl;
 		}
 	}
+	void AscHelper::logicalExpression(std::string functionName) 
+	{
+                out() << "\t" << functionName << endl;
+        }
+
 
 	void AscHelper::addArraySubscriptOffset(Type* arrayType)
 	{

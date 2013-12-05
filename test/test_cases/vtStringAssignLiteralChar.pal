@@ -1,0 +1,6 @@
+program test(input, output);
+var
+        a : string;
+begin
+	a := 'b';
+end.

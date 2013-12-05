@@ -1,0 +1,11 @@
+program test2(input, output);
+var 
+	a,b: boolean;
+begin
+	a := false;
+	b := false;
+
+	if (not(a and b) or true) then
+		a := not(b);
+
+end.

@@ -1,0 +1,59 @@
+# Machine specific build configs
+MakefileCustomDefs
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+.DS_Store
+
+# Generated Lex/Yacc sources
+pal.tab.cpp
+pal.tab.hpp
+position.hh
+stack.hh
+location.hh
+lex.yy.cpp
+
+# program listings
+*.lst
+
+# Generated dependency files
+*.d
+*.ad
+
+# Generated executables
+bin/*
+test/AllTests
+test/ScannerTest
+test/ParserTest
+test/ParserTestWithFiles
+test/MeowlibTest
+test/CodegenTest
+test/asc/*.pal
+test/asc/*.asc
+test/asc/*.in
+
+# random editor temp files
+*.swp
+*.swo
+*.swn
+
+# latex output
+*.aux
+*.log
+*.pdf
+
+# Generated GTest code
+test/ParserTestWithFiles.cpp
+
+dummyout

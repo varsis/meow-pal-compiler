@@ -1,0 +1,10 @@
+program test2(input, output);
+var 
+	a,b: boolean;
+begin
+	a := false;
+	b := false;
+
+	if ((a and b) or a) then
+		a := b;
+end.

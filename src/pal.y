@@ -310,6 +310,9 @@ const_decl              : IDENTIFIER EQ type_expr
 
 				table.addSymbol(sym);
 				// TODO: Add Symbol to stack at the current level
+				
+				
+				
                         }
                         | IDENTIFIER ASSIGN type_expr
                         {       
@@ -1358,7 +1361,9 @@ type_simple_expr        : type_term
                                         scanner.lineno()));
                             }
                             
-                            $$ = semanticHelper.getConstOpResult(OpOR, $1, $3);
+                        $$ = semanticHelper.getConstOpResult(OpOR, $1, $3);
+                        ascHelper.logicalExpression("OR");
+
                         }
                         ;
 
@@ -1435,6 +1440,8 @@ type_term               : type_factor
                             }
                             
                             $$ = semanticHelper.getConstOpResult(OpAND, $1, $3);
+                            ascHelper.logicalExpression("AND");
+
                         }
                         ;
 
@@ -1694,6 +1701,7 @@ simple_expr             : term
 
 				$$.type = result;
 				$$.assignable = false;
+                                ascHelper.logicalExpression("OR");
 			}
 			;
 
@@ -1791,6 +1799,8 @@ term                    : factor
 
 				$$.type = result;
 				$$.assignable = false;
+                                ascHelper.logicalExpression("AND");
+
 			}
 			;
 
@@ -1833,6 +1843,7 @@ factor                  : var
 
 				$$.type = result;
 				$$.assignable = false;
+                                ascHelper.logicalExpression("NOT");
 			}
 			;
 
