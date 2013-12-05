@@ -810,7 +810,7 @@ simple_stat             : lhs_var ASSIGN expr
 						scanner.lineno()));
 				}
 
-				ascHelper.assignToVariable($1);
+				ascHelper.assignToVariable($1, $3.type);
 			}
                         | proc_invok
                         | compound_stat

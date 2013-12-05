@@ -2505,4 +2505,93 @@ namespace Meow
 
 		pclose(palout);
 	}
+	
+	TEST(CodegenTest, TestAssignString1)
+	{
+		ofstream testfile("test/asc/string.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	s : array[1..4] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	s := 'word';" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/string.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char* buf = new char[256];
+		size_t bufsize = 255;
+
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "word\n"); 
+
+		delete [] buf;
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestAssignString2)
+	{
+		ofstream testfile("test/asc/string.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	s : string;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	s := 'what is the meaning of life?';" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "	s := 'arf arf arf';" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/string.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char* buf = new char[256];
+		size_t bufsize = 255;
+
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "what is the meaning of life?\n"); 
+
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "arf arf arf\n"); 
+
+		delete [] buf;
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestAssignString3)
+	{
+		ofstream testfile("test/asc/string.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "	s : array[1..4] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	s := 'wordplussomemorestuff';" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S  test/asc/string.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char* buf = new char[256];
+		size_t bufsize = 255;
+
+		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
+		EXPECT_EQ(string(buf), "word\n"); 
+
+		delete [] buf;
+
+		pclose(palout);
+	}
 }

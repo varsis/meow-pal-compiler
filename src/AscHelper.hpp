@@ -40,7 +40,7 @@ namespace Meow
 			void allocVariable(Symbol*);
 			void accessVariable(LValue lvalue);
 			void pushConstantValue(Symbol* symbol);
-			void assignToVariable(LValue lvalue);
+			void assignToVariable(LValue lvalue, Type* rtype);
 			void addArraySubscriptOffset(Type* arrayType);
 			void deallocVariables();
 			bool shouldPassByRef(string functionName, unsigned int paramIndex);

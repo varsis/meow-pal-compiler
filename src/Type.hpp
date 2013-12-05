@@ -53,7 +53,7 @@ namespace Meow
 			}
 
 			// Array
-			Type(Type* elementType, Type* indexType, ArrayIndexRange indexRange)
+			Type(Type* elementType, Type* indexType, ArrayIndexRange indexRange, bool string)
 				: m_typeClass(ArrayType)
 				, m_elementType(elementType)
 				, m_indexRange(indexRange)
@@ -66,6 +66,11 @@ namespace Meow
 				else
 				{
 					m_typeSize = 1;
+				}
+
+				if (string)
+				{
+					m_typeSize += 1; // for terminating null
 				}
 			}
 

@@ -449,7 +449,16 @@ namespace Meow
 				m_ascOutput << "\tCONSTI " << symbol->getConstantValue().int_val << endl;
 				break;
 			case Type::StringLiteralType:
-				// TODO push a bunch of chars as integers with a terminating null
+				{
+					// Ugh why exactly did we put the string in the type!?
+					// TODO we should probably move that to the symbol!
+					string literal = type->getStringLiteral();
+					for (string::iterator it = literal.begin(); it != literal.end(); ++it)
+					{
+						m_ascOutput << "\tCONSTI " << (int)(*it) << endl;
+					}
+					m_ascOutput << "\tCONSTI " << 0 << endl;
+				}
 				break;
 			default:
 				// Other types aren't valid constants!
@@ -458,7 +467,7 @@ namespace Meow
 		}
 	}
 
-	void AscHelper::assignToVariable(LValue lvalue)
+	void AscHelper::assignToVariable(LValue lvalue, Type* rtype)
 	{
 		// Make sure that we have no errors
 		if (m_errorManager->getErrors()->size() > 0)
@@ -466,16 +475,25 @@ namespace Meow
 			return;
 		}
 
-		if (lvalue.type)
+		if (lvalue.type && rtype)
 		{
 			// address should be right below value on stack
-
 			reserveLabels(2);
 			m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
 			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
 			m_ascOutput << currentLabel(0) << endl;
 
-			int size = lvalue.type->getTypeSize();
+			// don't copy more than the smallest type
+			// (this is an issue for assigning string literals to char arrays)
+			int size = min(lvalue.type->getTypeSize(), rtype->getTypeSize());
+			if (m_semanticHelper->isStringType(lvalue.type) 
+				&& lvalue.type->getTypeSize() < rtype->getTypeSize())
+			{
+				size -= 1; // don't copy over the terminating null!
+				// FIXME -- but we still need to make sure we have a terminating null
+				// in the first place!
+			}
+
 			for (int i = 0; i < size; ++i)
 			{
 				// Push address to copy to

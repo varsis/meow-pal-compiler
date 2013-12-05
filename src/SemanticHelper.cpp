@@ -325,6 +325,14 @@ namespace Meow
 			&& t->getIndexRange().end > 1;
 	}
 
+	bool SemanticHelper::isStringType(Type* elementType, Type* indexType, ArrayIndexRange range)
+	{
+		return elementType == getCharType()
+			&& indexType == getIntegerType()
+			&& range.start == 1
+			&& range.end > 1;
+	}
+
 	Type* SemanticHelper::makeArrayType(Type* indexType, Type* elementType)
 	{
 		if (!isOrdinalType(indexType))
@@ -340,7 +348,7 @@ namespace Meow
 		range.start = indexType->getMinValue().int_val;
 		range.end = indexType->getMaxValue().int_val;
 
-		return new Type(elementType, indexType, range);
+		return new Type(elementType, indexType, range, isStringType(elementType, indexType, range));
 	}
 
 	Type* SemanticHelper::makeArrayType(ConstExpr start, ConstExpr end, Type* elementType)
@@ -357,7 +365,7 @@ namespace Meow
 					"Indices must be same type.",
 					m_scanner->lineno()));
 
-			return new Type(elementType, NULL, range);
+			return new Type(elementType, NULL, range, false);
 		}
 
 		Type* indexType = start.type;
@@ -369,7 +377,7 @@ namespace Meow
 					SemanticError,
 					"Indices must be ordinal types; boolean, enum, or integer.",
 					m_scanner->lineno()));
-			return new Type(elementType, NULL, range);
+			return new Type(elementType, NULL, range, false);
 		}
 	
 		// Check that start doesn't come after end
@@ -381,7 +389,7 @@ namespace Meow
 		}
 
 
-		return new Type(elementType, indexType, range);
+		return new Type(elementType, indexType, range, isStringType(elementType, indexType, range));
 	}
 
 	void SemanticHelper::declareVariable(string id, Type* type)
