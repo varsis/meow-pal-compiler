@@ -14,15 +14,29 @@ from the root dir, which will place the pal compiler executable at
 	
 	./bin/pal
 
+and asc interpreter executable at
+
+	./bin/asc
+
+and supporting library (with builtin routines) at 
+
+	./bin/meowlib.asc
+
+NOTE: Moving the generated pal executable to a different directory that
+does not contain the asc interpreter or the meowlib.asc library will cause 
+pal to fail.
+
 To build and run all tests:
 
 	$ make test
 
-To build and run specific tests:
+To build and run specific test suites:
 	
 	$ make ScannerTest
 	$ make ParserTest
 	$ make ParserTestWithFiles
+	$ make MeowlibTest
+	$ make CodegenTest
 
 --------------------------------------------------------------------------------
 PAL Sources
@@ -84,6 +98,10 @@ PAL Sources
 	./SemanticHelper.hpp
 		- helper class used by parser for semantic analysis.
 
+	./AscHelper.cpp
+	./AscHelper.hpp
+		- helper class used by parser for code generation.
+
 	./AuxiliaryTypes.hpp
 		- assorted types used for return values in parser rules, semantic 
 		analysis, and symbol definitions
@@ -114,23 +132,23 @@ Testing Sources
 		- Test PAL programs (files starting with b are invalid programs,
 			v are valid)
 
-	./test/test_cases/cp2tests/*
-		- Test PAL programs for checkpoint 2 submission
+	./test/test_cases/cp3tests/*
+		- Test PAL programs for checkpoint 3 submission
 
 --------------------------------------------------------------------------------
-Checkpoint 2 Submission Tests 
+Checkpoint 3 (Final) Submission Tests 
 --------------------------------------------------------------------------------
 
-	test/test_cases/cp2tests/0.pal
-	test/test_cases/cp2tests/1.pal
-	test/test_cases/cp2tests/2.pal
-	test/test_cases/cp2tests/3.pal
-	test/test_cases/cp2tests/4.pal
-	test/test_cases/cp2tests/5.pal
-	test/test_cases/cp2tests/6.pal
-	test/test_cases/cp2tests/7.pal
-	test/test_cases/cp2tests/8.pal
-	test/test_cases/cp2tests/9.pal
+	test/test_cases/cp3tests/0.pal
+	test/test_cases/cp3tests/1.pal
+	test/test_cases/cp3tests/2.pal
+	test/test_cases/cp3tests/3.pal
+	test/test_cases/cp3tests/4.pal
+	test/test_cases/cp3tests/5.pal
+	test/test_cases/cp3tests/6.pal
+	test/test_cases/cp3tests/7.pal
+	test/test_cases/cp3tests/8.pal
+	test/test_cases/cp3tests/9.pal
 
 --------------------------------------------------------------------------------
 Man Page
