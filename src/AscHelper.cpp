@@ -10,6 +10,7 @@
 #include "Symbol.hpp"
 
 extern std::vector<int> g_offsetList;
+extern bool g_charLiteral;
 
 namespace Meow
 {
@@ -559,14 +560,20 @@ namespace Meow
 				break;
 			case Type::StringLiteralType:
 				{
-					// Ugh why exactly did we put the string in the type!?
-					// TODO we should probably move that to the symbol!
 					string literal = type->getStringLiteral();
-					for (string::iterator it = literal.begin(); it != literal.end(); ++it)
+					if (g_charLiteral)
 					{
-						m_ascOutput << "\tCONSTI " << (int)(*it) << endl;
+						// for passing literals to char params, indexing arrays, assigning char vals, etc
+						m_ascOutput << "\tCONSTI " << (int)literal[0] << endl;
 					}
-					m_ascOutput << "\tCONSTI " << 0 << endl;
+					else
+					{
+						for (string::iterator it = literal.begin(); it != literal.end(); ++it)
+						{
+							m_ascOutput << "\tCONSTI " << (int)(*it) << endl;
+						}
+						m_ascOutput << "\tCONSTI " << 0 << endl;
+					}
 				}
 				break;
 			default:

@@ -91,6 +91,8 @@ namespace Meow
 
 			bool checkDuplicateField(IdTypePairList* fields, IdTypePair* field);
 
+			bool isCharParam(string routineName, unsigned int paramIndex);
+
 			Type* getBooleanType() { return &m_booleanType; }
 			Type* getIntegerType() { return &m_integerType; }
 			Type* getRealType() { return &m_realType; }
