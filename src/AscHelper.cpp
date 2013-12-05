@@ -127,13 +127,6 @@ namespace Meow
 		}
 
 
-		if (procedureSymbol == m_semanticHelper->getOrd()
-			|| procedureSymbol == m_semanticHelper->getChr())
-		{
-			// noop! just leave the argument on the stack as is!
-			return;
-		}
-
 		// Note: at this point, we can assume arugments have been correctly pushed onto stack
 		// Note: as the grammar is currently -- args pushed in order of appearance
 
@@ -156,7 +149,13 @@ namespace Meow
 
 		// handle builtin procedures
 
-		if (procedureSymbol == m_semanticHelper->getWrite())
+		if (procedureSymbol == m_semanticHelper->getOrd()
+			|| procedureSymbol == m_semanticHelper->getChr())
+		{
+			// noop
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getWrite())
 		{
 			invokeWrite(args);
 		}
@@ -172,15 +171,40 @@ namespace Meow
 		{
 			invokeReadln(args);
 		}
+		else if (procedureSymbol == m_semanticHelper->getTrunc())
+		{
+			m_ascOutput << "\tCALL 0, trunc" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getRound())
+		{
+			m_ascOutput << "\tCALL 0, round" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getSucc())
+		{
+			m_ascOutput << "\tCALL 0, ml_succ" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getPred())
+		{
+			m_ascOutput << "\tCALL 0, ml_pred" << endl;
+			return;
+		}
+		else if (procedureSymbol == m_semanticHelper->getOdd())
+		{
+			m_ascOutput << "\tCALL 0, ml_odd" << endl;
+			return;
+		}
 		else if (procedureSymbol == m_semanticHelper->getAbs())
 		{
 			invokeAbs(args);
-			return; // just leave return value on top
+			return;
 		}
 		else if (procedureSymbol == m_semanticHelper->getSqr())
 		{
 			invokeSqr(args);
-			return; // just leave return value on top
+			return;
 		}
 		else if (procedureSymbol == m_semanticHelper->getSqrt())
 		{

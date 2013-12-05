@@ -2766,7 +2766,7 @@ namespace Meow
 
 	TEST(CodegenTest, TestRound)
 	{
-		ofstream testfile("test/asc/test.pal");
+		ofstream testfile("test/asc/round.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "begin" << endl;
@@ -2778,7 +2778,7 @@ namespace Meow
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		FILE* palout = popen("bin/pal -n test/asc/round.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		int i;
@@ -3037,15 +3037,15 @@ namespace Meow
 		char c;
 
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		EXPECT_FLOAT_EQ(f, 3.0);
+		EXPECT_NEAR(f, 3.0, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		EXPECT_FLOAT_EQ(f, 4.0);
+		EXPECT_NEAR(f, 4.0, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		EXPECT_FLOAT_EQ(f, 5.0);
+		EXPECT_NEAR(f, 5.0, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		EXPECT_FLOAT_EQ(f, 2.6457513110645907);
+		EXPECT_NEAR(f, 2.6457513110645907, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		EXPECT_FLOAT_EQ(f, 3.3166247903554);
+		EXPECT_NEAR(f, 3.3166247903554, 0.001);
 
 		ASSERT_EQ(fscanf(palout, "%c", &c), 1); // eat newline
 
@@ -3091,19 +3091,19 @@ namespace Meow
 
 	TEST(CodegenTest, TestExp)
 	{
-		ofstream testfile("test/asc/test.pal");
+		ofstream testfile("test/asc/testexp.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "begin" << endl;
-		testfile << "  writeln(exp(0));" << endl;
-		//testfile << "  writeln(exp(-1));" << endl; // FIXME -- not working at all for negatives!
-		testfile << "  writeln(exp(2));" << endl;
-		testfile << "  writeln(exp(3));" << endl;
+		testfile << "  writeln(exp(0.0));" << endl;
+		testfile << "  writeln(exp(-10.0));" << endl;
+		testfile << "  writeln(exp(2.0));" << endl;
+		testfile << "  writeln(exp(3.0));" << endl;
 		testfile << "end." << endl;
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		FILE* palout = popen("bin/pal -S -n test/asc/testexp.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		float f;
@@ -3113,8 +3113,8 @@ namespace Meow
 
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
 		EXPECT_NEAR(f, 1, 0.001);
-		//ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		//EXPECT_NEAR(f, 0.0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0.0, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
 		EXPECT_NEAR(f, 7.38905609893065, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
@@ -3125,29 +3125,29 @@ namespace Meow
 
 	TEST(CodegenTest, TestLn)
 	{
-		ofstream testfile("test/asc/test.pal");
+		ofstream testfile("test/asc/testln.pal");
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "begin" << endl;
-		//testfile << "  writeln(ln(1.0));" << endl;
-		//testfile << "  writeln(ln(2.0));" << endl;
-		//testfile << "  writeln(ln(4.0));" << endl;
+		testfile << "  writeln(ln(1.0));" << endl;
+		testfile << "  writeln(ln(2.0));" << endl;
+		//testfile << "  writeln(ln(4.0));" << endl; // FIXME !! hangs on 4!!!
 		testfile << "  writeln(ln(6.0));" << endl;
 		testfile << "  writeln(ln(10.0));" << endl;
 		testfile << "end." << endl;
 
 		testfile.close();
 
-		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		FILE* palout = popen("bin/pal -S -n test/asc/testln.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 
 		float f;
 		char c;
 
-		//ASSERT_EQ(fscanf(palout, "%f", &f), 1); // FIXME -- these are hanging....
-		//EXPECT_NEAR(f, 0, 0.001);
-		//ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		//EXPECT_NEAR(f, 0.6931471805599453, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0, 0.001);
+		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
+		EXPECT_NEAR(f, 0.6931471805599453, 0.001);
 		//ASSERT_EQ(fscanf(palout, "%f", &f), 1);
 		//EXPECT_NEAR(f, 1.3862943611198906, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);

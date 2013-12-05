@@ -14,46 +14,34 @@ namespace Meow
 		ifstream abs_source("asc/meowlib/abs.asc");
 		ofstream testfile("test/asc/test.asc");
 
-		testfile << "\tCONSTI 0" << endl; // argument!
-		testfile << "\tADJUST 1" << endl; // return value!
-		testfile << "\tCALL 1, ml_odd" << endl;
+		testfile << "\tCONSTI 0" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
 		testfile << "\tWRITEI" << endl;
-		testfile << "\tADJUST -1" << endl;
 		// expect 0
 
 		testfile << "\tCONSTI 1" << endl;
-		testfile << "\tADJUST 1" << endl; // return value!
-		testfile << "\tCALL 1, ml_odd" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
 		testfile << "\tWRITEI" << endl;
-		testfile << "\tADJUST -1" << endl;
 		// expect 1
 
 		testfile << "\tCONSTI 14" << endl;
-		testfile << "\tADJUST 1" << endl; // return value!
-		testfile << "\tCALL 1, ml_odd" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
 		testfile << "\tWRITEI" << endl;
-		testfile << "\tADJUST -1" << endl;
 		// expect 0
 
 		testfile << "\tCONSTI 255" << endl;
-		testfile << "\tADJUST 1" << endl; // return value!
-		testfile << "\tCALL 1, ml_odd" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
 		testfile << "\tWRITEI" << endl;
-		testfile << "\tADJUST -1" << endl;
 		// expect 1
 
 		testfile << "\tCONSTI 1034" << endl;
-		testfile << "\tADJUST 1" << endl; // return value!
-		testfile << "\tCALL 1, ml_odd" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
 		testfile << "\tWRITEI" << endl;
-		testfile << "\tADJUST -1" << endl;
 		// expect 0
 
 		testfile << "\tCONSTI 50243" << endl;
-		testfile << "\tADJUST 1" << endl; // return value!
-		testfile << "\tCALL 1, ml_odd" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
 		testfile << "\tWRITEI" << endl;
-		testfile << "\tADJUST -1" << endl;
 		// expect 1
 
 		testfile << "\tSTOP" << endl;
@@ -154,28 +142,28 @@ namespace Meow
 		ofstream testfile("test/asc/test.asc");
 
 		testfile << "\tCONSTR 0.0" << endl;
-		testfile << "\tCALL 1, ml_succ" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
 		// 1.000000
 		
 		testfile << "\tCONSTR -1" << endl;
-		testfile << "\tCALL 1, ml_succ" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
 		// 0.000000
 
 		testfile << "\tCONSTR 1" << endl;
-		testfile << "\tCALL 1, ml_succ" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
 		// 2.000000
 		
 		testfile << "\tCONSTR 99" << endl;
-		testfile << "\tCALL 1, ml_succ" << endl;
+		testfile << "\tCALL 0, ml_succ" << endl;
 		testfile << "\tWRITER" << endl;
 		testfile << "\tCONSTI 32" << endl;
 		testfile << "\tWRITEC" << endl;
