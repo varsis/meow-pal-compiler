@@ -216,13 +216,11 @@ namespace Meow
 			m_ascOutput << "\tCALL 0, ml_sin" << endl;
 			return;
 		}
-		// FIXME -- something is horribly wrong with how exp() and ln() are being invoked...
 		else if (procedureSymbol == m_semanticHelper->getExp())
 		{
 			m_ascOutput << "\tCALL 0, ml_exp" << endl;
 			return;
 		}
-		// FIXME -- something is horribly wrong with how exp() and ln() are being invoked...
 		else if (procedureSymbol == m_semanticHelper->getLn())
 		{
 			m_ascOutput << "\tCALL 0, ml_ln" << endl;
