@@ -1,8 +1,8 @@
 program test8( input, output );
 { Should parse as valid PAL }
-function s(a : integer; b : integer) : integer;
+procedure s(a : integer; b : integer);
 begin
-	s := a + b;
+	writeln(a + b);
 end;
 
 function foo1(a : integer; b : integer) : integer;
