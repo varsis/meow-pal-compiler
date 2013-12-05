@@ -486,23 +486,25 @@ namespace Meow
 			// don't copy more than the smallest type
 			// (this is an issue for assigning string literals to char arrays)
 			int size = min(lvalue.type->getTypeSize(), rtype->getTypeSize());
-			if (m_semanticHelper->isStringType(lvalue.type) 
-				&& lvalue.type->getTypeSize() < rtype->getTypeSize())
-			{
-				size -= 1; // don't copy over the terminating null!
-				// FIXME -- but we still need to make sure we have a terminating null
-				// in the first place!
-			}
-
 			for (int i = 0; i < size; ++i)
 			{
+
 				// Push address to copy to
-				m_ascOutput << "\tPUSH " << - size - 1 - 2 << "[0]" << endl;
+				m_ascOutput << "\tPUSH " << - rtype->getTypeSize() - 1 - 2 << "[0]" << endl;
 				m_ascOutput << "\tCONSTI " << i << endl;
 				m_ascOutput << "\tADDI" << endl;
 
-				// Push element
-				m_ascOutput << "\tPUSH " << - size + i - 2 << "[0]" << endl;
+				if (m_semanticHelper->isStringType(lvalue.type) && i == size - 1)
+				{
+					// push a terminating null for the string!
+					// (necessary if truncating a larger string literal)
+					m_ascOutput << "\tCONSTI 0" << endl;
+				}
+				else
+				{
+					// Push element from RHS
+					m_ascOutput << "\tPUSH " << - rtype->getTypeSize() + i - 2 << "[0]" << endl;
+				}
 
 				// Copy element to target location
 				m_ascOutput << "\tPOPI" << endl;
