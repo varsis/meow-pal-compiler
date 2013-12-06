@@ -5,7 +5,7 @@ type
 		b:integer;
 		c:integer;
 		d:real;
-		e:real;
+		e:real
 		end;
 begin
 end.

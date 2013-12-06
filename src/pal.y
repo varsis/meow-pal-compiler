@@ -489,10 +489,6 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
 			{
 				$$ = new Type($2);
 			}
-                        | RECORD field_list SEMICOLON END
-			{
-				$$ = new Type($2);
-			}
                         | RECORD error END
                         {
                             errorManager.addError(

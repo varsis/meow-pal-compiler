@@ -1,0 +1,53 @@
+program Adventure(input, output);
+type
+
+	Position = record
+			x : integer;
+			y : integer
+			end;
+
+	Item = record
+			name : string;
+			weight: integer
+			end;
+
+	Inventory = array[1 .. 16] of Item;
+
+	Player = record
+			name : string;
+			pos : Position;
+			health : integer;
+			inv : Inventory
+			end;
+var
+	player : Player;
+	playing : boolean;
+	
+procedure GameLoop();
+const
+	quit = 'q';
+var
+	choice : char;
+begin
+	while (playing) do
+	begin
+		writeln('What do you do?');
+		readln(choice);
+
+		if (choice = quit) then
+		begin
+			writeln('Quitting, really?');
+			exit;
+		end;
+	end;
+end;
+
+begin
+	playing := true;
+
+	writeln('What is your name?');
+	readln(player.name);
+	writeln('Hi ', player.name, '. You are in a locked jail cell.');
+
+	GameLoop();
+end.
