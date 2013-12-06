@@ -881,7 +881,35 @@ namespace Meow
 				}
 			}
 		}
+	}
 
+	void AscHelper::compareStrings(Symbol * sym1, Symbol * sym2) 
+	{
+		Symbol * tableSym1 = m_symbolTable->getSymbol(sym1->getName());
+		Symbol * tableSym2 = m_symbolTable->getSymbol(sym2->getName());
+		
+		// Debug
+		/*out() << "\t# Location 1 " << tableSym1->getLocation() << endl;
+		out() << "\t# Size 1 " << tableSym1->getSizeInMem() << endl;
+		
+		out() << "\t# Location 2 " << tableSym2->getLocation() << endl;
+		out() << "\t# Size 2 " << tableSym2->getSizeInMem() << endl;
+		*/
+				 
+		if(tableSym1->getSizeInMem() == tableSym2->getSizeInMem())
+		{
+			out() << "\tPUSHA " << tableSym1->getLocation() << "[" << tableSym1->getLexLevel() << "]" << endl;
+			out() << "\tPUSHA " << tableSym2->getLocation() << "[" << tableSym2->getLexLevel() << "]" << endl;
+			out() << "\tCONSTI 0 " << endl;
+		
+			out() << "\tCALL 0, ml_compare_strings" << endl;
+		}
+		else
+		{
+			out() << "\tCALL 0, ml_compare_noteq_strings" << endl;
+		}
+
+		// TODO <, >, <=, >= ......?
 	}
 }
 

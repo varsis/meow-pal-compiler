@@ -1,0 +1,14 @@
+program test(input, output);
+const
+        d = 'string';
+        e = 'string';
+var
+	b,c : string;
+begin
+
+        b := d;
+        c := e;
+
+        if(b = c) then
+		writeln('equal');
+end.
