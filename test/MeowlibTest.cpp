@@ -12,7 +12,7 @@ namespace Meow
 	{
 		ifstream odd_source("asc/meowlib/odd.asc");
 		ifstream abs_source("asc/meowlib/abs.asc");
-		ofstream testfile("test/asc/test.asc");
+		ofstream testfile("test/asc/odd_test.asc");
 
 		testfile << "\tCONSTI 0" << endl;
 		testfile << "\tCALL 0, ml_odd" << endl;
@@ -44,6 +44,16 @@ namespace Meow
 		testfile << "\tWRITEI" << endl;
 		// expect 1
 
+		testfile << "\tCONSTI -1" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
+		testfile << "\tWRITEI" << endl;
+		// expect 1
+
+		testfile << "\tCONSTI -300" << endl;
+		testfile << "\tCALL 0, ml_odd" << endl;
+		testfile << "\tWRITEI" << endl;
+		// expect 0
+
 		testfile << "\tSTOP" << endl;
 
 		// append builtin function implmentation
@@ -54,7 +64,7 @@ namespace Meow
 		abs_source.close();
 		odd_source.close();
 
-		FILE* ascout = popen("cat test/asc/test.asc | bin/asc", "r");
+		FILE* ascout = popen("cat test/asc/odd_test.asc | bin/asc", "r");
 		ASSERT_NE(ascout, (void*)0);
 
 		int retval;
@@ -76,6 +86,12 @@ namespace Meow
 
 		ASSERT_EQ(fscanf(ascout, "%d", &retval), 1);
 		EXPECT_EQ(retval, 1);
+
+		ASSERT_EQ(fscanf(ascout, "%d", &retval), 1);
+		EXPECT_EQ(retval, 1);
+
+		ASSERT_EQ(fscanf(ascout, "%d", &retval), 1);
+		EXPECT_EQ(retval, 0);
 
 		pclose(ascout);
 	}
