@@ -28,6 +28,30 @@ namespace Meow
 
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestWriteIntFormat)
+	{
+		// Actually test output format
+		ofstream testfile("test/asc/intformat.pal");
+
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		testfile << "   write(1);" << endl;
+		testfile << "   write(2);" << endl;
+		testfile << "   writeln(3);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n test/asc/intformat.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "123\n");
+
+		pclose(palout);
+	}
 	
 	
 	TEST(CodegenTest, TestConstantDec)
@@ -53,7 +77,7 @@ namespace Meow
 		char str [1000];
 		
 		fgets(str, 300 , palout);
-		EXPECT_STREQ(str, "        -9\n");
+		EXPECT_STREQ(str, "-9\n");
 		
 		pclose(palout);
 	}

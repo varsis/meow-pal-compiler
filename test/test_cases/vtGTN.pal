@@ -1,11 +1,13 @@
 program guessTheNumber(input, output);
 const
-	theNumber = 10; { Actual random number from rolling a d10! }
+	theNumber = 21; { Actual random number from rolling a d100! }
 	numGuesses = 10;
+	max = 100;
+	min = 1;
 var
 	guess, remainingGuesses : integer;
 begin
-	writeln('I am thinking of a random number between 1 and 10.');
+	writeln('I am thinking of a random number between ', min, ' and ', max, '.');
 	writeln('You only get ', numGuesses, ' guesses!');
 
 	remainingGuesses := numGuesses;
@@ -14,6 +16,19 @@ begin
 	begin
 		write('\tYour guess (', remainingGuesses, ' remaining) : ');
 		readln(guess);
+		
+		if (guess < min) then
+		begin
+			writeln('A number bigger than ', min - 1, ', please!');
+			continue;
+		end;
+
+		if (guess > max) then
+		begin
+			writeln('A number smaller than ', max + 1, ', please!');
+			continue;
+		end;
+
 		if (guess = theNumber) then
 		begin
 			writeln('Yay you win! It was ', theNumber, '!');
@@ -21,8 +36,10 @@ begin
 		end
 		else
 		begin
-			{ TODO - say lt or gt when we have comparisons working! }
-			writeln('That\'s not it!');
+			if (guess < theNumber) then
+				writeln('It\'s bigger than that!')
+			else
+				writeln('It\'s smaller than that!');
 		end;
 
 		remainingGuesses := remainingGuesses - 1;
