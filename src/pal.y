@@ -1595,16 +1595,7 @@ expr			: simple_expr
                             $$.assignable = false;
 
 
-			if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
-				ascHelper.out() <<  "	# " << $1.type << endl;
-					ascHelper.compareStrings($1.sym,$3.sym);
-				}
-			else
-			{
-
-			    ascHelper.comparisonExpression($1.type, $3.type, "EQ");
-			}
-			    
+		        ascHelper.comparisonExpression($1.type, $3.type, "EQ");
 			    
                         }
                         | expr NE simple_expr
