@@ -1,6 +1,7 @@
 #ifndef TYPE_HPP
 #define TYPE_HPP
 
+#include <iostream>
 #include <vector>
 #include "Symbol.hpp"
 #include "AuxiliaryTypes.hpp"
@@ -68,10 +69,12 @@ namespace Meow
 					m_typeSize = 1;
 				}
 
+				/*
 				if (string)
 				{
 					m_typeSize += 1; // for terminating null
 				}
+				*/
 			}
 
 			// Record
@@ -98,7 +101,7 @@ namespace Meow
 				: m_typeClass(StringLiteralType)
 				, m_stringLiteral(literal)
 			{
-				m_typeSize = m_stringLiteral.size() + 1; // size of null terminated string
+				m_typeSize = m_stringLiteral.size();// + 1; // size of null terminated string
 			}
 
 			TypeClass getTypeClass()
@@ -142,6 +145,7 @@ namespace Meow
 
 			int getTypeSize()
 			{
+				//std::cout << m_typeSize << std::endl;
 				return m_typeSize;
 			}
 

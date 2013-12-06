@@ -1595,16 +1595,7 @@ expr			: simple_expr
                             $$.assignable = false;
 
 
-			if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
-				ascHelper.out() <<  "	# " << $1.type << endl;
-					ascHelper.compareStrings($1.sym,$3.sym);
-				}
-			else
-			{
-
-			    ascHelper.comparisonExpression($1.type, $3.type, "EQ");
-			}
-			    
+		        ascHelper.comparisonExpression($1.type, $3.type, "EQ");
 			    
                         }
                         | expr NE simple_expr
@@ -1964,12 +1955,11 @@ unsigned_const          : unsigned_num
 				{
 					$$ = new Type(*$1);
 
-					// TODO Do we put the string somewhere special somehow or just push it to stack here in place like this?
 					for (unsigned int i = 0; i < $1->length(); ++i)
 					{
 						ascHelper.out() << "\tCONSTI " << (unsigned short)($1->at(i)) << endl;
 					}
-					ascHelper.out() << "\tCONSTI 0" << endl;
+					//ascHelper.out() << "\tCONSTI 0" << endl;
 				}
 				delete $1;
 			}

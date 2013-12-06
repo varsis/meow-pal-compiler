@@ -396,10 +396,21 @@ namespace Meow
 			}
 			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 			{
+				int size;
+				if (it->type->getTypeClass() == Type::StringLiteralType)
+				{
+					size = it->type->getStringLiteral().size();
+				}
+				else
+				{
+					size = it->type->getTypeSize();
+				}
+
 				// push pointer to start of string
 				m_ascOutput << "\tPUSHA " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tCONSTI " << size << endl;
 				m_ascOutput << "\tCALL 0, ml_write_string" << endl;
-				m_ascOutput << "\tADJUST -1" << endl;
+				m_ascOutput << "\tADJUST -2" << endl;
 			}
 
 			argPointer += it->type->getTypeSize();
@@ -413,11 +424,7 @@ namespace Meow
 	void AscHelper::invokeReadln(InvocationParameters* args)
 	{
 		invokeRead(args);
-		// If last argument is not a string ... (read_string will read until newline!)
-		if (args->size() > 0 && !m_semanticHelper->isStringType(args->back().type))
-		{
-			m_ascOutput << "\tCALL 0, ml_eat_nl" << endl;
-		}
+		m_ascOutput << "\tCALL 0, ml_eat_nl" << endl;
 	}
 
 	void AscHelper::invokeRead(InvocationParameters* args)
@@ -461,8 +468,8 @@ namespace Meow
 			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 			{
 				// push pointer to start of string
-				m_ascOutput << "\tCONSTI " << it->type->getIndexRange().end - it->type->getIndexRange().start + 1 << endl;
 				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tCONSTI " << it->type->getIndexRange().end - it->type->getIndexRange().start + 1 << endl;
 				m_ascOutput << "\tCALL 0, ml_read_string" << endl;
 				m_ascOutput << "\tADJUST -2" << endl;
 			}
@@ -616,7 +623,7 @@ namespace Meow
 						{
 							m_ascOutput << "\tCONSTI " << (int)(*it) << endl;
 						}
-						m_ascOutput << "\tCONSTI " << 0 << endl;
+						//m_ascOutput << "\tCONSTI " << 0 << endl;
 					}
 				}
 				break;
@@ -654,17 +661,8 @@ namespace Meow
 				m_ascOutput << "\tCONSTI " << i << endl;
 				m_ascOutput << "\tADDI" << endl;
 
-				if (m_semanticHelper->isStringType(lvalue.type) && i == size - 1)
-				{
-					// push a terminating null for the string!
-					// (necessary if truncating a larger string literal)
-					m_ascOutput << "\tCONSTI 0" << endl;
-				}
-				else
-				{
-					// Push element from RHS
-					m_ascOutput << "\tPUSH " << - rtype->getTypeSize() + i - 2 << "[0]" << endl;
-				}
+				// Push element from RHS
+				m_ascOutput << "\tPUSH " << - rtype->getTypeSize() + i - 2 << "[0]" << endl;
 
 				if (rtype == m_semanticHelper->getIntegerType() 
 					&& lvalue.type == m_semanticHelper->getRealType())
@@ -764,9 +762,9 @@ namespace Meow
 			// enums
 			out() << "\t" << functionName << "I" << endl;
 		}
-		else
+		else if (typeOne->getTypeClass() == Type::StringLiteralType || m_semanticHelper->isStringType(typeOne))
 		{
-			// TODO: Handle string type
+			compareStrings(typeOne->getTypeSize(), functionName);
 		}
 	}
 
@@ -855,6 +853,7 @@ namespace Meow
 	{
 		// if we pass a string literal arg to a string param, need to adjust
 		// stack appropriately
+		/*
 
 		if (!arg.type || arg.type->getTypeClass() != Type::StringLiteralType)
 		{
@@ -881,35 +880,29 @@ namespace Meow
 				}
 			}
 		}
+		*/
 	}
 
-	void AscHelper::compareStrings(Symbol * sym1, Symbol * sym2) 
+	void AscHelper::compareStrings(int size, string functionName)
 	{
-		Symbol * tableSym1 = m_symbolTable->getSymbol(sym1->getName());
-		Symbol * tableSym2 = m_symbolTable->getSymbol(sym2->getName());
+		out() << "\tCONSTI " << size << endl;
+		out() << "\tCALL 0, ml_string_" << functionName << endl;
 		
-		// Debug
-		/*out() << "\t# Location 1 " << tableSym1->getLocation() << endl;
-		out() << "\t# Size 1 " << tableSym1->getSizeInMem() << endl;
-		
-		out() << "\t# Location 2 " << tableSym2->getLocation() << endl;
-		out() << "\t# Size 2 " << tableSym2->getSizeInMem() << endl;
-		*/
-				 
-		if(tableSym1->getSizeInMem() == tableSym2->getSizeInMem())
-		{
-			out() << "\tPUSHA " << tableSym1->getLocation() << "[" << tableSym1->getLexLevel() << "]" << endl;
-			out() << "\tPUSHA " << tableSym2->getLocation() << "[" << tableSym2->getLexLevel() << "]" << endl;
-			out() << "\tCONSTI 0 " << endl;
-		
-			out() << "\tCALL 0, ml_compare_strings" << endl;
-		}
-		else
-		{
-			out() << "\tCALL 0, ml_compare_noteq_strings" << endl;
-		}
+		// copy result 
+		reserveLabels(2);
+		m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
+		m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
+		m_ascOutput << currentLabel(0) << endl;
 
-		// TODO <, >, <=, >= ......?
+		m_ascOutput << "\tPUSH -3[0]" << endl;
+		m_ascOutput << "\tPOP " << - 3 - 2 * size <<  "[0]" << endl;
+
+		m_ascOutput << "\tRET 0" << endl;
+		m_ascOutput << currentLabel(1) << endl;
+		popLabels();
+
+		// adjust for size of strings
+		out() << "\tADJUST " << - 2 * size << endl;
 	}
 }
 

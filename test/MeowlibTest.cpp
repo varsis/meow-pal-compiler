@@ -656,6 +656,7 @@ namespace Meow
 		pclose(ascout);
 	}
 
+	/*
 	TEST(MeowlibTest, TestWriteString)
 	{
 		ifstream ascsource("asc/meowlib/write_string.asc");
@@ -719,4 +720,5 @@ namespace Meow
 
 		pclose(ascout);
 	}
+	*/
 }
