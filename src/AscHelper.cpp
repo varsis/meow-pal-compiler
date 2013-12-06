@@ -734,27 +734,10 @@ namespace Meow
 		else if (typeOne == m_semanticHelper->getCharType() && typeTwo->getTypeClass() == Type::StringLiteralType)
 		{
 			// char and single char string literal on right
-			out() << "\tADJUST -1" << endl; // adjust for terminating null on top of stack
 			out() << "\t" << functionName << "I" << endl;
 		}
 		else if (typeTwo == m_semanticHelper->getCharType() && typeOne->getTypeClass() == Type::StringLiteralType)
 		{
-			// char and single char string literal on left
-			// need to copy char down in place of null
-			reserveLabels(2);
-			m_ascOutput << "\tCALL 0, " << currentLabel(0) << endl;
-			m_ascOutput << "\tGOTO " << currentLabel(1) << endl;
-			m_ascOutput << currentLabel(0) << endl;
-
-			m_ascOutput << "\tPUSH -3[0]" << endl;
-			m_ascOutput << "\tPOP -4[0]" << endl;
-
-			m_ascOutput << "\tRET 0" << endl;
-			m_ascOutput << currentLabel(1) << endl;
-			popLabels();
-
-			out() << "\tADJUST -1" << endl;
-
 			out() << "\t" << functionName << "I" << endl;
 		}
 		else if (typeOne->getTypeClass() == Type::EnumeratedType && typeTwo->getTypeClass() == Type::EnumeratedType)
