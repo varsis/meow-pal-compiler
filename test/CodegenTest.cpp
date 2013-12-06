@@ -66,6 +66,7 @@ namespace Meow
 		testfile << "\t c := 'ab';" << endl;
 		testfile << "\t if (b = c) then" << endl;
 		testfile << "\t\t writeln('equals')" << endl;
+		testfile << "\t else writeln('notequals')" << endl;
 		testfile << "end." << endl;
 		
 		testfile.close();
@@ -91,11 +92,9 @@ namespace Meow
 		testfile << "begin" << endl;
 		testfile << "\t b := 'ab';" << endl;
 		testfile << "\t c := 'ab';" << endl;
-		testfile << "\t d := 'ab';" << endl;
-		testfile << "\t if (b = c) and (c = d) then" << endl;
-		testfile << "\t   writeln('equals');" << endl;
-		testfile << "\t if (b <> c) or (c <> d) then" << endl;
-		testfile << "\t   writeln('not equals');" << endl;
+		testfile << "\t if (b <> c) then" << endl;
+		testfile << "\t\t writeln('notequals')" << endl;
+		testfile << "\t else writeln('equals')" << endl;
 		testfile << "end." << endl;
 		
 		testfile.close();
@@ -111,6 +110,62 @@ namespace Meow
 		pclose(palout);
 	}
 	
+	TEST(CodegenTest, TestStringCompareLT)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'aa';" << endl;
+		testfile << "\t c := 'ab';" << endl;
+		testfile << "\t if (b < c) then" << endl;
+		testfile << "\t\t writeln('lt')" << endl;
+		testfile << "\t else writeln('not lt')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "lt\n");
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestStringCompareGT)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'as';" << endl;
+		testfile << "\t c := 'ab';" << endl;
+		testfile << "\t if (b > c) then" << endl;
+		testfile << "\t\t writeln('GT')" << endl;
+		testfile << "\t else writeln('not GT')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "GT\n");
+		
+		pclose(palout);
+	}
+
 	TEST(CodegenTest, TestConstantDec)
 	{
 		ofstream testfile("test/asc/testConst.pal");
