@@ -110,6 +110,67 @@ namespace Meow
 		
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestCompareOps2)
+	{
+		ofstream testfile("test/asc/test.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c,d: integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 5;" << endl;
+		testfile << "\t b := 5;" << endl;
+		testfile << "\t c := 2;" << endl;
+		testfile << "\t d := 2;" << endl;
+		testfile << "\t if (b <> c) or (c <> d) then" << endl;
+		testfile << "\t   writeln('not equals');" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "not equals\n");
+		
+		pclose(palout);
+	}
+	
+	// Compares integers using more than one operation
+	TEST(CodegenTest, TestCompareOps)
+	{
+		ofstream testfile("test/asc/test.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c,d: integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 5;" << endl;
+		testfile << "\t b := 5;" << endl;
+		testfile << "\t c := 2;" << endl;
+		testfile << "\t d := 2;" << endl;
+		testfile << "\t if ((b = a) and (c = d)) then" << endl;
+		testfile << "\t   writeln('equals');" << endl;
+		testfile << "\t if (b <> c) or (c <> d) then" << endl;
+		testfile << "\t   writeln('not equals');" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
 	
 	TEST(CodegenTest, TestConstantDec)
 	{
