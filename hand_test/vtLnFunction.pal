@@ -1,9 +1,9 @@
 program test(input, output);
 
 var
-	i : real;
+	i : integer;
 
 begin
-	i := -8.0;
+	i := 2;
         writeln(exp(i))
 end.
