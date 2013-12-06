@@ -167,6 +167,26 @@ namespace Meow
 			}
 		}
 
+		// Handle integer to real conversions
+		int currentOffset = 0;
+		for(unsigned int i=0; i<args->size(); ++i)
+		{
+			if (procedureSymbol == m_semanticHelper->getAbs()
+				|| procedureSymbol == m_semanticHelper->getSqr())
+			{
+				// Nothing, as there are multiple versions of these functions
+			}
+			else if (args->at(i).type == m_semanticHelper->getIntegerType()
+				&& i < procedureSymbol->getParameters()->size()	
+				&& procedureSymbol->getParameters()->at(i)->getType() == m_semanticHelper->getRealType())
+			{
+				m_ascOutput << "\tADJUST -" << argumentSpace + currentOffset - 1 << endl;
+				m_ascOutput << "\tITOR" << endl;
+				m_ascOutput << "\tADJUST " << argumentSpace + currentOffset - 1 << endl;
+			}
+			currentOffset += args->at(i).type->getTypeSize();
+		}
+
 		// handle builtin procedures
 
 		if (procedureSymbol == m_semanticHelper->getOrd()
@@ -620,6 +640,13 @@ namespace Meow
 				{
 					// Push element from RHS
 					m_ascOutput << "\tPUSH " << - rtype->getTypeSize() + i - 2 << "[0]" << endl;
+				}
+
+				if (rtype == m_semanticHelper->getIntegerType() 
+					&& lvalue.type == m_semanticHelper->getRealType())
+				{
+					// Convert integer to real before assigning
+					m_ascOutput << "\tITOR" << endl;
 				}
 
 				// Copy element to target location

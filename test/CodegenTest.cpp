@@ -3952,4 +3952,86 @@ namespace Meow
 		EXPECT_FLOAT_EQ(b, 34.1*4*4/3.2/8+(23.3-23.122));
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, TestIntegerArgConversion0)
+	{
+		ofstream testfile("test/asc/iconv.pal");
+
+		testfile << "program test(i,o);" << endl;
+	
+		testfile << "procedure b(a : real);" << endl;
+		testfile << "begin writeln(a); end;" << endl;
+	
+		testfile << "begin" << endl;
+		testfile << "	b(10);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/iconv.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float b;
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_FLOAT_EQ(b, 10);
+
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestIntegerArgConversion1)
+	{
+		ofstream testfile("test/asc/iconv.pal");
+
+		testfile << "program test(i,o);" << endl;
+	
+		testfile << "begin" << endl;
+		testfile << "	writeln(abs(10));" << endl;
+		testfile << "	writeln(abs(10.0));" << endl;
+		testfile << "	writeln(sqr(10));" << endl;
+		testfile << "	writeln(sqr(10.0));" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/iconv.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float b;
+		int a;
+		ASSERT_EQ(fscanf(palout, "%d", &a), 1);
+		ASSERT_EQ(a, 10);
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_FLOAT_EQ(b, 10);
+		ASSERT_EQ(fscanf(palout, "%d", &a), 1);
+		ASSERT_EQ(a, 100);
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_FLOAT_EQ(b, 100);
+
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestIntegerArgConversion2)
+	{
+		ofstream testfile("test/asc/iconv.pal");
+
+		testfile << "program test(i,o);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a:real;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a := 10;" << endl;
+		testfile << "	writeln(a);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/iconv.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float b;
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_FLOAT_EQ(b, 10);
+
+		pclose(palout);
+	}
+
 }
