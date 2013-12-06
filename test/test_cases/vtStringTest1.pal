@@ -1,15 +1,12 @@
 program test2(input, output);
 const 
-	world = 'world';
+	world = 'wor';
 var 
-	s, t : string;
-	s1 : array[1..10] of char;
-	s2 : array[1..10] of char;
+	s1 : array[1..3] of char;
+	s2 : array[1..3] of char;
 begin
-	s := 'hello';
-	s := world;
-	
 	s1 := 'sup';
 	s2 := 'bro';
 	s1 := s2;
+	s1 := world;
 end.

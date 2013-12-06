@@ -1,0 +1,14 @@
+program test(input,output);
+var
+	s : string;
+procedure foo(s : string);
+begin
+	writeln(s);
+end;
+	
+begin
+	s := 'hello'; { invalid...}
+	if s = 'hello' then { also invalid.. }
+		writeln('yo');
+	foo('hello'); { also also invalid.. }
+end.

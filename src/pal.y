@@ -489,6 +489,14 @@ structured_type         : ARRAY LEFT_BRACKET type_expr UPTO type_expr RIGHT_BRAC
 			{
 				$$ = new Type($2);
 			}
+                        | RECORD field_list SEMICOLON END
+			{
+				$$ = new Type($2);
+                            errorManager.addError(
+                                new Error(InvalidRecordDecl,
+                                          "Extra semicolon in record declaration.",
+                                          scanner.lineno()));
+			}
                         | RECORD error END
                         {
                             errorManager.addError(
@@ -955,6 +963,14 @@ var                     : IDENTIFIER
                                         {
                                             // If its a constant, just push the value itself since we already know it
                                             ascHelper.pushConstantValue(sym);
+
+					    if (g_charLiteral 
+						&& sym->getType()
+						&& sym->getType()->getTypeClass() == Type::StringLiteralType
+						&& sym->getType()->getStringLiteral().size() == 1)
+					    {
+						$$.type = semanticHelper.getCharType();
+					    }
                                         }
                                         else
                                         {
@@ -1047,6 +1063,10 @@ proc_invok              : plist_finvok RIGHT_PAREN
 
 plist_finvok            : plist_finvok_start parm
 			{
+				// If first parameter is a string type, and we passed a string literal
+				// need to adjust stack as if string literal is same size as string
+				ascHelper.makeRoom(*$1.procedureName, g_parmcount, $2);
+
 				$$ = $1;
 				$$.params->push_back($2);
 
@@ -1056,9 +1076,14 @@ plist_finvok            : plist_finvok_start parm
 
 				// check if next param should be a char
 				g_charLiteral = semanticHelper.shouldPassChar(*$$.procedureName, g_parmcount);
+
 			}
 			| plist_finvok COMMA parm
 			{
+				// If first parameter is a string type, and we passed a string literal
+				// need to adjust stack as if string literal is same size as string
+				ascHelper.makeRoom(*$1.procedureName, g_parmcount, $3);
+
 				$$ = $1;
 				$$.params->push_back($3);
 

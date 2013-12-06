@@ -850,5 +850,38 @@ namespace Meow
 
 		return false;
 	}
+
+	void AscHelper::makeRoom(string routineName, unsigned int paramIndex, LValue arg)
+	{
+		// if we pass a string literal arg to a string param, need to adjust
+		// stack appropriately
+
+		if (!arg.type || arg.type->getTypeClass() != Type::StringLiteralType)
+		{
+			return;
+		}
+
+		Symbol* sym = m_symbolTable->getSymbol(routineName);
+		if (sym)
+		{
+			const vector<Symbol*>* params = sym->getParameters();
+			if (params && paramIndex < params->size())
+			{
+				Type* type = params->at(paramIndex)->getType();
+				if (type && m_semanticHelper->isStringType(type))
+				{
+					int adjustment = type->getTypeSize() - arg.type->getTypeSize();
+					m_ascOutput << "\tADJUST " << adjustment << endl;
+					if (adjustment < 0)
+					{
+						// we truncated the string literal! need to add a terminating null!
+						m_ascOutput << "\tADJUST -1" << endl;
+						m_ascOutput << "\tCONSTI 0" << endl;
+					}
+				}
+			}
+		}
+
+	}
 }
 
