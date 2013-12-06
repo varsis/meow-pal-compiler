@@ -51,7 +51,7 @@ test/asc/*.in
 # latex output
 *.aux
 *.log
-*.pdf
+doc/pal.out
 
 # Generated GTest code
 test/ParserTestWithFiles.cpp
