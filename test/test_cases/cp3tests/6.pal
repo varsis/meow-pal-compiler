@@ -28,6 +28,6 @@ begin
 		end;
 	end;
 
-	c := a/b;
+	c := a div b;
 end.
 

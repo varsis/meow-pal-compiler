@@ -3,6 +3,9 @@
 	Tests some library stuff and other cool things.
 
 	Should output:
+	-10
+	3.162277
+	4.60517
 }
 
 program test(input, output);
@@ -20,5 +23,4 @@ begin
 	writeln((a*pred(a))-sqr(a));
 	writeln(sqrt(b));
 	writeln(ln(a)*2);
-	writeln(exp(a)*23);
 end.
