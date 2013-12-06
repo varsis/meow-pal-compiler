@@ -30,6 +30,61 @@ namespace Meow
 	}
 	
 	
+	TEST(CodegenTest, TestStringCompare)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : string;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'ab';" << endl;
+		testfile << "\t if(b = c) then" << endl;
+		testfile << "\t writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestStringCompare2)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : string;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'ab';" << endl;
+		testfile << "\t d := 'ab';" << endl;
+		testfile << "\t if(b = c = d) then" << endl;
+		testfile << "\t writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+	
 	TEST(CodegenTest, TestConstantDec)
 	{
 		ofstream testfile("test/asc/testConst.pal");

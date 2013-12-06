@@ -1219,9 +1219,11 @@ type_expr		: type_simple_expr
 			    
 			    // TODO
 			    // DO we need this here?
-			    //if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
-				    //ascHelper.compareStrings($1.sym,$3x.sym);
-			   // }
+			    // DEBUG STUFF FOR NOW
+			    if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
+				    ascHelper.out() << "# EQ" << endl;
+				   // ascHelper.compareStrings($1.sym,$3x.sym);
+			    }
 			    
                         }
                         | type_expr NE type_simple_expr
@@ -1524,6 +1526,7 @@ expr			: simple_expr
 
 
 			if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
+				ascHelper.out() <<  "	# " << $1.type << endl;
 					ascHelper.compareStrings($1.sym,$3.sym);
 				}
 			else
