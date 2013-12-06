@@ -1048,7 +1048,7 @@ namespace Meow
 						"Expecting 1 argument for '" + functionName + "'.",
 						m_scanner->lineno()));
 				}
-				else if (params && !isOrdinalType(params->at(0).type))
+				else if (params && params->at(0).type && !isOrdinalType(params->at(0).type))
 				{
 					m_errorManager->addError(new Error(
 						SemanticError,
