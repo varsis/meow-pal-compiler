@@ -80,7 +80,118 @@ namespace Meow
 		
 		pclose(palout);
 	}
-	
+		TEST(CodegenTest, TestLessThan3)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 2;" << endl;
+		testfile << "\t b := 1;" << endl;
+		testfile << "\t if(a < b) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "\t if(b < a) then" << endl;
+		testfile << "\t 	writeln('b less than a')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "b less than a\n");
+		
+		pclose(palout);
+	}
+
+
+		TEST(CodegenTest, TestLessThan2)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(a < b) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+
+
+		TEST(CodegenTest, TestLessThan)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(a < b) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+
+		TEST(CodegenTest, TestInequality)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(a <> b) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+
 	TEST(CodegenTest, TestStringCompare2)
 	{
 		ofstream testfile("test/asc/testString.pal");
