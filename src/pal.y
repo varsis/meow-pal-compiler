@@ -1964,12 +1964,11 @@ unsigned_const          : unsigned_num
 				{
 					$$ = new Type(*$1);
 
-					// TODO Do we put the string somewhere special somehow or just push it to stack here in place like this?
 					for (unsigned int i = 0; i < $1->length(); ++i)
 					{
 						ascHelper.out() << "\tCONSTI " << (unsigned short)($1->at(i)) << endl;
 					}
-					ascHelper.out() << "\tCONSTI 0" << endl;
+					//ascHelper.out() << "\tCONSTI 0" << endl;
 				}
 				delete $1;
 			}

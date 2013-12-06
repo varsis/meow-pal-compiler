@@ -93,9 +93,9 @@ namespace Meow
 		testfile << "\t c := 'ab';" << endl;
 		testfile << "\t d := 'ab';" << endl;
 		testfile << "\t if (b = c) and (c = d) then" << endl;
-		testfile << "\t   writeln('equals')" << endl;
+		testfile << "\t   writeln('equals');" << endl;
 		testfile << "\t if (b <> c) or (c <> d) then" << endl;
-		testfile << "\t   writeln('not equals')" << endl;
+		testfile << "\t   writeln('not equals');" << endl;
 		testfile << "end." << endl;
 		
 		testfile.close();
@@ -3275,7 +3275,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "var" << endl;
-		testfile << "	s : string;" << endl;
+		testfile << "	s : array[1..4] of char;" << endl;
 		testfile << "begin" << endl;
 		testfile << "	readln(s);" << endl;
 		testfile << "	writeln(s);" << endl;
@@ -3286,8 +3286,8 @@ namespace Meow
 		testfile.close();
 
 		ofstream input("test/asc/read.in");
-		input << "hello world!" << endl;
-		input << "how is your day?" << endl;
+		input << "hiyo" << endl;
+		input << "woof" << endl;
 		input.close();
 
 		FILE* palout = popen("bin/pal -n -S  test/asc/read.pal < test/asc/read.in", "r");
@@ -3297,10 +3297,10 @@ namespace Meow
 		size_t bufsize = 255;
 
 		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
-		EXPECT_EQ(string(buf), "hello world!\n"); 
+		EXPECT_EQ(string(buf), "hiyo\n"); 
 
 		ASSERT_GT(getline(&buf, &bufsize, palout), 0);
-		EXPECT_EQ(string(buf), "how is your day?\n"); 
+		EXPECT_EQ(string(buf), "woof\n"); 
 
 		delete [] buf;
 

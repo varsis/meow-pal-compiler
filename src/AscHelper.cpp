@@ -396,10 +396,21 @@ namespace Meow
 			}
 			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 			{
+				int size;
+				if (it->type->getTypeClass() == Type::StringLiteralType)
+				{
+					size = it->type->getStringLiteral().size();
+				}
+				else
+				{
+					size = it->type->getTypeSize();
+				}
+
 				// push pointer to start of string
 				m_ascOutput << "\tPUSHA " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tCONSTI " << size << endl;
 				m_ascOutput << "\tCALL 0, ml_write_string" << endl;
-				m_ascOutput << "\tADJUST -1" << endl;
+				m_ascOutput << "\tADJUST -2" << endl;
 			}
 
 			argPointer += it->type->getTypeSize();
@@ -413,11 +424,7 @@ namespace Meow
 	void AscHelper::invokeReadln(InvocationParameters* args)
 	{
 		invokeRead(args);
-		// If last argument is not a string ... (read_string will read until newline!)
-		if (args->size() > 0 && !m_semanticHelper->isStringType(args->back().type))
-		{
-			m_ascOutput << "\tCALL 0, ml_eat_nl" << endl;
-		}
+		m_ascOutput << "\tCALL 0, ml_eat_nl" << endl;
 	}
 
 	void AscHelper::invokeRead(InvocationParameters* args)
@@ -461,8 +468,8 @@ namespace Meow
 			else if (m_semanticHelper->isStringType(it->type) || it->type->getTypeClass() == Type::StringLiteralType)
 			{
 				// push pointer to start of string
-				m_ascOutput << "\tCONSTI " << it->type->getIndexRange().end - it->type->getIndexRange().start + 1 << endl;
 				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
+				m_ascOutput << "\tCONSTI " << it->type->getIndexRange().end - it->type->getIndexRange().start + 1 << endl;
 				m_ascOutput << "\tCALL 0, ml_read_string" << endl;
 				m_ascOutput << "\tADJUST -2" << endl;
 			}
@@ -616,7 +623,7 @@ namespace Meow
 						{
 							m_ascOutput << "\tCONSTI " << (int)(*it) << endl;
 						}
-						m_ascOutput << "\tCONSTI " << 0 << endl;
+						//m_ascOutput << "\tCONSTI " << 0 << endl;
 					}
 				}
 				break;
@@ -654,17 +661,8 @@ namespace Meow
 				m_ascOutput << "\tCONSTI " << i << endl;
 				m_ascOutput << "\tADDI" << endl;
 
-				if (m_semanticHelper->isStringType(lvalue.type) && i == size - 1)
-				{
-					// push a terminating null for the string!
-					// (necessary if truncating a larger string literal)
-					m_ascOutput << "\tCONSTI 0" << endl;
-				}
-				else
-				{
-					// Push element from RHS
-					m_ascOutput << "\tPUSH " << - rtype->getTypeSize() + i - 2 << "[0]" << endl;
-				}
+				// Push element from RHS
+				m_ascOutput << "\tPUSH " << - rtype->getTypeSize() + i - 2 << "[0]" << endl;
 
 				if (rtype == m_semanticHelper->getIntegerType() 
 					&& lvalue.type == m_semanticHelper->getRealType())
@@ -855,6 +853,7 @@ namespace Meow
 	{
 		// if we pass a string literal arg to a string param, need to adjust
 		// stack appropriately
+		/*
 
 		if (!arg.type || arg.type->getTypeClass() != Type::StringLiteralType)
 		{
@@ -881,6 +880,7 @@ namespace Meow
 				}
 			}
 		}
+		*/
 	}
 
 	void AscHelper::compareStrings(Symbol * sym1, Symbol * sym2) 
