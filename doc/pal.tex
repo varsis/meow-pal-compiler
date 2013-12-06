@@ -4,6 +4,7 @@
 \usepackage{epstopdf}
 \usepackage{enumitem}
 \usepackage{fge}
+\usepackage{hyperref}
 
 \setdescription{leftmargin=\parindent, labelindent=\parindent}
 
@@ -274,8 +275,18 @@ in order to perform semantic checking.
 	responsibilities such as type conversion, allocating variables, logical expression, etc... It is also responsible for generating
 	ASC code to call the built-in routines.
 
-\item[Built-in Routine Library] 
-	 	
+\item[Built-in Routine Library]
+	All of our routines were written directly in ASC and then later connected to predefined PAL function symbols using the \texttt{SemanticHelper}
+	class.
+	\begin{itemize}
+		\item
+			\texttt{sin(x)} - Approximation using a \href{http://lab.polygonal.de/?p=205}{quadratic curve}
+		\item
+			\texttt{exp(x)} - Approximation using a \href{http://en.wikipedia.org/wiki/Taylor_series#Approximation_and_convergence}{Taylor Series} 
+		\item
+			\texttt{sqrt(x)} - Utilizes the \href{http://en.wikipedia.org/wiki/Methods_of_computing_square_roots}{Bakhshali Approximation}
+	
+	\end{itemize}	 	
 
 \end{description}
 
