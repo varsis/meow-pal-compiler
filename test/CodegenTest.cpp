@@ -36,12 +36,12 @@ namespace Meow
 		
 		testfile << "program test(input, output);" << endl;
 		testfile << "var" << endl;
-		testfile << "\tb,c,d,e,f,g : string;" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
 		testfile << "begin" << endl;
 		testfile << "\t b := 'ab';" << endl;
 		testfile << "\t c := 'ab';" << endl;
-		testfile << "\t if(b = c) then" << endl;
-		testfile << "\t writeln('equals')" << endl;
+		testfile << "\t if (b = c) then" << endl;
+		testfile << "\t\t writeln('equals')" << endl;
 		testfile << "end." << endl;
 		
 		testfile.close();
@@ -63,13 +63,15 @@ namespace Meow
 		
 		testfile << "program test(input, output);" << endl;
 		testfile << "var" << endl;
-		testfile << "\tb,c,d,e,f,g : string;" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
 		testfile << "begin" << endl;
 		testfile << "\t b := 'ab';" << endl;
 		testfile << "\t c := 'ab';" << endl;
 		testfile << "\t d := 'ab';" << endl;
-		testfile << "\t if(b = c = d) then" << endl;
-		testfile << "\t writeln('equals')" << endl;
+		testfile << "\t if (b = c) and (c = d) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "\t if (b <> c) or (c <> d) then" << endl;
+		testfile << "\t   writeln('not equals')" << endl;
 		testfile << "end." << endl;
 		
 		testfile.close();
