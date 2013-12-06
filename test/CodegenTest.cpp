@@ -3703,9 +3703,9 @@ namespace Meow
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
 		EXPECT_NEAR(f, 5.0, 0.001);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		EXPECT_NEAR(f, 2.6457513110645907, 0.001);
+		EXPECT_NEAR(f, 2.6457513110645907, 0.01);
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
-		EXPECT_NEAR(f, 3.3166247903554, 0.001);
+		EXPECT_NEAR(f, 3.3166247903554, 0.01);
 
 		ASSERT_EQ(fscanf(palout, "%c", &c), 1); // eat newline
 
