@@ -1086,14 +1086,13 @@ namespace Meow
 		if (!procedureSymbol)
 		{
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"Procedure or function, '" + procedureName + "', has not been declared.",
+							"Procedure, '" + procedureName + "', has not been declared.",
 							m_scanner->lineno()));
 		}
-		else if (procedureSymbol->getSymbolType() != Symbol::ProcedureSymbol
-			&& procedureSymbol->getSymbolType() != Symbol::FunctionSymbol)
+		else if (procedureSymbol->getSymbolType() != Symbol::ProcedureSymbol)
 		{
 			m_errorManager->addError(new Error(IdentifierInUse,
-							"'" + procedureName + "' is not a procedure or function.",
+							"'" + procedureName + "' is not a procedure.",
 							m_scanner->lineno()));
 		}
 		else
