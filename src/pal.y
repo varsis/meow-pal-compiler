@@ -1790,7 +1790,7 @@ term                    : factor
 				$$.assignable = false;
 
 
-				ascHelper.simpleExpressionHelper($1.type,$3.type, "DIV");
+				ascHelper.simpleExpressionHelper($1.type,$3.type, "DIVR");
 				ascHelper.out() << "\tIFERR division_zero" << endl;
 
 
