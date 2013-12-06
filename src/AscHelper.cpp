@@ -356,8 +356,8 @@ namespace Meow
 			if (it->type == m_semanticHelper->getIntegerType())
 			{
 				m_ascOutput << "\tPUSH " << argPointer << "[0]" << endl;
-				m_ascOutput << "\tWRITEI" << endl;
-				//m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
+				m_ascOutput << "\tCALL 0, ml_write_integer" << endl;
+				m_ascOutput << "\tADJUST -1" << endl;
 			}
 			else if (it->type == m_semanticHelper->getCharType())
 			{

@@ -1,0 +1,10 @@
+program test(input, output);
+
+function foo() : integer;
+begin
+		foo := 1;
+end;
+
+begin
+		foo(); { can't invoke function outside of an expression! }
+end.
