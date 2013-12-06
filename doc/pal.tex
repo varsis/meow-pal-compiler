@@ -4,6 +4,7 @@
 \usepackage{epstopdf}
 \usepackage{enumitem}
 \usepackage{fge}
+\usepackage{hyperref}
 
 \setdescription{leftmargin=\parindent, labelindent=\parindent}
 
@@ -254,13 +255,50 @@ As you can see, the \texttt{SymbolTable} and \texttt{SemanticHelper} classes wor
 in order to perform semantic checking.
 
 \section*{Our Failed Abstract Syntax Tree}
+\begin{description}
 
-When beginning Checkpoint 2, we started to create an AST structure so we could cleanly separate semantic analysis 
-and code generation functionality from the grammar file. Initially, it seemed like a great idea, using proper software
-engineering principles and such. As time progressed, the amount of code began to spiral out of control, leading to a
-convoluted mess of AST nodes. The amount of code need to properly build and traverse the AST was preposterous. We decided
-to start from scratch essentially. Let's just say after we reverted back to our checkpoint 1 codebase, there was over
-9 000 lines deleted! Lesson learned...
+\item
+	When beginning Checkpoint 2, we started to create an AST structure so we could cleanly separate semantic analysis 
+	and code generation functionality from the grammar file. Initially, it seemed like a great idea, using proper software
+	engineering principles and such. As time progressed, the amount of code began to spiral out of control, leading to a
+	convoluted mess of AST nodes. The amount of code need to properly build and traverse the AST was preposterous. We decided
+	to start from scratch essentially. Let's just say after we reverted back to our checkpoint 1 codebase, there was over
+	9 000 lines deleted! Lesson learned...
+
+\end{description}
+
+\section*{Code Generation}
+\begin{description}
+
+\item
+	The code generation portion of our compiler primarily lies within a class called \texttt{AscHelper}. This class has numerous
+	responsibilities such as type conversion, allocating variables, logical expression, etc... It is also responsible for generating
+	ASC code to call the built-in routines.
+	
+	\texttt{AscHelper} contains a reference to our \texttt{SemanticHelper} class as well in order to determine proper code generation for
+	integer, character, and real based types.
+	
+	We chose not utilize an AST for code generation; mainly because we would not be doing any sort of code optimization. This design choice
+	was reinforced by our previous failed attempt at creating a manageable AST in the previous checkpoint.
+
+\item[Built-in Routine Library]
+	All of our routines were written directly in ASC and then later connected to predefined PAL function symbols using the \texttt{SemanticHelper}
+	class. Here are descriptions of the non-trivial routines:
+	\begin{itemize}
+		\item
+			\texttt{sin(x)} - Approximation using a \href{http://lab.polygonal.de/?p=205}{quadratic curve}
+		\item
+			\texttt{exp(x)} - Approximation using a \href{http://en.wikipedia.org/wiki/Taylor_series#Approximation_and_convergence}{Taylor Series} 
+		\item
+			\texttt{sqrt(x)} - Utilizes the \href{http://en.wikipedia.org/wiki/Methods_of_computing_square_roots}{Bakhshali Approximation}
+	
+	\end{itemize}
+	
+\item[Runtime Error Handling]
+	We took a very simple approach to runtime error handling. In most cases, an error message is printed out and the ASC operation \texttt{STOP} is
+	called. No attempts to recover are made in most cases.
+	
+\end{description}
 
 \section*{Testing}
 \begin{description}
@@ -293,10 +331,13 @@ to start from scratch essentially. Let's just say after we reverted back to our 
 		changes to the grammar or token identifiers.
 	\end{itemize}
 \item[Submitted Tests 0.pal - 9.pal]
-	Tests 0-1 contain 3 errors which are all syntactical. Tests 2-7 contain
-	only semantic errors. Test 8 is essentially the output of a dictionary. The program header
-	is correct. Test 9 checks tricky nested declarations. These tests are included at ''test\textbackslash 
-	test\textunderscore cases\textbackslash cp2tests''.
+	Tests 0-3 contain only semantic errors; a maximum of 3 errors per test file. Tests 4-7 comply to
+	the PAL specification and therefore compile properly, producing ASC code. Test 8 checks various built-in
+	routines to ensure that they are functioning as expected. Test 9 (THE TEST OF DOOOOOOOOOOOOOOM!!!!!!!!!!!!!!!!)
+	is a fairly convoluted sequence of nested recursive functions, multi-dimensional arrays, and crazy nested while loops,
+	which is, surprisingly, correct and should output 42.  
+	These tests are included at ''test\textbackslash 
+	test\textunderscore cases\textbackslash cp3tests''.
 \end{description}
 % known bugs?
 % extra features?
