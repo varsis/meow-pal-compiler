@@ -6,7 +6,7 @@ type
 	aRec = record
 		a : integer;
 		b:integer;
-		c:char;
+		c:char
 		end;
 var
 	myRec : aRec;

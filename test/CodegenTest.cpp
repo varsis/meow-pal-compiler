@@ -1668,7 +1668,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType = record a : integer; end;" << endl;
+		testfile << "	recordType = record a : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	aRecord : recordType;" << endl;
 		testfile << "begin" << endl;
@@ -1694,7 +1694,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType = record a : integer; b : integer; c : integer; end;" << endl;
+		testfile << "	recordType = record a : integer; b : integer; c : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	aRecord : recordType;" << endl;
 		testfile << "begin" << endl;
@@ -1728,8 +1728,8 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	r1 = record a : integer; b : integer; end;" << endl;
-		testfile << "	r2 = record x : integer; y : r1; end;" << endl;
+		testfile << "	r1 = record a : integer; b : integer end;" << endl;
+		testfile << "	r2 = record x : integer; y : r1 end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r : r2;" << endl;
 		testfile << "begin" << endl;
@@ -1763,7 +1763,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType = record a : integer; end;" << endl;
+		testfile << "	recordType = record a : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r1 : recordType;" << endl;
 		testfile << "	r2 : recordType;" << endl;
@@ -1795,7 +1795,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType = record a : integer; b : integer; end;" << endl;
+		testfile << "	recordType = record a : integer; b : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r1 : recordType;" << endl;
 		testfile << "	r2 : recordType;" << endl;
@@ -1834,7 +1834,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType = record a : integer; b : integer; end;" << endl;
+		testfile << "	recordType = record a : integer; b : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r1 : recordType;" << endl;
 		testfile << "procedure foo(r : recordType);" << endl;
@@ -1867,8 +1867,8 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
-		testfile << "	recordType2 = record x : recordType1; y : recordType1; end;" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer end;" << endl;
+		testfile << "	recordType2 = record x : recordType1; y : recordType1 end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r : recordType2;" << endl;
 		testfile << "procedure foo(arg : recordType2);" << endl;
@@ -1909,8 +1909,8 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
-		testfile << "	recordType2 = record x : recordType1; y : recordType1; end;" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer end;" << endl;
+		testfile << "	recordType2 = record x : recordType1; y : recordType1 end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r : recordType2;" << endl;
 		testfile << "procedure foo(arg1 : recordType1; arg2 : recordType1);" << endl;
@@ -1951,7 +1951,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r : recordType1;" << endl;
 		testfile << "function foo() : recordType1;" << endl;
@@ -1984,7 +1984,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	recordType1 = record a : integer; b : integer; end;" << endl;
+		testfile << "	recordType1 = record a : integer; b : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r, s, t : recordType1;" << endl;
 		testfile << "function foo(x : recordType1; y : recordType1) : recordType1;" << endl;
@@ -2021,8 +2021,8 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	rt1 = record a : integer; b : integer; end;" << endl;
-		testfile << "	rt2 = record a : rt1; b : rt1; end;" << endl;
+		testfile << "	rt1 = record a : integer; b : integer end;" << endl;
+		testfile << "	rt2 = record a : rt1; b : rt1 end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	s, t: rt1;" << endl;
 		testfile << "	r : rt2;" << endl;
@@ -2130,7 +2130,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	rt = record a : integer; b : integer; end;" << endl;
+		testfile << "	rt = record a : integer; b : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r : rt;" << endl;
 		testfile << "procedure foo(var x : rt);" << endl;
@@ -2163,7 +2163,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	rt = record a : integer; b : integer; end;" << endl;
+		testfile << "	rt = record a : integer; b : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r1, r2 : rt;" << endl;
 		testfile << "function foo(var x : rt) : rt;" << endl;
@@ -2203,7 +2203,7 @@ namespace Meow
 
 		testfile << "program test(input, output);" << endl;
 		testfile << "type" << endl;
-		testfile << "	rt = record a : integer; b : integer; end;" << endl;
+		testfile << "	rt = record a : integer; b : integer end;" << endl;
 		testfile << "var" << endl;
 		testfile << "	r1, r2 : rt;" << endl;
 		testfile << "function foo(var x : rt) : rt;" << endl;
@@ -4034,4 +4034,27 @@ namespace Meow
 		pclose(palout);
 	}
 
+	TEST(CodegenTest, TestCharCompare)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(i,o);" << endl;
+		testfile << "var" << endl;
+		testfile << "	a : real;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	a := 10;" << endl;
+		testfile << "	writeln(a);" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		float b;
+		ASSERT_EQ(fscanf(palout, "%f", &b), 1);
+		EXPECT_FLOAT_EQ(b, 10);
+
+		pclose(palout);
+	}
 }
