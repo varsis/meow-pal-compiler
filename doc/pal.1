@@ -68,6 +68,13 @@ will suppress the program listing but not the error messages. Option
 -p will send the output to stdout rather than the listing file.
 
 .SH BUGS
-None that are known.
+Functions/procedures may only be nested to a lexical depth of 16. This is because Asc only
+has 16 display registers, and we did not implement a method of reusing them.
+Note that this is NOT recursive depth, but lexical depth. While this is an issue, in only VERY rare cases would 
+it be useful to nest procedures to a lexical depth of 16.
+
+There are also some issues with builtin math functions. Some hang on some inputs, while others become 
+wildly inaccurate with certain inputs. This is likely a limitation of the Asc interpreter (due to it's poor handling
+of floating point numbers) as well as implementation flaws in our library functions.
 .SH AUTHORS
 Chris Pavlicek, Connor Moreside, Mike Armstrong, and Steve Jahns

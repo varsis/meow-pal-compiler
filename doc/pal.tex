@@ -273,13 +273,47 @@ in order to perform semantic checking.
 \item
 	The code generation portion of our compiler primarily lies within a class called \texttt{AscHelper}. This class has numerous
 	responsibilities such as type conversion, allocating variables, logical expression, etc... It is also responsible for generating
-	ASC code to call the built-in routines.
+	ASC code to call the built-in routines. AscHelper will stop generating code after the first error is encountered; this was done to
+	speed up the compiler, as well as to ensure that no unitialized or improperly set values are used.
 	
 	\texttt{AscHelper} contains a reference to our \texttt{SemanticHelper} class as well in order to determine proper code generation for
 	integer, character, and real based types.
 	
 	We chose not utilize an AST for code generation; mainly because we would not be doing any sort of code optimization. This design choice
-	was reinforced by our previous failed attempt at creating a manageable AST in the previous checkpoint.
+	was reinforced by our previous failed attempt at creating a manageable AST in the previous checkpoint. Furthermore, we believed that building
+	and traversing an AST would be slow and prone to bugs.
+
+\item[Code-gen details]
+	We decided to inline the code generation with the parser. This means that the code is generated while the parser is parsing the file, rather than 
+	after the parser is finished. Thus, our compiler is a one-pass compiler.
+	\begin{itemize}
+		\item
+			\texttt{Allocation of space} - We allocated space using the ADJUST instruction, at the time of variable declaration, based on
+				the size of the type of the variable.
+		\item
+			\texttt{Expression evaluation} - This was very simple to do, as Asc is a stack based machine. In essence, most of the basic operations
+				simply needed to have their Asc equivalent pushed into the code stream, as it was assumed that the two operands would be in
+				the correct order on the top of the stack.
+		\item
+			\texttt{Variable references} - This was done using the symbol table. A PUSH instruction was used, in conjunction with the symbol table 
+				information, to push the variables value onto the stack.
+		\item
+			\texttt{Variable assignment} - This was done in a similar way to reference, but in reverse using a POP instruction.
+		\item
+			\texttt{If-else statement} - This was done very similarly to the class notes.
+		\item
+			\texttt{While statement} - This was also similar to the class notes.
+		\item
+			\texttt{Exit-Continue statements} - This was done using GOTO statement in Asc, and a While statement stack within the compiler. 
+				Each encountered While loop would have it's start and end label pushed onto the internal stack. Then, if exit or continue
+				were seen, a GOTO would need to be pushed into the code stream with the correct label (continue=start, exit=end). Upon leaving
+				a while loop, the internal stack would pop the top labels off of the stack.
+		\item
+			\texttt{Function calls} - To when calling functions, we used a calling convention. The caller is repsonsible for pushing the arguments onto
+				the stack, in left to right order, as well as making space for the return value after the arguments have been pushed onto the stack.
+				Then, the caller calls the function, using the lexical level of the function as a display register. After the callee has return, the 
+				caller then can use the return value and remove the space for the arguments on the stack.
+	\end{itemize}			
 
 \item[Built-in Routine Library]
 	All of our routines were written directly in ASC and then later connected to predefined PAL function symbols using the \texttt{SemanticHelper}
@@ -293,10 +327,25 @@ in order to perform semantic checking.
 			\texttt{sqrt(x)} - Utilizes the \href{http://en.wikipedia.org/wiki/Methods_of_computing_square_roots}{Bakhshali Approximation}
 	
 	\end{itemize}
+	Note that due to the extreme inaccuracy in floating point numbers within the Asc interpreter, some builtin functions will be relatively inaccurate. 
 	
 \item[Runtime Error Handling]
 	We took a very simple approach to runtime error handling. In most cases, an error message is printed out and the ASC operation \texttt{STOP} is
-	called. No attempts to recover are made in most cases.
+	called. No attempts to recover are made in most cases. Some of the runtime errors that we handle in our compiled code:
+	\begin{itemize}
+		\item
+			\texttt{Bounds checks} - We check to make sure that all accesses are within the specified range for the array type. This is only true
+				when the bounds checking is not disabled (-a). If it is disabled, we do not do checks, and the code should run faster for array accesses.
+
+		\item
+			\texttt{Division by Zero} - We handle division by zero in our generated code, both at compile time and runtime. At compile time, constant expressions
+				are evaluated, and if they contain division by zero, and error is shown and the code is not (and CANNOT) be compiled. At runtime, if a division
+				by zero occurs, an error message will be shown and the code will exit.
+
+		\item
+			\texttt{Invalid arguments to builtin procedures} - We check to make sure that the argument passed to the builtin is valid. If it is not (in the case of sqrt(-1), etc...),
+				we throw and error and the program will exit. This occurs at runtime.
+	\end{itemize}
 	
 \end{description}
 
@@ -310,7 +359,9 @@ in order to perform semantic checking.
 	For accurate tests of the compiler we used gtest. Within gtest we
 	built specific tests using tokens. Our tests can be ran using,
 	\texttt{\%make test}, \texttt{\%make ScannerTest}, or \texttt{\%make ParserTest}.
-	(make test runs every test)
+	(make test runs every test). Over time, we managed to gather a huge amount (over 500) of test
+	files, and this made it dramatically easier to make changes to the compiler, as it was
+	very easy to see when a change had broken something.
 	\begin{itemize}
 		\item \texttt{MockScanner.cpp} is a simple file. It defines a 
 		'' MockScanner '', for use with testing. The Parser can be unit tested
@@ -327,19 +378,52 @@ in order to perform semantic checking.
 		generated using a bash script. This file takes the tests in
 		the test\_cases folder and builds a cpp file, if it is labeled vt*.pal
 		the expected return is 0 (valid pal) or bt*.pal is 1 (invalid pal).
+		Full test naming conventions can be found in NAMINGCONVENTIONS.txt,
+		within the test case directory.
 		This made it very easy to add test cases and to run them while making 
 		changes to the grammar or token identifiers.
+	
+		\item \texttt{CodegenTest.cpp} This file contains a large amount of valid test cases,
+		all of which compile to Asc code. Each of the test cases compile and run the specified code, 
+		and then check for the expected output. If the output is the same, then the test passes,
+		otherwise it fails. There are approximately 130 test cases within this file.
 	\end{itemize}
 \item[Submitted Tests 0.pal - 9.pal]
 	Tests 0-3 contain only semantic errors; a maximum of 3 errors per test file. Tests 4-7 comply to
 	the PAL specification and therefore compile properly, producing ASC code. Test 8 checks various built-in
 	routines to ensure that they are functioning as expected. Test 9 (THE TEST OF DOOOOOOOOOOOOOOM!!!!!!!!!!!!!!!!)
 	is a fairly convoluted sequence of nested recursive functions, multi-dimensional arrays, and crazy nested while loops,
-	which is, surprisingly, correct and should output 42.  
+	which is, surprisingly, correct and should output 42. 
 	These tests are included at ''test\textbackslash 
 	test\textunderscore cases\textbackslash cp3tests''.
 \end{description}
-% known bugs?
-% extra features?
 
+\section*{Extra features and Known Bugs}
+\begin{description}
+
+\item[Compiler Options]
+	We added a few extra options to our compiler. Full details can be found in the man page:
+	\begin{itemize}
+		\item \texttt{-z} - Do not invoke the Asc interpreter.
+		\item \texttt{-p} - Print to stdout, like most other Unix command line applications.
+		\item \texttt{-e} - Enable the language extensions. This enables ascDump() and ascTrace(),
+			which are useful for debugging code. They map to the Asc debugging intructions; the 
+			default trace amount is 20 instructions.
+	\end{itemize}
+
+\item[Known bugs]
+	Our compiler is relatively free of bugs, however, here is a list of the bugs we know about:
+	\begin{itemize}
+		\item \texttt{Nesting depth} - Our compiler can generate code upto a maximum lexical level of 16, or the number of display registers available.
+			After this, undefined behaviour will occur. Note that this is NOT recursive depth; this is lexical depth. However, while this is not an ideal
+			situation, only in VERY rare cases would it be useful to have nested functions beyond a lexical depth of 16.
+		
+		\item \texttt{Math builtin Inaccuracy} - Our library functions are not always accurate in their return value. This is especially true for the sin function; inputs larger
+			than 10 become very, very inaccurate. This is most likely a limitation in the Asc interpreter, it was observed to be off by over 50 on large floating point numbers.
+			As well, most of the library functions were tested in Python, and output much more accurate results than their Asc counter-parts.
+		
+		\item \texttt{Builtin function hang} - Some inputs will cause some of the library functions to hang indefinitely. This is the case for ln(4) and some others. This may be
+			related to inaccuracy of floating point numbers with the interpreter, however, it may also be implemenation flaws of our library functions.
+	\end{itemize}
+\end{description}
 \end{document}
