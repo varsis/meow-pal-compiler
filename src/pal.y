@@ -311,8 +311,7 @@ const_decl              : IDENTIFIER EQ type_expr
 				table.addSymbol(sym);
 				// TODO: Add Symbol to stack at the current level
 				
-				
-				
+				//ascHelper.out() << "CALL 0, ml_compare_strings" << endl;
                         }
                         | IDENTIFIER ASSIGN type_expr
                         {       
@@ -849,6 +848,7 @@ simple_stat             : lhs_var ASSIGN expr
 				new Error(CStyleAssignment,
                                         "C-style assignment, expected \":=\".",
                                         scanner.lineno()));
+
                         }
                         ;
 
@@ -1216,6 +1216,11 @@ type_expr		: type_simple_expr
                             }
 
                             $$ = semanticHelper.getConstOpResult(OpEQ, $1, $3);
+			    
+			    if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
+				    //ascHelper.compareStrings($1.sym,$3.sym);
+			    }
+			    
                         }
                         | type_expr NE type_simple_expr
                         {
@@ -1510,11 +1515,22 @@ expr			: simple_expr
                                         "Incompatible types for '='",
                                         scanner.lineno()));
                             }
+				
                             
                             $$.type = result;
                             $$.assignable = false;
 
+
+			if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
+					ascHelper.compareStrings($1.sym,$3.sym);
+				}
+			else
+			{
+
 			    ascHelper.comparisonExpression($1.type, $3.type, "EQ");
+			}
+			    
+			    
                         }
                         | expr NE simple_expr
                         {

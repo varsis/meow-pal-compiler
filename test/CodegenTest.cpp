@@ -82,13 +82,13 @@ namespace Meow
 		pclose(palout);
 	}
 	
-	TEST(CodegenTest, SquareRootFloatTest)
+	TEST(CodegenTest, SquareRootTest2)
 	{
 		ofstream testfile("test/asc/test.pal");
 		
 		testfile << "program test(input, output);" << endl;
 		testfile << "const" << endl;
-		testfile << "\tx = 9.0;" << endl;
+		testfile << "\tx = 9;" << endl;
 		testfile << "begin" << endl;
 		testfile << "   sqrt(x);" << endl;
 		testfile << "end." << endl;
@@ -101,6 +101,31 @@ namespace Meow
 		double i;
 		
 		ASSERT_EQ(fscanf(palout, "%f", &i), 1);
+		EXPECT_FLOAT_EQ(i, 3.0);
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, lnFunctionTest)
+	{
+		ofstream testfile("test/asc/test.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ti : real;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\ti:= 0.01;" << endl;
+		testfile << "\twriteln(ln(i));" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		double i;
+		
+		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
 		EXPECT_FLOAT_EQ(i, 3.0);
 		
 		pclose(palout);

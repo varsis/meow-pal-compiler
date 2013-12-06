@@ -50,6 +50,7 @@ namespace Meow
 		        void functionSquareRoot(Type *typeOne);
                         void logicalExpression(string functionName);
 			void comparisonExpression(Type* typeOne, Type* typetwo, string functionName);
+			void compareStrings(Symbol * sym1, Symbol * sym2);
 
 		private:
 			ofstream& m_ascOutput;

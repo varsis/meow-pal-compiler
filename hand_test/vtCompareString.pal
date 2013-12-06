@@ -1,0 +1,10 @@
+program test(input, output);
+var
+	b,c : string;
+begin
+	readln(b);
+	readln(c);
+
+        if(c = b) then
+		writeln('equal');
+end.
