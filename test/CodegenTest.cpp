@@ -4057,4 +4057,55 @@ namespace Meow
 
 		pclose(palout);
 	}
+
+	TEST(CodegenTest, StringLitArg)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(i,o);" << endl;
+		testfile << "procedure foo(s : string);" << endl;
+		testfile << "begin" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	foo('hello world!');" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "hello world!\n");
+
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, StringLitArg2)
+	{
+		ofstream testfile("test/asc/test.pal");
+
+		testfile << "program test(i,o);" << endl;
+		testfile << "type t = array[1..4] of char;" << endl;
+		testfile << "procedure foo(s : t);" << endl;
+		testfile << "begin" << endl;
+		testfile << "	writeln(s);" << endl;
+		testfile << "end;" << endl;
+		testfile << "begin" << endl;
+		testfile << "	foo('hello world!');" << endl;
+		testfile << "end." << endl;
+
+		testfile.close();
+
+		FILE* palout = popen("bin/pal -n -S test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+
+		char str [300];
+		fgets(str, 300 , palout);
+		EXPECT_STRCASEEQ(str, "hell\n");
+
+		pclose(palout);
+	}
 }

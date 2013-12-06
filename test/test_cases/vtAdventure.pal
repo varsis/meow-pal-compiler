@@ -11,21 +11,59 @@ type
 			weight: integer
 			end;
 
-	Inventory = array[1 .. 16] of Item;
+	Inventory = array[0 .. 15] of Item;
 
 	Player = record
 			name : string;
 			pos : Position;
 			health : integer;
-			inv : Inventory
+			inv : Inventory;
+			itemCount : integer
 			end;
 var
 	player : Player;
 	playing : boolean;
+
+procedure showInventory();
+var 
+	i : integer;
+begin
+	i := 0;
+
+	writeln('You have ', player.itemCount, ' items.');
+	while (i < player.itemCount) do
+	begin
+		write(i + 1, ': ', player.inv[i].name);
+		writeln(' (', player.inv[i].weight, ' pounds)');
+		i := i + 1;
+	end;
+end;
+
+procedure pickup(item : string; weight : integer);
+begin
+	writeln('You pick up a ', item, '!');
+	player.inv[player.itemCount].name := item;
+	player.inv[player.itemCount].weight := weight;
+	player.itemCount := player.itemCount + 1;
+end;
+
+procedure printStatus();
+begin
+	writeln('Status of ', player.name, ':');
+	writeln('\tHealth: ', player.health);
+	writeln('\tPosition: ', player.pos.x, ', ', player.pos.y);
+end;
 	
 procedure GameLoop();
 const
 	quit = 'q';
+	look = 'e';
+	status = 's';
+	up = 'k';
+	down = 'j';
+	left = 'h';
+	right = 'l';
+	inv = 'i';
 var
 	choice : char;
 begin
@@ -36,8 +74,58 @@ begin
 
 		if (choice = quit) then
 		begin
-			writeln('Quitting, really?');
 			exit;
+		end;
+
+		if (choice = look) then
+		begin
+			writeln('Outside the barred window you see the sky.');
+			writeln('It is the colour of sadness.');
+		end;
+
+		if (choice = status) then
+		begin
+			printStatus();
+		end;
+
+		if choice = inv then
+		begin
+			showInventory();
+		end;
+
+		if (choice = up) then
+		begin
+			player.pos.y := player.pos.y + 1;
+			writeln('You walk north');
+		end;
+
+		if (choice = down) then
+		begin
+			player.pos.y := player.pos.y - 1;
+			writeln('You walk south');
+		end;
+
+		if (choice = left) then
+		begin
+			player.pos.x := player.pos.x + 1;
+			writeln('You walk west');
+		end;
+
+		if (choice = right) then
+		begin
+			player.pos.x := player.pos.x - 1;
+			writeln('You walk east');
+		end;
+
+		if (player.pos.x = 0) and (player.pos.y = 1) then
+		begin
+			writeln('You fall into a pit!');
+			exit;
+		end;
+
+		if (player.pos.x = 0) and (player.pos.y = -1) then
+		begin
+			pickup('glass of orange juice', 1);
 		end;
 	end;
 end;
@@ -45,9 +133,16 @@ end;
 begin
 	playing := true;
 
+	player.health := 100;
+	player.itemCount := 0;
+	player.pos.x := 0;
+	player.pos.y := 0;
+
 	writeln('What is your name?');
 	readln(player.name);
 	writeln('Hi ', player.name, '. You are in a locked jail cell.');
 
 	GameLoop();
+
+	writeln('You die :(');
 end.

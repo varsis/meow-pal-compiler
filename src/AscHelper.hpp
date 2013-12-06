@@ -47,8 +47,9 @@ namespace Meow
 			void addArraySubscriptOffset(Type* arrayType);
 			void deallocVariables();
 			bool shouldPassByRef(string functionName, unsigned int paramIndex);
-		        void functionSquareRoot(Type *typeOne);
-                        void logicalExpression(string functionName);
+			void makeRoom(string routineName, unsigned int paramIndex, LValue arg);
+			void functionSquareRoot(Type *typeOne);
+			void logicalExpression(string functionName);
 			void comparisonExpression(Type* typeOne, Type* typetwo, string functionName);
 
 		private:
