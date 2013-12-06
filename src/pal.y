@@ -1217,9 +1217,11 @@ type_expr		: type_simple_expr
 
                             $$ = semanticHelper.getConstOpResult(OpEQ, $1, $3);
 			    
-			    if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
-				    //ascHelper.compareStrings($1.sym,$3.sym);
-			    }
+			    // TODO
+			    // DO we need this here?
+			    //if(result != NULL && semanticHelper.isStringType($1.type) && semanticHelper.isStringType($3.type)) {
+				    //ascHelper.compareStrings($1.sym,$3x.sym);
+			   // }
 			    
                         }
                         | type_expr NE type_simple_expr
