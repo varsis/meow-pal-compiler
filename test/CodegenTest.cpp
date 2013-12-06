@@ -166,7 +166,7 @@ namespace Meow
 	
 	TEST(CodegenTest, lnFunctionTest)
 	{
-		ofstream testfile("test/asc/test.pal");
+		ofstream testfile("test/asc/lntest.pal");
 		
 		testfile << "program test(input, output);" << endl;
 		testfile << "var" << endl;
@@ -178,13 +178,13 @@ namespace Meow
 		
 		testfile.close();
 		
-		FILE* palout = popen("bin/pal -S -n test/asc/test.pal", "r");
+		FILE* palout = popen("bin/pal -S -n test/asc/lntest.pal", "r");
 		ASSERT_NE(palout, (void*)0);
 		
 		float i;
 		
 		ASSERT_EQ(fscanf(palout, "%f", &i), 1);
-		EXPECT_FLOAT_EQ(i, 3.0);
+		EXPECT_NEAR(i, -4.605170185988091, 0.001);
 		
 		pclose(palout);
 	}
