@@ -52,7 +52,34 @@ namespace Meow
 
 		pclose(palout);
 	}
-	
+		TEST(CodegenTest, TestStringCompare3)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'AB';" << endl;
+		testfile << "\t if (b < c) then" << endl;
+		testfile << "\t\t writeln('b is less')" << endl;
+		testfile << "\t else writeln('c is less')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "c is less\n");
+		
+		pclose(palout);
+	}
+
 	
 	TEST(CodegenTest, TestStringCompare)
 	{
@@ -81,7 +108,322 @@ namespace Meow
 		
 		pclose(palout);
 	}
+		TEST(CodegenTest, TestLessThan3)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 2;" << endl;
+		testfile << "\t b := 1;" << endl;
+		testfile << "\t if(a < b) then" << endl;
+		testfile << "\t   writeln('equals');" << endl;
+		testfile << "\t if(b < a) then" << endl;
+		testfile << "\t 	writeln('b less than a');" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "b less than a\n");
+		
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestNotEqual2)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 2;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(b <> a) then" << endl;
+		testfile << "\t   writeln('not equal');" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t if(b <> a) then" << endl;
+		testfile << "\t   writeln('not equal 2');" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "not equal 2\n");
+		
+		pclose(palout);
+	}
 	
+		TEST(CodegenTest, TestNotEqual1)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 2;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(b <> a) then" << endl;
+		testfile << "\t   writeln('not equal');" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t if(b <> a) then" << endl;
+		testfile << "\t   writeln('not equal 2');" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "not equal 2\n");
+		
+		pclose(palout);
+	}
+
+		TEST(CodegenTest, TestGreaterThanEquals2)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 2;" << endl;
+		testfile << "\t b := 1;" << endl;
+		testfile << "\t if(b >= c) then" << endl;
+		testfile << "\t   writeln('greater than or equals');" << endl;
+		testfile << "\t if(b < c) then" << endl;
+		testfile << "\t   writeln('equals');" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+
+		
+
+		TEST(CodegenTest, TestGreaterThanEquals)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 2;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(a >= b) then" << endl;
+		testfile << "\t   writeln('greater than or equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "greater than or equals\n");
+		
+		pclose(palout);
+	}
+
+
+
+		TEST(CodegenTest, TestLessThanEquals)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(a <= b) then" << endl;
+		testfile << "\t   writeln('less than or equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "less than or equals\n");
+		
+		pclose(palout);
+	}
+
+
+		TEST(CodegenTest, TestLessThan)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(a < b) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+
+		TEST(CodegenTest, TestInequality)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\t a,b,c : integer;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t a := 1;" << endl;
+		testfile << "\t b := 2;" << endl;
+		testfile << "\t if(a <> b) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+
+		TEST(CodegenTest, TestStringLessEqual)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'Ab';" << endl;
+		testfile << "\t if (b <= c) then" << endl;
+		testfile << "\t\t writeln('b')" << endl;
+		testfile << "\t else writeln('c')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "c\n");
+		
+		pclose(palout);
+	}
+
+		TEST(CodegenTest, TestStringCompare5)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'Ab';" << endl;
+		testfile << "\t if (b < c) then" << endl;
+		testfile << "\t\t writeln('b')" << endl;
+		testfile << "\t else writeln('c')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "c\n");
+		
+		pclose(palout);
+	}
+
+	TEST(CodegenTest, TestStringCompare4)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'Ab';" << endl;
+		testfile << "\t if (b > c) then" << endl;
+		testfile << "\t\t writeln('b')" << endl;
+		testfile << "\t else writeln('c')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "b\n");
+		
+		pclose(palout);
+	}
+
+
 	TEST(CodegenTest, TestStringCompare2)
 	{
 		ofstream testfile("test/asc/testString.pal");
@@ -92,9 +434,9 @@ namespace Meow
 		testfile << "begin" << endl;
 		testfile << "\t b := 'ab';" << endl;
 		testfile << "\t c := 'ab';" << endl;
-		testfile << "\t if (b <> c) then" << endl;
-		testfile << "\t\t writeln('notequals')" << endl;
-		testfile << "\t else writeln('equals')" << endl;
+		testfile << "\t if ((b = c) = (b = c)) then" << endl;
+		testfile << "\t\t writeln('equals')" << endl;
+		testfile << "\t else writeln('notequals')" << endl;
 		testfile << "end." << endl;
 		
 		testfile.close();
