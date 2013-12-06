@@ -3761,7 +3761,6 @@ namespace Meow
 		ASSERT_NE(palout, (void*)0);
 
 		float f;
-		char c;
 
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
 		EXPECT_NEAR(f, 0.0, 0.001);
@@ -3793,7 +3792,6 @@ namespace Meow
 		ASSERT_NE(palout, (void*)0);
 
 		float f;
-		char c;
 
 		// FIXME -- something is horribly wrong with how exp() and ln() are being invoked...
 
@@ -3828,7 +3826,6 @@ namespace Meow
 		ASSERT_NE(palout, (void*)0);
 
 		float f;
-		char c;
 
 		ASSERT_EQ(fscanf(palout, "%f", &f), 1);
 		EXPECT_NEAR(f, 0, 0.001);
@@ -3876,7 +3873,6 @@ namespace Meow
 		ASSERT_NE(palout, (void*)0);
 
 		int i;
-		char c;
 
 		ASSERT_EQ(fscanf(palout, "%d", &i), 1);
 		EXPECT_EQ(i, 10);
