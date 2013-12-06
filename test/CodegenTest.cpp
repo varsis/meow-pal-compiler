@@ -981,6 +981,29 @@ namespace Meow
 		pclose(palout);
 	}
 	
+	TEST(CodegenTest, TestDivideInt1)
+	{
+		ofstream testfile("test/asc/test.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "begin" << endl;
+		// print 12.2
+		testfile << "   writeln(10 / 2.3);" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n test/asc/test.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		float i;
+		
+		ASSERT_EQ(fscanf(palout, "%f", &i), 1);
+		EXPECT_FLOAT_EQ(i, 10/2.3);
+		
+		pclose(palout);
+	}
+	
 	// This test should fail...
 	TEST(CodegenTest, TestDivideIntZero)
 	{
@@ -1011,7 +1034,7 @@ namespace Meow
 		testfile << "program test(input, output);" << endl;
 		testfile << "begin" << endl;
 		// print 12.2
-		testfile << "   writeln(10 / 0);" << endl;
+		testfile << "   writeln(10 div 0);" << endl;
 		testfile << "end." << endl;
 		
 		testfile.close();

@@ -48,7 +48,19 @@ namespace Meow
 	}
 	
 	void AscHelper::simpleExpressionHelper(Type *typeOne, Type* typeTwo, string functionName) {
-		
+	
+		bool isRealDiv = false;
+
+		if (functionName.compare("DIVR") == 0)
+		{
+			isRealDiv = true;
+			functionName = "DIV";
+		}
+		else if (functionName.compare("DIV") == 0)
+		{
+			isRealDiv = false;
+		}
+
 		// Make sure that we have no errors
 		if (m_errorManager->getErrors()->size() > 0)
 		{
@@ -58,14 +70,26 @@ namespace Meow
 		// add top two values of stack
 		if (typeOne == m_semanticHelper->getIntegerType() && typeTwo == m_semanticHelper->getIntegerType())
 		{
-			// if integer ...
-			out() << "\t" << functionName << "I" << endl;
+			if (isRealDiv)
+			{
+				m_ascOutput << "\tADJUST -1" << endl;
+				m_ascOutput << "\tITOR" << endl;
+				m_ascOutput << "\tADJUST 1" << endl;
+				m_ascOutput << "\tITOR" << endl;
+				m_ascOutput << "\t" << functionName << "R" << endl;
+			}
+			else
+			{
+				// if integer ...
+				out() << "\t" << functionName << "I" << endl;
+			}
 		}
 		else if(typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getRealType())
 		{
 			// if real ...
 			out() << "\t" << functionName << "R" << endl;
-		} else if(typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getIntegerType())
+		} 
+		else if(typeOne == m_semanticHelper->getRealType() && typeTwo == m_semanticHelper->getIntegerType())
 		{
 			// real than int
 			out() << "\tITOR" << endl;
