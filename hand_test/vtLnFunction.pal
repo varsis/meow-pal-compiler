@@ -4,6 +4,6 @@ var
 	i : real;
 
 begin
-	i := 1.2;
+	i := -8.0;
         writeln(exp(i))
 end.
