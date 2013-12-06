@@ -16,7 +16,7 @@ FLEX = flex
 # set CFLAGS += -DNO_TR1 in MakefileCustomDefs
 -include MakefileCustomDefs
 
-.PHONY: test clean
+.PHONY: test clean tar
 
 all: pal asc meowlib
 
@@ -67,7 +67,9 @@ $(BISONDEP): %.y.ad: %.y
 	fi
 
 ifeq (,$(filter clean,$(MAKECMDGOALS)))
+ifeq (,$(filter tar,$(MAKECMDGOALS)))
 -include $(FLEXDEP) $(BISONDEP)
+endif
 endif
 
 ################################################################################
