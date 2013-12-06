@@ -54,6 +54,63 @@ namespace Meow
 	}
 	
 	
+	TEST(CodegenTest, TestStringCompare)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'ab';" << endl;
+		testfile << "\t if (b = c) then" << endl;
+		testfile << "\t\t writeln('equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, TestStringCompare2)
+	{
+		ofstream testfile("test/asc/testString.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\tb,c,d,e,f,g : array[1..2] of char;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\t b := 'ab';" << endl;
+		testfile << "\t c := 'ab';" << endl;
+		testfile << "\t d := 'ab';" << endl;
+		testfile << "\t if (b = c) and (c = d) then" << endl;
+		testfile << "\t   writeln('equals')" << endl;
+		testfile << "\t if (b <> c) or (c <> d) then" << endl;
+		testfile << "\t   writeln('not equals')" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -n -S test/asc/testString.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		char str [1000];
+		
+		fgets(str, 300 , palout);
+		EXPECT_STREQ(str, "equals\n");
+		
+		pclose(palout);
+	}
+	
 	TEST(CodegenTest, TestConstantDec)
 	{
 		ofstream testfile("test/asc/testConst.pal");
@@ -82,7 +139,8 @@ namespace Meow
 		pclose(palout);
 	}
 	
-	TEST(CodegenTest, SquareRootTest)
+	
+	TEST(CodegenTest, SquareRootTest2)
 	{
 		ofstream testfile("test/asc/test.pal");
 		
@@ -102,6 +160,31 @@ namespace Meow
 		
 		ASSERT_EQ(fscanf(palout, "%f", &i), 1);
 		EXPECT_FLOAT_EQ(i, 3.0);
+		
+		pclose(palout);
+	}
+	
+	TEST(CodegenTest, lnFunctionTest)
+	{
+		ofstream testfile("test/asc/lntest.pal");
+		
+		testfile << "program test(input, output);" << endl;
+		testfile << "var" << endl;
+		testfile << "\ti : real;" << endl;
+		testfile << "begin" << endl;
+		testfile << "\ti:= 0.01;" << endl;
+		testfile << "\twriteln(ln(i));" << endl;
+		testfile << "end." << endl;
+		
+		testfile.close();
+		
+		FILE* palout = popen("bin/pal -S -n test/asc/lntest.pal", "r");
+		ASSERT_NE(palout, (void*)0);
+		
+		float i;
+		
+		ASSERT_EQ(fscanf(palout, "%f", &i), 1);
+		EXPECT_NEAR(i, -4.605170185988091, 0.001);
 		
 		pclose(palout);
 	}

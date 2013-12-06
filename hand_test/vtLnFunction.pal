@@ -1,0 +1,9 @@
+program test(input, output);
+
+var
+	i : real;
+
+begin
+	i := 1.2;
+        writeln(exp(i))
+end.
